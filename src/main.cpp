@@ -31,22 +31,12 @@ static void glfwErrorCallback(int error, const char* description)
 }
 
 #include "include/LowLevelClasses/Shader.h"
-#include "include/HighLevelClasses/Camera.h"
-
-void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
-void MouseCallback(GLFWwindow* window, double xPosIn, double yPosIn);
-void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
 
 int width = 1200;
 int height = 780;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-Camera camera({0.0f, 1.0f, 10.0f});
-float lastX = width / 2.0f;
-float lastY = height / 2.0f;
-bool firstMouse = true;
 
 int main(int, char**)
 {
@@ -69,9 +59,6 @@ int main(int, char**)
         return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(true); // Enable vsync
-    glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
-    glfwSetCursorPosCallback(window, MouseCallback);
-    glfwSetScrollCallback(window, ScrollCallback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Initialize OpenGL loader
@@ -109,11 +96,7 @@ int main(int, char**)
     // Generate Shader object
     Shader shaderProgram("res/shaders/basic.vert", "res/shaders/basic.frag");
 
-    bool bIsCursorEnabled = false;
     glEnable(GL_DEPTH_TEST);
-
-    //Camera speed
-    camera.movementSpeed = 100;
 
     // ________________________
     // ---------WHILE----------
@@ -134,31 +117,6 @@ int main(int, char**)
 
         ImGui::Begin("Debug window", nullptr);
 
-        if(ImGui::IsKeyDown(ImGuiKey_D)){
-            camera.ProcessKeyboard(RIGHT, deltaTime);
-        }
-        if(ImGui::IsKeyDown(ImGuiKey_A)){
-            camera.ProcessKeyboard(LEFT, deltaTime);
-        }
-        if(ImGui::IsKeyDown(ImGuiKey_W)){
-            camera.ProcessKeyboard(FORWARD, deltaTime);
-        }
-        if(ImGui::IsKeyDown(ImGuiKey_S)){
-            camera.ProcessKeyboard(BACKWARD, deltaTime);
-        }
-        if (ImGui::IsKeyDown(ImGuiKey_Escape)) {
-            glfwSetWindowShouldClose(window, true);
-        }
-        if (ImGui::IsKeyReleased(ImGuiKey_Q)) {
-            bIsCursorEnabled = !bIsCursorEnabled;
-            if (bIsCursorEnabled) {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-            else {
-                glfwSetCursorPos(window, lastX, lastY);
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            }
-        }
         ImGui::End();
 
         ImGui::Render();
@@ -186,41 +144,3 @@ int main(int, char**)
     return 0;
 }
 
-void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void MouseCallback(GLFWwindow* window, double xPosIn, double yPosIn)
-{
-    if(glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED){
-        float xPos = static_cast<float>(xPosIn);
-        float yPos = static_cast<float>(yPosIn);
-
-        if (firstMouse)
-        {
-            lastX = xPos;
-            lastY = yPos;
-            firstMouse = false;
-        }
-
-        float xOffset = xPos - lastX;
-        float yOffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
-
-        lastX = xPos;
-        lastY = yPos;
-
-        camera.ProcessMouseMovement(xOffset, yOffset);
-    }
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
-{
-    camera.ProcessMouseScroll(static_cast<float>(yOffset));
-}
