@@ -6,7 +6,6 @@
 
 Component::Component(const ComponentNames &name, const std::shared_ptr<GameObject> &parent) : name(name), parent(parent) {}
 
-
 const ComponentNames &Component::GetName() const {
     return name;
 }

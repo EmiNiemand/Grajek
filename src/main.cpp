@@ -1,3 +1,4 @@
+#pragma region "Library includes"
 // dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
@@ -24,19 +25,17 @@
 
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 #include <spdlog/spdlog.h>
+#pragma endregion
 
-static void glfwErrorCallback(int error, const char* description)
-{
-    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
-}
+#include "include/GloomEngine.h"
 
-#include "include/LowLevelClasses/Shader.h"
+// Global methods
+static void glfwErrorCallback(int error, const char* description);
+void FramebufferSizeCallback(GLFWwindow* window, int newWidth, int newHeight);
 
+// Global variables, window resolution
 int width = 1200;
 int height = 780;
-
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 
 int main(int, char**)
 {
@@ -58,8 +57,20 @@ int main(int, char**)
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(true); // Enable vsync
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // Enable vsync
+    glfwSwapInterval(true);
+
+    // Center window on the screen
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int monitorWidth = mode->width;
+    int monitorHeight = mode->height;
+    glfwSetWindowPos(window, monitorWidth / 2 - width / 2, monitorHeight / 2 - height / 2);
+
+    // Resize window to given resolution
+    glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+
+    // Enable cursor - change last parameter to disable it
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
@@ -93,10 +104,12 @@ int main(int, char**)
 
     ImVec4 screenColor = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
 
-    // Generate Shader object
-    Shader shaderProgram("res/shaders/basic.vert", "res/shaders/basic.frag");
 
     glEnable(GL_DEPTH_TEST);
+
+    GloomEngine gloomEngine = GloomEngine(&width, &height);
+    gloomEngine.Awake();
+    gloomEngine.Start();
 
     // ________________________
     // ---------WHILE----------
@@ -104,10 +117,6 @@ int main(int, char**)
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
-
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -127,13 +136,15 @@ int main(int, char**)
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        gloomEngine.Update(glfwGetTime());
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
 
-    shaderProgram.Delete();
+    gloomEngine.End();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -144,3 +155,15 @@ int main(int, char**)
     return 0;
 }
 
+static void glfwErrorCallback(int error, const char* description)
+{
+    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+void FramebufferSizeCallback(GLFWwindow* window, int newWidth, int newHeight)
+{
+    // make sure the viewport matches the new window dimensions; note that width and
+    // height will be significantly larger than specified on retina displays.
+    glViewport(0, 0, width, height);
+    glfwSetWindowSize(window, width, height);
+}

@@ -21,9 +21,13 @@ public:
     Component(const ComponentNames &name, const std::shared_ptr<GameObject> &parent);
     virtual ~Component() = 0;
 
+    virtual void Awake(){};
+    virtual void Start(){};
+    virtual void Update(){};
+
     // Getters
-    const ComponentNames &GetName() const;
-    const std::shared_ptr<GameObject> &GetParent() const;
+    [[nodiscard]] const ComponentNames &GetName() const;
+    [[nodiscard]] const std::shared_ptr<GameObject> &GetParent() const;
 
     //Setters
     void SetParent(const std::shared_ptr<GameObject> &parent);
