@@ -4,7 +4,9 @@
 
 #include "include/Components/Component.h"
 
-Component::Component(const ComponentNames &name, const std::shared_ptr<GameObject> &parent) : name(name), parent(parent) {}
+Component::Component(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent) : gloomEngine(gloomEngine), parent(parent) {}
+
+Component::~Component() {}
 
 const ComponentNames &Component::GetName() const {
     return name;

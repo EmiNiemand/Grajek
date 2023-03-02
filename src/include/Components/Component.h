@@ -9,16 +9,19 @@
 #include <memory>
 #include <string>
 
+class GloomEngine;
 class GameObject;
 
 class Component {
-private:
+protected:
+    std::shared_ptr<GloomEngine> gloomEngine;
     ComponentNames name;
-    std::shared_ptr<GameObject> parent = nullptr;
+    std::shared_ptr<GameObject> parent;
+
 public:
     bool enabled = true;
 
-    Component(const ComponentNames &name, const std::shared_ptr<GameObject> &parent);
+    Component(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
     virtual ~Component() = 0;
 
     virtual void Awake(){};

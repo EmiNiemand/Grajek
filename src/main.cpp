@@ -1,32 +1,3 @@
-#pragma region "Library includes"
-// dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
-// If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
-// (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
-
-#include "imgui.h"
-#include "imgui_impl/imgui_impl_glfw.h"
-#include "imgui_impl/imgui_impl_opengl3.h"
-#include <cstdio>
-
-#define IMGUI_IMPL_OPENGL_LOADER_GLAD
-
-// About OpenGL function loaders: modern OpenGL doesn't have a standard header file and requires individual function pointers to be loaded manually.
-// Helper libraries are often used for this purpose! Here we are supporting a few common ones: gl3w, glew, glad.
-// You may use another loader/header of your choice (glext, glLoadGen, etc.), or chose to manually implement your own.
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-#include <GL/gl3w.h>    // Initialize with gl3wInit()
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-#include <GL/glew.h>    // Initialize with glewInit()
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-#include <glad/glad.h>  // Initialize with gladLoadGL()
-#else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
-#endif
-
-#include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
-#include <spdlog/spdlog.h>
-#pragma endregion
-
 #include "include/GloomEngine.h"
 
 // Global methods
@@ -107,14 +78,17 @@ int main(int, char**)
 
     glEnable(GL_DEPTH_TEST);
 
-    GloomEngine gloomEngine = GloomEngine(&width, &height);
-    gloomEngine.Awake();
-    gloomEngine.Start();
+    std::shared_ptr<GloomEngine> gloomEngine = std::make_shared<GloomEngine>(window, &width, &height);
+    gloomEngine->Init();
+    gloomEngine->Awake();
+    gloomEngine->Start();
+
+    bool endGame = false;
 
     // ________________________
     // ---------WHILE----------
     // ________________________
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window) || endGame)
     {
         glfwPollEvents();
 
@@ -136,7 +110,7 @@ int main(int, char**)
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        gloomEngine.Update(glfwGetTime());
+        endGame = gloomEngine->Update();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -144,7 +118,7 @@ int main(int, char**)
         glfwSwapBuffers(window);
     }
 
-    gloomEngine.End();
+    gloomEngine->Destroy();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

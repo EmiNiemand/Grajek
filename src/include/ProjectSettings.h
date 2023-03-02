@@ -5,12 +5,16 @@
 #ifndef OPENGLGP_PROJECTSETTINGS_H
 #define OPENGLGP_PROJECTSETTINGS_H
 
-enum Tags{
-    DEFAULT
+
+enum class Tags{
+    DEFAULT,
+    CAMERA
 };
 
-enum ComponentNames{
-
+enum class ComponentNames{
+    RENDERER,
+    CAMERA
 };
+
 
 #endif //OPENGLGP_PROJECTSETTINGS_H
