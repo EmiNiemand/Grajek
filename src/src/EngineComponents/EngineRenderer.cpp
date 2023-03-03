@@ -102,7 +102,7 @@ void EngineRenderer::RemovePointLight(int id) {
 void EngineRenderer::RemoveDirectionalLight(int id) {
     shader->Activate();
     std::string light = "directionalLights[" + std::to_string(id) + "]";
-    shader->SetBool(".isActive", false);
+    shader->SetBool(light +".isActive", false);
     shader->SetVec3(light + ".direction", {0, 0, 0});
     shader->SetVec3(light + ".ambient", {0, 0, 0});
     shader->SetVec3(light + ".diffuse", {0, 0, 0});
@@ -116,7 +116,7 @@ void EngineRenderer::RemoveSpotLight(int id) {
     shader->Activate();
     std::shared_ptr<SpotLight> spotLight = spotLights.find(id)->second;
     std::string light = "spotLights[" + std::to_string(id) + "]";
-    shader->SetBool(".isActive", false);
+    shader->SetBool(light +".isActive", false);
     shader->SetVec3(light + ".position", {0, 0, 0});
     shader->SetVec3(light + ".direction", {0, 0, 0});
     shader->SetFloat(light + ".cutOff", 0);
