@@ -28,17 +28,19 @@ public:
     // Create file with tag names as enums
     Tags tag;
 
-    Transform transform;
+    std::shared_ptr<Transform> transform = nullptr;
 
     GameObject(const std::shared_ptr <GloomEngine> &gloomEngine, const std::string &name,
                const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
 
     virtual ~GameObject();
 
-    const std::shared_ptr<Component> &FindComponent(ComponentNames componentName);
+    std::shared_ptr<Component> FindComponent(ComponentNames componentName);
     void AddComponent(std::shared_ptr<Component> &component);
+    void OnTransformUpdateComponents();
     void RemoveComponent(ComponentNames componentName);
     void RemoveAllComponents();
+
 
     void SetParent(const std::shared_ptr<GameObject> &newParent);
     void AddChild(const std::shared_ptr<GameObject> &child);

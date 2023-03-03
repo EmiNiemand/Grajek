@@ -17,6 +17,9 @@ private:
 
 public:
     Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
+    ~Camera() override;
+
+    void OnTransformUpdate() override;
 
     glm::mat4 GetViewMatrix();
 };

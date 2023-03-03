@@ -8,12 +8,17 @@
 
 enum class Tags{
     DEFAULT,
-    CAMERA
+    CAMERA,
+    SCENE,
+    LIGHT
 };
 
 enum class ComponentNames{
     RENDERER,
-    CAMERA
+    CAMERA,
+    DIRECTIONALLIGHT,
+    SPOTLIGHT,
+    POINTLIGHT
 };
 
 

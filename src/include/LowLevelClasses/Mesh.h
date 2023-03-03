@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Shader.h"
 
@@ -47,8 +48,7 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     // render the mesh
-    void Draw(Shader* shader, int type);
-    void DrawInstanced(Shader* shader, int type, int amount);
+    void Draw(std::shared_ptr<Shader> &shader, int type);
 
 private:
     // render data

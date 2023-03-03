@@ -7,9 +7,13 @@
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <memory>
+
+class GameObject;
 
 class Transform  {
 protected:
+    std::shared_ptr<GameObject> parent;
     //Local space information
     glm::vec3 mPos = {0.0f, 0.0f, 0.0f };
     glm::vec3 mEulerRot = {0.0f, 0.0f, 0.0f }; //In degrees
@@ -18,13 +22,10 @@ protected:
     //Global space information concatenate in matrix
     glm::mat4 mModelMatrix = glm::mat4(1.0f);
 
-    //Dirty flag
-    bool mIsDirty = true;
-
 protected:
     glm::mat4 GetLocalModelMatrix();
 public:
-    Transform();
+    explicit Transform(const std::shared_ptr<GameObject> &parent);
 
     void ComputeModelMatrix();
     void ComputeModelMatrix(const glm::mat4& parentGlobalModelMatrix);
@@ -43,8 +44,6 @@ public:
     [[nodiscard]] glm::vec3 GetBackward() const;
     [[nodiscard]] glm::vec3 GetForward() const;
     [[nodiscard]] glm::vec3 GetGlobalScale() const;
-
-    bool IsDirty() const;
 };
 
 

@@ -45,12 +45,12 @@ unsigned int TextureFromFile(const char *path, const std::string &directory, boo
     return textureID;
 }
 
-Model::Model(std::string const &path, Shader* shader, int type, bool gamma) : shader(shader),  type(type), gammaCorrection(gamma)
+Model::Model(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma) : shader(shader),  type(type), gammaCorrection(gamma)
 {
     LoadModel(path);
 }
 
-Model::Model(Mesh mesh, Shader* shader, int type) : shader(shader), type(type) {
+Model::Model(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
     meshes.push_back(mesh);
 }
 
@@ -58,11 +58,6 @@ void Model::Draw()
 {
     for(unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader, type);
-}
-
-void Model::DrawInstanced(int amount) {
-    for(unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].DrawInstanced(shader, type, amount);
 }
 
 void Model::LoadModel(std::string const &path)
@@ -87,8 +82,8 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
     // process each mesh located at the current node
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
-        // the node object only contains indices to index the actual objects in the scene.
-        // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+        // the node object only contains indices to index the actual objects in the activeScene.
+        // the activeScene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(ProcessMesh(mesh, scene));
     }
@@ -215,17 +210,5 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType 
         }
     }
     return textures;
-}
-
-Shader *Model::GetShader() const {
-    return shader;
-}
-
-const std::vector<Texture> &Model::GetTexturesLoaded() const {
-    return texturesLoaded;
-}
-
-const std::vector<Mesh> &Model::GetMeshes() const {
-    return meshes;
 }
 

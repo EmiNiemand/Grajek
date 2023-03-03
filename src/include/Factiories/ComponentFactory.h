@@ -15,6 +15,9 @@ class GameObject;
 // Component classes - add component classes after creating new component
 class Renderer;
 class Camera;
+class PointLight;
+class DirectionalLight;
+class SpotLight;
 
 class ComponentFactory {
 private:
@@ -25,6 +28,9 @@ public:
     // Creators - add creator for every component class
     std::shared_ptr<Renderer> CreateRenderer(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<Camera> CreateCamera(const std::shared_ptr<GameObject> &parent);
+    std::shared_ptr<PointLight> CreatePointLight(const std::shared_ptr<GameObject> &parent);
+    std::shared_ptr<DirectionalLight> CreateDirectionalLight(const std::shared_ptr<GameObject> &parent);
+    std::shared_ptr<SpotLight> CreateSpotLight(const std::shared_ptr<GameObject> &parent);
 };
 
 

@@ -3,6 +3,9 @@
 //
 
 #include "include/Components/Transform.h"
+#include "include/HighLevelClasses/GameObject.h"
+
+Transform::Transform(const std::shared_ptr<GameObject> &parent) : parent(parent) {}
 
 glm::mat4 Transform::GetLocalModelMatrix()
 {
@@ -20,31 +23,29 @@ glm::mat4 Transform::GetLocalModelMatrix()
 void Transform::ComputeModelMatrix()
 {
     mModelMatrix = GetLocalModelMatrix();
-    mIsDirty = false;
 }
 
 void Transform::ComputeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
 {
     mModelMatrix = parentGlobalModelMatrix * GetLocalModelMatrix();
-    mIsDirty = false;
 }
 
 void Transform::SetLocalPosition(const glm::vec3& newPosition)
 {
     mPos = newPosition;
-    mIsDirty = true;
+    parent->UpdateSelfAndChildren();
 }
 
 void Transform::SetLocalRotation(const glm::vec3& newRotation)
 {
     mEulerRot = newRotation;
-    mIsDirty = true;
+    parent->UpdateSelfAndChildren();
 }
 
 void Transform::SetLocalScale(const glm::vec3& newScale)
 {
     mScale = newScale;
-    mIsDirty = true;
+    parent->UpdateSelfAndChildren();
 }
 
 const glm::vec3& Transform::GetGlobalPosition() const
@@ -97,10 +98,3 @@ glm::vec3 Transform::GetForward() const
 {
     return -mModelMatrix[2];
 }
-
-bool Transform::IsDirty() const
-{
-    return mIsDirty;
-}
-
-Transform::Transform() {}

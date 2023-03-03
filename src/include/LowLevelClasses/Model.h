@@ -18,19 +18,13 @@ private:
     std::vector<Texture> texturesLoaded;
     std::vector<Mesh> meshes;
     std::string directory;
-    Shader* shader;
+    std::shared_ptr<Shader> shader;
     int type;
     bool gammaCorrection;
 public:
-    Model(std::string const &path, Shader* shader, int type, bool gamma = false);
-    Model(Mesh mesh, Shader* shader, int type);
+    Model(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma = false);
+    Model(Mesh mesh, std::shared_ptr<Shader> &shader, int type);
     void Draw();
-    void DrawInstanced(int amount);
-    Shader *GetShader() const;
-
-    const std::vector<Texture> &GetTexturesLoaded() const;
-
-    const std::vector<Mesh> &GetMeshes() const;
 
 private:
     void LoadModel(std::string const &path);

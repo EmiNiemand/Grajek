@@ -4,16 +4,20 @@
 
 #include "include/Components/Renderer.h"
 #include "include/GloomEngine.h"
+#include "include/EngineComponents/EngineRenderer.h"
 #include "include/HighLevelClasses/GameObject.h"
+#include "include/LowLevelClasses/Model.h"
 #include "include/Components/Camera.h"
 
 Renderer::Renderer(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent) :
 Component(gloomEngine, parent) {
     name = ComponentNames::RENDERER;
+    objectColor = {1.0f, 1.0f, 1.0f};
+    shininess = 32.0f;
 }
 
 Renderer::~Renderer() {
-    shader.Delete();
+
 }
 
 void Renderer::Update() {
@@ -24,14 +28,14 @@ void Renderer::Update() {
 
 void Renderer::LoadModel(std::string newPath) {
     path = newPath;
-    model = std::make_shared<Model>(path, &shader, GL_TRIANGLES);
+    model = std::make_shared<Model>(path, gloomEngine->engineRenderer->shader, GL_TRIANGLES);
 }
 
 void Renderer::Draw() {
-    shader.Activate();
-    shader.SetMat4("projection", gloomEngine->projection);
-    shader.SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponent(ComponentNames::CAMERA))->GetViewMatrix());
-    shader.SetMat4("model", parent->transform.GetModelMatrix());
+    gloomEngine->engineRenderer->shader->Activate();
+    gloomEngine->engineRenderer->shader->SetMat4("model", parent->transform->GetModelMatrix());
+    gloomEngine->engineRenderer->shader->SetFloat("shininess", shininess);
+    gloomEngine->engineRenderer->shader->SetVec3("objectColor", objectColor);
     model->Draw();
 }
 

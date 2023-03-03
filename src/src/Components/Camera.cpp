@@ -3,6 +3,8 @@
 //
 
 #include "include/Components/Camera.h"
+#include "include/GloomEngine.h"
+#include "include/EngineComponents/EngineRenderer.h"
 #include "include/HighLevelClasses/GameObject.h"
 
 Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent) : Component(
@@ -10,18 +12,24 @@ Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::share
     name = ComponentNames::CAMERA;
 }
 
+Camera::~Camera() {}
 
 glm::mat4 Camera::GetViewMatrix() {
 
-    glm::vec3 position = parent->transform.GetGlobalPosition();
-    glm::vec3 front = parent->transform.GetForward();
-    glm::vec3 up = parent->transform.GetUp();
+    glm::vec3 position = parent->transform->GetGlobalPosition();
+    glm::vec3 front = parent->transform->GetForward();
+    glm::vec3 up = parent->transform->GetUp();
 
     if(target == nullptr) {
         return glm::lookAt(position, position + front, up);
     }
     else {
-        glm::vec3 targetPosition = target->transform.GetGlobalPosition();
+        glm::vec3 targetPosition = target->transform->GetGlobalPosition();
         return glm::lookAt(position, targetPosition - position, up);
     }
+}
+
+void Camera::OnTransformUpdate() {
+    gloomEngine->engineRenderer->UpdateCamera();
+    Component::OnTransformUpdate();
 }

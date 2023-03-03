@@ -42,6 +42,7 @@ class Component;
 class GameObject;
 class GameObjectFactory;
 class ComponentFactory;
+class EngineRenderer;
 
 class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
 private:
@@ -56,33 +57,38 @@ public:
     int* width;
     int* height;
 
+    std::shared_ptr<EngineRenderer> engineRenderer;
+
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;
 
-    float fov = 45.0f;
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)*width/(float)*height, 0.1f, 100.0f);
-
     std::shared_ptr<GameObject> activeCamera;
+    std::shared_ptr<GameObject> activeScene;
 
-    std::shared_ptr<GameObject> scene;
 public:
     GloomEngine(GLFWwindow* window, int *width, int *height);
     virtual ~GloomEngine();
 
-    // Init creates all needed variables like factories
+    /// Init creates all needed variables like factories
     void Init();
-    // Awake calls all the components even when they are no enabled
+    /// Awake calls all the components even when they are no enabled during first frame
     void Awake();
-    // Start calls only enabled components
+    /// Start calls only enabled components during first frame
     void Start();
-    // Return false if game should not end
-    // Return true to end the update loop and end the game
+    /// Return false if game should not end
+    /// Return true to end the update loop and end the game
+    /// Update only enabled components
     bool Update();
-    // Free memory
+    /// Free memory
     void Destroy();
 
     void AddGameObject(std::shared_ptr<GameObject> gameObject);
     void AddComponent(std::shared_ptr<Component> component);
+
+    void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
+    void RemoveComponent(std::shared_ptr<Component> component);
+
+    std::shared_ptr<GameObject> FindGameObjectWithName(std::string name);
 
 private:
     void ClearScene();

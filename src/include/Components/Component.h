@@ -19,14 +19,23 @@ protected:
     std::shared_ptr<GameObject> parent;
 
 public:
+    bool callOnAwake = true;
+    bool callOnStart = true;
     bool enabled = true;
 
     Component(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
     virtual ~Component() = 0;
 
-    virtual void Awake(){};
-    virtual void Start(){};
+    /// Called once on creation even if disabled
+    virtual void Awake(){callOnAwake = false;};
+    /// Called once on creation if enabled
+    virtual void Start(){callOnStart = false;};
+    /// Called every frame
     virtual void Update(){};
+    /// Called on game object transform change
+    virtual void OnTransformUpdate(){};
+    /// Called on component remove in game object
+    virtual void OnRemove(){};
 
     // Getters
     [[nodiscard]] const ComponentNames &GetName() const;
