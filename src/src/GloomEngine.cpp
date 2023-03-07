@@ -22,7 +22,7 @@ GloomEngine::~GloomEngine() {
 void GloomEngine::Init() {
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
-    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
+    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), true);
 
     // INIT FACTORIES
     gameObjectFactory = std::make_unique<GameObjectFactory>(shared_from_this());
@@ -78,7 +78,6 @@ bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastFrameTime;
 
-    engineColliders->Update();
 
     std::shared_ptr<GameObject> cube1 = gameObjects.find("Cube1")->second;
 
@@ -90,6 +89,7 @@ bool GloomEngine::Update() {
         if (component->enabled) component->Update();
     }
 
+    engineColliders->Update();
 
     // TODO: add way to get out of the game
 
