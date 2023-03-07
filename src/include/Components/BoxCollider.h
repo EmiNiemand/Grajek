@@ -1,0 +1,49 @@
+//
+// Created by szymo on 06/03/2023.
+//
+
+#ifndef OPENGLGP_BOXCOLLIDER_H
+#define OPENGLGP_BOXCOLLIDER_H
+
+#include "glm/matrix.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+#include "Component.h"
+#include <vector>
+#include <cmath>
+
+class GameObject;
+
+class BoxCollider : public Component, public std::enable_shared_from_this<BoxCollider> {
+private:
+    // Size of the box from center to direction
+    glm::vec3 size;
+    glm::vec3 offset;
+
+public:
+    glm::vec3 AxisX;
+    glm::vec3 AxisY;
+    glm::vec3 AxisZ;
+
+public:
+    BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
+    ~BoxCollider() override;
+
+    void HandleCollision(std::shared_ptr<BoxCollider> other);
+    std::vector<glm::vec3> GetBoxPoints();
+
+    void OnRemove() override;
+
+    void OnTransformUpdate() override;
+
+    const glm::vec3 &GetSize() const;
+    void SetSize(const glm::vec3 &size);
+
+    const glm::vec3 &GetOffset() const;
+    void SetOffset(const glm::vec3 &offset);
+
+    glm::mat4 GetModelMatrix();
+    bool GetOBBCollision(std::shared_ptr<BoxCollider> other);
+};
+
+#endif //OPENGLGP_BOXCOLLIDER_H

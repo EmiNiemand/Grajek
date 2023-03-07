@@ -12,7 +12,18 @@ file(GLOB_RECURSE HEADER_FILES
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/LowLevelClasses/Shader.cpp include/LowLevelClasses/Shader.h src/LowLevelClasses/Mesh.cpp
 		include/LowLevelClasses/Mesh.h src/LowLevelClasses/Model.cpp include/LowLevelClasses/Model.h
 		src/Components/Transform.cpp include/Components/Transform.h src/HighLevelClasses/GameObject.cpp
-		include/HighLevelClasses/GameObject.h include/HighLevelClasses/GameObject.h src/Components/Component.cpp include/Components/Component.h include/Components/Component.h include/ProjectSettings.h include/ProjectSettings.h src/GloomEngine.cpp include/GloomEngine.h include/GloomEngine.h src/Components/Renderer.cpp include/Components/Renderer.h include/Components/Renderer.h src/Factories/GameObjectFactory.cpp include/Factiories/GameObjectFactory.h include/Factiories/GameObjectFactory.h src/Factories/ComponentFactory.cpp include/Factiories/ComponentFactory.h include/Factiories/ComponentFactory.h src/Components/Camera.cpp include/Components/Camera.h include/Components/Camera.h src/EngineComponents/EngineRenderer.cpp include/EngineComponents/EngineRenderer.h src/Components/Lights/PointLight.cpp include/Components/Lights/PointLight.h include/Components/Lights/PointLight.h src/Components/Lights/DirectionalLight.cpp include/Components/Lights/DirectionalLight.h include/Components/Lights/DirectionalLight.h src/Components/Lights/SpotLight.cpp include/Components/Lights/SpotLight.h include/Components/Lights/SpotLight.h)
+		include/HighLevelClasses/GameObject.h include/HighLevelClasses/GameObject.h src/Components/Component.cpp
+		include/Components/Component.h include/Components/Component.h include/ProjectSettings.h include/ProjectSettings.h
+		src/GloomEngine.cpp include/GloomEngine.h include/GloomEngine.h src/Components/Renderer.cpp include/Components/Renderer.h
+		include/Components/Renderer.h src/Factories/GameObjectFactory.cpp include/Factiories/GameObjectFactory.h
+		include/Factiories/GameObjectFactory.h src/Factories/ComponentFactory.cpp include/Factiories/ComponentFactory.h
+		include/Factiories/ComponentFactory.h src/Components/Camera.cpp include/Components/Camera.h
+		include/Components/Camera.h src/EngineComponents/EngineRenderer.cpp include/EngineComponents/EngineRenderer.h
+		src/Components/Lights/PointLight.cpp include/Components/Lights/PointLight.h include/Components/Lights/PointLight.h
+		src/Components/Lights/DirectionalLight.cpp include/Components/Lights/DirectionalLight.h
+		include/Components/Lights/DirectionalLight.h src/Components/Lights/SpotLight.cpp include/Components/Lights/SpotLight.h
+		include/Components/Lights/SpotLight.h src/Components/BoxCollider.cpp include/Components/BoxCollider.h
+		include/EngineComponents/EngineColliders.h src/EngineComponents/EngineColliders.cpp)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

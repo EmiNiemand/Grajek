@@ -5,12 +5,14 @@
 #include "include/Factiories/ComponentFactory.h"
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineComponents/EngineColliders.h"
 #include "include/HighLevelClasses/GameObject.h"
 #include "include/Components/Renderer.h"
 #include "include/Components/Camera.h"
 #include "include/Components/Lights/PointLight.h"
 #include "include/Components/Lights/DirectionalLight.h"
 #include "include/Components/Lights/SpotLight.h"
+#include "include/Components/BoxCollider.h"
 
 ComponentFactory::ComponentFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
 
@@ -116,6 +118,18 @@ std::shared_ptr<SpotLight> ComponentFactory::CreateSpotLight(const std::shared_p
     gloomEngine->engineRenderer->spotLights.insert({id, component});
     gloomEngine->engineRenderer->UpdateSpotLight(id);
     gloomEngine->engineRenderer->spotLightNumber++;
+    return component;
+}
+
+std::shared_ptr<BoxCollider> ComponentFactory::CreateBoxCollider(const std::shared_ptr<GameObject> &parent) {
+    std::shared_ptr<BoxCollider> component = std::dynamic_pointer_cast<BoxCollider>(parent->FindComponent(ComponentNames::BOXCOLLIDER));
+    if (component != nullptr) return component;
+    component = std::make_shared<BoxCollider>(gloomEngine, parent);
+    std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
+    gloomEngine->engineColliders->boxColliders.push_back(component);
+    gloomEngine->engineColliders->OnBoxColliderChange();
+    parent->AddComponent(parentComponent);
+    gloomEngine->AddComponent(component);
     return component;
 }
 

@@ -1,5 +1,6 @@
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineComponents/EngineColliders.h"
 #include "include/Factiories/GameObjectFactory.h"
 #include "include/Factiories/ComponentFactory.h"
 #include "include/HighLevelClasses/GameObject.h"
@@ -8,6 +9,7 @@
 #include "include/Components/Lights/PointLight.h"
 #include "include/Components/Lights/DirectionalLight.h"
 #include "include/Components/Lights/SpotLight.h"
+#include "include/Components/BoxCollider.h"
 
 GloomEngine::GloomEngine(GLFWwindow* window, int *width, int *height) : window(window), width(width), height(height) {
 
@@ -20,6 +22,7 @@ GloomEngine::~GloomEngine() {
 void GloomEngine::Init() {
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
+    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
 
     // INIT FACTORIES
     gameObjectFactory = std::make_unique<GameObjectFactory>(shared_from_this());
@@ -37,32 +40,22 @@ void GloomEngine::Init() {
     std::shared_ptr<GameObject> cube = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer = componentFactory->CreateRenderer(cube);
     cubeRenderer->LoadModel("res/models/domek/domek.obj");
-    cube->transform->SetLocalPosition({0, 0, -4});
-    cube->transform->SetLocalScale({0.5, 0.5, 0.5});
+    std::shared_ptr<BoxCollider> cubeCollider = componentFactory->CreateBoxCollider(cube);
+    cubeCollider->SetOffset({0, 1, 0});
+    cube->transform->SetLocalPosition({0, 0, -10});
+    cube->transform->SetLocalScale({1, 1, 1});
 
-    std::shared_ptr<GameObject> cube2 = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> cubeRenderer2 = componentFactory->CreateRenderer(cube2);
-    cubeRenderer2->LoadModel("res/models/domek/domek.obj");
-    cube2->transform->SetLocalPosition({-2, 0, -6});
-    cube2->transform->SetLocalScale({0.5, 0.5, 0.5});
+    std::shared_ptr<GameObject> cube1 = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
+    std::shared_ptr<Renderer> cubeRenderer1 = componentFactory->CreateRenderer(cube1);
+    cubeRenderer1->LoadModel("res/models/domek/domek.obj");
+    std::shared_ptr<BoxCollider> cubeCollider1 = componentFactory->CreateBoxCollider(cube1);
+    cubeCollider1->SetOffset({0, 1, 0});
+    cube1->transform->SetLocalPosition({0, 10, -10});
+    cube1->transform->SetLocalScale({1, 1, 1});
+    cube1->transform->SetLocalRotation({0, 30, 0});
 
     std::shared_ptr<GameObject> light = gameObjectFactory->CreateGameObject("Light", activeScene, Tags::LIGHT);
     componentFactory->CreateDirectionalLight(light);
-    light->transform->SetLocalRotation({0, 90, 0});
-
-    std::shared_ptr<GameObject> light2 = gameObjectFactory->CreateGameObject("Light", activeScene, Tags::LIGHT);
-    std::shared_ptr<Renderer> light2Renderer = componentFactory->CreateRenderer(light2);
-    light2Renderer->LoadModel("res/models/domek/domek.obj");
-    componentFactory->CreatePointLight(light2);
-    light2->transform->SetLocalPosition({1.5, 1.5, -9});
-    light2->transform->SetLocalScale({0.1, 0.1, 0.1});
-
-    std::shared_ptr<GameObject> light3 = gameObjectFactory->CreateGameObject("Light", activeScene, Tags::LIGHT);
-    std::shared_ptr<Renderer> light3Renderer = componentFactory->CreateRenderer(light3);
-    light3Renderer->LoadModel("res/models/domek/domek.obj");
-    componentFactory->CreateSpotLight(light3);
-    light3->transform->SetLocalPosition({-1, 0.5, -2});
-    light3->transform->SetLocalScale({0.1, 0.1, 0.1});
 
 }
 
@@ -85,6 +78,11 @@ bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastFrameTime;
 
+    engineColliders->Update();
+
+    std::shared_ptr<GameObject> cube1 = gameObjects.find("Cube1")->second;
+
+    cube1->transform->SetLocalPosition(cube1->transform->GetLocalPosition() - glm::vec3({0, 0.1, 0}));
 
     for (auto&& component : components){
         if (component->callOnAwake) component->Awake();
@@ -101,6 +99,8 @@ bool GloomEngine::Update() {
 
 void GloomEngine::Destroy() {
     ClearScene();
+    engineColliders->Destroy();
+    engineRenderer->Destroy();
     gameObjectFactory = nullptr;
     componentFactory = nullptr;
     activeScene = nullptr;

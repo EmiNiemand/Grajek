@@ -17,11 +17,10 @@ class DirectionalLight;
 class SpotLight;
 
 class EngineRenderer {
-private:
+public:
     float fov = 45.0f;
     glm::mat4 projection;
 
-public:
     int pointLightNumber = 0;
     int spotLightNumber = 0;
     int directionalLightNumber = 0;

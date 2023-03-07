@@ -18,7 +18,8 @@ enum class ComponentNames{
     CAMERA,
     DIRECTIONALLIGHT,
     SPOTLIGHT,
-    POINTLIGHT
+    POINTLIGHT,
+    BOXCOLLIDER
 };
 
 
