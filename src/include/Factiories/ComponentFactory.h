@@ -22,6 +22,7 @@ class BoxCollider;
 
 class ComponentFactory {
 private:
+    int id = 0;
     std::shared_ptr<GloomEngine> gloomEngine;
 public:
     explicit ComponentFactory(const std::shared_ptr<GloomEngine> &gloomEngine);

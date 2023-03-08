@@ -14,6 +14,7 @@ class GameObject;
 
 class Component {
 protected:
+    int id;
     std::shared_ptr<GloomEngine> gloomEngine;
     ComponentNames name;
     std::shared_ptr<GameObject> parent;
@@ -23,7 +24,7 @@ public:
     bool callOnStart = true;
     bool enabled = true;
 
-    Component(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
+    Component(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
     virtual ~Component() = 0;
 
     /// Called once on creation even if disabled
@@ -33,11 +34,10 @@ public:
     /// Called every frame
     virtual void Update(){};
     /// Called on game object transform change
-    virtual void OnTransformUpdate(){};
-    /// Called on component remove in game object
-    virtual void OnRemove(){};
+    void OnUpdate();
 
     // Getters
+    [[nodiscard]] int GetId() const;
     [[nodiscard]] const ComponentNames &GetName() const;
     [[nodiscard]] const std::shared_ptr<GameObject> &GetParent() const;
 

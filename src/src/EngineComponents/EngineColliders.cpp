@@ -18,12 +18,18 @@ EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine
 EngineColliders::~EngineColliders() {}
 
 void EngineColliders::Update() {
-    if (boxColliders.size() == 0) return;
+    if (boxColliders.empty()) return;
 
     if (boxColliders.size() > 1) {
         // Handle collision
-        for (int i = 0; i < boxColliders.size() - 1; i++) {
-            boxColliders[i]->HandleCollision(boxColliders[i + 1]);
+        std::shared_ptr<BoxCollider> prevBox = nullptr;
+        for (auto&& box : boxColliders) {
+            if (prevBox == nullptr) {
+                prevBox = box.second;
+                continue;
+            }
+            prevBox->HandleCollision(box.second);
+            prevBox = box.second;
         }
     }
 
@@ -32,9 +38,9 @@ void EngineColliders::Update() {
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
     colliderDebugShader->SetMat4("projection", gloomEngine->engineRenderer->projection);
-    colliderDebugShader->SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponent(ComponentNames::CAMERA))->GetViewMatrix());
-    for (int i = 0; i < boxColliders.size(); i++) {
-        colliderDebugShader->SetMat4("model", boxColliders[i]->GetModelMatrix());
+    colliderDebugShader->SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
+    for (auto&& box : boxColliders) {
+        colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
@@ -48,21 +54,16 @@ void EngineColliders::Destroy() {
     glDeleteBuffers(1, &ebo);
 }
 
-void EngineColliders::RemoveBoxCollider(std::shared_ptr<BoxCollider> collider) {
-    for (int i = 0; i < boxColliders.size(); i++){
-        if (boxColliders[i] == collider) {
-            boxColliders.erase(boxColliders.begin() + i);
-            break;
-        }
-    }
+void EngineColliders::RemoveBoxCollider(int componentId) {
+    if (!boxColliders.contains(componentId)) boxColliders.erase(componentId);
 }
 
-void EngineColliders::OnBoxColliderChange() {
+void EngineColliders::OnBoxColliderAdd() {
     vertices.clear();
     indices.clear();
     int i = 0;
     for (auto&& col : boxColliders) {
-        for (auto&& point : col->GetBoxPoints()) {
+        for (auto&& point : col.second->GetBoxPoints()) {
             vertices.push_back(point);
         }
         // UP LEFT

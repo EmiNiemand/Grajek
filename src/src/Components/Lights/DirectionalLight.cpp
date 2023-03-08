@@ -6,8 +6,8 @@
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 
-DirectionalLight::DirectionalLight(const std::shared_ptr<GloomEngine> &gloomEngine,
-                                   const std::shared_ptr<GameObject> &parent, int id) : Component(gloomEngine, parent), id(id) {
+DirectionalLight::DirectionalLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent,
+                                   int id) : Component(gloomEngine, parent, id) {
     name = ComponentNames::DIRECTIONALLIGHT;
     ambient = {0.1f, 0.1f, 0.1f};
     diffuse = {0.25f, 0.25f, 0.25f};
@@ -17,15 +17,6 @@ DirectionalLight::DirectionalLight(const std::shared_ptr<GloomEngine> &gloomEngi
 
 DirectionalLight::~DirectionalLight() {}
 
-void DirectionalLight::OnTransformUpdate() {
-    gloomEngine->engineRenderer->UpdateDirectionalLight(id);
-    Component::OnTransformUpdate();
-}
-
-void DirectionalLight::OnRemove() {
-    gloomEngine->engineRenderer->RemoveDirectionalLight(id);
-    Component::OnRemove();
-}
 
 const glm::vec3 &DirectionalLight::GetAmbient() const {
     return ambient;
@@ -33,7 +24,7 @@ const glm::vec3 &DirectionalLight::GetAmbient() const {
 
 void DirectionalLight::SetAmbient(const glm::vec3 &ambient) {
     DirectionalLight::ambient = ambient;
-    gloomEngine->engineRenderer->UpdateDirectionalLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &DirectionalLight::GetDiffuse() const {
@@ -42,7 +33,7 @@ const glm::vec3 &DirectionalLight::GetDiffuse() const {
 
 void DirectionalLight::SetDiffuse(const glm::vec3 &diffuse) {
     DirectionalLight::diffuse = diffuse;
-    gloomEngine->engineRenderer->UpdateDirectionalLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &DirectionalLight::GetSpecular() const {
@@ -51,7 +42,7 @@ const glm::vec3 &DirectionalLight::GetSpecular() const {
 
 void DirectionalLight::SetSpecular(const glm::vec3 &specular) {
     DirectionalLight::specular = specular;
-    gloomEngine->engineRenderer->UpdateDirectionalLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &DirectionalLight::GetColor() const {
@@ -60,5 +51,5 @@ const glm::vec3 &DirectionalLight::GetColor() const {
 
 void DirectionalLight::SetColor(const glm::vec3 &color) {
     DirectionalLight::color = color;
-    gloomEngine->engineRenderer->UpdateDirectionalLight(id);
+    Component::OnUpdate();
 }

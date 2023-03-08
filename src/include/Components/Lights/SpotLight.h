@@ -12,7 +12,6 @@
 
 class SpotLight : public Component {
 private:
-    int id;
     float cutOff;
     float outerCutOff;
 
@@ -28,9 +27,6 @@ private:
 public:
     SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
     ~SpotLight() override;
-
-    void OnTransformUpdate() override;
-    void OnRemove() override;
 
     float GetCutOff() const;
     void SetCutOff(float cutOff);

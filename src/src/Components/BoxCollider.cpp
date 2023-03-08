@@ -3,44 +3,41 @@
 #include "include/HighLevelClasses/GameObject.h"
 #include "include/EngineComponents/EngineColliders.h"
 
-BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent)
-        : Component(gloomEngine, parent) {
+BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
+        : Component(gloomEngine, parent, id) {
     name = ComponentNames::BOXCOLLIDER;
     size = {1.0f, 1.0f, 1.0f};
     offset = {0.0f, 0.0f, 0.0f};
-    AxisX = {1, 0, 0};
-    AxisY = {0, 1, 0};
-    AxisZ = {0, 0, 1};
 }
 
 BoxCollider::~BoxCollider() {}
 
 void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
-    glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
-    glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
-
-    glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
-    glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
-
-    // Collision checker for not rotated cubes
+    // Collision checker for not rotated cubes AABB method
     if (parent->transform->GetLocalRotation() == glm::vec3(0, 0, 0) && other->parent->transform->GetLocalRotation() == glm::vec3(0, 0, 0)){
+        glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
+        glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
+
+        glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
+        glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
+
         if (minBoxPos.x <= maxOtherPos.x && maxBoxPos.x >= minOtherPos.x && minBoxPos.y <= maxOtherPos.y &&
             maxBoxPos.y >= minOtherPos.y && minBoxPos.z <= maxOtherPos.z && maxBoxPos.z >= minOtherPos.z){
-            spdlog::info("HIT");
            // TODO: Separate depending on velocity of objects - physics depended
             glm::vec3 pos1 = parent->transform->GetGlobalPosition();
             glm::vec3 pos2 = other->parent->transform->GetGlobalPosition();
             glm::vec3 vector = pos2 - pos1;
 
             vector /= 2;
-            spdlog::info(std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z));
 
             other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() + vector);
             return;
         }
     }
 
+    // OBB
     if (GetOBBCollision(other)) {
+        spdlog::info("HIT");
        // TODO: Separate depending on velocity of objects - physics depended
         glm::vec3 pos1 = parent->transform->GetGlobalPosition();
         glm::vec3 pos2 = other->parent->transform->GetGlobalPosition();
@@ -49,7 +46,7 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
         vector /= 2;
         spdlog::info(std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z));
 
-        other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() + vector);
+        other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() + glm::vec3(0, 0.1f, 0));
     }
 }
 
@@ -68,18 +65,13 @@ std::vector<glm::vec3> BoxCollider::GetBoxPoints() {
     return points;
 }
 
-void BoxCollider::OnRemove() {
-    gloomEngine->engineColliders->RemoveBoxCollider(shared_from_this());
-    Component::OnRemove();
-}
-
 const glm::vec3 &BoxCollider::GetSize() const {
     return size;
 }
 
 void BoxCollider::SetSize(const glm::vec3 &size) {
     BoxCollider::size = size;
-    gloomEngine->engineColliders->OnBoxColliderChange();
+    Component::OnUpdate();
 }
 
 const glm::vec3 &BoxCollider::GetOffset() const {
@@ -88,18 +80,11 @@ const glm::vec3 &BoxCollider::GetOffset() const {
 
 void BoxCollider::SetOffset(const glm::vec3 &offset) {
     BoxCollider::offset = offset;
-    gloomEngine->engineColliders->OnBoxColliderChange();
+    Component::OnUpdate();
 }
 
 glm::mat4 BoxCollider::GetModelMatrix() {
     return parent->transform->GetModelMatrix() * glm::mat4(size.x, 0, 0, 0, 0, size.y, 0, 0, 0, 0, size.z, 0, offset.x, offset.y, offset.z, 1);
-}
-
-void BoxCollider::OnTransformUpdate() {
-    AxisX = parent->transform->GetLocalRotation().x * glm::vec4(AxisX, 1);
-    AxisY = parent->transform->GetLocalRotation().y * glm::vec4(AxisY, 1);
-    AxisZ = parent->transform->GetLocalRotation().z * glm::vec4(AxisZ, 1);
-    Component::OnTransformUpdate();
 }
 
 bool BoxCollider::GetOBBCollision(std::shared_ptr<BoxCollider> other) {

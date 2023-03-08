@@ -12,6 +12,7 @@
 
 class GloomEngine;
 class Shader;
+class Component;
 class PointLight;
 class DirectionalLight;
 class SpotLight;
@@ -21,9 +22,6 @@ public:
     float fov = 45.0f;
     glm::mat4 projection;
 
-    int pointLightNumber = 0;
-    int spotLightNumber = 0;
-    int directionalLightNumber = 0;
 
     // pair of id and ptr to light
     std::map<int, std::shared_ptr<PointLight>> pointLights;
@@ -43,16 +41,16 @@ public:
     void UpdateProjection();
     void UpdateCamera();
 
+    void UpdateLight(int componentId);
+    void RemoveLight(int componentId);
+    void SetFov(float fov);
+private:
     void UpdatePointLight(int id);
     void UpdateDirectionalLight(int id);
     void UpdateSpotLight(int id);
-
     void RemovePointLight(int id);
     void RemoveDirectionalLight(int id);
     void RemoveSpotLight(int id);
-
-    void SetFov(float fov);
-
 };
 
 

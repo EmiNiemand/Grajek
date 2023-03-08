@@ -6,32 +6,38 @@
 #include "include/GloomEngine.h"
 #include "include/Components/Component.h"
 
-GameObject::GameObject(const std::shared_ptr<GloomEngine> &gloomEngine, const std::string &name,
+GameObject::GameObject(const std::shared_ptr<GloomEngine> &gloomEngine, const std::string &name, int id,
                        const std::shared_ptr<GameObject> &parent, Tags tag) : gloomEngine(gloomEngine),
-                       name(name), parent(parent), tag(tag) {}
+                       name(name), id(id), parent(parent), tag(tag) {}
 
 GameObject::~GameObject() {}
 
-std::shared_ptr<Component> GameObject::FindComponent(ComponentNames componentName) {
-    if (!components.contains(componentName)) return nullptr;
-    return components.find(componentName)->second;
+std::shared_ptr<Component> GameObject::FindComponent(int componentId) {
+    if (!components.contains(componentId)) return nullptr;
+    return components.find(componentId)->second;
+}
+
+std::shared_ptr<Component> GameObject::FindComponentByName(ComponentNames name) {
+    for (auto&& component : components) {
+        if (component.second->GetName() == name) return component.second;
+    }
+    return nullptr;
 }
 
 void GameObject::AddComponent(std::shared_ptr<Component> &component) {
-    components.insert({component->GetName(), component});
+    components.insert({component->GetId(), component});
 }
 
 void GameObject::OnTransformUpdateComponents() {
     for (auto&& component : components) {
-        component.second->OnTransformUpdate();
+        component.second->OnUpdate();
     }
 }
 
-void GameObject::RemoveComponent(ComponentNames componentName) {
-    if (!components.contains(componentName)) return;
-    components.find(componentName)->second->OnRemove();
-    gloomEngine->RemoveComponent(components.find(componentName)->second);
-    components.erase(componentName);
+void GameObject::RemoveComponent(int componentId) {
+    if (!components.contains(componentId)) return;
+    gloomEngine->RemoveComponent(components.find(componentId)->second);
+    components.erase(componentId);
 }
 
 void GameObject::RemoveAllComponents() {
@@ -47,13 +53,13 @@ void GameObject::SetParent(const std::shared_ptr<GameObject> &newParent) {
 
 void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
     child->parent = shared_from_this();
-    children.insert({child->GetName(), child});
+    children.insert({child->GetId(), child});
 }
 
-void GameObject::RemoveChild(std::string childName) {
-    if (!children.contains(childName)) return;
-    children.find(childName)->second->RemoveAllChildren();
-    children.erase(childName);
+void GameObject::RemoveChild(int childId) {
+    if (!children.contains(childId)) return;
+    children.find(childId)->second->RemoveAllChildren();
+    children.erase(childId);
 }
 
 void GameObject::RemoveAllChildren() {
@@ -81,6 +87,10 @@ void GameObject::ForceUpdateSelfAndChildren() {
         child.second->OnTransformUpdateComponents();
         child.second->ForceUpdateSelfAndChildren();
     }
+}
+
+int GameObject::GetId() const {
+    return id;
 }
 
 const std::string &GameObject::GetName() const {

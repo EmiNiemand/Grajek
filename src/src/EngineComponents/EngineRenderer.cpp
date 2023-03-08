@@ -34,14 +34,56 @@ void EngineRenderer::UpdateProjection() {
 
 void EngineRenderer::UpdateCamera() {
     shader->Activate();
-    shader->SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponent(ComponentNames::CAMERA))->GetViewMatrix());
+    shader->SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
     shader->SetVec3("viewPos", gloomEngine->activeCamera->transform->GetGlobalPosition());
 }
 
-void EngineRenderer::UpdatePointLight(int id) {
+void EngineRenderer::UpdateLight(int componentId) {
+    for (int i = 0; i < spotLights.size(); i++) {
+        if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
+            UpdateSpotLight(i);
+            return;
+        }
+    }
+    for (int i = 0; i < directionalLights.size(); i++) {
+        if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
+            UpdateDirectionalLight(i);
+            return;
+        }
+    }
+    for (int i = 0; i < pointLights.size(); i++) {
+        if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
+            UpdatePointLight(i);
+            return;
+        }
+    }
+}
+
+void EngineRenderer::RemoveLight(int componentId) {
+    for (int i = 0; i < spotLights.size(); i++) {
+        if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
+            RemoveSpotLight(i);
+            return;
+        }
+    }
+    for (int i = 0; i < directionalLights.size(); i++) {
+        if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
+            RemoveDirectionalLight(i);
+            return;
+        }
+    }
+    for (int i = 0; i < pointLights.size(); i++) {
+        if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
+            RemovePointLight(i);
+            return;
+        }
+    }
+}
+
+void EngineRenderer::UpdatePointLight(int lightNumber) {
     shader->Activate();
-    std::shared_ptr<PointLight> pointLight = pointLights.find(id)->second;
-    std::string light = "pointLights[" + std::to_string(id) + "]";
+    std::shared_ptr<PointLight> pointLight = pointLights.find(lightNumber)->second;
+    std::string light = "pointLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light + ".isActive", pointLight->enabled);
     shader->SetVec3(light + ".position", pointLight->GetParent()->transform->GetLocalPosition());
     shader->SetFloat(light + ".constant", pointLight->GetConstant());
@@ -53,10 +95,10 @@ void EngineRenderer::UpdatePointLight(int id) {
     shader->SetVec3(light + ".color", pointLight->GetColor());
 }
 
-void EngineRenderer::UpdateDirectionalLight(int id) {
+void EngineRenderer::UpdateDirectionalLight(int lightNumber) {
     shader->Activate();
-    std::shared_ptr<DirectionalLight> directionalLight = directionalLights.find(id)->second;
-    std::string light = "directionalLights[" + std::to_string(id) + "]";
+    std::shared_ptr<DirectionalLight> directionalLight = directionalLights.find(lightNumber)->second;
+    std::string light = "directionalLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light + ".isActive", directionalLight->enabled);
     shader->SetVec3(light + ".direction", directionalLight->GetParent()->transform->GetForward());
     shader->SetVec3(light + ".ambient", directionalLight->GetAmbient());
@@ -65,10 +107,10 @@ void EngineRenderer::UpdateDirectionalLight(int id) {
     shader->SetVec3(light + ".color", directionalLight->GetColor());
 }
 
-void EngineRenderer::UpdateSpotLight(int id) {
+void EngineRenderer::UpdateSpotLight(int lightNumber) {
     shader->Activate();
-    std::shared_ptr<SpotLight> spotLight = spotLights.find(id)->second;
-    std::string light = "spotLights[" + std::to_string(id) + "]";
+    std::shared_ptr<SpotLight> spotLight = spotLights.find(lightNumber)->second;
+    std::string light = "spotLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light + ".isActive", spotLight->enabled);
     shader->SetVec3(light + ".position", spotLight->GetParent()->transform->GetLocalPosition());
     shader->SetVec3(light + ".direction", spotLight->GetParent()->transform->GetForward());
@@ -83,9 +125,9 @@ void EngineRenderer::UpdateSpotLight(int id) {
     shader->SetVec3(light + ".color", spotLight->GetColor());
 }
 
-void EngineRenderer::RemovePointLight(int id) {
+void EngineRenderer::RemovePointLight(int lightNumber) {
     shader->Activate();
-    std::string light = "pointLights[" + std::to_string(id) + "]";
+    std::string light = "pointLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light + ".isActive", false);
     shader->SetVec3(light + ".position", {0, 0, 0});
     shader->SetFloat(light + ".constant", 0);
@@ -96,12 +138,12 @@ void EngineRenderer::RemovePointLight(int id) {
     shader->SetVec3(light + ".specular", {0, 0, 0});
     shader->SetVec3(light + ".color", {0, 0, 0});
 
-    pointLights.find(id)->second = nullptr;
+    pointLights.find(lightNumber)->second = nullptr;
 }
 
-void EngineRenderer::RemoveDirectionalLight(int id) {
+void EngineRenderer::RemoveDirectionalLight(int lightNumber) {
     shader->Activate();
-    std::string light = "directionalLights[" + std::to_string(id) + "]";
+    std::string light = "directionalLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light +".isActive", false);
     shader->SetVec3(light + ".direction", {0, 0, 0});
     shader->SetVec3(light + ".ambient", {0, 0, 0});
@@ -109,13 +151,13 @@ void EngineRenderer::RemoveDirectionalLight(int id) {
     shader->SetVec3(light + ".specular", {0, 0, 0});
     shader->SetVec3(light + ".color", {0, 0, 0});
 
-    directionalLights.find(id)->second = nullptr;
+    directionalLights.find(lightNumber)->second = nullptr;
 }
 
-void EngineRenderer::RemoveSpotLight(int id) {
+void EngineRenderer::RemoveSpotLight(int lightNumber) {
     shader->Activate();
-    std::shared_ptr<SpotLight> spotLight = spotLights.find(id)->second;
-    std::string light = "spotLights[" + std::to_string(id) + "]";
+    std::shared_ptr<SpotLight> spotLight = spotLights.find(lightNumber)->second;
+    std::string light = "spotLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light +".isActive", false);
     shader->SetVec3(light + ".position", {0, 0, 0});
     shader->SetVec3(light + ".direction", {0, 0, 0});
@@ -129,7 +171,7 @@ void EngineRenderer::RemoveSpotLight(int id) {
     shader->SetVec3(light + ".specular", {0, 0, 0});
     shader->SetVec3(light + ".color", {0, 0, 0});
 
-    spotLights.find(id)->second = nullptr;
+    spotLights.find(lightNumber)->second = nullptr;
 }
 
 void EngineRenderer::SetFov(float fov) {

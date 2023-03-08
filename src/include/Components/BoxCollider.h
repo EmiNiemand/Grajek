@@ -21,20 +21,11 @@ private:
     glm::vec3 offset;
 
 public:
-    glm::vec3 AxisX;
-    glm::vec3 AxisY;
-    glm::vec3 AxisZ;
-
-public:
-    BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
+    BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
     ~BoxCollider() override;
 
     void HandleCollision(std::shared_ptr<BoxCollider> other);
     std::vector<glm::vec3> GetBoxPoints();
-
-    void OnRemove() override;
-
-    void OnTransformUpdate() override;
 
     const glm::vec3 &GetSize() const;
     void SetSize(const glm::vec3 &size);

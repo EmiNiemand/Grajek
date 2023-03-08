@@ -22,7 +22,7 @@ GloomEngine::~GloomEngine() {
 void GloomEngine::Init() {
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
-    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), true);
+    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
 
     // INIT FACTORIES
     gameObjectFactory = std::make_unique<GameObjectFactory>(shared_from_this());
@@ -52,7 +52,7 @@ void GloomEngine::Init() {
     cubeCollider1->SetOffset({0, 1, 0});
     cube1->transform->SetLocalPosition({0, 10, -10});
     cube1->transform->SetLocalScale({1, 1, 1});
-    cube1->transform->SetLocalRotation({0, 30, 0});
+    cube1->transform->SetLocalRotation({0, 30, 45});
 
     std::shared_ptr<GameObject> light = gameObjectFactory->CreateGameObject("Light", activeScene, Tags::LIGHT);
     componentFactory->CreateDirectionalLight(light);
@@ -64,13 +64,13 @@ void GloomEngine::Awake() {
     engineRenderer->UpdateRenderer();
 
     for (auto&& component : components){
-        component->Awake();
+        component.second->Awake();
     }
 }
 
 void GloomEngine::Start() {
     for (auto&& component : components){
-        if (component->enabled) component->Start();
+        if (component.second->enabled) component.second->Start();
     }
 }
 
@@ -78,18 +78,22 @@ bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastFrameTime;
 
+    std::shared_ptr<GameObject> cube = FindGameObjectWithName("Cube1");
+    cube->transform->SetLocalPosition(cube->transform->GetLocalPosition() + glm::vec3(0, -0.1, 0));
 
-    std::shared_ptr<GameObject> cube1 = gameObjects.find("Cube1")->second;
-
-    cube1->transform->SetLocalPosition(cube1->transform->GetLocalPosition() - glm::vec3({0, 0.1, 0}));
-
-    for (auto&& component : components){
-        if (component->callOnAwake) component->Awake();
-        if (component->callOnStart) component->Start();
-        if (component->enabled) component->Update();
-    }
+    std::shared_ptr<GameObject> light = FindGameObjectWithName("Light");
+    std::shared_ptr<DirectionalLight> dir = std::dynamic_pointer_cast<DirectionalLight>(light->FindComponentByName(ComponentNames::DIRECTIONALLIGHT));
+    dir->SetColor({1, 0 ,0});
 
     engineColliders->Update();
+
+    for (auto&& component : components){
+        if (component.second->callOnAwake) component.second->Awake();
+        if (component.second->callOnStart) component.second->Start();
+        if (component.second->enabled) component.second->Update();
+    }
+
+
 
     // TODO: add way to get out of the game
 
@@ -114,28 +118,40 @@ void GloomEngine::ClearScene() {
 }
 
 void GloomEngine::AddGameObject(std::shared_ptr<GameObject> gameObject) {
-    gameObjects.insert({gameObject->GetName(), gameObject});
+    gameObjects.insert({gameObject->GetId(), gameObject});
 }
 
 void GloomEngine::AddComponent(std::shared_ptr<Component> component) {
-    components.push_back(component);
+    components.insert({component->GetId(), component});
+}
+
+void GloomEngine::OnUpdate(int componentId) {
+    engineRenderer->UpdateLight(componentId);
 }
 
 void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
-    gameObjects.erase(gameObject->GetName());
+    gameObjects.erase(gameObject->GetId());
 }
 
 void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
-    for (int i = 0; i < components.size(); i++){
-        if (components[i] == component) {
-            components.erase(components.begin() + i);
-            break;
-        }
+    int componentId = component->GetId();
+    if (component->GetName() == ComponentNames::SPOTLIGHT || component->GetName() == ComponentNames ::DIRECTIONALLIGHT ||
+        component->GetName() == ComponentNames::POINTLIGHT) {
+        engineRenderer->RemoveLight(componentId);
     }
+    if (component->GetName() == ComponentNames::BOXCOLLIDER) engineColliders->RemoveBoxCollider(componentId);
+    components.erase(componentId);
+}
+
+std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(int id) {
+    if(!gameObjects.contains(id)) return nullptr;
+    return gameObjects.find(id)->second;
 }
 
 std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithName(std::string name) {
-    if(!gameObjects.contains(name)) return nullptr;
-    return gameObjects.find(name)->second;
+    for (auto&& object : gameObjects){
+        if (object.second->GetName() == name) return object.second;
+    }
+    return nullptr;
 }
 

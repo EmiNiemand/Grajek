@@ -14,6 +14,7 @@ class GameObject;
 
 class GameObjectFactory {
 private:
+    int id = 0;
     std::shared_ptr<GloomEngine> gloomEngine;
 public:
     explicit GameObjectFactory(const std::shared_ptr<GloomEngine> &gloomEngine);

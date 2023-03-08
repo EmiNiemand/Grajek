@@ -47,8 +47,8 @@ class EngineColliders;
 
 class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
 private:
-    std::map<std::string, std::shared_ptr<GameObject>> gameObjects;
-    std::vector<std::shared_ptr<Component>> components;
+    std::map<int, std::shared_ptr<GameObject>> gameObjects;
+    std::map<int, std::shared_ptr<Component>> components;
 
     std::unique_ptr<GameObjectFactory> gameObjectFactory;
     std::unique_ptr<ComponentFactory> componentFactory;
@@ -87,9 +87,12 @@ public:
     void AddGameObject(std::shared_ptr<GameObject> gameObject);
     void AddComponent(std::shared_ptr<Component> component);
 
+    void OnUpdate(int componentId);
+
     void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
     void RemoveComponent(std::shared_ptr<Component> component);
 
+    std::shared_ptr<GameObject> FindGameObjectWithId(int id);
     std::shared_ptr<GameObject> FindGameObjectWithName(std::string name);
 
 private:

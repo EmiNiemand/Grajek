@@ -21,7 +21,7 @@ public:
     float shininess;
 
 public:
-    Renderer(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent);
+    Renderer(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
     ~Renderer() override;
 
     void Update() override;

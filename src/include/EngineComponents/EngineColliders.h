@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 class Shader;
 class GloomEngine;
@@ -22,7 +23,7 @@ public:
 
     std::shared_ptr<GloomEngine> gloomEngine;
 
-    std::vector<std::shared_ptr<BoxCollider>> boxColliders;
+    std::map<int, std::shared_ptr<BoxCollider>> boxColliders;
     std::shared_ptr<Shader> colliderDebugShader;
 
 public:
@@ -32,8 +33,8 @@ public:
     void Update();
     void Destroy();
 
-    void OnBoxColliderChange();
-    void RemoveBoxCollider(std::shared_ptr<BoxCollider> collider);
+    void OnBoxColliderAdd();
+    void RemoveBoxCollider(int componentId);
 };
 
 

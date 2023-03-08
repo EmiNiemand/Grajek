@@ -16,12 +16,13 @@ class Component;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
 private:
-    std::shared_ptr<GloomEngine> gloomEngine;
-    std::map<ComponentNames,std::shared_ptr<Component>> components;
-    std::map<std::string, std::shared_ptr<GameObject>> children;
-
-    // Name should be original for every game object, do not repeat
+    // Name and id are unique
+    int id;
     std::string name;
+
+    std::shared_ptr<GloomEngine> gloomEngine;
+    std::map<int,std::shared_ptr<Component>> components;
+    std::map<int, std::shared_ptr<GameObject>> children;
 public:
     std::shared_ptr<GameObject> parent = nullptr;
 
@@ -30,27 +31,29 @@ public:
 
     std::shared_ptr<Transform> transform = nullptr;
 
-    GameObject(const std::shared_ptr <GloomEngine> &gloomEngine, const std::string &name,
+    GameObject(const std::shared_ptr <GloomEngine> &gloomEngine, const std::string &name, int id,
                const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
 
     virtual ~GameObject();
 
-    std::shared_ptr<Component> FindComponent(ComponentNames componentName);
+    std::shared_ptr<Component> FindComponent(int componentId);
+    std::shared_ptr<Component> FindComponentByName(ComponentNames name);
     void AddComponent(std::shared_ptr<Component> &component);
     void OnTransformUpdateComponents();
-    void RemoveComponent(ComponentNames componentName);
+    void RemoveComponent(int componentId);
     void RemoveAllComponents();
 
 
     void SetParent(const std::shared_ptr<GameObject> &newParent);
     void AddChild(const std::shared_ptr<GameObject> &child);
-    void RemoveChild(std::string childName);
+    void RemoveChild(int childId);
     void RemoveAllChildren();
 
 
     void UpdateSelfAndChildren();
     void ForceUpdateSelfAndChildren();
 
+    int GetId() const;
     const std::string &GetName() const;
 };
 

@@ -7,7 +7,7 @@
 #include "include/EngineComponents/EngineRenderer.h"
 
 SpotLight::SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
-        : Component(gloomEngine, parent), id(id) {
+        : Component(gloomEngine, parent, id) {
     name = ComponentNames::SPOTLIGHT;
     cutOff = glm::cos(glm::radians(12.5f));
     outerCutOff = glm::cos(glm::radians(15.0f));
@@ -22,23 +22,13 @@ SpotLight::SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std:
 
 SpotLight::~SpotLight() {}
 
-void SpotLight::OnTransformUpdate() {
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
-    Component::OnTransformUpdate();
-}
-
-void SpotLight::OnRemove() {
-    gloomEngine->engineRenderer->RemoveSpotLight(id);
-    Component::OnRemove();
-}
-
 float SpotLight::GetCutOff() const {
     return cutOff;
 }
 
 void SpotLight::SetCutOff(float cutOff) {
     SpotLight::cutOff = cutOff;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 float SpotLight::GetOuterCutOff() const {
@@ -47,7 +37,7 @@ float SpotLight::GetOuterCutOff() const {
 
 void SpotLight::SetOuterCutOff(float outerCutOff) {
     SpotLight::outerCutOff = outerCutOff;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 float SpotLight::GetConstant() const {
@@ -56,7 +46,7 @@ float SpotLight::GetConstant() const {
 
 void SpotLight::SetConstant(float constant) {
     SpotLight::constant = constant;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 float SpotLight::GetLinear() const {
@@ -65,7 +55,7 @@ float SpotLight::GetLinear() const {
 
 void SpotLight::SetLinear(float linear) {
     SpotLight::linear = linear;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 float SpotLight::GetQuadratic() const {
@@ -74,7 +64,7 @@ float SpotLight::GetQuadratic() const {
 
 void SpotLight::SetQuadratic(float quadratic) {
     SpotLight::quadratic = quadratic;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &SpotLight::GetAmbient() const {
@@ -83,7 +73,7 @@ const glm::vec3 &SpotLight::GetAmbient() const {
 
 void SpotLight::SetAmbient(const glm::vec3 &ambient) {
     SpotLight::ambient = ambient;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &SpotLight::GetDiffuse() const {
@@ -92,7 +82,7 @@ const glm::vec3 &SpotLight::GetDiffuse() const {
 
 void SpotLight::SetDiffuse(const glm::vec3 &diffuse) {
     SpotLight::diffuse = diffuse;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &SpotLight::GetSpecular() const {
@@ -101,7 +91,7 @@ const glm::vec3 &SpotLight::GetSpecular() const {
 
 void SpotLight::SetSpecular(const glm::vec3 &specular) {
     SpotLight::specular = specular;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &SpotLight::GetColor() const {
@@ -110,6 +100,6 @@ const glm::vec3 &SpotLight::GetColor() const {
 
 void SpotLight::SetColor(const glm::vec3 &color) {
     SpotLight::color = color;
-    gloomEngine->engineRenderer->UpdateSpotLight(id);
+    Component::OnUpdate();
 }
 

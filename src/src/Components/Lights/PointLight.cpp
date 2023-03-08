@@ -7,7 +7,7 @@
 #include "include/EngineComponents/EngineRenderer.h"
 
 PointLight::PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
-        : Component(gloomEngine, parent), id(id) {
+        : Component(gloomEngine, parent, id) {
     name = ComponentNames::POINTLIGHT;
     constant = 1.0f;
     linear = 0.00014f;
@@ -20,23 +20,13 @@ PointLight::PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const st
 
 PointLight::~PointLight() {}
 
-void PointLight::OnTransformUpdate() {
-    gloomEngine->engineRenderer->UpdatePointLight(id);
-    Component::OnTransformUpdate();
-}
-
-void PointLight::OnRemove() {
-    gloomEngine->engineRenderer->RemovePointLight(id);
-    Component::OnRemove();
-}
-
 float PointLight::GetConstant() const {
     return constant;
 }
 
 void PointLight::SetConstant(float constant) {
     PointLight::constant = constant;
-    gloomEngine->engineRenderer->UpdatePointLight(id);
+    Component::OnUpdate();
 }
 
 float PointLight::GetLinear() const {
@@ -45,7 +35,7 @@ float PointLight::GetLinear() const {
 
 void PointLight::SetLinear(float linear) {
     PointLight::linear = linear;
-    gloomEngine->engineRenderer->UpdatePointLight(id);
+    Component::OnUpdate();
 }
 
 float PointLight::GetQuadratic() const {
@@ -54,7 +44,7 @@ float PointLight::GetQuadratic() const {
 
 void PointLight::SetQuadratic(float quadratic) {
     PointLight::quadratic = quadratic;
-    gloomEngine->engineRenderer->UpdatePointLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &PointLight::GetAmbient() const {
@@ -63,7 +53,7 @@ const glm::vec3 &PointLight::GetAmbient() const {
 
 void PointLight::SetAmbient(const glm::vec3 &ambient) {
     PointLight::ambient = ambient;
-    gloomEngine->engineRenderer->UpdatePointLight(id);
+    Component::OnUpdate();
 }
 
 const glm::vec3 &PointLight::GetDiffuse() const {
@@ -72,6 +62,7 @@ const glm::vec3 &PointLight::GetDiffuse() const {
 
 void PointLight::SetDiffuse(const glm::vec3 &diffuse) {
     PointLight::diffuse = diffuse;
+    Component::OnUpdate();
 }
 
 const glm::vec3 &PointLight::GetSpecular() const {
@@ -80,6 +71,7 @@ const glm::vec3 &PointLight::GetSpecular() const {
 
 void PointLight::SetSpecular(const glm::vec3 &specular) {
     PointLight::specular = specular;
+    Component::OnUpdate();
 }
 
 const glm::vec3 &PointLight::GetColor() const {
@@ -88,4 +80,5 @@ const glm::vec3 &PointLight::GetColor() const {
 
 void PointLight::SetColor(const glm::vec3 &color) {
     PointLight::color = color;
+    Component::OnUpdate();
 }
