@@ -10,10 +10,10 @@ PointLight::PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const st
         : Component(gloomEngine, parent, id) {
     name = ComponentNames::POINTLIGHT;
     constant = 1.0f;
-    linear = 0.00014f;
-    quadratic = 0.0000007f;
-    ambient = {0.05f, 0.05f, 0.05f};
-    diffuse = {0.8f, 0.8f, 0.8f};
+    linear = 0.7f;
+    quadratic = 2.5f;
+    ambient = {1.0f, 1.0f, 1.0f};
+    diffuse = {1.0f, 1.0f, 1.0f};
     specular = {1.0f, 1.0f, 1.0f};
     color = {1.0f, 1.0f, 1.0f};
 }

@@ -6,6 +6,7 @@
 #include "include/HighLevelClasses/GameObject.h"
 #include "include/Components/Component.h"
 #include "include/Components/Renderer.h"
+#include "include/Components/Camera.h"
 #include "include/Components/Lights/PointLight.h"
 #include "include/Components/Lights/DirectionalLight.h"
 #include "include/Components/Lights/SpotLight.h"
@@ -34,16 +35,15 @@ void GloomEngine::Init() {
     // TODO: delete this
     activeCamera = gameObjectFactory->CreateGameObject("Camera", activeScene, Tags::CAMERA);
     componentFactory->CreateCamera(activeCamera);
-    activeCamera->transform->SetLocalPosition({0, 1, 0});
-    activeCamera->UpdateSelfAndChildren();
+    activeCamera->transform->SetLocalPosition({0, 20, 10});
+    std::shared_ptr<Camera> camera = std::dynamic_pointer_cast<Camera>(activeCamera->FindComponentByName(ComponentNames::CAMERA));
 
     std::shared_ptr<GameObject> cube = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer = componentFactory->CreateRenderer(cube);
     cubeRenderer->LoadModel("res/models/domek/domek.obj");
     std::shared_ptr<BoxCollider> cubeCollider = componentFactory->CreateBoxCollider(cube);
-    cubeCollider->SetOffset({0, 1, 0});
     cube->transform->SetLocalPosition({0, 0, -10});
-    cube->transform->SetLocalScale({1, 1, 1});
+    cube->transform->SetLocalScale({10, 0.1, 6});
 
     std::shared_ptr<GameObject> cube1 = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer1 = componentFactory->CreateRenderer(cube1);
@@ -51,12 +51,18 @@ void GloomEngine::Init() {
     std::shared_ptr<BoxCollider> cubeCollider1 = componentFactory->CreateBoxCollider(cube1);
     cubeCollider1->SetOffset({0, 1, 0});
     cube1->transform->SetLocalPosition({0, 10, -10});
-    cube1->transform->SetLocalScale({1, 1, 1});
-    cube1->transform->SetLocalRotation({0, 30, 45});
+    cube1->transform->SetLocalScale({0.5, 1, 0.5});
 
-    std::shared_ptr<GameObject> light = gameObjectFactory->CreateGameObject("Light", activeScene, Tags::LIGHT);
-    componentFactory->CreateDirectionalLight(light);
+    std::shared_ptr<GameObject> cube2 = gameObjectFactory->CreateGameObject("Cube", cube1, Tags::DEFAULT);
+    std::shared_ptr<SpotLight> spotLight2 = componentFactory->CreateSpotLight(cube2);
+    cube2->transform->SetLocalPosition({0, 10, -10});
+    cube2->transform->SetLocalRotation({-90, 0, 0});
 
+    std::shared_ptr<GameObject> cube3 = gameObjectFactory->CreateGameObject("Cube", cube1, Tags::DEFAULT);;
+    std::shared_ptr<PointLight> pointLight2 = componentFactory->CreatePointLight(cube3);
+    cube3->transform->SetLocalPosition({0, 1, -10});
+
+    camera->SetTarget(cube3);
 }
 
 void GloomEngine::Awake() {
@@ -78,12 +84,10 @@ bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastFrameTime;
 
+    engineRenderer->UpdateRenderer();
+
     std::shared_ptr<GameObject> cube = FindGameObjectWithName("Cube1");
     cube->transform->SetLocalPosition(cube->transform->GetLocalPosition() + glm::vec3(0, -0.1, 0));
-
-    std::shared_ptr<GameObject> light = FindGameObjectWithName("Light");
-    std::shared_ptr<DirectionalLight> dir = std::dynamic_pointer_cast<DirectionalLight>(light->FindComponentByName(ComponentNames::DIRECTIONALLIGHT));
-    dir->SetColor({1, 0 ,0});
 
     engineColliders->Update();
 
@@ -92,8 +96,6 @@ bool GloomEngine::Update() {
         if (component.second->callOnStart) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
-
-
 
     // TODO: add way to get out of the game
 

@@ -19,6 +19,8 @@ public:
     Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
     ~Camera() override;
 
+    void SetTarget(const std::shared_ptr<GameObject> &target);
+
     glm::mat4 GetViewMatrix();
 };
 
