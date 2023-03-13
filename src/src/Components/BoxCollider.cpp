@@ -37,14 +37,14 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
 
     // OBB
     if (GetOBBCollision(other)) {
-        spdlog::info("HIT");
+        //spdlog::info("HIT");
        // TODO: Separate depending on velocity of objects - physics depended
         glm::vec3 pos1 = parent->transform->GetGlobalPosition();
         glm::vec3 pos2 = other->parent->transform->GetGlobalPosition();
         glm::vec3 vector = pos2 - pos1;
 
         vector /= 2;
-        spdlog::info(std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z));
+        //spdlog::info(std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z));
 
         other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() + glm::vec3(0, 0.1f, 0));
     }

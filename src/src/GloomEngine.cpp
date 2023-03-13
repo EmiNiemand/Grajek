@@ -1,8 +1,9 @@
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/EngineComponents/EngineColliders.h"
-#include "include/Factiories/GameObjectFactory.h"
-#include "include/Factiories/ComponentFactory.h"
+#include "include/EngineComponents/EngineHID.h"
+#include "include/Factories/GameObjectFactory.h"
+#include "include/Factories/ComponentFactory.h"
 #include "include/HighLevelClasses/GameObject.h"
 #include "include/Components/Component.h"
 #include "include/Components/Renderer.h"
@@ -24,6 +25,7 @@ void GloomEngine::Init() {
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
     engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
+    engineHID = std::make_unique<EngineHID>(shared_from_this());
 
     // INIT FACTORIES
     gameObjectFactory = std::make_unique<GameObjectFactory>(shared_from_this());
@@ -98,7 +100,7 @@ bool GloomEngine::Update() {
     }
 
     // TODO: add way to get out of the game
-
+    engineHID->Update();
     lastFrameTime = currentTime;
     return false;
 }

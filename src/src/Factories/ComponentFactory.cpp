@@ -2,7 +2,7 @@
 // Created by szymo on 02/03/2023.
 //
 
-#include "include/Factiories/ComponentFactory.h"
+#include "include/Factories/ComponentFactory.h"
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/EngineComponents/EngineColliders.h"

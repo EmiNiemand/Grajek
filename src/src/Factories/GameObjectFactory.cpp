@@ -2,7 +2,7 @@
 // Created by szymo on 02/03/2023.
 //
 
-#include "include/Factiories/GameObjectFactory.h"
+#include "include/Factories/GameObjectFactory.h"
 #include "include/GloomEngine.h"
 #include "include/HighLevelClasses/GameObject.h"
 

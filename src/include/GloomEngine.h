@@ -44,6 +44,7 @@ class GameObjectFactory;
 class ComponentFactory;
 class EngineRenderer;
 class EngineColliders;
+class EngineHID;
 
 class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
 private:
@@ -60,6 +61,7 @@ public:
 
     std::unique_ptr<EngineRenderer> engineRenderer;
     std::unique_ptr<EngineColliders> engineColliders;
+    std::unique_ptr<EngineHID> engineHID;
 
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;
