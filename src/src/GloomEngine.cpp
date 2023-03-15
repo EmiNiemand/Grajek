@@ -2,10 +2,7 @@
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/EngineComponents/EngineColliders.h"
 #include "include/EngineComponents/EngineHID.h"
-#include "include/Factories/GameObjectFactory.h"
-#include "include/Factories/ComponentFactory.h"
 #include "include/HighLevelClasses/GameObject.h"
-#include "include/Components/Component.h"
 #include "include/Components/Renderer.h"
 #include "include/Components/Camera.h"
 #include "include/Components/Lights/PointLight.h"
@@ -22,47 +19,55 @@ GloomEngine::~GloomEngine() {
 }
 
 void GloomEngine::Init() {
+    // Assign engin as parent to game objects
+    GameObject::Init(shared_from_this());
+
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
-    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
+    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), true);
     engineHID = std::make_unique<EngineHID>(shared_from_this());
 
-    // INIT FACTORIES
-    gameObjectFactory = std::make_unique<GameObjectFactory>(shared_from_this());
-    componentFactory = std::make_unique<ComponentFactory>(shared_from_this());
 
     // CREATE BASIC SCENE
-    activeScene = gameObjectFactory->CreateGameObject("Scene", nullptr, Tags::SCENE);
+    activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
 
     // TODO: delete this
-    activeCamera = gameObjectFactory->CreateGameObject("Camera", activeScene, Tags::CAMERA);
-    componentFactory->CreateCamera(activeCamera);
+    activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
+    std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
     activeCamera->transform->SetLocalPosition({0, 20, 10});
-    std::shared_ptr<Camera> camera = std::dynamic_pointer_cast<Camera>(activeCamera->FindComponentByName(ComponentNames::CAMERA));
 
-    std::shared_ptr<GameObject> cube = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> cubeRenderer = componentFactory->CreateRenderer(cube);
+    std::shared_ptr<GameObject> cube = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
+    std::shared_ptr<Renderer> cubeRenderer = cube->AddComponent<Renderer>();
     cubeRenderer->LoadModel("res/models/domek/domek.obj");
-    std::shared_ptr<BoxCollider> cubeCollider = componentFactory->CreateBoxCollider(cube);
+    std::shared_ptr<BoxCollider> cubeCollider = cube->AddComponent<BoxCollider>();
     cube->transform->SetLocalPosition({0, 0, -10});
     cube->transform->SetLocalScale({10, 0.1, 6});
 
-    std::shared_ptr<GameObject> cube1 = gameObjectFactory->CreateGameObject("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> cubeRenderer1 = componentFactory->CreateRenderer(cube1);
+    std::shared_ptr<GameObject> cube1 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
+    std::shared_ptr<Renderer> cubeRenderer1 = cube1->AddComponent<Renderer>();
     cubeRenderer1->LoadModel("res/models/domek/domek.obj");
-    std::shared_ptr<BoxCollider> cubeCollider1 = componentFactory->CreateBoxCollider(cube1);
+    std::shared_ptr<BoxCollider> cubeCollider1 = cube1->AddComponent<BoxCollider>();
     cubeCollider1->SetOffset({0, 1, 0});
-    cube1->transform->SetLocalPosition({0, 10, -10});
+    cube1->transform->SetLocalPosition({0, 30, -10});
     cube1->transform->SetLocalScale({0.5, 1, 0.5});
 
-    std::shared_ptr<GameObject> cube2 = gameObjectFactory->CreateGameObject("Cube", cube1, Tags::DEFAULT);
-    std::shared_ptr<SpotLight> spotLight2 = componentFactory->CreateSpotLight(cube2);
+    std::shared_ptr<GameObject> cube2 = GameObject::Instantiate("Cube", cube1, Tags::DEFAULT);
+    std::shared_ptr<SpotLight> spotLight2 = cube2->AddComponent<SpotLight>();
     cube2->transform->SetLocalPosition({0, 10, -10});
     cube2->transform->SetLocalRotation({-90, 0, 0});
 
-    std::shared_ptr<GameObject> cube3 = gameObjectFactory->CreateGameObject("Cube", cube1, Tags::DEFAULT);;
-    std::shared_ptr<PointLight> pointLight2 = componentFactory->CreatePointLight(cube3);
+    std::shared_ptr<GameObject> cube3 = GameObject::Instantiate("Cube", cube1, Tags::DEFAULT);;
+    std::shared_ptr<PointLight> pointLight2 = cube3->AddComponent<PointLight>();
     cube3->transform->SetLocalPosition({0, 1, -10});
+
+    for (int i = 0; i < 100; i++) {
+        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
+        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
+        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
+        std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
+        cubeCollider5->SetOffset({0, 1, 0});
+        cube5->transform->SetLocalPosition({i * std::cos(i), -20 + i, -50 + i * std::sin(i)});
+    }
 
     camera->SetTarget(cube3);
 }
@@ -105,12 +110,10 @@ bool GloomEngine::Update() {
     return false;
 }
 
-void GloomEngine::Destroy() {
+void GloomEngine::Free() {
     ClearScene();
-    engineColliders->Destroy();
-    engineRenderer->Destroy();
-    gameObjectFactory = nullptr;
-    componentFactory = nullptr;
+    engineColliders->Free();
+    engineRenderer->Free();
     activeScene = nullptr;
 }
 
@@ -121,6 +124,7 @@ void GloomEngine::ClearScene() {
     gameObjects.clear();
 }
 
+//DO NOT USE
 void GloomEngine::AddGameObject(std::shared_ptr<GameObject> gameObject) {
     gameObjects.insert({gameObject->GetId(), gameObject});
 }
@@ -153,8 +157,10 @@ std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(int id) {
 }
 
 std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithName(std::string name) {
-    for (auto&& object : gameObjects){
-        if (object.second->GetName() == name) return object.second;
+    if (!gameObjects.empty()) {
+        for (auto&& object : gameObjects) {
+            if (object.second->GetName() == name) return object.second;
+        }
     }
     return nullptr;
 }

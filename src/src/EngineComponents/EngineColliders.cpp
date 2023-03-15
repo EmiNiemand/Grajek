@@ -38,7 +38,8 @@ void EngineColliders::Update() {
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
     colliderDebugShader->SetMat4("projection", gloomEngine->engineRenderer->projection);
-    colliderDebugShader->SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
+    colliderDebugShader->SetMat4("view", std::dynamic_pointer_cast<Camera>(
+            gloomEngine->activeCamera->GetComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
     for (auto&& box : boxColliders) {
         colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());
         glBindVertexArray(vao);
@@ -47,7 +48,7 @@ void EngineColliders::Update() {
     }
 }
 
-void EngineColliders::Destroy() {
+void EngineColliders::Free() {
     colliderDebugShader->Delete();
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);

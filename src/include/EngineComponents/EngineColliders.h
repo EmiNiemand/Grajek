@@ -31,7 +31,7 @@ public:
     virtual ~EngineColliders();
 
     void Update();
-    void Destroy();
+    void Free();
 
     void OnBoxColliderAdd();
     void RemoveBoxCollider(int componentId);

@@ -35,7 +35,7 @@ public:
     explicit EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine);
     virtual ~EngineRenderer();
 
-    void Destroy();
+    void Free();
 
     void UpdateRenderer();
     void UpdateProjection();

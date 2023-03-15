@@ -5,7 +5,6 @@
 #ifndef OPENGLGP_PROJECTSETTINGS_H
 #define OPENGLGP_PROJECTSETTINGS_H
 
-
 enum class Tags{
     DEFAULT,
     CAMERA,

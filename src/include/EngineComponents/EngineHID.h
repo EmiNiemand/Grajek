@@ -16,9 +16,12 @@ class GloomEngine;
 class EngineHID {
 public:
     std::shared_ptr<GloomEngine> gloomEngine;
-    static std::vector<Key> keysDown;
-    static std::vector<Key> keysUp;
-    static std::vector<Key> keysPressed;
+    std::vector<Key> keysDown;
+    std::vector<Key> keysUp;
+    std::vector<Key> keysPressed;
+    static std::vector<Key> keysDownBuffer;
+    static std::vector<Key> keysUpBuffer;
+    static std::vector<Key> keysPressedBuffer;
 public:
     explicit EngineHID(const std::shared_ptr<GloomEngine> &gloomEngine);
 

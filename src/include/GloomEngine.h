@@ -40,19 +40,14 @@
 
 class Component;
 class GameObject;
-class GameObjectFactory;
-class ComponentFactory;
 class EngineRenderer;
 class EngineColliders;
 class EngineHID;
 
 class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
 private:
-    std::map<int, std::shared_ptr<GameObject>> gameObjects;
-    std::map<int, std::shared_ptr<Component>> components;
-
-    std::unique_ptr<GameObjectFactory> gameObjectFactory;
-    std::unique_ptr<ComponentFactory> componentFactory;
+    std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
+    std::map<int, std::shared_ptr<Component>> components = {};
 
 public:
     GLFWwindow* window;
@@ -84,8 +79,9 @@ public:
     /// Update only enabled components
     bool Update();
     /// Free memory
-    void Destroy();
+    void Free();
 
+    // Do not use this
     void AddGameObject(std::shared_ptr<GameObject> gameObject);
     void AddComponent(std::shared_ptr<Component> component);
 

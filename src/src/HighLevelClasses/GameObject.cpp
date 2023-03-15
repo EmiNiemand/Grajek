@@ -4,28 +4,31 @@
 
 #include "include/HighLevelClasses/GameObject.h"
 #include "include/GloomEngine.h"
+
 #include "include/Components/Component.h"
 
-GameObject::GameObject(const std::shared_ptr<GloomEngine> &gloomEngine, const std::string &name, int id,
-                       const std::shared_ptr<GameObject> &parent, Tags tag) : gloomEngine(gloomEngine),
-                       name(name), id(id), parent(parent), tag(tag) {}
+std::shared_ptr<GloomEngine> GameObject::gloomEngine = nullptr;
+std::shared_ptr<GameObjectFactory> GameObject::gameObjectFactory = nullptr;
+std::shared_ptr<ComponentFactory> GameObject::componentFactory = nullptr;
+
+GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+                                                                        name(name), id(id), parent(parent), tag(tag) {}
 
 GameObject::~GameObject() {}
 
-std::shared_ptr<Component> GameObject::FindComponent(int componentId) {
-    if (!components.contains(componentId)) return nullptr;
-    return components.find(componentId)->second;
+std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
+    return gameObjectFactory->CreateGameObject(name, parent, tag);
 }
 
-std::shared_ptr<Component> GameObject::FindComponentByName(ComponentNames name) {
+void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
+    gameObject->parent->RemoveChild(gameObject->GetId());
+}
+
+std::shared_ptr<Component> GameObject::GetComponentByName(ComponentNames name) {
     for (auto&& component : components) {
         if (component.second->GetName() == name) return component.second;
     }
     return nullptr;
-}
-
-void GameObject::AddComponent(std::shared_ptr<Component> &component) {
-    components.insert({component->GetId(), component});
 }
 
 void GameObject::OnTransformUpdateComponents() {
@@ -84,8 +87,8 @@ void GameObject::ForceUpdateSelfAndChildren() {
 
     for (auto&& child : children)
     {
-        child.second->OnTransformUpdateComponents();
         child.second->ForceUpdateSelfAndChildren();
+        child.second->OnTransformUpdateComponents();
     }
 }
 
@@ -95,4 +98,14 @@ int GameObject::GetId() const {
 
 const std::string &GameObject::GetName() const {
     return name;
+}
+
+void GameObject::Init(const std::shared_ptr<GloomEngine> &gloomEngine) {
+    GameObject::gloomEngine = gloomEngine;
+    GameObject::gameObjectFactory = std::make_shared<GameObjectFactory>(gloomEngine);
+    GameObject::componentFactory = std::make_shared<ComponentFactory>(gloomEngine);
+}
+
+void GameObject::AddComponentToList(std::shared_ptr<Component> component) {
+    components.insert({component->GetId(), component});
 }

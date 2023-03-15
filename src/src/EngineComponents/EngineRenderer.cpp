@@ -18,7 +18,7 @@ EngineRenderer::EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine) 
 
 EngineRenderer::~EngineRenderer() {}
 
-void EngineRenderer::Destroy() {
+void EngineRenderer::Free() {
     shader->Delete();
 }
 
@@ -34,7 +34,8 @@ void EngineRenderer::UpdateProjection() {
 
 void EngineRenderer::UpdateCamera() {
     shader->Activate();
-    shader->SetMat4("view", std::dynamic_pointer_cast<Camera>(gloomEngine->activeCamera->FindComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
+    shader->SetMat4("view", std::dynamic_pointer_cast<Camera>(
+            gloomEngine->activeCamera->GetComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
     shader->SetVec3("viewPos", gloomEngine->activeCamera->transform->GetGlobalPosition());
 }
 

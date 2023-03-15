@@ -11,7 +11,7 @@ GameObjectFactory::GameObjectFactory(const std::shared_ptr<GloomEngine> &gloomEn
 std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
     if(tag == Tags::SCENE) {
         parent = nullptr;
-        std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(gloomEngine, name, id, parent, tag);
+        std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(name, id, parent, tag);
         gameObject->transform = std::make_shared<Transform>(parent);
         id++;
         return gameObject;
@@ -21,12 +21,13 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
         bool endLoop = false;
         int i = 1;
         while(!endLoop) {
-            name = name + std::to_string(i);
+            if (i == 1) name = name + std::to_string(i);
+            else if (i > 1) name = name.substr(0, name.size() - 1) + std::to_string(i);
             if(gloomEngine->FindGameObjectWithName(name) == nullptr) endLoop = true;
             i++;
         }
     }
-    std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(gloomEngine, name, id, parent, tag);
+    std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(name, id, parent, tag);
     parent->AddChild(gameObject);
     gameObject->transform = std::make_shared<Transform>(gameObject);
     gloomEngine->AddGameObject(gameObject);
