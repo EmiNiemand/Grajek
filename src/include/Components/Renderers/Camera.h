@@ -1,7 +1,3 @@
-//
-// Created by szymo on 02/03/2023.
-//
-
 #ifndef OPENGLGP_CAMERA_H
 #define OPENGLGP_CAMERA_H
 
@@ -9,7 +5,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Component.h"
+#include "include/Components/Component.h"
 
 class Camera : public Component {
 private:

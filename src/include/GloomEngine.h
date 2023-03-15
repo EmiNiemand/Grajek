@@ -64,6 +64,9 @@ public:
     std::shared_ptr<GameObject> activeCamera;
     std::shared_ptr<GameObject> activeScene;
 
+    float timer = 0;
+    int frames = 0;
+
 public:
     GloomEngine(GLFWwindow* window, int *width, int *height);
     virtual ~GloomEngine();

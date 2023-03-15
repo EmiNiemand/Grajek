@@ -1,8 +1,4 @@
-//
-// Created by szymo on 03/03/2023.
-//
-
-#include "include/Components/Lights/PointLight.h"
+#include "include/Components/Renderers/Lights/PointLight.h"
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 

@@ -2,13 +2,13 @@
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/EngineComponents/EngineColliders.h"
-#include "include/HighLevelClasses/GameObject.h"
-#include "include/Components/Renderer.h"
-#include "include/Components/Camera.h"
-#include "include/Components/Lights/PointLight.h"
-#include "include/Components/Lights/DirectionalLight.h"
-#include "include/Components/Lights/SpotLight.h"
-#include "include/Components/BoxCollider.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "include/Components/Renderers/Renderer.h"
+#include "include/Components/Renderers/Camera.h"
+#include "include/Components/Renderers/Lights/PointLight.h"
+#include "include/Components/Renderers/Lights/DirectionalLight.h"
+#include "include/Components/Renderers/Lights/SpotLight.h"
+#include "include/Components/PhysicsAndColliders/BoxCollider.h"
 
 ComponentFactory::ComponentFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
 

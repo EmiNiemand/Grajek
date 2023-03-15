@@ -1,9 +1,5 @@
-//
-// Created by szymo on 08/11/2022.
-//
-
 #include "include/Components/Transform.h"
-#include "include/HighLevelClasses/GameObject.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
 
 Transform::Transform(const std::shared_ptr<GameObject> &parent) : parent(parent) {}
 

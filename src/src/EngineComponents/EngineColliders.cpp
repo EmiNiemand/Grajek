@@ -2,9 +2,9 @@
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/LowLevelClasses/Shader.h"
-#include "include/Components/BoxCollider.h"
-#include "include/HighLevelClasses/GameObject.h"
-#include "include/Components/Camera.h"
+#include "include/Components/PhysicsAndColliders/BoxCollider.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "include/Components/Renderers/Camera.h"
 
 EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine, bool isDebugOn) : gloomEngine(gloomEngine), isDebugOn(isDebugOn) {
     colliderDebugShader = std::make_shared<Shader>("res/shaders/colliderDebug.vert", "res/shaders/colliderDebug.frag");

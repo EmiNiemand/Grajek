@@ -1,6 +1,6 @@
-#include "include/Components/BoxCollider.h"
+#include "include/Components/PhysicsAndColliders/BoxCollider.h"
 #include "include/GloomEngine.h"
-#include "include/HighLevelClasses/GameObject.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/EngineComponents/EngineColliders.h"
 
 BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)

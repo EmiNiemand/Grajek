@@ -1,7 +1,3 @@
-//
-// Created by szymo on 13/03/2023.
-//
-
 #include "include/EngineComponents/EngineHID.h"
 #include "include/GloomEngine.h"
 

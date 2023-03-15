@@ -1,15 +1,11 @@
-//
-// Created by szymo on 03/03/2023.
-//
-
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/LowLevelClasses/Shader.h"
 #include "include/GloomEngine.h"
-#include "include/HighLevelClasses/GameObject.h"
-#include "include/Components/Camera.h"
-#include "include/Components/Lights/PointLight.h"
-#include "include/Components/Lights/DirectionalLight.h"
-#include "include/Components/Lights/SpotLight.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "include/Components/Renderers/Camera.h"
+#include "include/Components/Renderers/Lights/PointLight.h"
+#include "include/Components/Renderers/Lights/DirectionalLight.h"
+#include "include/Components/Renderers/Lights/SpotLight.h"
 
 EngineRenderer::EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     shader = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/basic.frag");

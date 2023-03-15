@@ -1,14 +1,10 @@
-//
-// Created by szymo on 06/03/2023.
-//
-
 #ifndef OPENGLGP_BOXCOLLIDER_H
 #define OPENGLGP_BOXCOLLIDER_H
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Component.h"
+#include "include/Components/Component.h"
 #include <vector>
 #include <cmath>
 

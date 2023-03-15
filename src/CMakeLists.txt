@@ -11,18 +11,18 @@ file(GLOB_RECURSE HEADER_FILES
 # Define the executable
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/LowLevelClasses/Shader.cpp include/LowLevelClasses/Shader.h src/LowLevelClasses/Mesh.cpp
 		include/LowLevelClasses/Mesh.h src/LowLevelClasses/Model.cpp include/LowLevelClasses/Model.h
-		src/Components/Transform.cpp include/Components/Transform.h src/HighLevelClasses/GameObject.cpp
-		include/HighLevelClasses/GameObject.h include/HighLevelClasses/GameObject.h src/Components/Component.cpp
+		src/Components/Transform.cpp include/Components/Transform.h src/GameObjectsAndPrefabs/GameObject.cpp
+		include/GameObjectsAndPrefabs/GameObject.h include/GameObjectsAndPrefabs/GameObject.h src/Components/Component.cpp
 		include/Components/Component.h include/Components/Component.h include/ProjectSettings.h include/ProjectSettings.h
-		src/GloomEngine.cpp include/GloomEngine.h include/GloomEngine.h src/Components/Renderer.cpp include/Components/Renderer.h
-		include/Components/Renderer.h src/Factories/GameObjectFactory.cpp include/Factories/GameObjectFactory.h
+		src/GloomEngine.cpp include/GloomEngine.h include/GloomEngine.h src/Components/Renderers/Renderer.cpp include/Components/Renderers/Renderer.h
+		include/Components/Renderers/Renderer.h src/Factories/GameObjectFactory.cpp include/Factories/GameObjectFactory.h
 		include/Factories/GameObjectFactory.h src/Factories/ComponentFactory.cpp include/Factories/ComponentFactory.h
-		include/Factories/ComponentFactory.h src/Components/Camera.cpp include/Components/Camera.h
-		include/Components/Camera.h src/EngineComponents/EngineRenderer.cpp include/EngineComponents/EngineRenderer.h
-		src/Components/Lights/PointLight.cpp include/Components/Lights/PointLight.h include/Components/Lights/PointLight.h
-		src/Components/Lights/DirectionalLight.cpp include/Components/Lights/DirectionalLight.h
-		include/Components/Lights/DirectionalLight.h src/Components/Lights/SpotLight.cpp include/Components/Lights/SpotLight.h
-		include/Components/Lights/SpotLight.h src/Components/BoxCollider.cpp include/Components/BoxCollider.h
+		include/Factories/ComponentFactory.h src/Components/Renderers/Camera.cpp include/Components/Renderers/Camera.h
+		include/Components/Renderers/Camera.h src/EngineComponents/EngineRenderer.cpp include/EngineComponents/EngineRenderer.h
+		src/Components/Renderers/Lights/PointLight.cpp include/Components/Renderers/Lights/PointLight.h include/Components/Renderers/Lights/PointLight.h
+		src/Components/Renderers/Lights/DirectionalLight.cpp include/Components/Renderers/Lights/DirectionalLight.h
+		include/Components/Renderers/Lights/DirectionalLight.h src/Components/Renderers/Lights/SpotLight.cpp include/Components/Renderers/Lights/SpotLight.h
+		include/Components/Renderers/Lights/SpotLight.h src/Components/PhysicsAndColliders/BoxCollider.cpp include/Components/PhysicsAndColliders/BoxCollider.h
 		include/EngineComponents/EngineColliders.h src/EngineComponents/EngineColliders.cpp
 		src/EngineComponents/EngineHID.cpp include/EngineComponents/EngineHID.h)
 

@@ -1,7 +1,3 @@
-//
-// Created by szymo on 01/03/2023.
-//
-
 #include "include/Components/Component.h"
 #include "include/GloomEngine.h"
 
@@ -10,7 +6,6 @@ Component::Component(const std::shared_ptr<GloomEngine> &gloomEngine, const std:
 
 Component::~Component() {}
 
-// TODO: make it call method to update in engine pass id
 void Component::OnUpdate() {
     gloomEngine->OnUpdate(id);
 }

@@ -8,7 +8,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Component.h"
+#include "include/Components/Component.h"
 
 class Model;
 

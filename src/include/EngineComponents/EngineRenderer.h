@@ -1,7 +1,3 @@
-//
-// Created by szymo on 03/03/2023.
-//
-
 #ifndef OPENGLGP_ENGINERENDERER_H
 #define OPENGLGP_ENGINERENDERER_H
 

@@ -2,13 +2,13 @@
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/EngineComponents/EngineColliders.h"
 #include "include/EngineComponents/EngineHID.h"
-#include "include/HighLevelClasses/GameObject.h"
-#include "include/Components/Renderer.h"
-#include "include/Components/Camera.h"
-#include "include/Components/Lights/PointLight.h"
-#include "include/Components/Lights/DirectionalLight.h"
-#include "include/Components/Lights/SpotLight.h"
-#include "include/Components/BoxCollider.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "include/Components/Renderers/Renderer.h"
+#include "include/Components/Renderers/Camera.h"
+#include "include/Components/Renderers/Lights/PointLight.h"
+#include "include/Components/Renderers/Lights/DirectionalLight.h"
+#include "include/Components/Renderers/Lights/SpotLight.h"
+#include "include/Components/PhysicsAndColliders/BoxCollider.h"
 
 GloomEngine::GloomEngine(GLFWwindow* window, int *width, int *height) : window(window), width(width), height(height) {
 
@@ -60,14 +60,14 @@ void GloomEngine::Init() {
     std::shared_ptr<PointLight> pointLight2 = cube3->AddComponent<PointLight>();
     cube3->transform->SetLocalPosition({0, 1, -10});
 
-    for (int i = 0; i < 100; i++) {
-        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
-        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
-        std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
-        cubeCollider5->SetOffset({0, 1, 0});
-        cube5->transform->SetLocalPosition({i * std::cos(i), -20 + i, -50 + i * std::sin(i)});
-    }
+//    for (int i = 0; i < 1000; i++) {
+//        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
+//        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
+//        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
+//        std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
+//        cubeCollider5->SetOffset({0, 1, 0});
+//        cube5->transform->SetLocalPosition({i * std::cos(i), -20 + i, -50 + i * std::sin(i)});
+//    }
 
     camera->SetTarget(cube3);
 }
@@ -107,6 +107,16 @@ bool GloomEngine::Update() {
     // TODO: add way to get out of the game
     engineHID->Update();
     lastFrameTime = currentTime;
+
+    timer += deltaTime;
+    frames++;
+
+    if (timer >= 1) {
+        spdlog::info(frames);
+        frames = 0;
+        timer = 0;
+    }
+
     return false;
 }
 

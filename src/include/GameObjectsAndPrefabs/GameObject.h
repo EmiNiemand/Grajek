@@ -1,7 +1,3 @@
-//
-// Created by szymo on 01/03/2023.
-//
-
 #ifndef OPENGLGP_GAMEOBJECT_H
 #define OPENGLGP_GAMEOBJECT_H
 

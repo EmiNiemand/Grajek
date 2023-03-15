@@ -1,7 +1,3 @@
-//
-// Created by szymo on 08/11/2022.
-//
-
 #ifndef OPENGLGP_TRANSFORM_H
 #define OPENGLGP_TRANSFORM_H
 

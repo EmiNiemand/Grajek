@@ -1,7 +1,3 @@
-//
-// Created by szymo on 01/03/2023.
-//
-
 #ifndef OPENGLGP_COMPONENT_H
 #define OPENGLGP_COMPONENT_H
 

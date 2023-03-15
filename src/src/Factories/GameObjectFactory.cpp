@@ -1,10 +1,6 @@
-//
-// Created by szymo on 02/03/2023.
-//
-
 #include "include/Factories/GameObjectFactory.h"
 #include "include/GloomEngine.h"
-#include "include/HighLevelClasses/GameObject.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
 
 GameObjectFactory::GameObjectFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
 

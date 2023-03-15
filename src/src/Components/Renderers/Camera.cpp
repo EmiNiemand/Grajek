@@ -1,11 +1,7 @@
-//
-// Created by szymo on 02/03/2023.
-//
-
-#include "include/Components/Camera.h"
+#include "include/Components/Renderers/Camera.h"
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
-#include "include/HighLevelClasses/GameObject.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
 
 Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) : Component(
         gloomEngine, parent, id) {

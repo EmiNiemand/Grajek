@@ -1,10 +1,5 @@
-//
-// Created by szymo on 01/03/2023.
-//
-
-#include "include/HighLevelClasses/GameObject.h"
+#include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/GloomEngine.h"
-
 #include "include/Components/Component.h"
 
 std::shared_ptr<GloomEngine> GameObject::gloomEngine = nullptr;

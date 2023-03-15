@@ -1,28 +1,34 @@
-//
-// Created by szymo on 03/03/2023.
-//
-
-#ifndef OPENGLGP_POINTLIGHT_H
-#define OPENGLGP_POINTLIGHT_H
+#ifndef OPENGLGP_SPOTLIGHT_H
+#define OPENGLGP_SPOTLIGHT_H
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "include/Components/Component.h"
 
-class PointLight : public Component {
+class SpotLight : public Component {
 private:
+    float cutOff;
+    float outerCutOff;
+
     float constant;
     float linear;
     float quadratic;
+
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
     glm::vec3 color;
 
 public:
-    PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
-    ~PointLight() override;
+    SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    ~SpotLight() override;
+
+    float GetCutOff() const;
+    void SetCutOff(float cutOff);
+
+    float GetOuterCutOff() const;
+    void SetOuterCutOff(float outerCutOff);
 
     float GetConstant() const;
     void SetConstant(float constant);
@@ -47,4 +53,4 @@ public:
 };
 
 
-#endif //OPENGLGP_POINTLIGHT_H
+#endif //OPENGLGP_SPOTLIGHT_H
