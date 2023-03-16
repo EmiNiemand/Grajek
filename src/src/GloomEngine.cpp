@@ -41,8 +41,9 @@ void GloomEngine::Init() {
     std::shared_ptr<Renderer> cubeRenderer = cube->AddComponent<Renderer>();
     cubeRenderer->LoadModel("res/models/domek/domek.obj");
     std::shared_ptr<BoxCollider> cubeCollider = cube->AddComponent<BoxCollider>();
-    cube->transform->SetLocalPosition({0, 0, -10});
-    cube->transform->SetLocalScale({10, 0.1, 6});
+    cubeCollider->SetOffset({0, 1, 0});
+    cube->transform->SetLocalPosition({0, -4, -10});
+    cube->transform->SetLocalScale({10, 2, 6});
 
     std::shared_ptr<GameObject> cube1 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer1 = cube1->AddComponent<Renderer>();
@@ -61,19 +62,20 @@ void GloomEngine::Init() {
     std::shared_ptr<PointLight> pointLight2 = cube3->AddComponent<PointLight>();
     cube3->transform->SetLocalPosition({0, 1, -10});
 
-//    for (int i = 0; i < 100; i++) {
-//        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-//        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
-//        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
-//        std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
-//        cubeCollider5->SetOffset({0, 1, 0});
-//        cube5->transform->SetLocalPosition({i * std::cos(i), -20 + i, -50 + i * std::sin(i)});
-//    }
+    for (int i = 0; i < 100; i++) {
+        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
+        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
+        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
+        std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
+        cubeCollider5->SetOffset({0, 1, 0});
+        cube5->transform->SetLocalPosition({i * std::cos(i), -20 + i, -50 + i * std::sin(i)});
+    }
 
     camera->SetTarget(cube3);
 }
 
 void GloomEngine::Awake() {
+    lastFrameTime = glfwGetTime();
     // Setup all engine components
     engineRenderer->UpdateRenderer();
 
@@ -90,7 +92,6 @@ void GloomEngine::Start() {
 
 bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
-    deltaTime = currentTime - lastFrameTime;
 
     for (auto&& component : components){
         if (component.second->callOnAwake) component.second->Awake();
@@ -101,6 +102,8 @@ bool GloomEngine::Update() {
     engineHID->Update();
     engineColliders->Update();
     engineRenderer->UpdateRenderer();
+
+    deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
 
     timer += deltaTime;

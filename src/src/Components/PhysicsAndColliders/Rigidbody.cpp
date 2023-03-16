@@ -18,17 +18,17 @@ Rigidbody::~Rigidbody() {}
 
 void Rigidbody::Update() {
     parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() + velocity);
-    this->AddForce({0, -1, 0}, gravityScale, ForceMode::Force);
-    this->AddForce(-velocity, linearDrag, ForceMode::Force);
+    this->AddForce(glm::vec3(0, -1, 0) * gravityScale, ForceMode::Force);
+    this->AddForce(-velocity * linearDrag, ForceMode::Force);
     Component::Update();
 }
 
-void Rigidbody::AddForce(glm::vec3 vector, float value, ForceMode forceMode) {
+void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
     if (forceMode == ForceMode::Force) {
-        velocity += glm::normalize(vector) * value / mass * gloomEngine->deltaTime;
+        velocity += vector / mass * gloomEngine->deltaTime;
     }
     else {
-        velocity += glm::normalize(vector) * value / mass;
+        velocity += vector / mass;
     }
 }
 

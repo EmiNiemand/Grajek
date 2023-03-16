@@ -24,7 +24,7 @@ public:
 
     void Update() override;
 
-    void AddForce(glm::vec3 vector, float value, ForceMode forceMode);
+    void AddForce(glm::vec3 vector, ForceMode forceMode);
 };
 
 
