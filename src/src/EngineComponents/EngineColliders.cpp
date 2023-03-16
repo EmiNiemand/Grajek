@@ -2,9 +2,10 @@
 #include "include/GloomEngine.h"
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/LowLevelClasses/Shader.h"
-#include "include/Components/PhysicsAndColliders/BoxCollider.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/Components/Renderers/Camera.h"
+#include "include/Components/PhysicsAndColliders/BoxCollider.h"
+#include "include/Components/PhysicsAndColliders/Rigidbody.h"
 
 EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine, bool isDebugOn) : gloomEngine(gloomEngine), isDebugOn(isDebugOn) {
     colliderDebugShader = std::make_shared<Shader>("res/shaders/colliderDebug.vert", "res/shaders/colliderDebug.frag");
@@ -22,14 +23,13 @@ void EngineColliders::Update() {
 
     if (boxColliders.size() > 1) {
         // Handle collision
-        std::shared_ptr<BoxCollider> prevBox = nullptr;
         for (auto&& box : boxColliders) {
-            if (prevBox == nullptr) {
-                prevBox = box.second;
-                continue;
+            if (box.second->GetParent()->GetComponent<Rigidbody>() != nullptr) {
+                for(auto&& box2 : boxColliders) {
+                    if (box2.second == box.second) continue;
+                    box.second->HandleCollision(box2.second);
+                }
             }
-            prevBox->HandleCollision(box.second);
-            prevBox = box.second;
         }
     }
 

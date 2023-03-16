@@ -24,20 +24,11 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
 
         if (minBoxPos.x <= maxOtherPos.x && maxBoxPos.x >= minOtherPos.x && minBoxPos.y <= maxOtherPos.y &&
             maxBoxPos.y >= minOtherPos.y && minBoxPos.z <= maxOtherPos.z && maxBoxPos.z >= minOtherPos.z){
-           // TODO: Separate depending on velocity of objects - physics depended
-//            std::shared_ptr<Rigidbody> rb = parent->GetComponent<Rigidbody>();
-//            std::shared_ptr<Rigidbody> otherRb = other->parent->GetComponent<Rigidbody>();
-//            if (rb != nullptr && otherRb != nullptr) {
-//
-//                parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() - );
-//                other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() - );
-//            }
-//            else if (rb != nullptr && otherRb == nullptr) {
-//                parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() - glm::vec3(rb->velocity.x, 0, rb->velocity.y));
-//            }
-            if (other->parent->GetComponent<Rigidbody>() != nullptr) {
-                other->parent->GetComponent<Rigidbody>()->AddForce({0, 1, 0},
-                               -other->parent->GetComponent<Rigidbody>()->velocity.y, ForceMode::Impulse);
+
+
+            if (parent->GetComponent<Rigidbody>() != nullptr) {
+                parent->GetComponent<Rigidbody>()->AddForce({0, 1, 0},
+                               -parent->GetComponent<Rigidbody>()->velocity.y, ForceMode::Impulse);
                 return;
             }
         }
@@ -45,13 +36,11 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
 
     // OBB
     if (GetOBBCollision(other)) {
-        //spdlog::info("HIT");
-       // TODO: Separate depending on velocity of objects - physics depended
-        //spdlog::info(std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z));
 
-        if (other->parent->GetComponent<Rigidbody>() != nullptr) {
-            other->parent->GetComponent<Rigidbody>()->AddForce({0, 1, 0},
-                           -other->parent->GetComponent<Rigidbody>()->velocity.y, ForceMode::Impulse);
+
+        if (parent->GetComponent<Rigidbody>() != nullptr) {
+            parent->GetComponent<Rigidbody>()->AddForce({0, 1, 0},
+                           -parent->GetComponent<Rigidbody>()->velocity.y, ForceMode::Impulse);
             return;
         }
     }
