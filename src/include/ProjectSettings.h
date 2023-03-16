@@ -18,7 +18,8 @@ enum class ComponentNames{
     DIRECTIONALLIGHT,
     SPOTLIGHT,
     POINTLIGHT,
-    BOXCOLLIDER
+    BOXCOLLIDER,
+    RIGIDBODY
 };
 
 enum class Key{
@@ -37,5 +38,9 @@ enum class Key{
     KEY_BACKSPACE = 259
 };
 
+enum class ForceMode{
+    Force,
+    Impulse
+};
 
 #endif //OPENGLGP_PROJECTSETTINGS_H

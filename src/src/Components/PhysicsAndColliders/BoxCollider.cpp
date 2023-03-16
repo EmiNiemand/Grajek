@@ -2,6 +2,7 @@
 #include "include/GloomEngine.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/EngineComponents/EngineColliders.h"
+#include "include/Components/PhysicsAndColliders/Rigidbody.h"
 
 BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {
@@ -24,14 +25,21 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
         if (minBoxPos.x <= maxOtherPos.x && maxBoxPos.x >= minOtherPos.x && minBoxPos.y <= maxOtherPos.y &&
             maxBoxPos.y >= minOtherPos.y && minBoxPos.z <= maxOtherPos.z && maxBoxPos.z >= minOtherPos.z){
            // TODO: Separate depending on velocity of objects - physics depended
-            glm::vec3 pos1 = parent->transform->GetGlobalPosition();
-            glm::vec3 pos2 = other->parent->transform->GetGlobalPosition();
-            glm::vec3 vector = pos2 - pos1;
-
-            vector /= 2;
-
-            other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() + vector);
-            return;
+//            std::shared_ptr<Rigidbody> rb = parent->GetComponent<Rigidbody>();
+//            std::shared_ptr<Rigidbody> otherRb = other->parent->GetComponent<Rigidbody>();
+//            if (rb != nullptr && otherRb != nullptr) {
+//
+//                parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() - );
+//                other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() - );
+//            }
+//            else if (rb != nullptr && otherRb == nullptr) {
+//                parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() - glm::vec3(rb->velocity.x, 0, rb->velocity.y));
+//            }
+            if (other->parent->GetComponent<Rigidbody>() != nullptr) {
+                other->parent->GetComponent<Rigidbody>()->AddForce({0, 1, 0},
+                               -other->parent->GetComponent<Rigidbody>()->velocity.y, ForceMode::Impulse);
+                return;
+            }
         }
     }
 
@@ -39,14 +47,13 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
     if (GetOBBCollision(other)) {
         //spdlog::info("HIT");
        // TODO: Separate depending on velocity of objects - physics depended
-        glm::vec3 pos1 = parent->transform->GetGlobalPosition();
-        glm::vec3 pos2 = other->parent->transform->GetGlobalPosition();
-        glm::vec3 vector = pos2 - pos1;
-
-        vector /= 2;
         //spdlog::info(std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z));
 
-        other->parent->transform->SetLocalPosition(other->parent->transform->GetLocalPosition() + glm::vec3(0, 0.1f, 0));
+        if (other->parent->GetComponent<Rigidbody>() != nullptr) {
+            other->parent->GetComponent<Rigidbody>()->AddForce({0, 1, 0},
+                           -other->parent->GetComponent<Rigidbody>()->velocity.y, ForceMode::Impulse);
+            return;
+        }
     }
 }
 

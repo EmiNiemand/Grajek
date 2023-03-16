@@ -8,6 +8,7 @@
 #include "include/Components/Renderers/Lights/PointLight.h"
 #include "include/Components/Renderers/Lights/DirectionalLight.h"
 #include "include/Components/Renderers/Lights/SpotLight.h"
+#include "include/Components/PhysicsAndColliders/Rigidbody.h"
 #include "include/Components/PhysicsAndColliders/BoxCollider.h"
 
 GloomEngine::GloomEngine(GLFWwindow* window, int *width, int *height) : window(window), width(width), height(height) {
@@ -46,8 +47,8 @@ void GloomEngine::Init() {
     std::shared_ptr<GameObject> cube1 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer1 = cube1->AddComponent<Renderer>();
     cubeRenderer1->LoadModel("res/models/domek/domek.obj");
-    std::shared_ptr<BoxCollider> cubeCollider1 = cube1->AddComponent<BoxCollider>();
-    cubeCollider1->SetOffset({0, 1, 0});
+    std::shared_ptr<Rigidbody> cubeRigidbody = cube1->AddComponent<Rigidbody>();
+    cube1->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
     cube1->transform->SetLocalPosition({0, 30, -10});
     cube1->transform->SetLocalScale({0.5, 1, 0.5});
 
@@ -60,7 +61,7 @@ void GloomEngine::Init() {
     std::shared_ptr<PointLight> pointLight2 = cube3->AddComponent<PointLight>();
     cube3->transform->SetLocalPosition({0, 1, -10});
 
-//    for (int i = 0; i < 1000; i++) {
+//    for (int i = 0; i < 100; i++) {
 //        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
 //        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
 //        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
@@ -91,21 +92,15 @@ bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastFrameTime;
 
-    engineRenderer->UpdateRenderer();
-
-    std::shared_ptr<GameObject> cube = FindGameObjectWithName("Cube1");
-    cube->transform->SetLocalPosition(cube->transform->GetLocalPosition() + glm::vec3(0, -0.1, 0));
-
-    engineColliders->Update();
-
     for (auto&& component : components){
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
 
-    // TODO: add way to get out of the game
     engineHID->Update();
+    engineColliders->Update();
+    engineRenderer->UpdateRenderer();
     lastFrameTime = currentTime;
 
     timer += deltaTime;
@@ -117,6 +112,7 @@ bool GloomEngine::Update() {
         timer = 0;
     }
 
+    // TODO: add way to get out of the game
     return false;
 }
 

@@ -64,6 +64,7 @@ public:
     std::shared_ptr<GameObject> activeCamera;
     std::shared_ptr<GameObject> activeScene;
 
+    // Framerate TODO: delete
     float timer = 0;
     int frames = 0;
 
