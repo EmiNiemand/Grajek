@@ -37,22 +37,20 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
         glm::vec3 vectors[6];
         vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
         vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
-        vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,1,1));
+        vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,-1,1));
         vectors[3] = -vectors[0];
         vectors[4] = -vectors[1];
         vectors[5] = -vectors[2];
 
-        glm::vec3 position = parent->transform->GetLocalPosition() + offset  * parent->transform->GetLocalScale();
-        glm::vec3 otherPosition = other->parent->transform->GetLocalPosition() + other->offset  * other->parent->transform->GetLocalScale();
-        glm::vec3 difPosition = position - otherPosition;
-
-        glm::vec3 closestVector = glm::vec3(0, 0, 0);
+        glm::vec3 position = parent->transform->GetLocalPosition() + offset * parent->transform->GetLocalScale();
+        glm::vec3 otherPosition = other->parent->transform->GetLocalPosition()+ other->offset * other->parent->transform->GetLocalScale();
+        glm::vec3 diffPos = position - otherPosition;
+        diffPos = glm::vec3(std::abs(diffPos.x), std::abs(diffPos.y), std::abs(diffPos.z));
 
         std::vector<std::pair<glm::vec3, glm::vec3>> points;
 
-        spdlog::info("dupa");
-        for(auto vector : vectors) {
-            glm::vec3 point = otherPosition + vector * difPosition;
+        for (auto vector : vectors) {
+            glm::vec3 point = otherPosition + glm::normalize(vector) * diffPos;
             if(!(point.x >= minOtherPos.x &&
                  point.x <= maxOtherPos.x &&
                  point.y >= minOtherPos.y &&
@@ -63,26 +61,53 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
             }
         }
 
+        if (points.empty()) return;
         float minDistance = glm::distance(points[0].first, position);
+        glm::vec3 closestVector = glm::vec3(0, 0, 0);
 
         for (auto point : points) {
             float distance = glm::distance(point.first, position);
-            spdlog::info(std::to_string(distance) +", "+std::to_string(point.second.x)+", "+std::to_string(point.second.y)+", "+std::to_string(point.second.z));
-            if (distance < minDistance) {
+            if (distance == minDistance) {
+                closestVector += point.second;
+            }
+            else if (distance < minDistance) {
                 minDistance = distance;
                 closestVector = point.second;
-            }
-            else if (distance == minDistance) {
-                closestVector += point.second;
             }
         }
 
         if (parent->GetComponent<Rigidbody>() != nullptr) {
-            glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
-            velocity = closestVector * velocity;
+            float cos = glm::dot(glm::vec3(1, 0, 0), glm::normalize(closestVector));
+            float absCos = std::abs(cos);
+            if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
+                float value = glm::normalize(closestVector).x + glm::normalize(closestVector).y + glm::normalize(closestVector).z;
+                glm::vec3 velocity = glm::normalize(closestVector) * parent->GetComponent<Rigidbody>()->velocity;
+                if (value > 0) velocity = -velocity;
+                parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
+            }
+            else {
+                glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
 
-            parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
+                glm::vec3 cross = glm::cross(glm::normalize(velocity), glm::normalize(closestVector));
+                float rad = std::acos(glm::dot(glm::normalize(velocity), glm::normalize(closestVector)));
 
+                glm::mat4 tMatrix = glm::rotate(glm::mat4(1.0f), rad, cross);
+                glm::vec3 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
+
+                if (!(glm::normalize(vel).x <= glm::normalize(closestVector).x + 0.001 &&
+                    glm::normalize(vel).y <= glm::normalize(closestVector).y + 0.001 &&
+                    glm::normalize(vel).z <= glm::normalize(closestVector).z + 0.001 &&
+                    glm::normalize(vel).x >= glm::normalize(closestVector).x - 0.001 &&
+                    glm::normalize(vel).y >= glm::normalize(closestVector).y - 0.001 &&
+                    glm::normalize(vel).z >= glm::normalize(closestVector).z - 0.001))
+                {
+                    tMatrix = glm::rotate(glm::mat4(1.0f), -rad, cross);
+                    vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
+                }
+
+                vel = glm::normalize(vel) * glm::length(velocity);
+                parent->GetComponent<Rigidbody>()->AddForce(vel, ForceMode::Impulse);
+            }
         }
     }
 }

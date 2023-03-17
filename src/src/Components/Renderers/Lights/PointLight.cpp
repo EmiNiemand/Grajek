@@ -7,7 +7,7 @@ PointLight::PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const st
     constant = 1.0f;
     linear = 0.007f;
     quadratic = 0.0002f;
-    ambient = {0.25f, 0.25f, 0.25f};
+    ambient = {1.0f, 1.0f, 1.0f};
     diffuse = {0.69f, 0.69f, 0.69f};
     specular = {1.0f, 1.0f, 1.0f};
     color = {1.0f, 1.0f, 1.0f};
