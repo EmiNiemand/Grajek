@@ -37,9 +37,9 @@ struct SpotLight {
     vec3 color;
 };
 
-#define NR_POINT_LIGHTS 128
-#define NR_DIRECTIONAL_LIGHTS 128
-#define NR_SPOT_LIGHTS 128
+#define NR_POINT_LIGHTS 32
+#define NR_DIRECTIONAL_LIGHTS 32
+#define NR_SPOT_LIGHTS 32
 
 in vec2 TexCoords;
 in vec3 Normal;
