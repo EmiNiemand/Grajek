@@ -16,9 +16,6 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
     glm::vec3 rotation = parent->transform->GetLocalRotation();
     glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
 
-    int deg = (int)std::round(rotation.x + rotation.y + rotation.z);
-    int otherDeg = (int)std::round(otherRotation.x + otherRotation.y + otherRotation.z);
-
     glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
     glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
 
