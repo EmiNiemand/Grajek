@@ -63,11 +63,11 @@ void EngineHID::KeyActionCallback(GLFWwindow *window, int key, int scancode, int
     if (action == GLFW_RELEASE) {
         if (!keysDownBuffer.empty()) {
             auto iterator = std::find(keysDownBuffer.begin(), keysDownBuffer.end(), static_cast<Key>(key));
-            keysDownBuffer.erase(iterator);
+            if(iterator != keysDownBuffer.end()) keysDownBuffer.erase(iterator);
         }
         if (!keysPressedBuffer.empty()) {
             auto iterator = std::find(keysPressedBuffer.begin(), keysPressedBuffer.end(), static_cast<Key>(key));
-            keysPressedBuffer.erase(iterator);
+            if(iterator != keysPressedBuffer.end()) keysPressedBuffer.erase(iterator);
         }
         keysUpBuffer.push_back(static_cast<Key>(key));
     }

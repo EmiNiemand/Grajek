@@ -11,7 +11,6 @@
 
 Renderer::Renderer(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) :
 Component(gloomEngine, parent, id) {
-    name = ComponentNames::RENDERER;
     objectColor = {1.0f, 1.0f, 1.0f};
     shininess = 32.0f;
 }

@@ -6,7 +6,6 @@
 
 BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {
-    name = ComponentNames::BOXCOLLIDER;
     size = {1.0f, 1.0f, 1.0f};
     offset = {0.0f, 0.0f, 0.0f};
 }
@@ -25,66 +24,6 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
 
     glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
     glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
-    // Collision checker for not rotated cubes AABB method
-    if (deg % 90 == 0 && otherDeg % 90 == 0){
-        if (maxBoxPos.x >= minOtherPos.x && maxBoxPos.x <= maxOtherPos.x &&
-            maxBoxPos.y >= minOtherPos.y && maxBoxPos.y <= maxOtherPos.y &&
-            maxBoxPos.z >= minOtherPos.z && maxBoxPos.z <= maxOtherPos.z ||
-            minBoxPos.x >= minOtherPos.x && minBoxPos.x <= maxOtherPos.x &&
-            minBoxPos.y >= minOtherPos.y && minBoxPos.y <= maxOtherPos.y &&
-            minBoxPos.z >= minOtherPos.z && minBoxPos.z <= maxOtherPos.z) {
-
-            const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-            const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-            // Y * X * Z
-            const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-            glm::vec3 vectors[6];
-            vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
-            vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
-            vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,1,1));
-            vectors[3] = -vectors[0];
-            vectors[4] = -vectors[1];
-            vectors[5] = -vectors[2];
-
-            glm::vec3 position = parent->transform->GetLocalPosition() + offset  * parent->transform->GetLocalScale();
-            glm::vec3 otherPosition = other->parent->transform->GetLocalPosition() + other->offset  * other->parent->transform->GetLocalScale();
-            glm::vec3 difPosition = position - otherPosition;
-
-            glm::vec3 closestVector = glm::vec3(0, 0, 0);
-            float closestDistance = glm::distance(otherPosition + glm::normalize(vectors[0]), position);
-
-            for(auto vector : vectors) {
-                float distance = glm::distance(otherPosition + glm::normalize(vector), position);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestVector = vector;
-                    continue;
-                }
-                if (distance == closestDistance) {
-                    glm::vec3 point = otherPosition + glm::normalize(vector) * difPosition;
-                    if(!(point.x >= minOtherPos.x &&
-                       point.x <= maxOtherPos.x &&
-                       point.y >= minOtherPos.y &&
-                       point.y <= maxOtherPos.y &&
-                       point.z >= minOtherPos.z &&
-                       point.z <= maxOtherPos.z)) {
-                        closestDistance = distance;
-                        closestVector += vector;
-                    }
-                }
-            }
-
-            if (parent->GetComponent<Rigidbody>() != nullptr) {
-                glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
-                velocity = glm::normalize(closestVector) * velocity;
-                parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
-            }
-        }
-        return;
-    }
 
     // OBB
     if (GetOBBCollision(other)) {
@@ -108,33 +47,42 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
         glm::vec3 difPosition = position - otherPosition;
 
         glm::vec3 closestVector = glm::vec3(0, 0, 0);
-        float closestDistance = glm::distance(otherPosition + glm::normalize(vectors[0]), position);
 
+        std::vector<std::pair<glm::vec3, glm::vec3>> points;
+
+        spdlog::info("dupa");
         for(auto vector : vectors) {
-            float distance = glm::distance(otherPosition + glm::normalize(vector), position);
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestVector = vector;
-                continue;
+            glm::vec3 point = otherPosition + vector * difPosition;
+            if(!(point.x >= minOtherPos.x &&
+                 point.x <= maxOtherPos.x &&
+                 point.y >= minOtherPos.y &&
+                 point.y <= maxOtherPos.y &&
+                 point.z >= minOtherPos.z &&
+                 point.z <= maxOtherPos.z)) {
+                points.push_back(std::make_pair(point, vector));
             }
-            if (distance == closestDistance) {
-                glm::vec3 point = otherPosition + glm::normalize(vector) * difPosition;
-                if(!(point.x >= minOtherPos.x &&
-                     point.x <= maxOtherPos.x &&
-                     point.y >= minOtherPos.y &&
-                     point.y <= maxOtherPos.y &&
-                     point.z >= minOtherPos.z &&
-                     point.z <= maxOtherPos.z)) {
-                    closestDistance = distance;
-                    closestVector += vector;
-                }
+        }
+
+        float minDistance = glm::distance(points[0].first, position);
+
+        for (auto point : points) {
+            float distance = glm::distance(point.first, position);
+            spdlog::info(std::to_string(distance) +", "+std::to_string(point.second.x)+", "+std::to_string(point.second.y)+", "+std::to_string(point.second.z));
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestVector = point.second;
+            }
+            else if (distance == minDistance) {
+                closestVector += point.second;
             }
         }
 
         if (parent->GetComponent<Rigidbody>() != nullptr) {
             glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
-            velocity = glm::normalize(closestVector) * velocity;
+            velocity = closestVector * velocity;
+
             parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
+
         }
     }
 }

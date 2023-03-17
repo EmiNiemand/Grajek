@@ -19,13 +19,6 @@ void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
     gameObject->parent->RemoveChild(gameObject->GetId());
 }
 
-std::shared_ptr<Component> GameObject::GetComponentByName(ComponentNames name) {
-    for (auto&& component : components) {
-        if (component.second->GetName() == name) return component.second;
-    }
-    return nullptr;
-}
-
 void GameObject::OnTransformUpdateComponents() {
     for (auto&& component : components) {
         component.second->OnUpdate();

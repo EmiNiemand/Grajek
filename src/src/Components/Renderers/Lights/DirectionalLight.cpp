@@ -4,7 +4,6 @@
 
 DirectionalLight::DirectionalLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent,
                                    int id) : Component(gloomEngine, parent, id) {
-    name = ComponentNames::DIRECTIONALLIGHT;
     ambient = {0.1f, 0.1f, 0.1f};
     diffuse = {0.25f, 0.25f, 0.25f};
     specular = {0.33f, 0.33f, 0.33f};

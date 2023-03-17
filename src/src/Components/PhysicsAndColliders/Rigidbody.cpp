@@ -9,7 +9,6 @@
 
 Rigidbody::Rigidbody(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {
-    name = ComponentNames::RIGIDBODY;
     parent->AddComponent<BoxCollider>();
 }
 

@@ -12,16 +12,6 @@ enum class Tags{
     LIGHT
 };
 
-enum class ComponentNames{
-    RENDERER,
-    CAMERA,
-    DIRECTIONALLIGHT,
-    SPOTLIGHT,
-    POINTLIGHT,
-    BOXCOLLIDER,
-    RIGIDBODY
-};
-
 enum class Key{
     KEY_1 = 49, KEY_2 = 50, KEY_3 = 51, KEY_4 = 52, KEY_5 = 53, KEY_6 = 54, KEY_7 = 55, KEY_8 = 56, KEY_9 = 57, KEY_0 = 48,
     KEY_Q = 81, KEY_W = 87, KEY_E = 69, KEY_R = 82, KEY_T = 84, KEY_Y = 89, KEY_U = 85, KEY_I = 73, KEY_O = 79, KEY_P = 80,

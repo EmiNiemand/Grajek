@@ -56,7 +56,6 @@ public:
         }
         return nullptr;
     };
-    std::shared_ptr<Component> GetComponentByName(ComponentNames name);
 
     void OnTransformUpdateComponents();
     void RemoveComponent(int componentId);

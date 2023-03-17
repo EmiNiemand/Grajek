@@ -12,7 +12,6 @@ class Component {
 protected:
     int id;
     std::shared_ptr<GloomEngine> gloomEngine;
-    ComponentNames name;
     std::shared_ptr<GameObject> parent;
 
 public:
@@ -34,7 +33,6 @@ public:
 
     // Getters
     [[nodiscard]] int GetId() const;
-    [[nodiscard]] const ComponentNames &GetName() const;
     [[nodiscard]] const std::shared_ptr<GameObject> &GetParent() const;
 
     //Setters

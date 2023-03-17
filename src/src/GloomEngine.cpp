@@ -10,6 +10,7 @@
 #include "include/Components/Renderers/Lights/SpotLight.h"
 #include "include/Components/PhysicsAndColliders/Rigidbody.h"
 #include "include/Components/PhysicsAndColliders/BoxCollider.h"
+#include "include/Components/Scripts/PlayerMovement.h"
 
 GloomEngine::GloomEngine(GLFWwindow* window, int *width, int *height) : window(window), width(width), height(height) {
 
@@ -25,7 +26,7 @@ void GloomEngine::Init() {
 
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
-    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), true);
+    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
     engineHID = std::make_unique<EngineHID>(shared_from_this());
 
 
@@ -37,41 +38,40 @@ void GloomEngine::Init() {
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
     activeCamera->transform->SetLocalPosition({0, 20, 10});
 
+    std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
+    std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
+    playerRenderer->LoadModel("res/models/domek/domek.obj");
+    std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
+    player->AddComponent<PlayerMovement>();
+    player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
+    player->transform->SetLocalPosition({0, 30, -10});
+    player->transform->SetLocalScale({0.5, 1, 0.5});
+    std::shared_ptr<GameObject> pivot = GameObject::Instantiate("Cube", player, Tags::DEFAULT);;
+    pivot->transform->SetLocalPosition({0, 1, -10});
+
     std::shared_ptr<GameObject> cube = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer = cube->AddComponent<Renderer>();
     cubeRenderer->LoadModel("res/models/domek/domek.obj");
     std::shared_ptr<BoxCollider> cubeCollider = cube->AddComponent<BoxCollider>();
     cubeCollider->SetOffset({0, 1, 0});
     cube->transform->SetLocalPosition({0, -4, -10});
-    cube->transform->SetLocalScale({10, 2, 6});
+    cube->transform->SetLocalScale({20, 2, 20});
 
-    std::shared_ptr<GameObject> cube1 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> cubeRenderer1 = cube1->AddComponent<Renderer>();
-    cubeRenderer1->LoadModel("res/models/domek/domek.obj");
-    std::shared_ptr<Rigidbody> cubeRigidbody = cube1->AddComponent<Rigidbody>();
-    cube1->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
-    cube1->transform->SetLocalPosition({0, 30, -10});
-    cube1->transform->SetLocalScale({0.5, 1, 0.5});
+    std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
+    sun->AddComponent<PointLight>();
+    sun->transform->SetLocalPosition({25, 100, 25});
 
-    std::shared_ptr<GameObject> cube2 = GameObject::Instantiate("Cube", cube1, Tags::DEFAULT);
-    std::shared_ptr<SpotLight> spotLight2 = cube2->AddComponent<SpotLight>();
-    cube2->transform->SetLocalPosition({0, 10, -10});
-    cube2->transform->SetLocalRotation({-90, 0, 0});
-
-    std::shared_ptr<GameObject> cube3 = GameObject::Instantiate("Cube", cube1, Tags::DEFAULT);;
-    std::shared_ptr<PointLight> pointLight2 = cube3->AddComponent<PointLight>();
-    cube3->transform->SetLocalPosition({0, 1, -10});
-
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
         std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
         cubeRenderer5->LoadModel("res/models/domek/domek.obj");
         std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
         cubeCollider5->SetOffset({0, 1, 0});
-        cube5->transform->SetLocalPosition({i * std::cos(i), -20 + i, -50 + i * std::sin(i)});
+        cube5->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
+        cube5->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
 
-    camera->SetTarget(cube3);
+    camera->SetTarget(pivot);
 }
 
 void GloomEngine::Awake() {
@@ -110,7 +110,7 @@ bool GloomEngine::Update() {
     frames++;
 
     if (timer >= 1) {
-        spdlog::info(frames);
+//        spdlog::info(frames);
         frames = 0;
         timer = 0;
     }
@@ -152,11 +152,8 @@ void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
 
 void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
     int componentId = component->GetId();
-    if (component->GetName() == ComponentNames::SPOTLIGHT || component->GetName() == ComponentNames ::DIRECTIONALLIGHT ||
-        component->GetName() == ComponentNames::POINTLIGHT) {
-        engineRenderer->RemoveLight(componentId);
-    }
-    if (component->GetName() == ComponentNames::BOXCOLLIDER) engineColliders->RemoveBoxCollider(componentId);
+    engineRenderer->RemoveLight(componentId);
+    engineColliders->RemoveBoxCollider(componentId);
     components.erase(componentId);
 }
 

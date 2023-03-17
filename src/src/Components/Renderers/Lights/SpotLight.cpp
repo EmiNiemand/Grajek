@@ -4,7 +4,6 @@
 
 SpotLight::SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {
-    name = ComponentNames::SPOTLIGHT;
     cutOff = glm::cos(glm::radians(12.5f));
     outerCutOff = glm::cos(glm::radians(15.0f));
     constant = 1.0f;

@@ -30,8 +30,7 @@ void EngineRenderer::UpdateProjection() {
 
 void EngineRenderer::UpdateCamera() {
     shader->Activate();
-    shader->SetMat4("view", std::dynamic_pointer_cast<Camera>(
-            gloomEngine->activeCamera->GetComponentByName(ComponentNames::CAMERA))->GetViewMatrix());
+    shader->SetMat4("view", gloomEngine->activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", gloomEngine->activeCamera->transform->GetGlobalPosition());
 }
 

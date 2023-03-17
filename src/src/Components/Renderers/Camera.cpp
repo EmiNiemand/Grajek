@@ -4,9 +4,7 @@
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 
 Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) : Component(
-        gloomEngine, parent, id) {
-    name = ComponentNames::CAMERA;
-}
+        gloomEngine, parent, id) {}
 
 Camera::~Camera() {}
 

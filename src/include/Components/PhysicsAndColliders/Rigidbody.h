@@ -15,8 +15,8 @@ class Rigidbody : public Component {
 public:
     glm::vec3 velocity = {0, 0, 0};
     float mass = 1;
-    float linearDrag = 0.05;
-    float gravityScale = 1;
+    float linearDrag = 10;
+    float gravityScale = 5;
 
 public:
     Rigidbody(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
