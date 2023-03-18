@@ -20,7 +20,7 @@ glm::mat4 Camera::GetViewMatrix() {
     }
     else {
         glm::vec3 targetPosition = target->transform->GetGlobalPosition();
-        return glm::lookAt(position, position + targetPosition - position, up);
+        return glm::lookAt(position, targetPosition, up);
     }
 }
 
