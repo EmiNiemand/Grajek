@@ -40,7 +40,7 @@ void GloomEngine::Init() {
 
     std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
-    playerRenderer->LoadModel("res/models/domek/domek.obj");
+    playerRenderer->LoadModel("domek/domek.obj");
     std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
     player->AddComponent<PlayerMovement>();
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
@@ -51,7 +51,7 @@ void GloomEngine::Init() {
 
     std::shared_ptr<GameObject> cube = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> cubeRenderer = cube->AddComponent<Renderer>();
-    cubeRenderer->LoadModel("res/models/domek/domek.obj");
+    cubeRenderer->LoadModel("domek/domek.obj");
     std::shared_ptr<BoxCollider> cubeCollider = cube->AddComponent<BoxCollider>();
     cubeCollider->SetOffset({0, 1, 0});
     cube->transform->SetLocalPosition({0, -4, -10});
@@ -64,7 +64,7 @@ void GloomEngine::Init() {
     for (int i = 0; i < 10; i++) {
         std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
         std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
-        cubeRenderer5->LoadModel("res/models/domek/domek.obj");
+        cubeRenderer5->LoadModel("domek/domek.obj");
         std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
         cubeCollider5->SetOffset({0, 1, 0});
         cube5->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
