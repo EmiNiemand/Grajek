@@ -78,7 +78,7 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
             float absCos = std::abs(cos);
             if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
                 float value = glm::normalize(closestVector).x + glm::normalize(closestVector).y + glm::normalize(closestVector).z;
-                glm::vec3 velocity = glm::normalize(closestVector) * parent->GetComponent<Rigidbody>()->velocity;
+                glm::vec3 velocity = glm::normalize(closestVector) * (parent->GetComponent<Rigidbody>()->velocity - glm::vec3(0.001));
                 if (value > 0) velocity = -velocity;
                 parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
             }
