@@ -36,7 +36,8 @@ void GloomEngine::Init() {
     // TODO: delete this
     activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    activeCamera->transform->SetLocalPosition({0, 20, 10});
+    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->parameter = 0.02f;
 
     std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
     std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
@@ -44,7 +45,7 @@ void GloomEngine::Init() {
     std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
     player->AddComponent<PlayerMovement>();
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
-    player->transform->SetLocalPosition({0, 30, -10});
+    player->transform->SetLocalPosition({0, 2, -10});
     player->transform->SetLocalScale({0.5, 1, 0.5});
     std::shared_ptr<GameObject> pivot = GameObject::Instantiate("Cube", player, Tags::DEFAULT);;
     pivot->transform->SetLocalPosition({0, 1, -10});
@@ -71,7 +72,8 @@ void GloomEngine::Init() {
         cube5->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
 
-    camera->SetTarget(pivot);
+    //camera->SetTarget(pivot);
+    camera->SetTarget(nullptr);
 }
 
 void GloomEngine::Awake() {
