@@ -44,17 +44,17 @@ void Transform::SetLocalScale(const glm::vec3& newScale)
     parent->UpdateSelfAndChildren();
 }
 
-const glm::vec3& Transform::GetGlobalPosition() const
+glm::vec3 Transform::GetGlobalPosition() const
 {
     return mModelMatrix[3];
 }
 
-const glm::vec3& Transform::GetLocalPosition() const
+glm::vec3 Transform::GetLocalPosition() const
 {
     return mPos;
 }
 
-const glm::vec3& Transform::GetLocalRotation() const
+glm::vec3 Transform::GetLocalRotation() const
 {
     return mEulerRot;
 }
@@ -64,12 +64,12 @@ glm::vec3 Transform::GetGlobalScale() const
     return {glm::length(GetRight()), glm::length(GetUp()), glm::length(GetBackward()) };
 }
 
-const glm::vec3& Transform::GetLocalScale() const
+glm::vec3 Transform::GetLocalScale() const
 {
     return mScale;
 }
 
-const glm::mat4& Transform::GetModelMatrix() const
+glm::mat4 Transform::GetModelMatrix() const
 {
     return mModelMatrix;
 }
