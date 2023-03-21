@@ -31,6 +31,7 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
         // Y * X * Z
         const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
 
+        // Walls' normal vectors
         glm::vec3 vectors[6];
         vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
         vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
@@ -46,6 +47,8 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
 
         std::vector<std::pair<glm::vec3, glm::vec3>> points;
 
+        // Calculate shift point in normal direction to check if it is within the walls of other collider and to look
+        // the closest point to the first collider
         for (auto vector : vectors) {
             glm::vec3 point = otherPosition + glm::normalize(vector) * diffPos;
             if(!(point.x >= minOtherPos.x &&
@@ -76,12 +79,15 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
         if (parent->GetComponent<Rigidbody>() != nullptr) {
             float cos = glm::dot(glm::vec3(1, 0, 0), glm::normalize(closestVector));
             float absCos = std::abs(cos);
+            // Collision handling for not rotated collider
             if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
                 float value = glm::normalize(closestVector).x + glm::normalize(closestVector).y + glm::normalize(closestVector).z;
+                // Subtract by 0.001 so character does not stuck on collision
                 glm::vec3 velocity = glm::normalize(closestVector) * (parent->GetComponent<Rigidbody>()->velocity - glm::vec3(0.001));
                 if (value > 0) velocity = -velocity;
                 parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
             }
+            // Collision handling for rotated colliders
             else {
                 glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
 
@@ -91,6 +97,7 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
                 glm::mat4 tMatrix = glm::rotate(glm::mat4(1.0f), rad, cross);
                 glm::vec3 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
 
+                // Check if rotated vector is equal normal vector of the wall
                 if (!(glm::normalize(vel).x <= glm::normalize(closestVector).x + 0.001 &&
                     glm::normalize(vel).y <= glm::normalize(closestVector).y + 0.001 &&
                     glm::normalize(vel).z <= glm::normalize(closestVector).z + 0.001 &&
