@@ -125,7 +125,7 @@ void GloomEngine::InitializeWindow() {
     window = glfwCreateWindow(width, height, "Gloomies", NULL, NULL);
     if (window == nullptr)
         throw;
-    glfwMakeContextCurrent(&*window);
+    glfwMakeContextCurrent(window);
     // Enable vsync
     glfwSwapInterval(true);
 
@@ -133,10 +133,10 @@ void GloomEngine::InitializeWindow() {
     const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     int monitorWidth = mode->width;
     int monitorHeight = mode->height;
-    glfwSetWindowPos(&*window, monitorWidth / 2 - width / 2, monitorHeight / 2 - height / 2);
+    glfwSetWindowPos(window, monitorWidth / 2 - width / 2, monitorHeight / 2 - height / 2);
 
     // Enable cursor - change last parameter to disable it
-    glfwSetInputMode(&*window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
