@@ -93,18 +93,19 @@ int main(int, char**)
     while (!glfwWindowShouldClose(window) || endGame)
     {
         glfwPollEvents();
+        glfwGetWindowSize(window, &width, &height);
 
+#ifdef DEBUG
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        glfwGetWindowSize(window, &width, &height);
 
         ImGui::Begin("Debug window", nullptr);
 
         ImGui::End();
 
         ImGui::Render();
+#endif
         int display_w, display_h;
         glfwMakeContextCurrent(window);
         glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -114,17 +115,21 @@ int main(int, char**)
 
         endGame = gloomEngine->Update();
 
+#ifdef DEBUG
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
 
     gloomEngine->Free();
+
+#ifdef DEBUG
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
+#endif
     glfwDestroyWindow(window);
     glfwTerminate();
 
