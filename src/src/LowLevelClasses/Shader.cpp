@@ -8,6 +8,9 @@
 #include <sstream>
 #include <fstream>
 
+// Prefix for any path given as shader source
+#define BASE_PATH "res/shaders/"
+
 Shader::Shader(std::string vertexShaderSource, std::string fragmentShaderSource, std::string geometryShaderSource) {
 
     std::string vCode;
@@ -34,7 +37,7 @@ Shader::Shader(std::string vertexShaderSource, std::string fragmentShaderSource,
     glCompileShader(fragmentShader);
 
     GLuint geometryShader;
-    if(geometryShaderSource != "")
+    if(!geometryShaderSource.empty())
     {
         std::string gCode;
         LoadShader(geometryShaderSource, gCode);
@@ -73,7 +76,7 @@ void Shader::LoadShader(std::string& shaderPath, std::string& shaderCode) {
     ShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
-        ShaderFile.open(shaderPath);
+        ShaderFile.open(BASE_PATH + shaderPath);
         std::stringstream ShaderStream;
 
         ShaderStream << ShaderFile.rdbuf();
@@ -156,4 +159,5 @@ void Shader::SetMat4(const std::string &name, const glm::mat4 &mat) const
 {
     glUniformMatrix4fv(glGetUniformLocation(shader, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
+
 #pragma endregion

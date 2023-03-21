@@ -8,7 +8,7 @@
 #include "include/Components/Renderers/Lights/SpotLight.h"
 
 EngineRenderer::EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
-    shader = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/basic.frag");
+    shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     projection = glm::perspective(glm::radians(45.0f), (float)*gloomEngine->width/(float)*gloomEngine->height, 0.1f, 100.0f);
 }
 

@@ -37,6 +37,12 @@ struct SpotLight {
     vec3 color;
 };
 
+struct Material {
+    sampler2D diffuse;
+    sampler2D roughness;
+    sampler2D opacity;
+};
+
 #define NR_POINT_LIGHTS 32
 #define NR_DIRECTIONAL_LIGHTS 32
 #define NR_SPOT_LIGHTS 32
@@ -66,21 +72,21 @@ void main()
 
     // phase 1: directional lighting
     for(int i = 0; i < NR_DIRECTIONAL_LIGHTS; i++){
-        if(directionalLights[i].isActive == true) {
+        if(directionalLights[i].isActive) {
             result += CalculateDirectionalLight(directionalLights[i], norm, viewDir);
         }
     }
 
     // phase 2: point light
     for(int i = 0; i < NR_POINT_LIGHTS; i++){
-        if(pointLights[i].isActive == true){
+        if(pointLights[i].isActive){
             result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);
         }
     }
 
     // phase 3: spot lights
     for(int i = 0; i < NR_SPOT_LIGHTS; i++){
-        if(spotLights[i].isActive == true){
+        if(spotLights[i].isActive){
             result += CalculateSpotLight(spotLights[i], norm, FragPos, viewDir);
         }
     }
