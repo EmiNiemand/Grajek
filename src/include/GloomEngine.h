@@ -56,8 +56,8 @@ private:
 
 public:
     GLFWwindow* window;
-    int width;
-    int height;
+    int32_t width;
+    int32_t height;
 
     glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
 

@@ -9,23 +9,7 @@ file(GLOB_RECURSE HEADER_FILES
 	 *.hpp)
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/LowLevelClasses/Shader.cpp include/LowLevelClasses/Shader.h src/LowLevelClasses/Mesh.cpp
-		include/LowLevelClasses/Mesh.h src/LowLevelClasses/Model.cpp include/LowLevelClasses/Model.h
-		src/Components/Transform.cpp include/Components/Transform.h src/GameObjectsAndPrefabs/GameObject.cpp
-		include/GameObjectsAndPrefabs/GameObject.h include/GameObjectsAndPrefabs/GameObject.h src/Components/Component.cpp
-		include/Components/Component.h include/Components/Component.h include/ProjectSettings.h include/ProjectSettings.h
-		src/GloomEngine.cpp include/GloomEngine.h include/GloomEngine.h src/Components/Renderers/Renderer.cpp include/Components/Renderers/Renderer.h
-		include/Components/Renderers/Renderer.h src/Factories/GameObjectFactory.cpp include/Factories/GameObjectFactory.h
-		include/Factories/GameObjectFactory.h src/Factories/ComponentFactory.cpp include/Factories/ComponentFactory.h
-		include/Factories/ComponentFactory.h src/Components/Renderers/Camera.cpp include/Components/Renderers/Camera.h
-		include/Components/Renderers/Camera.h src/EngineComponents/EngineRenderer.cpp include/EngineComponents/EngineRenderer.h
-		src/Components/Renderers/Lights/PointLight.cpp include/Components/Renderers/Lights/PointLight.h include/Components/Renderers/Lights/PointLight.h
-		src/Components/Renderers/Lights/DirectionalLight.cpp include/Components/Renderers/Lights/DirectionalLight.h
-		include/Components/Renderers/Lights/DirectionalLight.h src/Components/Renderers/Lights/SpotLight.cpp include/Components/Renderers/Lights/SpotLight.h
-		include/Components/Renderers/Lights/SpotLight.h src/Components/PhysicsAndColliders/BoxCollider.cpp include/Components/PhysicsAndColliders/BoxCollider.h
-		include/EngineComponents/EngineColliders.h src/EngineComponents/EngineColliders.cpp
-		src/EngineComponents/EngineHID.cpp include/EngineComponents/EngineHID.h
-		src/Components/PhysicsAndColliders/Rigidbody.cpp include/Components/PhysicsAndColliders/Rigidbody.h src/Components/Scripts/PlayerMovement.cpp include/Components/Scripts/PlayerMovement.h include/Components/Scripts/PlayerMovement.h src/Game.cpp include/Game.h include/Game.h)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")
