@@ -18,7 +18,6 @@ private:
     std::vector<glm::vec3> vertices;
     std::vector<unsigned int> indices;
 public:
-    bool isDebugOn;
     glm::vec3 debugColor = {0.0, 1.0, 0.0};
 
     std::shared_ptr<GloomEngine> gloomEngine;
@@ -27,7 +26,7 @@ public:
     std::shared_ptr<Shader> colliderDebugShader;
 
 public:
-    explicit EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine, bool isDebugOn = false);
+    explicit EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine);
     virtual ~EngineColliders();
 
     void Update();
