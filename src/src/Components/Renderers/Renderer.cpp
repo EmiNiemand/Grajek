@@ -49,3 +49,8 @@ void Renderer::Draw() {
     model->Draw();
 }
 
+void Renderer::OnUpdate() {
+    gloomEngine->engineRenderer->UpdateLight(id);
+    Component::OnUpdate();
+}
+

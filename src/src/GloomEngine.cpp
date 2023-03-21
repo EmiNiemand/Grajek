@@ -1,4 +1,5 @@
 #include "include/GloomEngine.h"
+#include "include/Game.h"
 #include "include/EngineComponents/EngineRenderer.h"
 #include "include/EngineComponents/EngineColliders.h"
 #include "include/EngineComponents/EngineHID.h"
@@ -12,15 +13,16 @@
 #include "include/Components/PhysicsAndColliders/BoxCollider.h"
 #include "include/Components/Scripts/PlayerMovement.h"
 
-GloomEngine::GloomEngine(GLFWwindow* window, int *width, int *height) : window(window), width(width), height(height) {
-
+GloomEngine::GloomEngine() {
+    width = 1200;
+    height = 780;
 }
 
-GloomEngine::~GloomEngine() {
-
-}
+GloomEngine::~GloomEngine() {}
 
 void GloomEngine::Init() {
+    InitializeWindow();
+
     // Assign engin as parent to game objects
     GameObject::Init(shared_from_this());
 
@@ -29,51 +31,8 @@ void GloomEngine::Init() {
     engineColliders = std::make_unique<EngineColliders>(shared_from_this());
     engineHID = std::make_unique<EngineHID>(shared_from_this());
 
-
-    // CREATE BASIC SCENE
-    activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
-
-    // TODO: delete this
-    activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
-    std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
-    camera->parameter = 0.02f;
-
-    std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
-    playerRenderer->LoadModel("domek/domek.obj");
-    std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
-    player->AddComponent<PlayerMovement>();
-    player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
-    player->transform->SetLocalPosition({0, 2, -10});
-    player->transform->SetLocalScale({0.5, 1, 0.5});
-    std::shared_ptr<GameObject> pivot = GameObject::Instantiate("Cube", player, Tags::DEFAULT);;
-    pivot->transform->SetLocalPosition({0, 1, -10});
-
-    std::shared_ptr<GameObject> cube = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> cubeRenderer = cube->AddComponent<Renderer>();
-    cubeRenderer->LoadModel("domek/domek.obj");
-    std::shared_ptr<BoxCollider> cubeCollider = cube->AddComponent<BoxCollider>();
-    cubeCollider->SetOffset({0, 1, 0});
-    cube->transform->SetLocalPosition({0, -4, -10});
-    cube->transform->SetLocalScale({20, 2, 20});
-
-    std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
-    sun->AddComponent<PointLight>();
-    sun->transform->SetLocalPosition({25, 100, 25});
-
-    for (int i = 0; i < 10; i++) {
-        std::shared_ptr<GameObject> cube5 = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-        std::shared_ptr<Renderer> cubeRenderer5 = cube5->AddComponent<Renderer>();
-        cubeRenderer5->LoadModel("domek/domek.obj");
-        std::shared_ptr<BoxCollider> cubeCollider5 = cube5->AddComponent<BoxCollider>();
-        cubeCollider5->SetOffset({0, 1, 0});
-        cube5->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
-        cube5->transform->SetLocalRotation({0, cos(i) * 90, 0});
-    }
-
-    //camera->SetTarget(pivot);
-    camera->SetTarget(nullptr);
+    game = std::make_shared<Game>(shared_from_this());
+    game->Init();
 }
 
 void GloomEngine::Awake() {
@@ -95,11 +54,21 @@ void GloomEngine::Start() {
 bool GloomEngine::Update() {
     float currentTime = glfwGetTime();
 
+    glfwPollEvents();
+    glfwSetWindowSize(window, width, height);
+
+    glfwMakeContextCurrent(window);
+    glViewport(0, 0, width, height);
+    glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     for (auto&& component : components){
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
+
+    bool endGame = game->Update();
 
     engineHID->Update();
     engineColliders->Update();
@@ -108,17 +77,10 @@ bool GloomEngine::Update() {
     deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
 
-    timer += deltaTime;
-    frames++;
+    glfwMakeContextCurrent(window);
+    glfwSwapBuffers(window);
 
-    if (timer >= 1) {
-//        spdlog::info(frames);
-        frames = 0;
-        timer = 0;
-    }
-
-    // TODO: add way to get out of the game
-    return false;
+    return glfwWindowShouldClose(window) || endGame;
 }
 
 void GloomEngine::Free() {
@@ -126,37 +88,8 @@ void GloomEngine::Free() {
     engineColliders->Free();
     engineRenderer->Free();
     activeScene = nullptr;
-}
-
-void GloomEngine::ClearScene() {
-    activeScene->RemoveAllChildren();
-
-    components.clear();
-    gameObjects.clear();
-}
-
-//DO NOT USE
-void GloomEngine::AddGameObject(std::shared_ptr<GameObject> gameObject) {
-    gameObjects.insert({gameObject->GetId(), gameObject});
-}
-
-void GloomEngine::AddComponent(std::shared_ptr<Component> component) {
-    components.insert({component->GetId(), component});
-}
-
-void GloomEngine::OnUpdate(int componentId) {
-    engineRenderer->UpdateLight(componentId);
-}
-
-void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
-    gameObjects.erase(gameObject->GetId());
-}
-
-void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
-    int componentId = component->GetId();
-    engineRenderer->RemoveLight(componentId);
-    engineColliders->RemoveBoxCollider(componentId);
-    components.erase(componentId);
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
 std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(int id) {
@@ -171,5 +104,88 @@ std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithName(std::string name
         }
     }
     return nullptr;
+}
+
+// PRIVATE FUNCTIONS
+void GloomEngine::InitializeWindow() {
+    // Setup window
+    glfwSetErrorCallback(glfwErrorCallback);
+    if (!glfwInit())
+        throw;
+
+    // Decide GL+GLSL versions
+    // GL 4.3 + GLSL 430
+    const char* glsl_version = "#version 430";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+
+    // Create window with graphics context
+    window = glfwCreateWindow(width, height, "Gloomies", NULL, NULL);
+    if (window == nullptr)
+        throw;
+    glfwMakeContextCurrent(&*window);
+    // Enable vsync
+    glfwSwapInterval(true);
+
+    // Center window on the screen
+    const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int monitorWidth = mode->width;
+    int monitorHeight = mode->height;
+    glfwSetWindowPos(&*window, monitorWidth / 2 - width / 2, monitorHeight / 2 - height / 2);
+
+    // Enable cursor - change last parameter to disable it
+    glfwSetInputMode(&*window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+    // Initialize OpenGL loader
+#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
+    bool err = gl3wInit() != 0;
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+    bool err = glewInit() != GLEW_OK;
+#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
+    bool err = !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+#endif
+    if (err)
+    {
+        spdlog::error("Failed to initialize OpenGL loader!");
+        throw;
+    }
+    spdlog::info("Successfully initialized OpenGL loader!");
+
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void GloomEngine::ClearScene() {
+    activeScene->RemoveAllChildren();
+    components.clear();
+    gameObjects.clear();
+}
+
+void GloomEngine::AddGameObject(std::shared_ptr<GameObject> gameObject) {
+    gameObjects.insert({gameObject->GetId(), gameObject});
+}
+
+void GloomEngine::AddComponent(std::shared_ptr<Component> component) {
+    components.insert({component->GetId(), component});
+}
+
+void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
+    gameObjects.erase(gameObject->GetId());
+}
+
+void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
+    int componentId = component->GetId();
+    engineRenderer->RemoveLight(componentId);
+    engineColliders->RemoveBoxCollider(componentId);
+    components.erase(componentId);
+}
+
+void GloomEngine::glfwErrorCallback(int error, const char* description)
+{
+    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 

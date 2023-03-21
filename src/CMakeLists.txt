@@ -25,7 +25,7 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/LowLevelClass
 		include/Components/Renderers/Lights/SpotLight.h src/Components/PhysicsAndColliders/BoxCollider.cpp include/Components/PhysicsAndColliders/BoxCollider.h
 		include/EngineComponents/EngineColliders.h src/EngineComponents/EngineColliders.cpp
 		src/EngineComponents/EngineHID.cpp include/EngineComponents/EngineHID.h
-		src/Components/PhysicsAndColliders/Rigidbody.cpp include/Components/PhysicsAndColliders/Rigidbody.h src/Components/Scripts/PlayerMovement.cpp include/Components/Scripts/PlayerMovement.h include/Components/Scripts/PlayerMovement.h)
+		src/Components/PhysicsAndColliders/Rigidbody.cpp include/Components/PhysicsAndColliders/Rigidbody.h src/Components/Scripts/PlayerMovement.cpp include/Components/Scripts/PlayerMovement.h include/Components/Scripts/PlayerMovement.h src/Game.cpp include/Game.h include/Game.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

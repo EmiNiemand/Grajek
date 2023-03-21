@@ -9,7 +9,7 @@
 
 EngineRenderer::EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
-    projection = glm::perspective(glm::radians(45.0f), (float)*gloomEngine->width/(float)*gloomEngine->height, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)gloomEngine->width/(float)gloomEngine->height, 0.1f, 100.0f);
 }
 
 EngineRenderer::~EngineRenderer() {}

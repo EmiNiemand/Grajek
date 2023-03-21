@@ -29,7 +29,7 @@ public:
     /// Called every frame
     virtual void Update(){};
     /// Called on game object transform change
-    void OnUpdate();
+    virtual void OnUpdate(){};
 
     // Getters
     [[nodiscard]] int GetId() const;

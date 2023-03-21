@@ -38,38 +38,42 @@
 #include <map>
 #include <string>
 
-class Component;
-class GameObject;
 class EngineRenderer;
 class EngineColliders;
 class EngineHID;
 
+class Game;
+class Component;
+
 class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
 private:
+    friend class GameObject;
+    friend class GameObjectFactory;
+    friend class ComponentFactory;
+
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};
 
 public:
     GLFWwindow* window;
-    int* width;
-    int* height;
+    int width;
+    int height;
+
+    glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
 
     std::unique_ptr<EngineRenderer> engineRenderer;
     std::unique_ptr<EngineColliders> engineColliders;
     std::unique_ptr<EngineHID> engineHID;
 
-    float deltaTime = 0.0f;
-    float lastFrameTime = 0.0f;
-
+    std::shared_ptr<Game> game;
     std::shared_ptr<GameObject> activeCamera;
     std::shared_ptr<GameObject> activeScene;
 
-    // Framerate TODO: delete
-    float timer = 0;
-    int frames = 0;
+    float deltaTime = 0.0f;
+    float lastFrameTime = 0.0f;
 
 public:
-    GloomEngine(GLFWwindow* window, int *width, int *height);
+    GloomEngine();
     virtual ~GloomEngine();
 
     /// Init creates all needed variables like factories
@@ -85,19 +89,19 @@ public:
     /// Free memory
     void Free();
 
-    // Do not use this
-    void AddGameObject(std::shared_ptr<GameObject> gameObject);
-    void AddComponent(std::shared_ptr<Component> component);
-
-    void OnUpdate(int componentId);
-
-    void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
-    void RemoveComponent(std::shared_ptr<Component> component);
-
     std::shared_ptr<GameObject> FindGameObjectWithId(int id);
     std::shared_ptr<GameObject> FindGameObjectWithName(std::string name);
 
 private:
+    void InitializeWindow();
+    static void glfwErrorCallback(int error, const char* description);
+
+    void AddGameObject(std::shared_ptr<GameObject> gameObject);
+    void AddComponent(std::shared_ptr<Component> component);
+
+    void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
+    void RemoveComponent(std::shared_ptr<Component> component);
+
     void ClearScene();
 };
 

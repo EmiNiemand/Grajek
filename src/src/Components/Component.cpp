@@ -6,14 +6,9 @@ Component::Component(const std::shared_ptr<GloomEngine> &gloomEngine, const std:
 
 Component::~Component() {}
 
-void Component::OnUpdate() {
-    gloomEngine->OnUpdate(id);
-}
-
 int Component::GetId() const {
     return id;
 }
-
 
 const std::shared_ptr<GameObject> &Component::GetParent() const {
     return parent;

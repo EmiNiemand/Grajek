@@ -26,6 +26,8 @@ public:
 
 
     void Update() override;
+    void OnUpdate() override;
+
     void LoadModel(std::string newPath);
 
 private:
