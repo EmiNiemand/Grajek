@@ -39,9 +39,7 @@ void Camera::Start() {
 void Camera::Update() {
     glm::vec3 playerPosition = player->transform->GetLocalPosition();
     glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
-    spdlog::info("POS: "+std::to_string(cameraPosition.x)+", "+std::to_string(cameraPosition.y)+", "+std::to_string(cameraPosition.z));
     parent->transform->SetLocalPosition(Lerp(parent->transform->GetGlobalPosition(), glm::vec3(playerPosition.x + cameraOffset.x, playerPosition.y + cameraOffset.y, playerPosition.z + cameraOffset.z), parameter));
-    spdlog::info(std::to_string(cameraPosition.x)+", "+std::to_string(cameraPosition.y)+", "+std::to_string(cameraPosition.z));
     Component::Update();
 }
 
