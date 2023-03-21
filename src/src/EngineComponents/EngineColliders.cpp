@@ -8,7 +8,7 @@
 #include "include/Components/PhysicsAndColliders/Rigidbody.h"
 
 EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
-    colliderDebugShader = std::make_shared<Shader>("res/shaders/colliderDebug.vert", "res/shaders/colliderDebug.frag");
+    colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");
 
     // create buffers/arrays
     glGenVertexArrays(1, &vao);
