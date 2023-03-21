@@ -7,7 +7,7 @@
 #include "include/Components/PhysicsAndColliders/BoxCollider.h"
 #include "include/Components/PhysicsAndColliders/Rigidbody.h"
 
-EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine, bool isDebugOn) : gloomEngine(gloomEngine), isDebugOn(isDebugOn) {
+EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     colliderDebugShader = std::make_shared<Shader>("res/shaders/colliderDebug.vert", "res/shaders/colliderDebug.frag");
 
     // create buffers/arrays
@@ -33,8 +33,7 @@ void EngineColliders::Update() {
         }
     }
 
-    if (!isDebugOn) return;
-
+#ifdef DEBUG
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
     colliderDebugShader->SetMat4("projection", gloomEngine->engineRenderer->projection);
@@ -42,9 +41,10 @@ void EngineColliders::Update() {
     for (auto&& box : boxColliders) {
         colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
+#endif
 }
 
 void EngineColliders::Free() {

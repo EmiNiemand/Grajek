@@ -26,7 +26,7 @@ void GloomEngine::Init() {
 
     //INIT ENGINE COMPONENTS
     engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
-    engineColliders = std::make_unique<EngineColliders>(shared_from_this(), false);
+    engineColliders = std::make_unique<EngineColliders>(shared_from_this());
     engineHID = std::make_unique<EngineHID>(shared_from_this());
 
 
