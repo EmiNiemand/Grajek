@@ -82,10 +82,13 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
             // Collision handling for not rotated collider
             if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
                 float value = glm::normalize(closestVector).x + glm::normalize(closestVector).y + glm::normalize(closestVector).z;
-                // Subtract by 0.001 so character does not stuck on collision
-                glm::vec3 velocity = glm::normalize(closestVector) * (parent->GetComponent<Rigidbody>()->velocity - glm::vec3(0.001));
-                if (value > 0) velocity = -velocity;
-                parent->GetComponent<Rigidbody>()->AddForce(velocity, ForceMode::Impulse);
+                glm::vec3 velocityOffset = glm::normalize(closestVector) * glm::vec3(0.001);
+
+                glm::vec3 velocity = glm::normalize(closestVector) * (parent->GetComponent<Rigidbody>()->velocity);
+                if (value > 0) {
+                    velocity = -velocity;
+                }
+                parent->GetComponent<Rigidbody>()->AddForce(velocity + velocityOffset, ForceMode::Impulse);
             }
             // Collision handling for rotated colliders
             else {
