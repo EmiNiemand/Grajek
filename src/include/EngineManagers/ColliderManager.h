@@ -1,5 +1,5 @@
-#ifndef OPENGLGP_ENGINECOLLIDERS_H
-#define OPENGLGP_ENGINECOLLIDERS_H
+#ifndef OPENGLGP_COLLIDERMANAGER_H
+#define OPENGLGP_COLLIDERMANAGER_H
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -12,7 +12,7 @@ class Shader;
 class GloomEngine;
 class BoxCollider;
 
-class EngineColliders {
+class ColliderManager {
 private:
     unsigned int vao, vbo, ebo;
     std::vector<glm::vec3> vertices;
@@ -26,8 +26,8 @@ public:
     std::shared_ptr<Shader> colliderDebugShader;
 
 public:
-    explicit EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine);
-    virtual ~EngineColliders();
+    explicit ColliderManager(const std::shared_ptr<GloomEngine> &gloomEngine);
+    virtual ~ColliderManager();
 
     void Update();
     void Free();
@@ -37,4 +37,4 @@ public:
 };
 
 
-#endif //OPENGLGP_ENGINECOLLIDERS_H
+#endif //OPENGLGP_COLLIDERMANAGER_H

@@ -1,7 +1,3 @@
-//
-// Created by szymo on 16/03/2023.
-//
-
 #include "include/Components/PhysicsAndColliders/Rigidbody.h"
 #include "include/GloomEngine.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"

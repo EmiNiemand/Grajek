@@ -1,5 +1,5 @@
-#ifndef OPENGLGP_ENGINERENDERER_H
-#define OPENGLGP_ENGINERENDERER_H
+#ifndef OPENGLGP_RENDERERMANAGER_H
+#define OPENGLGP_RENDERERMANAGER_H
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -13,7 +13,7 @@ class PointLight;
 class DirectionalLight;
 class SpotLight;
 
-class EngineRenderer {
+class RendererManager {
 public:
     float fov = 45.0f;
     glm::mat4 projection;
@@ -28,8 +28,8 @@ public:
     std::shared_ptr<Shader> shader;
 
 public:
-    explicit EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine);
-    virtual ~EngineRenderer();
+    explicit RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine);
+    virtual ~RendererManager();
 
     void Free();
 
@@ -50,4 +50,4 @@ private:
 };
 
 
-#endif //OPENGLGP_ENGINERENDERER_H
+#endif //OPENGLGP_RENDERERMANAGER_H

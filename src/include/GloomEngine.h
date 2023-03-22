@@ -38,9 +38,9 @@
 #include <map>
 #include <string>
 
-class EngineRenderer;
-class EngineColliders;
-class EngineHID;
+class RendererManager;
+class ColliderManager;
+class HIDManager;
 
 class Game;
 class Component;
@@ -61,9 +61,9 @@ public:
 
     glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
 
-    std::unique_ptr<EngineRenderer> engineRenderer;
-    std::unique_ptr<EngineColliders> engineColliders;
-    std::unique_ptr<EngineHID> engineHID;
+    std::unique_ptr<RendererManager> engineRenderer;
+    std::unique_ptr<ColliderManager> engineColliders;
+    std::unique_ptr<HIDManager> engineHID;
 
     std::shared_ptr<Game> game;
     std::shared_ptr<GameObject> activeCamera;

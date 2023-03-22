@@ -1,8 +1,8 @@
 #include "include/GloomEngine.h"
 #include "include/Game.h"
-#include "include/EngineComponents/EngineRenderer.h"
-#include "include/EngineComponents/EngineColliders.h"
-#include "include/EngineComponents/EngineHID.h"
+#include "include/EngineManagers/RendererManager.h"
+#include "include/EngineManagers/ColliderManager.h"
+#include "include/EngineManagers/HIDManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/Components/Renderers/Renderer.h"
 #include "include/Components/Renderers/Camera.h"
@@ -27,9 +27,9 @@ void GloomEngine::Init() {
     GameObject::Init(shared_from_this());
 
     //INIT ENGINE COMPONENTS
-    engineRenderer = std::make_unique<EngineRenderer>(shared_from_this());
-    engineColliders = std::make_unique<EngineColliders>(shared_from_this());
-    engineHID = std::make_unique<EngineHID>(shared_from_this());
+    engineRenderer = std::make_unique<RendererManager>(shared_from_this());
+    engineColliders = std::make_unique<ColliderManager>(shared_from_this());
+    engineHID = std::make_unique<HIDManager>(shared_from_this());
 
     game = std::make_shared<Game>(shared_from_this());
     game->Init();

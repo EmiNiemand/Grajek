@@ -1,13 +1,13 @@
-#include "include/EngineComponents/EngineColliders.h"
+#include "include/EngineManagers/ColliderManager.h"
 #include "include/GloomEngine.h"
-#include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineManagers/RendererManager.h"
 #include "include/LowLevelClasses/Shader.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/Components/Renderers/Camera.h"
 #include "include/Components/PhysicsAndColliders/BoxCollider.h"
 #include "include/Components/PhysicsAndColliders/Rigidbody.h"
 
-EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
+ColliderManager::ColliderManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");
 
     // create buffers/arrays
@@ -16,9 +16,9 @@ EngineColliders::EngineColliders(const std::shared_ptr<GloomEngine> &gloomEngine
     glGenBuffers(1, &ebo);
 }
 
-EngineColliders::~EngineColliders() {}
+ColliderManager::~ColliderManager() {}
 
-void EngineColliders::Update() {
+void ColliderManager::Update() {
     if (boxColliders.empty()) return;
 
     if (boxColliders.size() > 1) {
@@ -47,18 +47,18 @@ void EngineColliders::Update() {
 #endif
 }
 
-void EngineColliders::Free() {
+void ColliderManager::Free() {
     colliderDebugShader->Delete();
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
 }
 
-void EngineColliders::RemoveBoxCollider(int componentId) {
+void ColliderManager::RemoveBoxCollider(int componentId) {
     if (!boxColliders.contains(componentId)) boxColliders.erase(componentId);
 }
 
-void EngineColliders::OnBoxColliderAdd() {
+void ColliderManager::OnBoxColliderAdd() {
     vertices.clear();
     indices.clear();
     int i = 0;

@@ -1,5 +1,5 @@
-#ifndef OPENGLGP_ENGINEHID_H
-#define OPENGLGP_ENGINEHID_H
+#ifndef OPENGLGP_HIDMANAGER_H
+#define OPENGLGP_HIDMANAGER_H
 
 #include "include/ProjectSettings.h"
 #include "GLFW/glfw3.h"
@@ -9,7 +9,7 @@
 
 class GloomEngine;
 
-class EngineHID {
+class HIDManager {
 public:
     std::shared_ptr<GloomEngine> gloomEngine;
     std::vector<Key> keysDown;
@@ -19,7 +19,7 @@ public:
     static std::vector<Key> keysUpBuffer;
     static std::vector<Key> keysPressedBuffer;
 public:
-    explicit EngineHID(const std::shared_ptr<GloomEngine> &gloomEngine);
+    explicit HIDManager(const std::shared_ptr<GloomEngine> &gloomEngine);
 
     /// Should be called at the end of engine update function
     void Update();
@@ -32,4 +32,4 @@ public:
 };
 
 
-#endif //OPENGLGP_ENGINEHID_H
+#endif //OPENGLGP_HIDMANAGER_H

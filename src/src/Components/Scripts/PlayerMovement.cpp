@@ -4,7 +4,7 @@
 
 #include "include/Components/Scripts/PlayerMovement.h"
 #include "include/GloomEngine.h"
-#include "include/EngineComponents/EngineHID.h"
+#include "include/EngineManagers/HIDManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/Components/PhysicsAndColliders/Rigidbody.h"
 

@@ -1,6 +1,6 @@
 #include "include/Components/Renderers/Camera.h"
 #include "include/GloomEngine.h"
-#include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineManagers/RendererManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 
 Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) : Component(

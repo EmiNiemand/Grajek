@@ -1,11 +1,11 @@
-#include "include/EngineComponents/EngineHID.h"
+#include "include/EngineManagers/HIDManager.h"
 #include "include/GloomEngine.h"
 
-EngineHID::EngineHID(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
-    glfwSetKeyCallback(gloomEngine->window, EngineHID::KeyActionCallback);
+HIDManager::HIDManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
+    glfwSetKeyCallback(gloomEngine->window, HIDManager::KeyActionCallback);
 }
 // TODO: need test
-void EngineHID::Update() {
+void HIDManager::Update() {
     keysDown.clear();
     keysPressed.clear();
     keysUp.clear();
@@ -16,7 +16,7 @@ void EngineHID::Update() {
     keysUpBuffer.clear();
 }
 
-bool EngineHID::IsKeyDown(Key key) {
+bool HIDManager::IsKeyDown(Key key) {
     if (!keysDown.empty()) {
         for (int i = 0; i < keysDown.size(); i++) {
             if (keysDown[i] == key) {
@@ -27,7 +27,7 @@ bool EngineHID::IsKeyDown(Key key) {
     return false;
 }
 
-bool EngineHID::IsKeyPressed(Key key) {
+bool HIDManager::IsKeyPressed(Key key) {
     if (!keysPressed.empty()) {
         for (int i = 0; i < keysPressed.size(); i++) {
             if (keysPressed[i] == key) {
@@ -38,7 +38,7 @@ bool EngineHID::IsKeyPressed(Key key) {
     return false;
 }
 
-bool EngineHID::IsKeyUp(Key key) {
+bool HIDManager::IsKeyUp(Key key) {
     if (!keysUp.empty()) {
         for (int i = 0; i < keysUp.size(); i++) {
             if (keysUp[i] == key) {
@@ -49,11 +49,11 @@ bool EngineHID::IsKeyUp(Key key) {
     return false;
 }
 
-std::vector<Key> EngineHID::keysDownBuffer = {};
-std::vector<Key> EngineHID::keysPressedBuffer = {};
-std::vector<Key> EngineHID::keysUpBuffer = {};
+std::vector<Key> HIDManager::keysDownBuffer = {};
+std::vector<Key> HIDManager::keysPressedBuffer = {};
+std::vector<Key> HIDManager::keysUpBuffer = {};
 
-void EngineHID::KeyActionCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+void HIDManager::KeyActionCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     // Key down - first frame when clicked
     if (action == GLFW_PRESS) {
         keysDownBuffer.push_back(static_cast<Key>(key));

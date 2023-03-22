@@ -1,6 +1,6 @@
 #include "include/Components/Renderers/Lights/DirectionalLight.h"
 #include "include/GloomEngine.h"
-#include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineManagers/RendererManager.h"
 
 DirectionalLight::DirectionalLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent,
                                    int id) : Component(gloomEngine, parent, id) {

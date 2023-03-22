@@ -1,4 +1,4 @@
-#include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineManagers/RendererManager.h"
 #include "include/LowLevelClasses/Shader.h"
 #include "include/GloomEngine.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
@@ -7,34 +7,34 @@
 #include "include/Components/Renderers/Lights/DirectionalLight.h"
 #include "include/Components/Renderers/Lights/SpotLight.h"
 
-EngineRenderer::EngineRenderer(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
+RendererManager::RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     projection = glm::perspective(glm::radians(45.0f), (float)gloomEngine->width/(float)gloomEngine->height, 0.1f, 100.0f);
 }
 
-EngineRenderer::~EngineRenderer() {}
+RendererManager::~RendererManager() {}
 
-void EngineRenderer::Free() {
+void RendererManager::Free() {
     shader->Delete();
 }
 
-void EngineRenderer::UpdateRenderer() {
+void RendererManager::UpdateRenderer() {
     UpdateProjection();
     UpdateCamera();
 }
 
-void EngineRenderer::UpdateProjection() {
+void RendererManager::UpdateProjection() {
     shader->Activate();
     shader->SetMat4("projection", projection);
 }
 
-void EngineRenderer::UpdateCamera() {
+void RendererManager::UpdateCamera() {
     shader->Activate();
     shader->SetMat4("view", gloomEngine->activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", gloomEngine->activeCamera->transform->GetGlobalPosition());
 }
 
-void EngineRenderer::UpdateLight(int componentId) {
+void RendererManager::UpdateLight(int componentId) {
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
             UpdateSpotLight(i);
@@ -55,7 +55,7 @@ void EngineRenderer::UpdateLight(int componentId) {
     }
 }
 
-void EngineRenderer::RemoveLight(int componentId) {
+void RendererManager::RemoveLight(int componentId) {
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
             RemoveSpotLight(i);
@@ -76,7 +76,7 @@ void EngineRenderer::RemoveLight(int componentId) {
     }
 }
 
-void EngineRenderer::UpdatePointLight(int lightNumber) {
+void RendererManager::UpdatePointLight(int lightNumber) {
     shader->Activate();
     std::shared_ptr<PointLight> pointLight = pointLights.find(lightNumber)->second;
     std::string light = "pointLights[" + std::to_string(lightNumber) + "]";
@@ -91,7 +91,7 @@ void EngineRenderer::UpdatePointLight(int lightNumber) {
     shader->SetVec3(light + ".color", pointLight->GetColor());
 }
 
-void EngineRenderer::UpdateDirectionalLight(int lightNumber) {
+void RendererManager::UpdateDirectionalLight(int lightNumber) {
     shader->Activate();
     std::shared_ptr<DirectionalLight> directionalLight = directionalLights.find(lightNumber)->second;
     std::string light = "directionalLights[" + std::to_string(lightNumber) + "]";
@@ -103,7 +103,7 @@ void EngineRenderer::UpdateDirectionalLight(int lightNumber) {
     shader->SetVec3(light + ".color", directionalLight->GetColor());
 }
 
-void EngineRenderer::UpdateSpotLight(int lightNumber) {
+void RendererManager::UpdateSpotLight(int lightNumber) {
     shader->Activate();
     std::shared_ptr<SpotLight> spotLight = spotLights.find(lightNumber)->second;
     std::string light = "spotLights[" + std::to_string(lightNumber) + "]";
@@ -121,7 +121,7 @@ void EngineRenderer::UpdateSpotLight(int lightNumber) {
     shader->SetVec3(light + ".color", spotLight->GetColor());
 }
 
-void EngineRenderer::RemovePointLight(int lightNumber) {
+void RendererManager::RemovePointLight(int lightNumber) {
     shader->Activate();
     std::string light = "pointLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light + ".isActive", false);
@@ -137,7 +137,7 @@ void EngineRenderer::RemovePointLight(int lightNumber) {
     pointLights.find(lightNumber)->second = nullptr;
 }
 
-void EngineRenderer::RemoveDirectionalLight(int lightNumber) {
+void RendererManager::RemoveDirectionalLight(int lightNumber) {
     shader->Activate();
     std::string light = "directionalLights[" + std::to_string(lightNumber) + "]";
     shader->SetBool(light +".isActive", false);
@@ -150,7 +150,7 @@ void EngineRenderer::RemoveDirectionalLight(int lightNumber) {
     directionalLights.find(lightNumber)->second = nullptr;
 }
 
-void EngineRenderer::RemoveSpotLight(int lightNumber) {
+void RendererManager::RemoveSpotLight(int lightNumber) {
     shader->Activate();
     std::shared_ptr<SpotLight> spotLight = spotLights.find(lightNumber)->second;
     std::string light = "spotLights[" + std::to_string(lightNumber) + "]";
@@ -170,7 +170,7 @@ void EngineRenderer::RemoveSpotLight(int lightNumber) {
     spotLights.find(lightNumber)->second = nullptr;
 }
 
-void EngineRenderer::SetFov(float fov) {
-    EngineRenderer::fov = fov;
+void RendererManager::SetFov(float fov) {
+    RendererManager::fov = fov;
     UpdateProjection();
 }

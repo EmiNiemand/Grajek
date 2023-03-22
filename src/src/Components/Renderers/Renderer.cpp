@@ -6,7 +6,7 @@
 
 #include "include/Components/Renderers/Renderer.h"
 #include "include/GloomEngine.h"
-#include "include/EngineComponents/EngineRenderer.h"
+#include "include/EngineManagers/RendererManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/LowLevelClasses/Model.h"
 #include "include/Components/Renderers/Camera.h"
