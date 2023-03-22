@@ -3,6 +3,7 @@
 #include "include/EngineManagers/RendererManager.h"
 #include "include/EngineManagers/ColliderManager.h"
 #include "include/EngineManagers/HIDManager.h"
+#include "include/EngineManagers/SceneManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/Components/Renderers/Renderer.h"
 #include "include/Components/Renderers/Camera.h"
@@ -20,25 +21,28 @@ GloomEngine::GloomEngine() {
 
 GloomEngine::~GloomEngine() {}
 
-void GloomEngine::Init() {
+void GloomEngine::Initialize() {
     InitializeWindow();
 
     // Assign engin as parent to game objects
-    GameObject::Init(shared_from_this());
+    GameObject::InitializeGameObjects(shared_from_this());
 
     //INIT ENGINE COMPONENTS
-    engineRenderer = std::make_unique<RendererManager>(shared_from_this());
-    engineColliders = std::make_unique<ColliderManager>(shared_from_this());
-    engineHID = std::make_unique<HIDManager>(shared_from_this());
+    rendererManager = std::make_unique<RendererManager>(shared_from_this());
+    colliderManager = std::make_unique<ColliderManager>(shared_from_this());
+    hidManager = std::make_unique<HIDManager>(shared_from_this());
+    sceneManager = std::make_unique<SceneManager>(shared_from_this());
+
+    sceneManager->InitializeScene();
 
     game = std::make_shared<Game>(shared_from_this());
-    game->Init();
+    game->InitializeGame();
 }
 
 void GloomEngine::Awake() {
     lastFrameTime = glfwGetTime();
     // Setup all engine components
-    engineRenderer->UpdateRenderer();
+    rendererManager->UpdateRenderer();
 
     for (auto&& component : components){
         component.second->Awake();
@@ -70,9 +74,9 @@ bool GloomEngine::Update() {
 
     bool endGame = game->Update();
 
-    engineHID->Update();
-    engineColliders->Update();
-    engineRenderer->UpdateRenderer();
+    hidManager->Update();
+    colliderManager->Update();
+    rendererManager->UpdateRenderer();
 
     deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
@@ -84,10 +88,9 @@ bool GloomEngine::Update() {
 }
 
 void GloomEngine::Free() {
-    ClearScene();
-    engineColliders->Free();
-    engineRenderer->Free();
-    activeScene = nullptr;
+    colliderManager->Free();
+    rendererManager->Free();
+    sceneManager->Free();
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -159,12 +162,6 @@ void GloomEngine::InitializeWindow() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void GloomEngine::ClearScene() {
-    activeScene->RemoveAllChildren();
-    components.clear();
-    gameObjects.clear();
-}
-
 void GloomEngine::AddGameObject(std::shared_ptr<GameObject> gameObject) {
     gameObjects.insert({gameObject->GetId(), gameObject});
 }
@@ -179,8 +176,8 @@ void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
 
 void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
     int componentId = component->GetId();
-    engineRenderer->RemoveLight(componentId);
-    engineColliders->RemoveBoxCollider(componentId);
+    rendererManager->RemoveLight(componentId);
+    colliderManager->RemoveBoxCollider(componentId);
     components.erase(componentId);
 }
 

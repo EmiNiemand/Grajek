@@ -16,9 +16,8 @@ public:
     explicit Game(const std::shared_ptr<GloomEngine> &gloomEngine);
     virtual ~Game();
 
-    void Init();
-    void Awake();
-    void Start();
+    /// Should be used to load main menu scene
+    void InitializeGame();
     bool Update();
 };
 

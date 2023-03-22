@@ -38,18 +38,27 @@
 #include <map>
 #include <string>
 
+class GameObjectFactory;
+class ComponentFactory;
 class RendererManager;
 class ColliderManager;
 class HIDManager;
+class SceneManager;
 
 class Game;
+class GameObject;
 class Component;
+
 
 class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
 private:
     friend class GameObject;
     friend class GameObjectFactory;
     friend class ComponentFactory;
+    friend class RendererManager;
+    friend class ColliderManager;
+    friend class HIDManager;
+    friend class SceneManager;
 
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};
@@ -61,13 +70,12 @@ public:
 
     glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
 
-    std::unique_ptr<RendererManager> engineRenderer;
-    std::unique_ptr<ColliderManager> engineColliders;
-    std::unique_ptr<HIDManager> engineHID;
+    std::unique_ptr<RendererManager> rendererManager;
+    std::unique_ptr<ColliderManager> colliderManager;
+    std::unique_ptr<HIDManager> hidManager;
+    std::unique_ptr<SceneManager> sceneManager;
 
     std::shared_ptr<Game> game;
-    std::shared_ptr<GameObject> activeCamera;
-    std::shared_ptr<GameObject> activeScene;
 
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;
@@ -76,8 +84,8 @@ public:
     GloomEngine();
     virtual ~GloomEngine();
 
-    /// Init creates all needed variables like factories
-    void Init();
+    /// Initialize creates all needed variables like factories
+    void Initialize();
     /// Awake calls all the components even when they are no enabled during first frame
     void Awake();
     /// Start calls only enabled components during first frame
@@ -101,8 +109,6 @@ private:
 
     void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
     void RemoveComponent(std::shared_ptr<Component> component);
-
-    void ClearScene();
 };
 
 

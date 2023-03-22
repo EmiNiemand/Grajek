@@ -1,5 +1,6 @@
 #include "include/Factories/GameObjectFactory.h"
 #include "include/GloomEngine.h"
+#include "include/EngineManagers/SceneManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 
 GameObjectFactory::GameObjectFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
@@ -12,7 +13,7 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
         id++;
         return gameObject;
     }
-    if(parent == nullptr) parent = gloomEngine->activeScene;
+    if(parent == nullptr) parent = gloomEngine->sceneManager->activeScene;
     if(gloomEngine->FindGameObjectWithName(name) != nullptr) {
         bool endLoop = false;
         int i = 1;

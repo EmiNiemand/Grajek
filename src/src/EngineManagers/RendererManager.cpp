@@ -10,6 +10,7 @@
 RendererManager::RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     projection = glm::perspective(glm::radians(45.0f), (float)gloomEngine->width/(float)gloomEngine->height, 0.1f, 100.0f);
+
 }
 
 RendererManager::~RendererManager() {}
@@ -30,8 +31,8 @@ void RendererManager::UpdateProjection() {
 
 void RendererManager::UpdateCamera() {
     shader->Activate();
-    shader->SetMat4("view", gloomEngine->activeCamera->GetComponent<Camera>()->GetViewMatrix());
-    shader->SetVec3("viewPos", gloomEngine->activeCamera->transform->GetGlobalPosition());
+    shader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
+    shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 }
 
 void RendererManager::UpdateLight(int componentId) {

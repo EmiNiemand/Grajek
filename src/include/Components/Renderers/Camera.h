@@ -13,6 +13,8 @@ private:
     std::shared_ptr<GameObject> player;
 
 public:
+    static std::shared_ptr<GameObject> activeCamera;
+
     glm::vec3 cameraOffset = glm::vec3(0,0,0);
     float parameter = 0.1f;
 

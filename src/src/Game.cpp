@@ -3,6 +3,7 @@
 #include "include/EngineManagers/RendererManager.h"
 #include "include/EngineManagers/ColliderManager.h"
 #include "include/EngineManagers/HIDManager.h"
+#include "include/EngineManagers/SceneManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 #include "include/Components/Renderers/Renderer.h"
 #include "include/Components/Renderers/Camera.h"
@@ -14,18 +15,13 @@
 #include "include/Components/Scripts/PlayerMovement.h"
 
 Game::Game(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
-    activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
-    activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
-
-    gloomEngine->activeScene = activeScene;
-    gloomEngine->activeCamera = activeCamera;
+    activeCamera = Camera::activeCamera;
+    activeScene = gloomEngine->sceneManager->activeScene;
 }
 
 Game::~Game() {}
 
-void Game::Init() {
-
-
+void Game::InitializeGame() {
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
     camera->cameraOffset = glm::vec3(0, 20, 20);
     camera->parameter = 0.02f;
@@ -64,15 +60,6 @@ void Game::Init() {
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
-
-}
-
-void Game::Awake() {
-
-}
-
-void Game::Start() {
-
 }
 
 bool Game::Update() {

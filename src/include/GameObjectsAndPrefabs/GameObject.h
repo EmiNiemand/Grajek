@@ -37,7 +37,7 @@ public:
     GameObject(const std::string &name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
     virtual ~GameObject();
 
-    static void Init(const std::shared_ptr<GloomEngine> &gloomEngine);
+    static void InitializeGameObjects(const std::shared_ptr<GloomEngine> &gloomEngine);
     static std::shared_ptr<GameObject> Instantiate(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);
     static void Destroy(std::shared_ptr<GameObject> gameObject);
 

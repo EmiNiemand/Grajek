@@ -36,21 +36,21 @@ void Renderer::Update() {
  */
 void Renderer::LoadModel(std::string newPath) {
     path = std::move(newPath);
-    model = std::make_shared<Model>( "res/models/"+path, gloomEngine->engineRenderer->shader, GL_TRIANGLES);
+    model = std::make_shared<Model>( "res/models/"+path, gloomEngine->rendererManager->shader, GL_TRIANGLES);
 }
 
 void Renderer::Draw() {
     if(path.empty()) return;
 
-    gloomEngine->engineRenderer->shader->Activate();
-    gloomEngine->engineRenderer->shader->SetMat4("model", parent->transform->GetModelMatrix());
-    gloomEngine->engineRenderer->shader->SetFloat("shininess", shininess);
-    gloomEngine->engineRenderer->shader->SetVec3("objectColor", objectColor);
+    gloomEngine->rendererManager->shader->Activate();
+    gloomEngine->rendererManager->shader->SetMat4("model", parent->transform->GetModelMatrix());
+    gloomEngine->rendererManager->shader->SetFloat("shininess", shininess);
+    gloomEngine->rendererManager->shader->SetVec3("objectColor", objectColor);
     model->Draw();
 }
 
 void Renderer::OnUpdate() {
-    gloomEngine->engineRenderer->UpdateLight(id);
+    gloomEngine->rendererManager->UpdateLight(id);
     Component::OnUpdate();
 }
 

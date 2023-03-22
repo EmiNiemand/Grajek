@@ -3,12 +3,12 @@
 #include "include/EngineManagers/RendererManager.h"
 #include "include/GameObjectsAndPrefabs/GameObject.h"
 
+std::shared_ptr<GameObject> Camera::activeCamera = nullptr;
+
 Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) : Component(
         gloomEngine, parent, id) {}
 
 Camera::~Camera() {}
-
-
 
 glm::mat4 Camera::GetViewMatrix() {
     glm::vec3 position = parent->transform->GetGlobalPosition();

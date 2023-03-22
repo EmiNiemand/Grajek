@@ -8,6 +8,7 @@
 
 class GloomEngine;
 class Shader;
+class GameObject;
 class Component;
 class PointLight;
 class DirectionalLight;
@@ -17,7 +18,6 @@ class RendererManager {
 public:
     float fov = 45.0f;
     glm::mat4 projection;
-
 
     // pair of id and ptr to light
     std::map<int, std::shared_ptr<PointLight>> pointLights;

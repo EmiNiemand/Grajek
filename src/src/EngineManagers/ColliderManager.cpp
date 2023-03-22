@@ -36,8 +36,8 @@ void ColliderManager::Update() {
 #ifdef DEBUG
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
-    colliderDebugShader->SetMat4("projection", gloomEngine->engineRenderer->projection);
-    colliderDebugShader->SetMat4("view", gloomEngine->activeCamera->GetComponent<Camera>()->GetViewMatrix());
+    colliderDebugShader->SetMat4("projection", gloomEngine->rendererManager->projection);
+    colliderDebugShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     for (auto&& box : boxColliders) {
         colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());
         glBindVertexArray(vao);

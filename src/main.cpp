@@ -3,7 +3,7 @@
 int main(int, char**)
 {
     std::shared_ptr<GloomEngine> gloomEngine = std::make_shared<GloomEngine>();
-    gloomEngine->Init();
+    gloomEngine->Initialize();
     gloomEngine->Awake();
     gloomEngine->Start();
 

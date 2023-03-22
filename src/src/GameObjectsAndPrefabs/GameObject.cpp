@@ -11,6 +11,12 @@ GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<Ga
 
 GameObject::~GameObject() {}
 
+void GameObject::InitializeGameObjects(const std::shared_ptr<GloomEngine> &gloomEngine) {
+    GameObject::gloomEngine = gloomEngine;
+    GameObject::gameObjectFactory = std::make_shared<GameObjectFactory>(gloomEngine);
+    GameObject::componentFactory = std::make_shared<ComponentFactory>(gloomEngine);
+}
+
 std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
     return gameObjectFactory->CreateGameObject(name, parent, tag);
 }
@@ -86,12 +92,6 @@ int GameObject::GetId() const {
 
 const std::string &GameObject::GetName() const {
     return name;
-}
-
-void GameObject::Init(const std::shared_ptr<GloomEngine> &gloomEngine) {
-    GameObject::gloomEngine = gloomEngine;
-    GameObject::gameObjectFactory = std::make_shared<GameObjectFactory>(gloomEngine);
-    GameObject::componentFactory = std::make_shared<ComponentFactory>(gloomEngine);
 }
 
 void GameObject::AddComponentToList(std::shared_ptr<Component> component) {
