@@ -1,22 +1,27 @@
-#include "include/Factories/ComponentFactory.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/RendererManager.h"
-#include "include/EngineManagers/ColliderManager.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/Components/Renderers/Renderer.h"
-#include "include/Components/Renderers/Camera.h"
-#include "include/Components/Renderers/Lights/PointLight.h"
-#include "include/Components/Renderers/Lights/DirectionalLight.h"
-#include "include/Components/Renderers/Lights/SpotLight.h"
-#include "include/Components/PhysicsAndColliders/Rigidbody.h"
-#include "include/Components/PhysicsAndColliders/BoxCollider.h"
-#include "include/Components/Scripts/PlayerMovement.h"
+#include "Factories/ComponentFactory.h"
+#include "GloomEngine.h"
+#include "EngineManagers/RendererManager.h"
+#include "EngineManagers/ColliderManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Renderers/Renderer.h"
+#include "Components/Renderers/CubeMap.h"
+#include "Components/Renderers/Camera.h"
+#include "Components/Renderers/Lights/PointLight.h"
+#include "Components/Renderers/Lights/DirectionalLight.h"
+#include "Components/Renderers/Lights/SpotLight.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "Components/Scripts/PlayerMovement.h"
 
 ComponentFactory::ComponentFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
 
 std::shared_ptr<Component> ComponentFactory::CreateComponent(std::string type, const std::shared_ptr<GameObject> &parent){
     if (type == typeid(Renderer).name()) {
         std::shared_ptr<Component> component = CreateRenderer(parent);
+        return component;
+    }
+    else if (type == typeid(CubeMap).name()) {
+        std::shared_ptr<Component> component = CreateCubeMap(parent);
         return component;
     }
     else if (type == typeid(Camera).name()) {
@@ -55,6 +60,16 @@ std::shared_ptr<Renderer> ComponentFactory::CreateRenderer(const std::shared_ptr
     if (component != nullptr) return component;
     id++;
     component = std::make_shared<Renderer>(gloomEngine, parent, id);
+    std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
+    gloomEngine->AddComponent(component);
+    return component;
+}
+
+std::shared_ptr<CubeMap> ComponentFactory::CreateCubeMap(const std::shared_ptr<GameObject> &parent) {
+    std::shared_ptr<CubeMap> component = parent->GetComponent<CubeMap>();
+    if (component != nullptr) return component;
+    id++;
+    component = std::make_shared<CubeMap>(gloomEngine, parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
     gloomEngine->AddComponent(component);
     return component;

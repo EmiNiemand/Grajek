@@ -2,7 +2,7 @@
 // Created by szymo on 31/10/2022.
 //
 
-#include "include/LowLevelClasses/Model.h"
+#include "LowLevelClasses/Model.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"

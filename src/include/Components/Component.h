@@ -1,7 +1,7 @@
 #ifndef OPENGLGP_COMPONENT_H
 #define OPENGLGP_COMPONENT_H
 
-#include "include/ProjectSettings.h"
+#include "ProjectSettings.h"
 #include <memory>
 #include <string>
 

@@ -2,11 +2,11 @@
 // Created by szymo on 16/03/2023.
 //
 
-#include "include/Components/Scripts/PlayerMovement.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/HIDManager.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/Scripts/PlayerMovement.h"
+#include "GloomEngine.h"
+#include "EngineManagers/HIDManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 
 PlayerMovement::PlayerMovement(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent,
                                int id) : Component(gloomEngine, parent, id) {}

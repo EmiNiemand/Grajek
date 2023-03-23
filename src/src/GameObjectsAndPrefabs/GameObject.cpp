@@ -1,6 +1,6 @@
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/GloomEngine.h"
-#include "include/Components/Component.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "GloomEngine.h"
+#include "Components/Component.h"
 
 std::shared_ptr<GloomEngine> GameObject::gloomEngine = nullptr;
 std::shared_ptr<GameObjectFactory> GameObject::gameObjectFactory = nullptr;

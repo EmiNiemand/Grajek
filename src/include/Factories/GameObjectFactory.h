@@ -1,7 +1,7 @@
 #ifndef OPENGLGP_GAMEOBJECTFACTORY_H
 #define OPENGLGP_GAMEOBJECTFACTORY_H
 
-#include "include/ProjectSettings.h"
+#include "ProjectSettings.h"
 #include <memory>
 #include <string>
 

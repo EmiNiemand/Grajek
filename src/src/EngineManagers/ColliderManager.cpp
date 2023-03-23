@@ -1,11 +1,11 @@
-#include "include/EngineManagers/ColliderManager.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/RendererManager.h"
-#include "include/LowLevelClasses/Shader.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/Components/Renderers/Camera.h"
-#include "include/Components/PhysicsAndColliders/BoxCollider.h"
-#include "include/Components/PhysicsAndColliders/Rigidbody.h"
+#include "EngineManagers/ColliderManager.h"
+#include "GloomEngine.h"
+#include "EngineManagers/RendererManager.h"
+#include "LowLevelClasses/Shader.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Renderers/Camera.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 
 ColliderManager::ColliderManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");

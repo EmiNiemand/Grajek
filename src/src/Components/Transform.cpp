@@ -1,5 +1,5 @@
-#include "include/Components/Transform.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Transform.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 Transform::Transform(const std::shared_ptr<GameObject> &parent) : parent(parent) {}
 

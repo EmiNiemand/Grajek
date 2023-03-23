@@ -1,22 +1,25 @@
-#include "include/EngineManagers/RendererManager.h"
-#include "include/LowLevelClasses/Shader.h"
-#include "include/GloomEngine.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/Components/Renderers/Camera.h"
-#include "include/Components/Renderers/Lights/PointLight.h"
-#include "include/Components/Renderers/Lights/DirectionalLight.h"
-#include "include/Components/Renderers/Lights/SpotLight.h"
+#include "EngineManagers/RendererManager.h"
+#include "LowLevelClasses/Shader.h"
+#include "GloomEngine.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Renderers/Camera.h"
+#include "Components/Renderers/Lights/PointLight.h"
+#include "Components/Renderers/Lights/DirectionalLight.h"
+#include "Components/Renderers/Lights/SpotLight.h"
 
 RendererManager::RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
-    projection = glm::perspective(glm::radians(45.0f), (float)gloomEngine->width/(float)gloomEngine->height, 0.1f, 100.0f);
-
+    cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
+    projection = glm::perspective(glm::radians(45.0f),
+                                  (float)gloomEngine->width/(float)gloomEngine->height,
+                                  0.1f, 100.0f);
 }
 
 RendererManager::~RendererManager() {}
 
 void RendererManager::Free() {
     shader->Delete();
+    cubeMapShader->Delete();
 }
 
 void RendererManager::UpdateRenderer() {
@@ -27,12 +30,19 @@ void RendererManager::UpdateRenderer() {
 void RendererManager::UpdateProjection() {
     shader->Activate();
     shader->SetMat4("projection", projection);
+
+    cubeMapShader->Activate();
+    cubeMapShader->SetMat4("projection", projection);
 }
 
 void RendererManager::UpdateCamera() {
     shader->Activate();
     shader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
+
+    cubeMapShader->Activate();
+    cubeMapShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
+    cubeMapShader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 }
 
 void RendererManager::UpdateLight(int componentId) {

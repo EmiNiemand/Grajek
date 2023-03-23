@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "include/Components/Component.h"
+#include "Components/Component.h"
 
 class Camera : public Component {
 private:

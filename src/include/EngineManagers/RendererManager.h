@@ -26,6 +26,8 @@ public:
 
     std::shared_ptr<GloomEngine> gloomEngine;
     std::shared_ptr<Shader> shader;
+    //TODO: integrate with main shader maybe
+    std::shared_ptr<Shader> cubeMapShader;
 
 public:
     explicit RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine);

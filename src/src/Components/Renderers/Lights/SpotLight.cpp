@@ -1,6 +1,6 @@
-#include "include/Components/Renderers/Lights/SpotLight.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/RendererManager.h"
+#include "Components/Renderers/Lights/SpotLight.h"
+#include "GloomEngine.h"
+#include "EngineManagers/RendererManager.h"
 
 SpotLight::SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {

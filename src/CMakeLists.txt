@@ -9,12 +9,13 @@ file(GLOB_RECURSE HEADER_FILES
 	 *.hpp)
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/EngineManagers/SceneManager.cpp include/EngineManagers/SceneManager.h)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/EngineManagers/SceneManager.cpp include/EngineManagers/SceneManager.h src/Components/Renderers/CubeMap.cpp include/Components/Renderers/CubeMap.h src/Shapes/Cube.cpp include/Shapes/Cube.h include/Shapes/ShapeObject.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+												  ${CMAKE_CURRENT_SOURCE_DIR}/imgui_impl
 												  ${glad_SOURCE_DIR}
 												  ${stb_image_SOURCE_DIR}
 												  ${imgui_SOURCE_DIR})

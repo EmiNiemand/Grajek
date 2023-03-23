@@ -1,7 +1,7 @@
-#include "include/Components/Renderers/Camera.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/RendererManager.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Renderers/Camera.h"
+#include "GloomEngine.h"
+#include "EngineManagers/RendererManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 std::shared_ptr<GameObject> Camera::activeCamera = nullptr;
 

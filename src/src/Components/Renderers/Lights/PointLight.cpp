@@ -1,6 +1,6 @@
-#include "include/Components/Renderers/Lights/PointLight.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/RendererManager.h"
+#include "Components/Renderers/Lights/PointLight.h"
+#include "GloomEngine.h"
+#include "EngineManagers/RendererManager.h"
 
 PointLight::PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {

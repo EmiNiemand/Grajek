@@ -1,8 +1,8 @@
-#include "include/Components/PhysicsAndColliders/BoxCollider.h"
-#include "include/GloomEngine.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/EngineManagers/ColliderManager.h"
-#include "include/Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "GloomEngine.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/ColliderManager.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 
 BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
         : Component(gloomEngine, parent, id) {

@@ -5,7 +5,7 @@
 #ifndef OPENGLGP_PLAYERMOVEMENT_H
 #define OPENGLGP_PLAYERMOVEMENT_H
 
-#include "include/Components/Component.h"
+#include "Components/Component.h"
 
 class Rigidbody;
 

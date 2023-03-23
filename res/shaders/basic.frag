@@ -1,5 +1,12 @@
 #version 430
+
+// OUTPUT
+// ------
+
 out vec4 FragColor;
+
+// STRUCTS
+// -------
 
 struct DirectionalLight {
     bool isActive;
@@ -38,18 +45,28 @@ struct SpotLight {
 };
 
 struct Material {
+    vec3 color;
     sampler2D diffuse;
     sampler2D roughness;
-    sampler2D opacity;
+    bool opacity;
 };
+
+// CONSTANTS
+// ---------
 
 #define NR_POINT_LIGHTS 32
 #define NR_DIRECTIONAL_LIGHTS 32
 #define NR_SPOT_LIGHTS 32
 
+// SHADER PASSED VALUES
+// --------------------
+
 in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragPos;
+
+// EXTERNALLY SET VERIABLES
+// ------------------------
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
@@ -59,10 +76,20 @@ uniform DirectionalLight directionalLights[NR_DIRECTIONAL_LIGHTS];
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 uniform vec3 objectColor = vec3(1, 1, 1);
+uniform samplerCube skybox;
 
+uniform Material objectMaterial;
+
+// FORWARD DECLARATIONS
+// --------------------
+
+vec3 ApplyMaterial(Material material, vec3 fragPos);
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+
+// MAIN
+// ----
 
 void main()
 {
@@ -70,14 +97,14 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 result = {0.0f, 0.0f, 0.0f};
 
-    // phase 1: directional lighting
+    // phase 1: directional lights
     for(int i = 0; i < NR_DIRECTIONAL_LIGHTS; i++){
         if(directionalLights[i].isActive) {
             result += CalculateDirectionalLight(directionalLights[i], norm, viewDir);
         }
     }
 
-    // phase 2: point light
+    // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++){
         if(pointLights[i].isActive){
             result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);
@@ -93,6 +120,9 @@ void main()
     result = result * objectColor;
     FragColor = vec4(result, 1.0f);
 }
+
+// LIGHT FUNCTIONS
+// ---------------
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
@@ -155,4 +185,12 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
     return (ambient + diffuse + specular);
+}
+
+// MATERIAL FUNCTIONS
+// ------------------
+
+vec3 ApplyMaterial(Material material, vec3 fragPos)
+{
+    return vec3(1);
 }

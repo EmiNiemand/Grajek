@@ -1,7 +1,7 @@
-#include "include/Factories/GameObjectFactory.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/SceneManager.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "Factories/GameObjectFactory.h"
+#include "GloomEngine.h"
+#include "EngineManagers/SceneManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 GameObjectFactory::GameObjectFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
 

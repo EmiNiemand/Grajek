@@ -2,15 +2,15 @@
 // Created by szymo on 30/10/2022.
 //
 
-#include "include/LowLevelClasses/Mesh.h"
+#include "LowLevelClasses/Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
-this->vertices = vertices;
-this->indices = indices;
-this->textures = textures;
+    this->vertices = vertices;
+    this->indices = indices;
+    this->textures = textures;
 
-// now that we have all the required data, set the vertex buffers and its attribute pointers.
-setupMesh();
+    // now that we have all the required data, set the vertex buffers and its attribute pointers.
+    setupMesh();
 }
 
 void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {

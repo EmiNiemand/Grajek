@@ -1,7 +1,7 @@
-#include "include/EngineManagers/SceneManager.h"
-#include "include/GloomEngine.h"
-#include "include/Components/Renderers/Camera.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/SceneManager.h"
+#include "GloomEngine.h"
+#include "Components/Renderers/Camera.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 SceneManager::SceneManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
 

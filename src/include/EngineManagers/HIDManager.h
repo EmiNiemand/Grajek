@@ -1,7 +1,7 @@
 #ifndef OPENGLGP_HIDMANAGER_H
 #define OPENGLGP_HIDMANAGER_H
 
-#include "include/ProjectSettings.h"
+#include "ProjectSettings.h"
 #include "GLFW/glfw3.h"
 
 #include <vector>

@@ -1,10 +1,10 @@
 #ifndef OPENGLGP_GAMEOBJECT_H
 #define OPENGLGP_GAMEOBJECT_H
 
-#include "include/ProjectSettings.h"
-#include "include/Components/Transform.h"
-#include "include/Factories/GameObjectFactory.h"
-#include "include/Factories/ComponentFactory.h"
+#include "ProjectSettings.h"
+#include "Components/Transform.h"
+#include "Factories/GameObjectFactory.h"
+#include "Factories/ComponentFactory.h"
 
 #include <memory>
 #include <string>

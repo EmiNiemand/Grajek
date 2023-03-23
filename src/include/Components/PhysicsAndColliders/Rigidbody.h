@@ -8,8 +8,8 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "include/ProjectSettings.h"
-#include "include/Components/Component.h"
+#include "ProjectSettings.h"
+#include "Components/Component.h"
 
 class Rigidbody : public Component {
 public:

@@ -1,4 +1,4 @@
-#include "include/GloomEngine.h"
+#include "GloomEngine.h"
 
 int main(int, char**)
 {

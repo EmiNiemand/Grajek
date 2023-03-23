@@ -4,12 +4,12 @@
 
 #include <utility>
 
-#include "include/Components/Renderers/Renderer.h"
-#include "include/GloomEngine.h"
-#include "include/EngineManagers/RendererManager.h"
-#include "include/GameObjectsAndPrefabs/GameObject.h"
-#include "include/LowLevelClasses/Model.h"
-#include "include/Components/Renderers/Camera.h"
+#include "Components/Renderers/Renderer.h"
+#include "GloomEngine.h"
+#include "EngineManagers/RendererManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "LowLevelClasses/Model.h"
+#include "Components/Renderers/Camera.h"
 
 /**
  * @attention Remember to call LoadModel if you want model to actually display

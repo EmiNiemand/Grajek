@@ -4,7 +4,7 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "include/Components/Component.h"
+#include "Components/Component.h"
 
 class SpotLight : public Component {
 private:

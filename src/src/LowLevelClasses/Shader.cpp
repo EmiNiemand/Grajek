@@ -2,7 +2,7 @@
 // Created by szymo on 10/10/2022.
 //
 
-#include "include/LowLevelClasses/Shader.h"
+#include "LowLevelClasses/Shader.h"
 #include "spdlog/spdlog.h"
 
 #include <sstream>

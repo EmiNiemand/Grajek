@@ -1,5 +1,5 @@
-#include "include/EngineManagers/HIDManager.h"
-#include "include/GloomEngine.h"
+#include "EngineManagers/HIDManager.h"
+#include "GloomEngine.h"
 
 HIDManager::HIDManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
     glfwSetKeyCallback(gloomEngine->window, HIDManager::KeyActionCallback);
