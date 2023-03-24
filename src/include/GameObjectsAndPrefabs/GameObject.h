@@ -19,12 +19,13 @@ private:
     int id;
     std::string name;
 
-    std::map<int, std::shared_ptr<Component>> components;
-    std::map<int, std::shared_ptr<GameObject>> children;
-
     static std::shared_ptr<GloomEngine> gloomEngine;
     static std::shared_ptr<GameObjectFactory> gameObjectFactory;
     static std::shared_ptr<ComponentFactory> componentFactory;
+
+public:
+    std::map<int, std::shared_ptr<Component>> components;
+    std::map<int, std::shared_ptr<GameObject>> children;
 
 public:
     std::shared_ptr<GameObject> parent = nullptr;

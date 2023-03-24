@@ -44,6 +44,7 @@ class RendererManager;
 class ColliderManager;
 class HIDManager;
 class SceneManager;
+class DataPersistanceManager;
 
 class Game;
 class GameObject;
@@ -59,6 +60,7 @@ private:
     friend class ColliderManager;
     friend class HIDManager;
     friend class SceneManager;
+    friend class DataPersistanceManager;
 
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};
