@@ -10,16 +10,23 @@
 class GloomEngine;
 
 class HIDManager {
+private:
+    static HIDManager* hidManager;
+
 public:
-    std::shared_ptr<GloomEngine> gloomEngine;
     std::vector<Key> keysDown;
     std::vector<Key> keysUp;
     std::vector<Key> keysPressed;
     static std::vector<Key> keysDownBuffer;
     static std::vector<Key> keysUpBuffer;
     static std::vector<Key> keysPressedBuffer;
+
 public:
-    explicit HIDManager(const std::shared_ptr<GloomEngine> &gloomEngine);
+    HIDManager(HIDManager &other) = delete;
+    void operator=(const HIDManager&) = delete;
+    virtual ~HIDManager();
+
+    static HIDManager* GetInstance();
 
     /// Should be called at the end of engine update function
     void Update();
@@ -29,6 +36,9 @@ public:
     bool IsKeyUp(Key key);
 
     static void KeyActionCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+
+private:
+    explicit HIDManager();
 };
 
 

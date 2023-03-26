@@ -15,6 +15,9 @@ class DirectionalLight;
 class SpotLight;
 
 class RendererManager {
+private:
+    static RendererManager* rendererManager;
+
 public:
     float fov = 45.0f;
     glm::mat4 projection;
@@ -24,14 +27,16 @@ public:
     std::map<int, std::shared_ptr<DirectionalLight>> directionalLights;
     std::map<int, std::shared_ptr<SpotLight>> spotLights;
 
-    std::shared_ptr<GloomEngine> gloomEngine;
     std::shared_ptr<Shader> shader;
     //TODO: integrate with main shader maybe
     std::shared_ptr<Shader> cubeMapShader;
 
 public:
-    explicit RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine);
+    RendererManager(RendererManager &other) = delete;
+    void operator=(const RendererManager&) = delete;
     virtual ~RendererManager();
+
+    static RendererManager* GetInstance();
 
     void Free();
 
@@ -43,6 +48,8 @@ public:
     void RemoveLight(int componentId);
     void SetFov(float fov);
 private:
+    explicit RendererManager();
+
     void UpdatePointLight(int id);
     void UpdateDirectionalLight(int id);
     void UpdateSpotLight(int id);

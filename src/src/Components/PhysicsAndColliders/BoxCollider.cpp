@@ -4,8 +4,8 @@
 #include "EngineManagers/ColliderManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
-BoxCollider::BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
-        : Component(gloomEngine, parent, id) {
+BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
+        : Component(parent, id) {
     size = {1.0f, 1.0f, 1.0f};
     offset = {0.0f, 0.0f, 0.0f};
 }

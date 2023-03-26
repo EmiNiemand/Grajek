@@ -3,8 +3,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 
-Rigidbody::Rigidbody(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
-        : Component(gloomEngine, parent, id) {
+Rigidbody::Rigidbody(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     parent->AddComponent<BoxCollider>();
 }
 
@@ -20,7 +19,7 @@ void Rigidbody::Update() {
 
 void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
     if (forceMode == ForceMode::Force) {
-        velocity += vector / mass * gloomEngine->deltaTime;
+        velocity += vector / mass * GloomEngine::GetInstance()->deltaTime;
     }
     else {
         velocity += vector / mass;

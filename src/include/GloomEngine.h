@@ -51,7 +51,7 @@ class GameObject;
 class Component;
 
 
-class GloomEngine : public std::enable_shared_from_this<GloomEngine> {
+class GloomEngine {
 private:
     friend class GameObject;
     friend class GameObjectFactory;
@@ -61,6 +61,9 @@ private:
     friend class HIDManager;
     friend class SceneManager;
     friend class DataPersistanceManager;
+
+    /// Do not touch this variable
+    static GloomEngine* gloomEngine;
 
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};
@@ -72,19 +75,17 @@ public:
 
     glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
 
-    std::unique_ptr<RendererManager> rendererManager;
-    std::unique_ptr<ColliderManager> colliderManager;
-    std::unique_ptr<HIDManager> hidManager;
-    std::unique_ptr<SceneManager> sceneManager;
-
     std::shared_ptr<Game> game;
 
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;
 
 public:
-    GloomEngine();
+    GloomEngine(GloomEngine &other) = delete;
+    void operator=(const GloomEngine&) = delete;
     virtual ~GloomEngine();
+
+    static GloomEngine* GetInstance();
 
     /// Initialize creates all needed variables like factories
     void Initialize();
@@ -103,6 +104,7 @@ public:
     std::shared_ptr<GameObject> FindGameObjectWithName(std::string name);
 
 private:
+    GloomEngine();
     void InitializeWindow();
     static void glfwErrorCallback(int error, const char* description);
 

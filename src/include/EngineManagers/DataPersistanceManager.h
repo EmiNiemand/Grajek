@@ -16,27 +16,24 @@ class IDataPersistance;
 
 class DataPersistanceManager {
 private:
-    static std::shared_ptr<GloomEngine> gloomEngine;
-
     std::shared_ptr<GameData> gameData;
-    static std::shared_ptr<DataPersistanceManager> dataPersistanceManager;
+    static DataPersistanceManager* dataPersistanceManager;
 
 private:
     DataPersistanceManager();
     std::vector<std::shared_ptr<IDataPersistance>> FindAllDataPersistanceObjects();
 
 public:
+    DataPersistanceManager(DataPersistanceManager &other) = delete;
+    void operator=(const DataPersistanceManager&) = delete;
     virtual ~DataPersistanceManager();
 
-    static std::shared_ptr<DataPersistanceManager> GetInstance();
+    static DataPersistanceManager* GetInstance();
 
     //TODO: call this functions somewhere in the code
     void NewGame();
     void LoadGame(const std::string &dataDirectoryPath, const std::string &dataFileName);
     void SaveGame(const std::string &dataDirectoryPath, const std::string &dataFileName);
-
-    DataPersistanceManager(DataPersistanceManager const&) = delete;
-    DataPersistanceManager& operator=(DataPersistanceManager const&) = delete;
 };
 
 

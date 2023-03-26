@@ -2,23 +2,13 @@
 #include "GloomEngine.h"
 #include "Components/Component.h"
 
-std::shared_ptr<GloomEngine> GameObject::gloomEngine = nullptr;
-std::shared_ptr<GameObjectFactory> GameObject::gameObjectFactory = nullptr;
-std::shared_ptr<ComponentFactory> GameObject::componentFactory = nullptr;
-
 GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
                                                                         name(name), id(id), parent(parent), tag(tag) {}
 
 GameObject::~GameObject() {}
 
-void GameObject::InitializeGameObjects(const std::shared_ptr<GloomEngine> &gloomEngine) {
-    GameObject::gloomEngine = gloomEngine;
-    GameObject::gameObjectFactory = std::make_shared<GameObjectFactory>(gloomEngine);
-    GameObject::componentFactory = std::make_shared<ComponentFactory>(gloomEngine);
-}
-
 std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
-    return gameObjectFactory->CreateGameObject(name, parent, tag);
+    return GameObjectFactory::GetInstance()->CreateGameObject(name, parent, tag);
 }
 
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
@@ -33,13 +23,13 @@ void GameObject::OnTransformUpdateComponents() {
 
 void GameObject::RemoveComponent(int componentId) {
     if (!components.contains(componentId)) return;
-    gloomEngine->RemoveComponent(components.find(componentId)->second);
+    GloomEngine::GetInstance()->RemoveComponent(components.find(componentId)->second);
     components.erase(componentId);
 }
 
 void GameObject::RemoveAllComponents() {
     for (auto&& component : components){
-        gloomEngine->RemoveComponent(component.second);
+        GloomEngine::GetInstance()->RemoveComponent(component.second);
     }
     components.clear();
 }
@@ -63,7 +53,7 @@ void GameObject::RemoveAllChildren() {
     for (auto&& child : children) {
         child.second->RemoveAllComponents();
         child.second->RemoveAllChildren();
-        gloomEngine->RemoveGameObject(child.second);
+        GloomEngine::GetInstance()->RemoveGameObject(child.second);
     }
     children.clear();
 }

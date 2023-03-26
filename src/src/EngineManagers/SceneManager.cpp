@@ -3,9 +3,18 @@
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
-SceneManager::SceneManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
+SceneManager* SceneManager::sceneManager = nullptr;
+
+SceneManager::SceneManager() {}
 
 SceneManager::~SceneManager() {}
+
+SceneManager* SceneManager::GetInstance() {
+    if (sceneManager == nullptr) {
+        sceneManager = new SceneManager();
+    }
+    return sceneManager;
+}
 
 void SceneManager::InitializeScene() {
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
@@ -14,8 +23,8 @@ void SceneManager::InitializeScene() {
 
 void SceneManager::ClearScene() {
     activeScene->RemoveAllChildren();
-    gloomEngine->components.clear();
-    gloomEngine->gameObjects.clear();
+    GloomEngine::GetInstance()->components.clear();
+    GloomEngine::GetInstance()->gameObjects.clear();
 }
 
 void SceneManager::Free() {
@@ -23,5 +32,4 @@ void SceneManager::Free() {
     Camera::activeCamera = nullptr;
     activeScene = nullptr;
 }
-
 

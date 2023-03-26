@@ -11,11 +11,17 @@ class GameObject;
 class GameObjectFactory {
 private:
     int id = 0;
-    std::shared_ptr<GloomEngine> gloomEngine;
-public:
-    explicit GameObjectFactory(const std::shared_ptr<GloomEngine> &gloomEngine);
+    static GameObjectFactory* gameObjectFactory;
 
+public:
+    GameObjectFactory(GameObjectFactory &other) = delete;
+    void operator=(const GameObjectFactory&) = delete;
     std::shared_ptr<GameObject> CreateGameObject(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);
+
+    static GameObjectFactory* GetInstance();
+
+private:
+    explicit GameObjectFactory();
 };
 
 

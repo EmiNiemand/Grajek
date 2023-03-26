@@ -14,7 +14,7 @@ private:
     glm::vec3 color;
 
 public:
-    DirectionalLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    DirectionalLight(const std::shared_ptr<GameObject> &parent, int id);
     ~DirectionalLight() override;
 
     const glm::vec3 &GetAmbient() const;

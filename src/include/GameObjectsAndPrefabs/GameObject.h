@@ -19,10 +19,6 @@ private:
     int id;
     std::string name;
 
-    static std::shared_ptr<GloomEngine> gloomEngine;
-    static std::shared_ptr<GameObjectFactory> gameObjectFactory;
-    static std::shared_ptr<ComponentFactory> componentFactory;
-
 public:
     std::map<int, std::shared_ptr<Component>> components;
     std::map<int, std::shared_ptr<GameObject>> children;
@@ -38,13 +34,12 @@ public:
     GameObject(const std::string &name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
     virtual ~GameObject();
 
-    static void InitializeGameObjects(const std::shared_ptr<GloomEngine> &gloomEngine);
     static std::shared_ptr<GameObject> Instantiate(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);
     static void Destroy(std::shared_ptr<GameObject> gameObject);
 
     template<class T>
     std::shared_ptr<T> AddComponent() {
-        std::shared_ptr<T> component = std::dynamic_pointer_cast<T>(componentFactory->CreateComponent(typeid(T).name(), shared_from_this()));
+        std::shared_ptr<T> component = std::dynamic_pointer_cast<T>(ComponentFactory::GetInstance()->CreateComponent(typeid(T).name(), shared_from_this()));
         AddComponentToList(component);
         return component;
     };

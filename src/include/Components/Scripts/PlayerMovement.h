@@ -15,7 +15,7 @@ private:
     std::shared_ptr<Rigidbody> rb;
 
 public:
-    PlayerMovement(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    PlayerMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerMovement() override;
 
     void Start() override;

@@ -7,7 +7,9 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
-ColliderManager::ColliderManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
+ColliderManager* ColliderManager::colliderManager = nullptr;
+
+ColliderManager::ColliderManager() {
     colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");
 
     // create buffers/arrays
@@ -17,6 +19,14 @@ ColliderManager::ColliderManager(const std::shared_ptr<GloomEngine> &gloomEngine
 }
 
 ColliderManager::~ColliderManager() {}
+
+ColliderManager* ColliderManager::GetInstance() {
+    if (colliderManager == nullptr) {
+        colliderManager = new ColliderManager();
+    }
+    return colliderManager;
+}
+
 
 void ColliderManager::Update() {
     if (boxColliders.empty()) return;
@@ -36,7 +46,7 @@ void ColliderManager::Update() {
 #ifdef DEBUG
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
-    colliderDebugShader->SetMat4("projection", gloomEngine->rendererManager->projection);
+    colliderDebugShader->SetMat4("projection", RendererManager::GetInstance()->projection);
     colliderDebugShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     for (auto&& box : boxColliders) {
         colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());

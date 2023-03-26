@@ -2,10 +2,9 @@
 
 int main(int, char**)
 {
-    std::shared_ptr<GloomEngine> gloomEngine = std::make_shared<GloomEngine>();
-    gloomEngine->Initialize();
-    gloomEngine->Awake();
-    gloomEngine->Start();
+    GloomEngine::GetInstance()->Initialize();
+    GloomEngine::GetInstance()->Awake();
+    GloomEngine::GetInstance()->Start();
 
     bool endGame = false;
 
@@ -14,9 +13,9 @@ int main(int, char**)
     // ________________________
     while (!endGame)
     {
-        endGame = gloomEngine->Update();
+        endGame = GloomEngine::GetInstance()->Update();
     }
 
-    gloomEngine->Free();
+    GloomEngine::GetInstance()->Free();
     return 0;
 }

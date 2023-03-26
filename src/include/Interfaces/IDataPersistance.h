@@ -1,7 +1,3 @@
-//
-// Created by szymo on 24/03/2023.
-//
-
 #ifndef GLOOMENGINE_IDATAPERSISTANCE_H
 #define GLOOMENGINE_IDATAPERSISTANCE_H
 

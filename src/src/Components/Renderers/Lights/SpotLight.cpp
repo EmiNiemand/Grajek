@@ -2,8 +2,7 @@
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 
-SpotLight::SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id)
-        : Component(gloomEngine, parent, id) {
+SpotLight::SpotLight(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     cutOff = glm::cos(glm::radians(12.5f));
     outerCutOff = glm::cos(glm::radians(15.0f));
     constant = 1.0f;

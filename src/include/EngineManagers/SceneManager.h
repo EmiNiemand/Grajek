@@ -8,19 +8,26 @@ class GloomEngine;
 class GameObject;
 
 class SceneManager {
+private:
+    static SceneManager* sceneManager;
 public:
-    std::shared_ptr<GloomEngine> gloomEngine;
     std::shared_ptr<GameObject> activeScene;
 
 public:
-    explicit SceneManager(const std::shared_ptr<GloomEngine> &gloomEngine);
+    SceneManager(SceneManager &other) = delete;
+    void operator=(const SceneManager&) = delete;
     virtual ~SceneManager();
+
+    static SceneManager* GetInstance();
 
     void InitializeScene();
     //TODO: decide how to load scene and implement
     //void LoadScene();
     void ClearScene();
     void Free();
+
+private:
+    explicit SceneManager();
 };
 
 

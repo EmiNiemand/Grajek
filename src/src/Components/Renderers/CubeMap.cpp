@@ -14,9 +14,7 @@
 #define BASE_PATH "res/textures/"
 
 
-CubeMap::CubeMap(const std::shared_ptr<GloomEngine> &gloomEngine,
-                 const std::shared_ptr<GameObject> &parent, int id)
-        : Component(gloomEngine, parent, id) {
+CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     skyboxMesh = Shape::Cube::GetWithNormals(std::vector<Texture>());
 }
 
@@ -64,11 +62,11 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    auto shader = gloomEngine->rendererManager->cubeMapShader;
+    auto shader = RendererManager::GetInstance()->cubeMapShader;
     shader->Activate();
     shader->SetInt("skybox", 0);
 
-    shader = gloomEngine->rendererManager->shader;
+    shader = RendererManager::GetInstance()->shader;
     shader->Activate();
     shader->SetInt("skybox", 0);
     //TODO: fix setting bool in shader
@@ -76,7 +74,7 @@ void CubeMap::LoadTextures(const std::string& basePath) {
 }
 
 void CubeMap::Draw() {
-    auto shader = gloomEngine->rendererManager->cubeMapShader;
+    auto shader = RendererManager::GetInstance()->cubeMapShader;
     // change depth function so depth test passes
     // when values are equal to depth buffer's content
     glDepthFunc(GL_LEQUAL);

@@ -10,16 +10,15 @@
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
 
-std::shared_ptr<GloomEngine> DataPersistanceManager::gloomEngine = nullptr;
-std::shared_ptr<DataPersistanceManager> DataPersistanceManager::dataPersistanceManager = nullptr;
+DataPersistanceManager* DataPersistanceManager::dataPersistanceManager = nullptr;
 
 DataPersistanceManager::DataPersistanceManager() {}
 
 DataPersistanceManager::~DataPersistanceManager() {}
 
-std::shared_ptr<DataPersistanceManager> DataPersistanceManager::GetInstance() {
+DataPersistanceManager* DataPersistanceManager::GetInstance() {
     if (dataPersistanceManager == nullptr) {
-        dataPersistanceManager = std::shared_ptr<DataPersistanceManager>();
+        dataPersistanceManager = new DataPersistanceManager();
     }
     return dataPersistanceManager;
 }
@@ -53,7 +52,7 @@ void DataPersistanceManager::SaveGame(const std::string &dataDirectoryPath, cons
 std::vector<std::shared_ptr<IDataPersistance>> DataPersistanceManager::FindAllDataPersistanceObjects() {
     std::vector<std::shared_ptr<IDataPersistance>> objects;
 
-    for (const auto& object : gloomEngine->gameObjects) {
+    for (const auto& object : GloomEngine::GetInstance()->gameObjects) {
         for (const auto& component : object.second->components) {
             if (std::dynamic_pointer_cast<IDataPersistance>(component.second) != nullptr) {
                 objects.push_back(std::dynamic_pointer_cast<IDataPersistance>(component.second));

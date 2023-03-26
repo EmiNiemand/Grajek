@@ -5,8 +5,7 @@
 
 std::shared_ptr<GameObject> Camera::activeCamera = nullptr;
 
-Camera::Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) : Component(
-        gloomEngine, parent, id) {}
+Camera::Camera(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Camera::~Camera() {}
 
@@ -29,7 +28,7 @@ void Camera::SetTarget(const std::shared_ptr<GameObject> &target) {
 }
 
 void Camera::Start() {
-    player = gloomEngine->FindGameObjectWithName("Player");
+    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
     glm::vec3 playerPosition = player->transform->GetLocalPosition();
     parent->transform->SetLocalPosition(glm::vec3(playerPosition.x + cameraOffset.x, playerPosition.y + cameraOffset.y, playerPosition.z + cameraOffset.z));
     parent->transform->SetLocalRotation(glm::vec3(-45.0f, 0.0f, 0.0f));

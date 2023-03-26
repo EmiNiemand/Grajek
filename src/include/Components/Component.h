@@ -11,7 +11,6 @@ class GameObject;
 class Component {
 protected:
     int id;
-    std::shared_ptr<GloomEngine> gloomEngine;
     std::shared_ptr<GameObject> parent;
 
 public:
@@ -19,7 +18,7 @@ public:
     bool callOnStart = true;
     bool enabled = true;
 
-    Component(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    Component(const std::shared_ptr<GameObject> &parent, int id);
     virtual ~Component() = 0;
 
     /// Called once on creation even if disabled

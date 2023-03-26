@@ -17,7 +17,7 @@ private:
     glm::vec3 offset;
 
 public:
-    BoxCollider(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    BoxCollider(const std::shared_ptr<GameObject> &parent, int id);
     ~BoxCollider() override;
 
     void HandleCollision(std::shared_ptr<BoxCollider> other);

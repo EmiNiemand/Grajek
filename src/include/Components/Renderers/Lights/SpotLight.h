@@ -21,7 +21,7 @@ private:
     glm::vec3 color;
 
 public:
-    SpotLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    SpotLight(const std::shared_ptr<GameObject> &parent, int id);
     ~SpotLight() override;
 
     float GetCutOff() const;

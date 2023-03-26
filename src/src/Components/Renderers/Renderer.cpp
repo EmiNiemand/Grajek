@@ -1,7 +1,3 @@
-//
-// Created by szymo on 02/03/2023.
-//
-
 #include <utility>
 
 #include "Components/Renderers/Renderer.h"
@@ -14,8 +10,7 @@
 /**
  * @attention Remember to call LoadModel if you want model to actually display
  */
-Renderer::Renderer(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id) :
-Component(gloomEngine, parent, id) {
+Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     objectColor = {1.0f, 1.0f, 1.0f};
     shininess = 32.0f;
 }
@@ -36,21 +31,21 @@ void Renderer::Update() {
  */
 void Renderer::LoadModel(std::string newPath) {
     path = std::move(newPath);
-    model = std::make_shared<Model>( "res/models/"+path, gloomEngine->rendererManager->shader, GL_TRIANGLES);
+    model = std::make_shared<Model>( "res/models/"+path, RendererManager::GetInstance()->shader, GL_TRIANGLES);
 }
 
 void Renderer::Draw() {
     if(path.empty()) return;
 
-    gloomEngine->rendererManager->shader->Activate();
-    gloomEngine->rendererManager->shader->SetMat4("model", parent->transform->GetModelMatrix());
-    gloomEngine->rendererManager->shader->SetFloat("shininess", shininess);
-    gloomEngine->rendererManager->shader->SetVec3("objectColor", objectColor);
+    RendererManager::GetInstance()->shader->Activate();
+    RendererManager::GetInstance()->shader->SetMat4("model", parent->transform->GetModelMatrix());
+    RendererManager::GetInstance()->shader->SetFloat("shininess", shininess);
+    RendererManager::GetInstance()->shader->SetVec3("objectColor", objectColor);
     model->Draw();
 }
 
 void Renderer::OnUpdate() {
-    gloomEngine->rendererManager->UpdateLight(id);
+    RendererManager::GetInstance()->UpdateLight(id);
     Component::OnUpdate();
 }
 

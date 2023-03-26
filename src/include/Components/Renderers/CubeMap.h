@@ -18,8 +18,7 @@ private:
     unsigned int textureID;
     std::shared_ptr<Mesh> skyboxMesh;
 public:
-    CubeMap(const std::shared_ptr<GloomEngine> &gloomEngine,
-            const std::shared_ptr<GameObject> &parent, int id);
+    CubeMap(const std::shared_ptr<GameObject> &parent, int id);
 
     void LoadTextures(const std::string& basePath);
 

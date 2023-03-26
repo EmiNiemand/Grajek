@@ -17,7 +17,7 @@ private:
     glm::vec3 color;
 
 public:
-    PointLight(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    PointLight(const std::shared_ptr<GameObject> &parent, int id);
     ~PointLight() override;
 
     float GetConstant() const;

@@ -19,7 +19,7 @@ public:
     float parameter = 0.1f;
 
 public:
-    Camera(const std::shared_ptr<GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    Camera(const std::shared_ptr<GameObject> &parent, int id);
     ~Camera() override;
 
     void Start() override;

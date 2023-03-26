@@ -8,12 +8,11 @@ class GameObject;
 
 class Game {
 public:
-    std::shared_ptr<GloomEngine> gloomEngine;
     std::shared_ptr<GameObject> activeCamera;
     std::shared_ptr<GameObject> activeScene;
 
 public:
-    explicit Game(const std::shared_ptr<GloomEngine> &gloomEngine);
+    explicit Game();
     virtual ~Game();
 
     /// Should be used to load main menu scene

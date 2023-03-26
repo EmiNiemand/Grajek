@@ -1,10 +1,22 @@
 #include "EngineManagers/HIDManager.h"
 #include "GloomEngine.h"
 
-HIDManager::HIDManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
-    glfwSetKeyCallback(gloomEngine->window, HIDManager::KeyActionCallback);
+HIDManager* HIDManager::hidManager = nullptr;
+
+HIDManager::HIDManager() {
+    glfwSetKeyCallback(GloomEngine::GetInstance()->window, HIDManager::KeyActionCallback);
 }
-// TODO: need test
+
+HIDManager::~HIDManager() {}
+
+
+HIDManager* HIDManager::GetInstance() {
+    if (hidManager == nullptr) {
+        hidManager = new HIDManager();
+    }
+    return hidManager;
+}
+
 void HIDManager::Update() {
     keysDown.clear();
     keysPressed.clear();

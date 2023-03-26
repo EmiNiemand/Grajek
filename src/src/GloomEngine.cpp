@@ -14,6 +14,8 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 
+GloomEngine* GloomEngine::gloomEngine = nullptr;
+
 GloomEngine::GloomEngine() {
     width = 1200;
     height = 780;
@@ -21,28 +23,27 @@ GloomEngine::GloomEngine() {
 
 GloomEngine::~GloomEngine() {}
 
+GloomEngine* GloomEngine::GetInstance() {
+    if (gloomEngine == nullptr) {
+        gloomEngine = new GloomEngine();
+    }
+    return gloomEngine;
+}
+
+
 void GloomEngine::Initialize() {
     InitializeWindow();
 
-    // Assign engin as parent to game objects
-    GameObject::InitializeGameObjects(shared_from_this());
+    SceneManager::GetInstance()->InitializeScene();
 
-    //INIT ENGINE COMPONENTS
-    rendererManager = std::make_unique<RendererManager>(shared_from_this());
-    colliderManager = std::make_unique<ColliderManager>(shared_from_this());
-    hidManager = std::make_unique<HIDManager>(shared_from_this());
-    sceneManager = std::make_unique<SceneManager>(shared_from_this());
-
-    sceneManager->InitializeScene();
-
-    game = std::make_shared<Game>(shared_from_this());
+    game = std::make_shared<Game>();
     game->InitializeGame();
 }
 
 void GloomEngine::Awake() {
     lastFrameTime = glfwGetTime();
     // Setup all engine components
-    rendererManager->UpdateRenderer();
+    RendererManager::GetInstance()->UpdateRenderer();
 
     for (auto&& component : components){
         component.second->Awake();
@@ -74,9 +75,9 @@ bool GloomEngine::Update() {
 
     bool endGame = game->Update();
 
-    hidManager->Update();
-    colliderManager->Update();
-    rendererManager->UpdateRenderer();
+    HIDManager::GetInstance()->Update();
+    ColliderManager::GetInstance()->Update();
+    RendererManager::GetInstance()->UpdateRenderer();
 
     deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
@@ -88,9 +89,9 @@ bool GloomEngine::Update() {
 }
 
 void GloomEngine::Free() {
-    colliderManager->Free();
-    rendererManager->Free();
-    sceneManager->Free();
+    ColliderManager::GetInstance()->Free();
+    RendererManager::GetInstance()->Free();
+    SceneManager::GetInstance()->Free();
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -176,8 +177,8 @@ void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
 
 void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
     int componentId = component->GetId();
-    rendererManager->RemoveLight(componentId);
-    colliderManager->RemoveBoxCollider(componentId);
+    RendererManager::GetInstance()->RemoveLight(componentId);
+    ColliderManager::GetInstance()->RemoveBoxCollider(componentId);
     components.erase(componentId);
 }
 
@@ -185,4 +186,3 @@ void GloomEngine::glfwErrorCallback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
-

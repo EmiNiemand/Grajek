@@ -7,15 +7,24 @@
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "Components/Renderers/Lights/SpotLight.h"
 
-RendererManager::RendererManager(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
+RendererManager* RendererManager::rendererManager = nullptr;
+
+RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
     projection = glm::perspective(glm::radians(45.0f),
-                                  (float)gloomEngine->width/(float)gloomEngine->height,
+                                  (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,
                                   0.1f, 100.0f);
 }
 
 RendererManager::~RendererManager() {}
+
+RendererManager* RendererManager::GetInstance() {
+    if (rendererManager == nullptr) {
+        rendererManager = new RendererManager();
+    }
+    return rendererManager;
+}
 
 void RendererManager::Free() {
     shader->Delete();

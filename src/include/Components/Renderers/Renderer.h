@@ -1,7 +1,3 @@
-//
-// Created by szymo on 02/03/2023.
-//
-
 #ifndef OPENGLGP_RENDERER_H
 #define OPENGLGP_RENDERER_H
 
@@ -21,7 +17,7 @@ public:
     float shininess;
 
 public:
-    Renderer(const std::shared_ptr <GloomEngine> &gloomEngine, const std::shared_ptr<GameObject> &parent, int id);
+    Renderer(const std::shared_ptr<GameObject> &parent, int id);
     ~Renderer() override;
 
 

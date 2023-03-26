@@ -24,9 +24,13 @@ class PlayerMovement;
 class ComponentFactory {
 private:
     int id = 0;
-    std::shared_ptr<GloomEngine> gloomEngine;
+    static ComponentFactory* componentFactory;
+
 public:
-    explicit ComponentFactory(const std::shared_ptr<GloomEngine> &gloomEngine);
+    ComponentFactory(ComponentFactory &other) = delete;
+    void operator=(const ComponentFactory&) = delete;
+
+    static ComponentFactory* GetInstance();
 
     std::shared_ptr<Component> CreateComponent(std::string type, const std::shared_ptr<GameObject> &parent);
 
@@ -40,6 +44,9 @@ public:
     std::shared_ptr<BoxCollider> CreateBoxCollider(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<Rigidbody> CreateRigidbody(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<PlayerMovement> CreatePlayerMovement(const std::shared_ptr<GameObject> &parent);
+
+private:
+    explicit ComponentFactory();
 };
 
 

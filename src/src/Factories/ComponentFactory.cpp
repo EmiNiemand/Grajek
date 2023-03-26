@@ -13,7 +13,16 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 
-ComponentFactory::ComponentFactory(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {}
+ComponentFactory* ComponentFactory::componentFactory = nullptr;
+
+ComponentFactory::ComponentFactory() {}
+
+ComponentFactory* ComponentFactory::GetInstance() {
+    if (componentFactory == nullptr) {
+        componentFactory = new ComponentFactory();
+    }
+    return componentFactory;
+}
 
 std::shared_ptr<Component> ComponentFactory::CreateComponent(std::string type, const std::shared_ptr<GameObject> &parent){
     if (type == typeid(Renderer).name()) {
@@ -59,9 +68,9 @@ std::shared_ptr<Renderer> ComponentFactory::CreateRenderer(const std::shared_ptr
     std::shared_ptr<Renderer> component = parent->GetComponent<Renderer>();
     if (component != nullptr) return component;
     id++;
-    component = std::make_shared<Renderer>(gloomEngine, parent, id);
+    component = std::make_shared<Renderer>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
+    GloomEngine::GetInstance()->AddComponent(component);
     return component;
 }
 
@@ -69,9 +78,9 @@ std::shared_ptr<CubeMap> ComponentFactory::CreateCubeMap(const std::shared_ptr<G
     std::shared_ptr<CubeMap> component = parent->GetComponent<CubeMap>();
     if (component != nullptr) return component;
     id++;
-    component = std::make_shared<CubeMap>(gloomEngine, parent, id);
+    component = std::make_shared<CubeMap>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
+    GloomEngine::GetInstance()->AddComponent(component);
     return component;
 }
 
@@ -79,9 +88,9 @@ std::shared_ptr<Camera> ComponentFactory::CreateCamera(const std::shared_ptr<Gam
     std::shared_ptr<Camera> component = parent->GetComponent<Camera>();
     if (component != nullptr) return component;
     id++;
-    component = std::make_shared<Camera>(gloomEngine, parent, id);
+    component = std::make_shared<Camera>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
+    GloomEngine::GetInstance()->AddComponent(component);
     return component;
 }
 
@@ -92,24 +101,24 @@ std::shared_ptr<PointLight> ComponentFactory::CreatePointLight(const std::shared
 
     int number = 0;
 
-    for (auto&& pointLight : gloomEngine->rendererManager->pointLights) {
+    for (auto&& pointLight : RendererManager::GetInstance()->pointLights) {
         if (pointLight.second == nullptr) {
-            component = std::make_shared<PointLight>(gloomEngine, parent, id);
+            component = std::make_shared<PointLight>(parent, id);
             std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-            gloomEngine->AddComponent(component);
-            gloomEngine->rendererManager->pointLights.find(number)->second = component;
-            gloomEngine->rendererManager->UpdateLight(id);
+            GloomEngine::GetInstance()->AddComponent(component);
+            RendererManager::GetInstance()->pointLights.find(number)->second = component;
+            RendererManager::GetInstance()->UpdateLight(id);
             id++;
             return component;
         }
         number++;
     }
 
-    component = std::make_shared<PointLight>(gloomEngine, parent, id);
+    component = std::make_shared<PointLight>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
-    gloomEngine->rendererManager->pointLights.insert({number, component});
-    gloomEngine->rendererManager->UpdateLight(id);
+    GloomEngine::GetInstance()->AddComponent(component);
+    RendererManager::GetInstance()->pointLights.insert({number, component});
+    RendererManager::GetInstance()->UpdateLight(id);
     return component;
 
 }
@@ -120,24 +129,24 @@ std::shared_ptr<DirectionalLight> ComponentFactory::CreateDirectionalLight(const
     id++;
     int number = 0;
 
-    for (auto&& directionalLight : gloomEngine->rendererManager->directionalLights){
+    for (auto&& directionalLight : RendererManager::GetInstance()->directionalLights){
         if (directionalLight.second == nullptr) {
-            component = std::make_shared<DirectionalLight>(gloomEngine, parent, id);
+            component = std::make_shared<DirectionalLight>(parent, id);
             std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-            gloomEngine->AddComponent(component);
-            gloomEngine->rendererManager->directionalLights.find(number)->second = component;
-            gloomEngine->rendererManager->UpdateLight(id);
+            GloomEngine::GetInstance()->AddComponent(component);
+            RendererManager::GetInstance()->directionalLights.find(number)->second = component;
+            RendererManager::GetInstance()->UpdateLight(id);
             id++;
             return component;
         }
         number++;
     }
 
-    component = std::make_shared<DirectionalLight>(gloomEngine, parent, id);
+    component = std::make_shared<DirectionalLight>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
-    gloomEngine->rendererManager->directionalLights.insert({number, component});
-    gloomEngine->rendererManager->UpdateLight(id);
+    GloomEngine::GetInstance()->AddComponent(component);
+    RendererManager::GetInstance()->directionalLights.insert({number, component});
+    RendererManager::GetInstance()->UpdateLight(id);
     return component;
 }
 
@@ -147,22 +156,22 @@ std::shared_ptr<SpotLight> ComponentFactory::CreateSpotLight(const std::shared_p
     id++;
     int number = 0;
 
-    for (auto&& spotLight : gloomEngine->rendererManager->spotLights){
+    for (auto&& spotLight : RendererManager::GetInstance()->spotLights){
         if (spotLight.second == nullptr) {
-            component = std::make_shared<SpotLight>(gloomEngine, parent, id);
+            component = std::make_shared<SpotLight>(parent, id);
             std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-            gloomEngine->AddComponent(component);
-            gloomEngine->rendererManager->spotLights.find(number)->second = component;
-            gloomEngine->rendererManager->UpdateLight(id);
+            GloomEngine::GetInstance()->AddComponent(component);
+            RendererManager::GetInstance()->spotLights.find(number)->second = component;
+            RendererManager::GetInstance()->UpdateLight(id);
             return component;
         }
         number++;
     }
-    component = std::make_shared<SpotLight>(gloomEngine, parent, id);
+    component = std::make_shared<SpotLight>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
-    gloomEngine->rendererManager->spotLights.insert({number, component});
-    gloomEngine->rendererManager->UpdateLight(id);
+    GloomEngine::GetInstance()->AddComponent(component);
+    RendererManager::GetInstance()->spotLights.insert({number, component});
+    RendererManager::GetInstance()->UpdateLight(id);
     return component;
 }
 
@@ -170,11 +179,11 @@ std::shared_ptr<BoxCollider> ComponentFactory::CreateBoxCollider(const std::shar
     std::shared_ptr<BoxCollider> component = parent->GetComponent<BoxCollider>();
     if (component != nullptr) return component;
     id++;
-    component = std::make_shared<BoxCollider>(gloomEngine, parent, id);
+    component = std::make_shared<BoxCollider>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->colliderManager->boxColliders.insert({id, component});
-    gloomEngine->colliderManager->OnBoxColliderAdd();
-    gloomEngine->AddComponent(component);
+    ColliderManager::GetInstance()->boxColliders.insert({id, component});
+    ColliderManager::GetInstance()->OnBoxColliderAdd();
+    GloomEngine::GetInstance()->AddComponent(component);
     return component;
 }
 
@@ -182,9 +191,9 @@ std::shared_ptr<Rigidbody> ComponentFactory::CreateRigidbody(const std::shared_p
     std::shared_ptr<Rigidbody> component = parent->GetComponent<Rigidbody>();
     if (component != nullptr) return component;
     id++;
-    component = std::make_shared<Rigidbody>(gloomEngine, parent, id);
+    component = std::make_shared<Rigidbody>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
+    GloomEngine::GetInstance()->AddComponent(component);
     return component;
 }
 
@@ -192,8 +201,8 @@ std::shared_ptr<PlayerMovement> ComponentFactory::CreatePlayerMovement(const std
     std::shared_ptr<PlayerMovement> component = parent->GetComponent<PlayerMovement>();
     if (component != nullptr) return component;
     id++;
-    component = std::make_shared<PlayerMovement>(gloomEngine, parent, id);
+    component = std::make_shared<PlayerMovement>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
-    gloomEngine->AddComponent(component);
+    GloomEngine::GetInstance()->AddComponent(component);
     return component;
 }

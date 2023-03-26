@@ -1,7 +1,5 @@
 #include "Game.h"
 #include "GloomEngine.h"
-#include "EngineManagers/RendererManager.h"
-#include "EngineManagers/ColliderManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -15,9 +13,9 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 
-Game::Game(const std::shared_ptr<GloomEngine> &gloomEngine) : gloomEngine(gloomEngine) {
+Game::Game() {
     activeCamera = Camera::activeCamera;
-    activeScene = gloomEngine->sceneManager->activeScene;
+    activeScene = SceneManager::GetInstance()->activeScene;
 }
 
 Game::~Game() {}
