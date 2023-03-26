@@ -28,9 +28,10 @@ CubeMap::CubeMap(const std::shared_ptr<GloomEngine> &gloomEngine,
  *            e.g. first texture is in "res/textures/skybox/sky1.jpg"
  *            so <b>basePath</b> should be "skybox/sky" <br/>
  *            Order of textures is: <br/>
- *            <b>RIGHT, LEFT, TOP, BOTTOM, FRONT, BACK</b>
+ *            <b>RIGHT, LEFT, TOP, BOTTOM, BACK, FRONT</b>
  * @param basePath - path to folder containing textures
  */
+
 void CubeMap::LoadTextures(const std::string& basePath) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -40,6 +41,7 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     for (unsigned int i = 0; i < 6; i++)
     {
         auto path = BASE_PATH + basePath + std::to_string(i) + ".jpg";
+
         unsigned char *data = stbi_load(path.c_str(),
                                         &width, &height,
                                         &nrChannels, 0);
@@ -63,9 +65,14 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     auto shader = gloomEngine->rendererManager->cubeMapShader;
-
     shader->Activate();
     shader->SetInt("skybox", 0);
+
+    shader = gloomEngine->rendererManager->shader;
+    shader->Activate();
+    shader->SetInt("skybox", 0);
+    //TODO: fix setting bool in shader
+    shader->SetBool("isReflective", true);
 }
 
 void CubeMap::Draw() {
@@ -74,11 +81,15 @@ void CubeMap::Draw() {
     // when values are equal to depth buffer's content
     glDepthFunc(GL_LEQUAL);
     shader->Activate();
-    // skybox cube
+
     glBindVertexArray(skyboxMesh->vao);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    skyboxMesh->Draw(shader, GL_TRIANGLES);
+
+    glBindVertexArray(skyboxMesh->vao);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
+
     glDepthFunc(GL_LESS); // set depth function back to default
 }
 

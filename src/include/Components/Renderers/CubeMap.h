@@ -12,6 +12,7 @@
 #include "LowLevelClasses/Mesh.h"
 #include "Components/Component.h"
 
+//TODO: this should probably be at least partially moved to low-level classes
 class CubeMap : public Component {
 private:
     unsigned int textureID;
