@@ -41,8 +41,7 @@ void RendererManager::UpdateCamera() {
     shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 
     cubeMapShader->Activate();
-    cubeMapShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
-    cubeMapShader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
+    cubeMapShader->SetMat4("view", glm::mat4(glm::mat3(Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix())));
 }
 
 void RendererManager::UpdateLight(int componentId) {

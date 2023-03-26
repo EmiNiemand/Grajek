@@ -77,6 +77,7 @@ uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 uniform vec3 objectColor = vec3(1, 1, 1);
 uniform samplerCube skybox;
+uniform bool isReflective = false;
 
 uniform Material objectMaterial;
 
@@ -119,6 +120,19 @@ void main()
     }
     result = result * objectColor;
     FragColor = vec4(result, 1.0f);
+
+
+    //Apply reflection
+    //TODO: fix setting bool
+//    if(isReflective) {
+    if(false) {
+        vec3 I = normalize(FragPos - viewPos);
+        vec3 R = reflect(I, norm);
+        FragColor = vec4(texture(skybox, R).rgb, 1.0);
+    }
+    //    else {
+    //        result = ApplyMaterial(objectMaterial, FragPos);
+    //    }
 }
 
 // LIGHT FUNCTIONS
