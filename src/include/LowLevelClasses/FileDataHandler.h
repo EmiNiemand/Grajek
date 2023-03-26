@@ -5,9 +5,26 @@
 #ifndef GLOOMENGINE_FILEDATAHANDLER_H
 #define GLOOMENGINE_FILEDATAHANDLER_H
 
+#include <string>
+#include "nlohmann/json.hpp"
+
+class GameData;
 
 class FileDataHandler {
+private:
+    std::string dataDirectoryPath;
+    std::string dataFileName;
 
+public:
+    FileDataHandler(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    virtual ~FileDataHandler();
+
+    std::shared_ptr<GameData> LoadGame();
+    void SaveGame(std::shared_ptr<GameData> gameData);
+
+private:
+    void to_json(nlohmann::json &json, const std::shared_ptr<GameData>& gameData);
+    void from_json(const nlohmann::json &json, const std::shared_ptr<GameData>& gameData);
 };
 
 

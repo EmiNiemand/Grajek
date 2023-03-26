@@ -5,6 +5,7 @@
 #include "EngineManagers/DataPersistanceManager.h"
 #include "GloomEngine.h"
 #include "LowLevelClasses/GameData.h"
+#include "LowLevelClasses/FileDataHandler.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
@@ -27,10 +28,10 @@ void DataPersistanceManager::NewGame() {
     gameData = std::make_unique<GameData>();
 }
 
-void DataPersistanceManager::LoadGame() {
-    if (gameData == nullptr) {
-        NewGame();
-    }
+void DataPersistanceManager::LoadGame(const std::string &dataDirectoryPath, const std::string &dataFileName) {
+    FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
+    gameData = fileDataHandler.LoadGame();
+
     std::vector<std::shared_ptr<IDataPersistance>> dataPersistanceObjects = FindAllDataPersistanceObjects();
 
     for (const auto& object : dataPersistanceObjects) {
@@ -38,12 +39,15 @@ void DataPersistanceManager::LoadGame() {
     }
 }
 
-void DataPersistanceManager::SaveGame() {
+void DataPersistanceManager::SaveGame(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::vector<std::shared_ptr<IDataPersistance>> dataPersistanceObjects = FindAllDataPersistanceObjects();
 
     for (const auto& object : dataPersistanceObjects) {
         object->SaveData(gameData);
     }
+
+    FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
+    fileDataHandler.SaveGame(gameData);
 }
 
 std::vector<std::shared_ptr<IDataPersistance>> DataPersistanceManager::FindAllDataPersistanceObjects() {

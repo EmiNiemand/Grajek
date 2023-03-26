@@ -7,8 +7,10 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 class GloomEngine;
+class FileDataHandler;
 class GameData;
 class IDataPersistance;
 
@@ -28,9 +30,10 @@ public:
 
     static std::shared_ptr<DataPersistanceManager> GetInstance();
 
+    //TODO: call this functions somewhere in the code
     void NewGame();
-    void LoadGame();
-    void SaveGame();
+    void LoadGame(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    void SaveGame(const std::string &dataDirectoryPath, const std::string &dataFileName);
 
     DataPersistanceManager(DataPersistanceManager const&) = delete;
     DataPersistanceManager& operator=(DataPersistanceManager const&) = delete;
