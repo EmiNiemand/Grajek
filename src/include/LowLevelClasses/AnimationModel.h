@@ -31,12 +31,13 @@ private:
     std::vector<Mesh> meshes;
     std::string directory;
     std::shared_ptr<Shader> shader;
+	// GL_TRIANGLES etc
     int type;
     bool gammaCorrection;
 
 public:
-    AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma = false);
-    AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type);
+    AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES, bool gamma = false);
+    AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
     void Draw();
     auto& GetBoneInfoMap() { return boneInfoMap; }
     uint16_t& GetBoneCount() { return boneCounter; }

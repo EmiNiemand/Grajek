@@ -13,6 +13,7 @@ class GameObject;
 class Component;
 class Renderer;
 class CubeMap;
+class Animator;
 class Camera;
 class PointLight;
 class DirectionalLight;
@@ -37,6 +38,7 @@ public:
     // Creators - add creator for every component class
     std::shared_ptr<Renderer> CreateRenderer(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<CubeMap> CreateCubeMap(const std::shared_ptr<GameObject> &parent);
+	std::shared_ptr<Animator> CreateAnimator(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<Camera> CreateCamera(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<PointLight> CreatePointLight(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<DirectionalLight> CreateDirectionalLight(const std::shared_ptr<GameObject> &parent);

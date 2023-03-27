@@ -13,6 +13,7 @@ RendererManager* RendererManager::rendererManager = nullptr;
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
+	animatedShader = std::make_shared<Shader>("animated.vert", "animated.frag");
     projection = glm::perspective(glm::radians(45.0f),
                                   (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,
                                   0.1f, 100.0f);
@@ -46,6 +47,10 @@ void RendererManager::UpdateProjection() {
 
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("projection", projection);
+
+
+	animatedShader->Activate();
+	animatedShader->SetMat4("projection", projection);
 }
 
 void RendererManager::UpdateCamera() {
@@ -55,140 +60,148 @@ void RendererManager::UpdateCamera() {
 
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("view", glm::mat4(glm::mat3(Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix())));
+
+	animatedShader->Activate();
+	animatedShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
+	animatedShader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 }
 
 void RendererManager::UpdateLight(int componentId) {
-    for (int i = 0; i < spotLights.size(); i++) {
-        if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-            UpdateSpotLight(i);
-            return;
-        }
-    }
-    for (int i = 0; i < directionalLights.size(); i++) {
-        if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-            UpdateDirectionalLight(i);
-            return;
-        }
-    }
-    for (int i = 0; i < pointLights.size(); i++) {
-        if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-            UpdatePointLight(i);
-            return;
-        }
-    }
+	for(auto lightShader : {shader, animatedShader}) {
+		for (int i = 0; i < spotLights.size(); i++) {
+			if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
+				UpdateSpotLight(i, lightShader);
+				return;
+			}
+		}
+		for (int i = 0; i < directionalLights.size(); i++) {
+			if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
+				UpdateDirectionalLight(i, lightShader);
+				return;
+			}
+		}
+		for (int i = 0; i < pointLights.size(); i++) {
+			if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
+				UpdatePointLight(i, lightShader);
+				return;
+			}
+		}
+	}
 }
 
 void RendererManager::RemoveLight(int componentId) {
-    for (int i = 0; i < spotLights.size(); i++) {
-        if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-            RemoveSpotLight(i);
-            return;
-        }
-    }
-    for (int i = 0; i < directionalLights.size(); i++) {
-        if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-            RemoveDirectionalLight(i);
-            return;
-        }
-    }
-    for (int i = 0; i < pointLights.size(); i++) {
-        if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-            RemovePointLight(i);
-            return;
-        }
-    }
+	for(auto lightShader : {shader, animatedShader}) {
+		for (int i = 0; i < spotLights.size(); i++) {
+			if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
+				RemoveSpotLight(i, lightShader);
+				return;
+			}
+		}
+		for (int i = 0; i < directionalLights.size(); i++) {
+			if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
+				RemoveDirectionalLight(i, lightShader);
+				return;
+			}
+		}
+		for (int i = 0; i < pointLights.size(); i++) {
+			if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
+				RemovePointLight(i, lightShader);
+				return;
+			}
+		}
+	}
 }
 
-void RendererManager::UpdatePointLight(int lightNumber) {
-    shader->Activate();
+void RendererManager::UpdatePointLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
+    lightShader->Activate();
     std::shared_ptr<PointLight> pointLight = pointLights.find(lightNumber)->second;
     std::string light = "pointLights[" + std::to_string(lightNumber) + "]";
-    shader->SetBool(light + ".isActive", pointLight->enabled);
-    shader->SetVec3(light + ".position", pointLight->GetParent()->transform->GetLocalPosition());
-    shader->SetFloat(light + ".constant", pointLight->GetConstant());
-    shader->SetFloat(light + ".linear", pointLight->GetLinear());
-    shader->SetFloat(light + ".quadratic", pointLight->GetQuadratic());
-    shader->SetVec3(light + ".ambient", pointLight->GetAmbient());
-    shader->SetVec3(light + ".diffuse", pointLight->GetDiffuse());
-    shader->SetVec3(light + ".specular", pointLight->GetSpecular());
-    shader->SetVec3(light + ".color", pointLight->GetColor());
+    lightShader->SetBool(light + ".isActive", pointLight->enabled);
+    lightShader->SetVec3(light + ".position", pointLight->GetParent()->transform->GetLocalPosition());
+    lightShader->SetFloat(light + ".constant", pointLight->GetConstant());
+    lightShader->SetFloat(light + ".linear", pointLight->GetLinear());
+    lightShader->SetFloat(light + ".quadratic", pointLight->GetQuadratic());
+    lightShader->SetVec3(light + ".ambient", pointLight->GetAmbient());
+    lightShader->SetVec3(light + ".diffuse", pointLight->GetDiffuse());
+    lightShader->SetVec3(light + ".specular", pointLight->GetSpecular());
+    lightShader->SetVec3(light + ".color", pointLight->GetColor());
 }
 
-void RendererManager::UpdateDirectionalLight(int lightNumber) {
-    shader->Activate();
+void RendererManager::UpdateDirectionalLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
+    lightShader->Activate();
     std::shared_ptr<DirectionalLight> directionalLight = directionalLights.find(lightNumber)->second;
     std::string light = "directionalLights[" + std::to_string(lightNumber) + "]";
-    shader->SetBool(light + ".isActive", directionalLight->enabled);
-    shader->SetVec3(light + ".direction", directionalLight->GetParent()->transform->GetForward());
-    shader->SetVec3(light + ".ambient", directionalLight->GetAmbient());
-    shader->SetVec3(light + ".diffuse", directionalLight->GetDiffuse());
-    shader->SetVec3(light + ".specular", directionalLight->GetSpecular());
-    shader->SetVec3(light + ".color", directionalLight->GetColor());
+    lightShader->SetBool(light + ".isActive", directionalLight->enabled);
+    lightShader->SetVec3(light + ".direction", directionalLight->GetParent()->transform->GetForward());
+    lightShader->SetVec3(light + ".ambient", directionalLight->GetAmbient());
+    lightShader->SetVec3(light + ".diffuse", directionalLight->GetDiffuse());
+    lightShader->SetVec3(light + ".specular", directionalLight->GetSpecular());
+    lightShader->SetVec3(light + ".color", directionalLight->GetColor());
 }
 
-void RendererManager::UpdateSpotLight(int lightNumber) {
-    shader->Activate();
+void RendererManager::UpdateSpotLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
+    lightShader->Activate();
     std::shared_ptr<SpotLight> spotLight = spotLights.find(lightNumber)->second;
     std::string light = "spotLights[" + std::to_string(lightNumber) + "]";
-    shader->SetBool(light + ".isActive", spotLight->enabled);
-    shader->SetVec3(light + ".position", spotLight->GetParent()->transform->GetLocalPosition());
-    shader->SetVec3(light + ".direction", spotLight->GetParent()->transform->GetForward());
-    shader->SetFloat(light + ".cutOff", spotLight->GetCutOff());
-    shader->SetFloat(light + ".outerCutOff", spotLight->GetOuterCutOff());
-    shader->SetFloat(light + ".constant", spotLight->GetConstant());
-    shader->SetFloat(light + ".linear", spotLight->GetLinear());
-    shader->SetFloat(light + ".quadratic", spotLight->GetQuadratic());
-    shader->SetVec3(light + ".ambient", spotLight->GetAmbient());
-    shader->SetVec3(light + ".diffuse", spotLight->GetDiffuse());
-    shader->SetVec3(light + ".specular", spotLight->GetSpecular());
-    shader->SetVec3(light + ".color", spotLight->GetColor());
+    lightShader->SetBool(light + ".isActive", spotLight->enabled);
+    lightShader->SetVec3(light + ".position", spotLight->GetParent()->transform->GetLocalPosition());
+    lightShader->SetVec3(light + ".direction", spotLight->GetParent()->transform->GetForward());
+    lightShader->SetFloat(light + ".cutOff", spotLight->GetCutOff());
+    lightShader->SetFloat(light + ".outerCutOff", spotLight->GetOuterCutOff());
+    lightShader->SetFloat(light + ".constant", spotLight->GetConstant());
+    lightShader->SetFloat(light + ".linear", spotLight->GetLinear());
+    lightShader->SetFloat(light + ".quadratic", spotLight->GetQuadratic());
+    lightShader->SetVec3(light + ".ambient", spotLight->GetAmbient());
+    lightShader->SetVec3(light + ".diffuse", spotLight->GetDiffuse());
+    lightShader->SetVec3(light + ".specular", spotLight->GetSpecular());
+    lightShader->SetVec3(light + ".color", spotLight->GetColor());
 }
 
-void RendererManager::RemovePointLight(int lightNumber) {
-    shader->Activate();
+void RendererManager::RemovePointLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
+    lightShader->Activate();
     std::string light = "pointLights[" + std::to_string(lightNumber) + "]";
-    shader->SetBool(light + ".isActive", false);
-    shader->SetVec3(light + ".position", {0, 0, 0});
-    shader->SetFloat(light + ".constant", 0);
-    shader->SetFloat(light + ".linear", 0);
-    shader->SetFloat(light + ".quadratic", 0);
-    shader->SetVec3(light + ".ambient", {0, 0, 0});
-    shader->SetVec3(light + ".diffuse", {0, 0, 0});
-    shader->SetVec3(light + ".specular", {0, 0, 0});
-    shader->SetVec3(light + ".color", {0, 0, 0});
+    lightShader->SetBool(light + ".isActive", false);
+    lightShader->SetVec3(light + ".position", {0, 0, 0});
+    lightShader->SetFloat(light + ".constant", 0);
+    lightShader->SetFloat(light + ".linear", 0);
+    lightShader->SetFloat(light + ".quadratic", 0);
+    lightShader->SetVec3(light + ".ambient", {0, 0, 0});
+    lightShader->SetVec3(light + ".diffuse", {0, 0, 0});
+    lightShader->SetVec3(light + ".specular", {0, 0, 0});
+    lightShader->SetVec3(light + ".color", {0, 0, 0});
 
     pointLights.find(lightNumber)->second = nullptr;
 }
 
-void RendererManager::RemoveDirectionalLight(int lightNumber) {
-    shader->Activate();
+void RendererManager::RemoveDirectionalLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
+    lightShader->Activate();
     std::string light = "directionalLights[" + std::to_string(lightNumber) + "]";
-    shader->SetBool(light +".isActive", false);
-    shader->SetVec3(light + ".direction", {0, 0, 0});
-    shader->SetVec3(light + ".ambient", {0, 0, 0});
-    shader->SetVec3(light + ".diffuse", {0, 0, 0});
-    shader->SetVec3(light + ".specular", {0, 0, 0});
-    shader->SetVec3(light + ".color", {0, 0, 0});
+    lightShader->SetBool(light +".isActive", false);
+    lightShader->SetVec3(light + ".direction", {0, 0, 0});
+    lightShader->SetVec3(light + ".ambient", {0, 0, 0});
+    lightShader->SetVec3(light + ".diffuse", {0, 0, 0});
+    lightShader->SetVec3(light + ".specular", {0, 0, 0});
+    lightShader->SetVec3(light + ".color", {0, 0, 0});
 
     directionalLights.find(lightNumber)->second = nullptr;
 }
 
-void RendererManager::RemoveSpotLight(int lightNumber) {
-    shader->Activate();
+void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
+    lightShader->Activate();
     std::shared_ptr<SpotLight> spotLight = spotLights.find(lightNumber)->second;
     std::string light = "spotLights[" + std::to_string(lightNumber) + "]";
-    shader->SetBool(light +".isActive", false);
-    shader->SetVec3(light + ".position", {0, 0, 0});
-    shader->SetVec3(light + ".direction", {0, 0, 0});
-    shader->SetFloat(light + ".cutOff", 0);
-    shader->SetFloat(light + ".outerCutOff", 0);
-    shader->SetFloat(light + ".constant", 0);
-    shader->SetFloat(light + ".linear", 0);
-    shader->SetFloat(light + ".quadratic", 0);
-    shader->SetVec3(light + ".ambient", {0, 0, 0});
-    shader->SetVec3(light + ".diffuse", {0, 0, 0});
-    shader->SetVec3(light + ".specular", {0, 0, 0});
-    shader->SetVec3(light + ".color", {0, 0, 0});
+    lightShader->SetBool(light +".isActive", false);
+    lightShader->SetVec3(light + ".position", {0, 0, 0});
+    lightShader->SetVec3(light + ".direction", {0, 0, 0});
+    lightShader->SetFloat(light + ".cutOff", 0);
+    lightShader->SetFloat(light + ".outerCutOff", 0);
+    lightShader->SetFloat(light + ".constant", 0);
+    lightShader->SetFloat(light + ".linear", 0);
+    lightShader->SetFloat(light + ".quadratic", 0);
+    lightShader->SetVec3(light + ".ambient", {0, 0, 0});
+    lightShader->SetVec3(light + ".diffuse", {0, 0, 0});
+    lightShader->SetVec3(light + ".specular", {0, 0, 0});
+    lightShader->SetVec3(light + ".color", {0, 0, 0});
 
     spotLights.find(lightNumber)->second = nullptr;
 }

@@ -28,10 +28,10 @@ private:
     std::map<std::string, BoneInfo> boneInfoMap;
 
 public:
-    Animation(const std::string& animationPath, AnimationModel* model);
+    Animation(const std::string& animationPath, std::shared_ptr<AnimationModel> model);
     virtual ~Animation();
 
-    Bone* FindBone(const std::string& name);
+	std::shared_ptr<Bone> FindBone(const std::string& name);
 
 
     int GetTicksPerSecond() const;
@@ -40,8 +40,8 @@ public:
     const std::map<std::string,BoneInfo>& GetBoneIDMap();
 
 private:
-    void ReadMissingBones(const aiAnimation* animation, AnimationModel& model);
-    void ReadHierarchyData(AssimpNodeData& dest, const aiNode* src);
+    void ReadMissingBones(const std::shared_ptr<aiAnimation>& animation, AnimationModel& model);
+    void ReadHierarchyData(AssimpNodeData& dest, aiNode& src);
 };
 
 

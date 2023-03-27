@@ -17,19 +17,24 @@
 class Animator : public Component {
 private:
     std::vector<glm::mat4> finalBoneMatrices;
-    Animation* currentAnimation;
+    std::shared_ptr<Animation> currentAnimation;
+	std::shared_ptr<AnimationModel> model;
     float currentTime;
-    float deltaTime;
+	bool isPlaying;
 
 public:
-    Animator(const std::shared_ptr<GameObject> &parent, int id, Animation *currentAnimation);
-
+    Animator(const std::shared_ptr<GameObject> &parent, int id);
     ~Animator() override;
 
-    void UpdateAnimation(float deltaTime);
-    void PlayAnimation(Animation* pAnimation);
+	void LoadAnimation(std::string path);
 
-    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+	void Update() override;
+
+	void UpdateAnimation(float deltaTime);
+    void PlayAnimation(std::shared_ptr<Animation> pAnimation);
+	void PauseAnimation();
+
+    void CalculateBoneTransform(const std::shared_ptr<AssimpNodeData>& node, glm::mat4 parentTransform);
     std::vector<glm::mat4> GetFinalBoneMatrices();
 };
 

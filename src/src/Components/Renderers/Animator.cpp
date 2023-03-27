@@ -4,9 +4,14 @@
 
 #include "Components/Renderers/Animator.h"
 #include "LowLevelClasses/Bone.h"
+#include "EngineManagers/RendererManager.h"
+#include "GloomEngine.h"
+#include <filesystem>
+#include <utility>
 
-Animator::Animator(const std::shared_ptr<GameObject> &parent, int id, Animation *currentAnimation) : Component(parent, id),
-                                                                                   currentAnimation(currentAnimation) {
+#define BASE_PATH "res/models"
+
+Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     currentTime = 0.0;
     finalBoneMatrices.reserve(100);
 
@@ -15,32 +20,50 @@ Animator::Animator(const std::shared_ptr<GameObject> &parent, int id, Animation 
 
 Animator::~Animator() {}
 
+void Animator::LoadAnimation(std::string path)
+{
+	std::filesystem::path normalizedPath(BASE_PATH + path);
+	model = std::make_shared<AnimationModel>(
+			normalizedPath.string().c_str(),
+			RendererManager::GetInstance()->animatedShader);
+	currentAnimation = std::make_shared<Animation>(
+			normalizedPath.string(), model);
+}
+
+
+void Animator::Update() {
+	Component::Update();
+	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
+}
+
 void Animator::UpdateAnimation(float deltaTime) {
-    deltaTime = deltaTime;
-    if (currentAnimation)
-    {
-        currentTime += currentAnimation->GetTicksPerSecond() * deltaTime;
-        currentTime = fmod(currentTime, currentAnimation->GetDuration());
-        CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
-    }
+	if(!isPlaying) return;
+	if (!currentAnimation) return;
+
+    currentTime += currentAnimation->GetTicksPerSecond() * deltaTime;
+    currentTime = fmod(currentTime, currentAnimation->GetDuration());
+    CalculateBoneTransform(std::make_shared<AssimpNodeData>(currentAnimation->GetRootNode()), glm::mat4(1.0f));
 }
 
-void Animator::PlayAnimation(Animation* pAnimation) {
-    currentAnimation = pAnimation;
+void Animator::PlayAnimation(std::shared_ptr<Animation> pAnimation) {
+    currentAnimation = std::move(pAnimation);
     currentTime = 0.0f;
+	isPlaying = true;
 }
 
-void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void Animator::PauseAnimation() { isPlaying = false; }
+
+void Animator::CalculateBoneTransform(const std::shared_ptr<AssimpNodeData>& node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;
     glm::mat4 nodeTransform = node->transformation;
 
-    Bone* Bone = currentAnimation->FindBone(nodeName);
+	std::shared_ptr<Bone> bone = currentAnimation->FindBone(nodeName);
 
-    if (Bone)
+    if (bone)
     {
-        Bone->Update(currentTime);
-        nodeTransform = Bone->GetLocalTransform();
+	    bone->Update(currentTime);
+        nodeTransform = bone->GetLocalTransform();
     }
 
     glm::mat4 globalTransformation = parentTransform * nodeTransform;
@@ -53,7 +76,8 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
         finalBoneMatrices[index] = globalTransformation * offset;
     }
 
-    for (int i = 0; i < node->childrenCount; i++) CalculateBoneTransform(&node->children[i], globalTransformation);
+    for (int i = 0; i < node->childrenCount; i++)
+		CalculateBoneTransform(std::make_shared<AssimpNodeData>(node->children[i]), globalTransformation);
 }
 
 std::vector<glm::mat4> Animator::GetFinalBoneMatrices()

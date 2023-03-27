@@ -12,6 +12,7 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
+#include "Components/Renderers/Animator.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -73,6 +74,13 @@ void Game::InitializeGame() {
         sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
         sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
+
+	// Set up animated model
+	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
+	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/Hip Hop Dancing.dae");
+	std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
+	scenePropCollider->SetOffset({0, 1, 0});
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
