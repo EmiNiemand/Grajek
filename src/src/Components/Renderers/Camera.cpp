@@ -28,10 +28,10 @@ void Camera::SetTarget(const std::shared_ptr<GameObject> &target) {
     Camera::target = target;
 }
 
-void Camera::SetZoomLevel(float newzoom)
+void Camera::SetZoomLevel(float newZoom)
 {
-    if(newzoom > 0.01f)
-    desiredZoomLevel = newzoom;
+    if(newZoom > 0.01f)
+    desiredZoomLevel = newZoom;
 }
 
 void Camera::Start() {

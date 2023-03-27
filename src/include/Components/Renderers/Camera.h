@@ -31,7 +31,7 @@ public:
     void Update() override;
 
     void SetTarget(const std::shared_ptr<GameObject> &target);
-    void SetZoomLevel(float newzoom);
+    void SetZoomLevel(float newZoom);
 
     glm::mat4 GetViewMatrix();
 
