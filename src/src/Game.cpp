@@ -78,7 +78,7 @@ void Game::InitializeGame() {
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
 	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/Hip Hop Dancing.dae");
+	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
 	std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
 	scenePropCollider->SetOffset({0, 1, 0});
 

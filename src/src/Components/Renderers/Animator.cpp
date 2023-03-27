@@ -9,7 +9,7 @@
 #include <filesystem>
 #include <utility>
 
-#define BASE_PATH "res/models"
+#define BASE_PATH "res/models/"
 
 Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     currentTime = 0.0;
@@ -27,7 +27,7 @@ void Animator::LoadAnimation(std::string path)
 			normalizedPath.string().c_str(),
 			RendererManager::GetInstance()->animatedShader);
 	currentAnimation = std::make_shared<Animation>(
-			normalizedPath.string(), model);
+			normalizedPath.string(), model.get());
 }
 
 
@@ -42,7 +42,7 @@ void Animator::UpdateAnimation(float deltaTime) {
 
     currentTime += currentAnimation->GetTicksPerSecond() * deltaTime;
     currentTime = fmod(currentTime, currentAnimation->GetDuration());
-    CalculateBoneTransform(std::make_shared<AssimpNodeData>(currentAnimation->GetRootNode()), glm::mat4(1.0f));
+    CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
 }
 
 void Animator::PlayAnimation(std::shared_ptr<Animation> pAnimation) {
@@ -53,12 +53,12 @@ void Animator::PlayAnimation(std::shared_ptr<Animation> pAnimation) {
 
 void Animator::PauseAnimation() { isPlaying = false; }
 
-void Animator::CalculateBoneTransform(const std::shared_ptr<AssimpNodeData>& node, glm::mat4 parentTransform)
+void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;
     glm::mat4 nodeTransform = node->transformation;
 
-	std::shared_ptr<Bone> bone = currentAnimation->FindBone(nodeName);
+	Bone* bone = currentAnimation->FindBone(nodeName);
 
     if (bone)
     {
@@ -77,7 +77,7 @@ void Animator::CalculateBoneTransform(const std::shared_ptr<AssimpNodeData>& nod
     }
 
     for (int i = 0; i < node->childrenCount; i++)
-		CalculateBoneTransform(std::make_shared<AssimpNodeData>(node->children[i]), globalTransformation);
+		CalculateBoneTransform(&node->children[i], globalTransformation);
 }
 
 std::vector<glm::mat4> Animator::GetFinalBoneMatrices()

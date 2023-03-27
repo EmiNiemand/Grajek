@@ -34,7 +34,7 @@ public:
     void PlayAnimation(std::shared_ptr<Animation> pAnimation);
 	void PauseAnimation();
 
-    void CalculateBoneTransform(const std::shared_ptr<AssimpNodeData>& node, glm::mat4 parentTransform);
+    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
     std::vector<glm::mat4> GetFinalBoneMatrices();
 };
 
