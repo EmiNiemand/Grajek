@@ -33,6 +33,14 @@ void Animator::LoadAnimation(std::string path)
 
 void Animator::Update() {
 	Component::Update();
+	auto shader = RendererManager::GetInstance()->animatedShader;
+	shader->Activate();
+
+	auto transforms = GetFinalBoneMatrices();
+	for (int i = 0; i < transforms.size(); ++i)
+		shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+	model->Draw();
+
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
 }
 
