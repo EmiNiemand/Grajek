@@ -31,7 +31,7 @@ void Camera::SetTarget(const std::shared_ptr<GameObject> &target) {
 void Camera::SetZoomLevel(float newzoom)
 {
     if(newzoom > 0.01f)
-    desiredzoomLevel = newzoom;
+    desiredZoomLevel = newzoom;
 }
 
 void Camera::Start() {
@@ -43,8 +43,8 @@ void Camera::Start() {
 }
 
 void Camera::Update() {
-    //zmieniany po¿¹dany zoom na kamerze. Trzeba tylko szybko klikn¹æ
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_Z)) {
+    // we change desired zoom on the camera when pressing Z. 
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_Z)) {
         if (!isZoomed) {
             isZoomed = true;
             SetZoomLevel(0.5f);
@@ -55,7 +55,7 @@ void Camera::Update() {
     }
     glm::vec3 playerPosition = player->transform->GetLocalPosition();
     glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
-    zoomLevel = Lerp(zoomLevel, desiredzoomLevel, parameter);
+    zoomLevel = Lerp(zoomLevel, desiredZoomLevel, parameter);
     parent->transform->SetLocalPosition(Lerp(parent->transform->GetGlobalPosition(), playerPosition + cameraOffset * zoomLevel, parameter));
     Component::Update();
 }

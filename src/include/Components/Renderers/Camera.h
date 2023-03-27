@@ -17,8 +17,8 @@ public:
     static std::shared_ptr<GameObject> activeCamera;
 
     glm::vec3 cameraOffset = glm::vec3(0,0,0);
-    float zoomLevel = 1.0f; //poziom zooma. ile offseta ma byæ dodane do pozycji kamery. (1.0 = offset, 0,5 = polowa offseta)
-    float desiredzoomLevel = 1.0f;
+    float zoomLevel = 1.0f; // effective level of zoom. defined as multiplier to the offset on the camera
+    float desiredZoomLevel = 1.0f; // zoom level that will be interpolated to
     float parameter = 0.1f;
     bool isZoomed = false;
 
