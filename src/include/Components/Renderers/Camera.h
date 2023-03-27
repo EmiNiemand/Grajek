@@ -6,6 +6,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Components/Component.h"
+#include "EngineManagers/HIDManager.h"
 
 class Camera : public Component {
 private:
@@ -16,7 +17,10 @@ public:
     static std::shared_ptr<GameObject> activeCamera;
 
     glm::vec3 cameraOffset = glm::vec3(0,0,0);
+    float zoomLevel = 1.0f; //poziom zooma. ile offseta ma byæ dodane do pozycji kamery. (1.0 = offset, 0,5 = polowa offseta)
+    float desiredzoomLevel = 1.0f;
     float parameter = 0.1f;
+    bool isZoomed = false;
 
 public:
     Camera(const std::shared_ptr<GameObject> &parent, int id);
@@ -27,11 +31,13 @@ public:
     void Update() override;
 
     void SetTarget(const std::shared_ptr<GameObject> &target);
+    void SetZoomLevel(float newzoom);
 
     glm::mat4 GetViewMatrix();
 
 private:
     glm::vec3 Lerp(glm::vec3 firstPoint, glm::vec3 secondPoint, float parameter);
+    float Lerp(float scalar1, float scalar2, float parameter);
 };
 
 
