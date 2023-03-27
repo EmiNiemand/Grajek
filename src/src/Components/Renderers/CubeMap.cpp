@@ -3,11 +3,9 @@
 //
 
 #include "Components/Renderers/CubeMap.h"
-#include <utility>
 #include "glad/glad.h"
 #include "stb_image.h"
 #include "Shapes/Cube.h"
-#include "glm/detail/type_mat4x4.hpp"
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 

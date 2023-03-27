@@ -2,6 +2,7 @@
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Utilities.h"
 
 std::shared_ptr<GameObject> Camera::activeCamera = nullptr;
 
@@ -38,10 +39,6 @@ void Camera::Start() {
 void Camera::Update() {
     glm::vec3 playerPosition = player->transform->GetLocalPosition();
     glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
-    parent->transform->SetLocalPosition(Lerp(parent->transform->GetGlobalPosition(), glm::vec3(playerPosition.x + cameraOffset.x, playerPosition.y + cameraOffset.y, playerPosition.z + cameraOffset.z), parameter));
+    parent->transform->SetLocalPosition(Utilities::GetInstance()->Lerp(parent->transform->GetGlobalPosition(), glm::vec3(playerPosition.x + cameraOffset.x, playerPosition.y + cameraOffset.y, playerPosition.z + cameraOffset.z), 0.02f));
     Component::Update();
-}
-
-glm::vec3 Camera::Lerp(glm::vec3 firstPoint, glm::vec3 secondPoint, float parameter) {
-    return firstPoint + (secondPoint - firstPoint) * parameter;
 }

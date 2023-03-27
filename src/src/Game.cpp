@@ -25,7 +25,6 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
     camera->cameraOffset = glm::vec3(0, 20, 20);
-    camera->parameter = 0.02f;
 
     // Set up player
     // -------------
