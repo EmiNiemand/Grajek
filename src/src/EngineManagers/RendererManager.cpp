@@ -66,49 +66,46 @@ void RendererManager::UpdateCamera() {
 }
 
 void RendererManager::UpdateLight(int componentId) {
-	for(const auto& lightShader : {shader, animatedShader}) {
-		for (int i = 0; i < spotLights.size(); i++) {
-			if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-				UpdateSpotLight(i, lightShader);
-				return;
-			}
-		}
-		for (int i = 0; i < directionalLights.size(); i++) {
-			if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-				UpdateDirectionalLight(i, lightShader);
-				return;
-			}
-		}
-		for (int i = 0; i < pointLights.size(); i++) {
-			if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-				UpdatePointLight(i, lightShader);
-				return;
-			}
-		}
-	}
+
+    for (int i = 0; i < spotLights.size(); i++) {
+        if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
+            for(const auto& lightShader : {shader, animatedShader}) UpdateSpotLight(i, lightShader);
+            return;
+        }
+    }
+    for (int i = 0; i < directionalLights.size(); i++) {
+        if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
+            for(const auto& lightShader : {shader, animatedShader}) UpdateDirectionalLight(i, lightShader);
+            return;
+        }
+    }
+    for (int i = 0; i < pointLights.size(); i++) {
+        if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
+            for(const auto& lightShader : {shader, animatedShader}) UpdatePointLight(i, lightShader);
+            return;
+        }
+    }
 }
 
 void RendererManager::RemoveLight(int componentId) {
-	for(const auto& lightShader : {shader, animatedShader}) {
-		for (int i = 0; i < spotLights.size(); i++) {
-			if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-				RemoveSpotLight(i, lightShader);
-				return;
-			}
-		}
-		for (int i = 0; i < directionalLights.size(); i++) {
-			if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-				RemoveDirectionalLight(i, lightShader);
-				return;
-			}
-		}
-		for (int i = 0; i < pointLights.size(); i++) {
-			if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-				RemovePointLight(i, lightShader);
-				return;
-			}
-		}
-	}
+    for (int i = 0; i < spotLights.size(); i++) {
+        if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
+            for(const auto& lightShader : {shader, animatedShader}) RemoveSpotLight(i, lightShader);
+            return;
+        }
+    }
+    for (int i = 0; i < directionalLights.size(); i++) {
+        if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
+            for(const auto& lightShader : {shader, animatedShader}) RemoveDirectionalLight(i, lightShader);
+            return;
+        }
+    }
+    for (int i = 0; i < pointLights.size(); i++) {
+        if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
+            for(const auto& lightShader : {shader, animatedShader}) RemovePointLight(i, lightShader);
+            return;
+        }
+    }
 }
 
 void RendererManager::UpdatePointLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {

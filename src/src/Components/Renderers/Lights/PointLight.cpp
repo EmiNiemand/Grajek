@@ -20,6 +20,7 @@ float PointLight::GetConstant() const {
 
 void PointLight::SetConstant(float constant) {
     PointLight::constant = constant;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -29,6 +30,7 @@ float PointLight::GetLinear() const {
 
 void PointLight::SetLinear(float linear) {
     PointLight::linear = linear;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -38,6 +40,7 @@ float PointLight::GetQuadratic() const {
 
 void PointLight::SetQuadratic(float quadratic) {
     PointLight::quadratic = quadratic;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -47,6 +50,7 @@ const glm::vec3 &PointLight::GetAmbient() const {
 
 void PointLight::SetAmbient(const glm::vec3 &ambient) {
     PointLight::ambient = ambient;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -56,6 +60,7 @@ const glm::vec3 &PointLight::GetDiffuse() const {
 
 void PointLight::SetDiffuse(const glm::vec3 &diffuse) {
     PointLight::diffuse = diffuse;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -65,6 +70,7 @@ const glm::vec3 &PointLight::GetSpecular() const {
 
 void PointLight::SetSpecular(const glm::vec3 &specular) {
     PointLight::specular = specular;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -74,5 +80,11 @@ const glm::vec3 &PointLight::GetColor() const {
 
 void PointLight::SetColor(const glm::vec3 &color) {
     PointLight::color = color;
+    OnUpdate();
+    Component::OnUpdate();
+}
+
+void PointLight::OnUpdate() {
+    RendererManager::GetInstance()->UpdateLight(id);
     Component::OnUpdate();
 }

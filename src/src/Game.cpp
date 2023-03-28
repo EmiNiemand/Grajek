@@ -81,7 +81,7 @@ void Game::InitializeGame() {
 	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
 	std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
 	scenePropCollider->SetOffset({0, 1, 0});
-	animatedDood->transform->SetLocalPosition({0, 2, -5});
+	animatedDood->transform->SetLocalPosition({0, 0, -5});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);

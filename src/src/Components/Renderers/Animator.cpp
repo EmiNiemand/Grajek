@@ -33,7 +33,6 @@ void Animator::LoadAnimation(std::string path)
 
 
 void Animator::Update() {
-	Component::Update();
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
 
 	//TODO: improve (ugly)
@@ -44,12 +43,10 @@ void Animator::Update() {
 	//TODO: I don't even know man
 	shader->SetMat4("model", parent->transform->GetModelMatrix());
 	model->Draw();
+
+    Component::Update();
 }
 
-void Animator::OnUpdate() {
-	RendererManager::GetInstance()->UpdateLight(id);
-	Component::OnUpdate();
-}
 
 void Animator::UpdateAnimation(float deltaTime) {
 	//if(!isPlaying) return;

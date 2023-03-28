@@ -20,6 +20,8 @@ public:
     PointLight(const std::shared_ptr<GameObject> &parent, int id);
     ~PointLight() override;
 
+    void OnUpdate() override;
+
     float GetConstant() const;
     void SetConstant(float constant);
 

@@ -1,8 +1,8 @@
-#version 430 core
+#version 430
 
-layout(location = 0) in vec3 pos;
-layout(location = 1) in vec3 norm;
-layout(location = 2) in vec2 tex;
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aNormal;
+layout(location = 2) in vec2 aTexCoords;
 layout(location = 3) in vec3 tangent;
 layout(location = 4) in vec3 bitangent;
 layout(location = 5) in ivec4 boneIds;
@@ -29,18 +29,19 @@ void main()
         continue;
         if(boneIds[i] >=MAX_BONES)
         {
-            totalPosition = vec4(pos,1.0f);
+            totalPosition = vec4(aPos,1.0f);
             break;
         }
-        vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(pos,1.0f);
+        vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos,1.0f);
         totalPosition += localPosition * weights[i];
-        vec3 localNormal = mat3(finalBonesMatrices[boneIds[i]]) * norm;
+        vec3 localNormal = mat3(finalBonesMatrices[boneIds[i]]) * aNormal;
     }
 
-    mat4 viewModel = view * model;
-    gl_Position =  projection * viewModel * totalPosition;
-    TexCoords = tex;
-
+    TexCoords = aTexCoords;
     FragPos = vec3(model * totalPosition);
-    Normal = mat3(transpose(inverse(model))) * norm;
+    Normal = mat3(transpose(inverse(model))) * aNormal;
+
+    mat4 viewModel = view * model;
+    gl_Position =  projection * view * model * totalPosition;
+
 }
