@@ -48,7 +48,6 @@ void RendererManager::UpdateProjection() {
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("projection", projection);
 
-
 	animatedShader->Activate();
 	animatedShader->SetMat4("projection", projection);
 }

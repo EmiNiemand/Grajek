@@ -23,14 +23,13 @@ private:
 	bool isPlaying;
 
 public:
-	glm::mat4 modelMatrix;
-
     Animator(const std::shared_ptr<GameObject> &parent, int id);
     ~Animator() override;
 
 	void LoadAnimation(std::string path);
 
 	void Update() override;
+	void OnUpdate() override;
 
 	void UpdateAnimation(float deltaTime);
     void PlayAnimation(std::shared_ptr<Animation> pAnimation);

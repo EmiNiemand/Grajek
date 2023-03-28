@@ -2,7 +2,6 @@
 #include "GloomEngine.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
-#include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/CubeMap.h"
@@ -84,7 +83,6 @@ void Game::InitializeGame() {
 	scenePropCollider->SetOffset({0, 1, 0});
 	animatedDood->transform->SetLocalPosition({0, 2, -5});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
-	animatedDoodAnimator->modelMatrix = animatedDood->transform->GetModelMatrix();
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

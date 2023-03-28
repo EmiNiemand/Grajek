@@ -46,6 +46,11 @@ void Animator::Update() {
 	model->Draw();
 }
 
+void Animator::OnUpdate() {
+	RendererManager::GetInstance()->UpdateLight(id);
+	Component::OnUpdate();
+}
+
 void Animator::UpdateAnimation(float deltaTime) {
 	//if(!isPlaying) return;
 	if (!currentAnimation) return;
