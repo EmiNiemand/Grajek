@@ -3,6 +3,7 @@
 //
 
 #include "Components/Renderers/Animator.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Bone.h"
 #include "EngineManagers/RendererManager.h"
 #include "GloomEngine.h"
@@ -33,19 +34,20 @@ void Animator::LoadAnimation(std::string path)
 
 void Animator::Update() {
 	Component::Update();
+	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
+
+	//TODO: improve (ugly)
 	auto shader = RendererManager::GetInstance()->animatedShader;
 	shader->Activate();
-
-	auto transforms = GetFinalBoneMatrices();
-	for (int i = 0; i < transforms.size(); ++i)
-		shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+	for (int i = 0; i < finalBoneMatrices.size(); ++i)
+		shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
+	//TODO: I don't even know man
+	shader->SetMat4("model", parent->transform->GetModelMatrix());
 	model->Draw();
-
-	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
 }
 
 void Animator::UpdateAnimation(float deltaTime) {
-	if(!isPlaying) return;
+	//if(!isPlaying) return;
 	if (!currentAnimation) return;
 
     currentTime += currentAnimation->GetTicksPerSecond() * deltaTime;

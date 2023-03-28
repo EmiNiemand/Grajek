@@ -67,7 +67,7 @@ void RendererManager::UpdateCamera() {
 }
 
 void RendererManager::UpdateLight(int componentId) {
-	for(auto lightShader : {shader, animatedShader}) {
+	for(const auto& lightShader : {shader, animatedShader}) {
 		for (int i = 0; i < spotLights.size(); i++) {
 			if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
 				UpdateSpotLight(i, lightShader);
@@ -90,7 +90,7 @@ void RendererManager::UpdateLight(int componentId) {
 }
 
 void RendererManager::RemoveLight(int componentId) {
-	for(auto lightShader : {shader, animatedShader}) {
+	for(const auto& lightShader : {shader, animatedShader}) {
 		for (int i = 0; i < spotLights.size(); i++) {
 			if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
 				RemoveSpotLight(i, lightShader);

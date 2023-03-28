@@ -23,6 +23,8 @@ private:
 	bool isPlaying;
 
 public:
+	glm::mat4 modelMatrix;
+
     Animator(const std::shared_ptr<GameObject> &parent, int id);
     ~Animator() override;
 

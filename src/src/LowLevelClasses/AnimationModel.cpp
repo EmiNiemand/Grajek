@@ -160,6 +160,8 @@ Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
+	ExtractBoneWeightForVertices(vertices,mesh,scene);
+
     // return a mesh object created from the extracted mesh data
     return Mesh(vertices, indices, textures);
 }
