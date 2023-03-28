@@ -36,7 +36,7 @@ void Image::CreateMesh(float x, float y, float width, float height) {
     mesh = std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Image::LoadTextures(const std::string &path) {
+void Image::LoadTextures(float x, float y, const std::string &path) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int width, height, nrChannels;
@@ -60,6 +60,8 @@ void Image::LoadTextures(const std::string &path) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        this->CreateMesh(x, y, width, height);
     }
     else
     {

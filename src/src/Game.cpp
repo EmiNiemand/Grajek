@@ -65,11 +65,14 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    std::shared_ptr<GameObject> UI = GameObject::Instantiate("UI", activeScene);
-    UI->AddComponent<Image>();
-    // x,y,width, height from 0 to 1920
-    UI->GetComponent<Image>()->CreateMesh(0, 0, 1280, 180);
-    UI->GetComponent<Image>()->LoadTextures("UI/UI.png");
+    std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
+    reksio->AddComponent<Image>();
+    // x,y from 0 to 1920
+    reksio->GetComponent<Image>()->LoadTextures(50, 0, "UI/piesek.png");
+    std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
+    mruczek->AddComponent<Image>();
+    mruczek->GetComponent<Image>()->LoadTextures(1650, 0, "UI/kotek.png");
+
 
     // Set up cubes for collision testing
     // ----------------------------------
