@@ -17,6 +17,8 @@ public:
     DirectionalLight(const std::shared_ptr<GameObject> &parent, int id);
     ~DirectionalLight() override;
 
+    void OnUpdate() override;
+
     const glm::vec3 &GetAmbient() const;
     void SetAmbient(const glm::vec3 &ambient);
 

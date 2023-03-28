@@ -28,8 +28,8 @@ public:
     std::map<int, std::shared_ptr<SpotLight>> spotLights;
 
     std::shared_ptr<Shader> shader;
-    //TODO: integrate with main shader maybe
     std::shared_ptr<Shader> cubeMapShader;
+	std::shared_ptr<Shader> animatedShader;
 
 public:
     RendererManager(RendererManager &other) = delete;
@@ -50,12 +50,12 @@ public:
 private:
     explicit RendererManager();
 
-    void UpdatePointLight(int id);
-    void UpdateDirectionalLight(int id);
-    void UpdateSpotLight(int id);
-    void RemovePointLight(int id);
-    void RemoveDirectionalLight(int id);
-    void RemoveSpotLight(int id);
+    void UpdatePointLight(int id, const std::shared_ptr<Shader>& lightShader);
+    void UpdateDirectionalLight(int id, const std::shared_ptr<Shader>& lightShader);
+    void UpdateSpotLight(int id, const std::shared_ptr<Shader>& lightShader);
+    void RemovePointLight(int id, const std::shared_ptr<Shader>& lightShader);
+    void RemoveDirectionalLight(int id, const std::shared_ptr<Shader>& lightShader);
+    void RemoveSpotLight(int id, const std::shared_ptr<Shader>& lightShader);
 };
 
 

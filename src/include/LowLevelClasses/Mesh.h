@@ -5,13 +5,13 @@
 #ifndef OPENGLGP_MESH_H
 #define OPENGLGP_MESH_H
 
-#define MAX_BONE_INFLUENCE 4
-
 #include <string>
 #include <vector>
 #include <memory>
 
 #include "Shader.h"
+
+#define MAX_BONE_INFLUENCE 4
 
 struct Vertex {
     // position
@@ -25,9 +25,11 @@ struct Vertex {
     // bitangent
     glm::vec3 biTangent;
     //bone indexes which will influence this vertex
-    glm::i16vec4 mBoneIDs;
+    //glm::i16vec4 boneIDs[MAX_BONE_INFLUENCE];
+    int boneIDs[MAX_BONE_INFLUENCE];
     //weights from each bone
-    glm::vec4 mWeights;
+    //glm::vec4 weights[MAX_BONE_INFLUENCE];
+    float weights[MAX_BONE_INFLUENCE];
 };
 
 struct Texture {

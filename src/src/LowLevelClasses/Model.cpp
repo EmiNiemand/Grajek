@@ -1,7 +1,3 @@
-//
-// Created by szymo on 31/10/2022.
-//
-
 #include "LowLevelClasses/Model.h"
 
 #include "assimp/Importer.hpp"
@@ -11,7 +7,7 @@
 #include "spdlog/spdlog.h"
 #include <filesystem>
 
-unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma) {
+unsigned int Model::TextureFromFile(const char *path, const std::string &directory, bool gamma) {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
     unsigned int textureID;

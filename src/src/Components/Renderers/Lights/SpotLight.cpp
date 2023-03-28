@@ -22,6 +22,7 @@ float SpotLight::GetCutOff() const {
 
 void SpotLight::SetCutOff(float cutOff) {
     SpotLight::cutOff = cutOff;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -31,6 +32,7 @@ float SpotLight::GetOuterCutOff() const {
 
 void SpotLight::SetOuterCutOff(float outerCutOff) {
     SpotLight::outerCutOff = outerCutOff;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -40,6 +42,7 @@ float SpotLight::GetConstant() const {
 
 void SpotLight::SetConstant(float constant) {
     SpotLight::constant = constant;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -49,6 +52,7 @@ float SpotLight::GetLinear() const {
 
 void SpotLight::SetLinear(float linear) {
     SpotLight::linear = linear;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -58,6 +62,7 @@ float SpotLight::GetQuadratic() const {
 
 void SpotLight::SetQuadratic(float quadratic) {
     SpotLight::quadratic = quadratic;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -67,6 +72,7 @@ const glm::vec3 &SpotLight::GetAmbient() const {
 
 void SpotLight::SetAmbient(const glm::vec3 &ambient) {
     SpotLight::ambient = ambient;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -76,6 +82,7 @@ const glm::vec3 &SpotLight::GetDiffuse() const {
 
 void SpotLight::SetDiffuse(const glm::vec3 &diffuse) {
     SpotLight::diffuse = diffuse;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -85,6 +92,7 @@ const glm::vec3 &SpotLight::GetSpecular() const {
 
 void SpotLight::SetSpecular(const glm::vec3 &specular) {
     SpotLight::specular = specular;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -94,6 +102,12 @@ const glm::vec3 &SpotLight::GetColor() const {
 
 void SpotLight::SetColor(const glm::vec3 &color) {
     SpotLight::color = color;
+    OnUpdate();
+    Component::OnUpdate();
+}
+
+void SpotLight::OnUpdate() {
+    RendererManager::GetInstance()->UpdateLight(id);
     Component::OnUpdate();
 }
 

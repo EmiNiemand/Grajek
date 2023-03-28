@@ -5,12 +5,14 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/CubeMap.h"
+#include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Camera.h"
 #include "Components/Renderers/Lights/PointLight.h"
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "Components/UI/Image.h"
 #include "Components/Scripts/PlayerMovement.h"
 
 ComponentFactory* ComponentFactory::componentFactory = nullptr;
@@ -32,6 +34,10 @@ std::shared_ptr<Component> ComponentFactory::CreateComponent(std::string type, c
     else if (type == typeid(CubeMap).name()) {
         std::shared_ptr<Component> component = CreateCubeMap(parent);
         return component;
+    }
+    else if (type == typeid(Animator).name()) {
+	    std::shared_ptr<Component> component = CreateAnimator(parent);
+	    return component;
     }
     else if (type == typeid(Camera).name()) {
         std::shared_ptr<Component> component = CreateCamera(parent);
@@ -55,6 +61,10 @@ std::shared_ptr<Component> ComponentFactory::CreateComponent(std::string type, c
     }
     else if (type == typeid(Rigidbody).name()) {
         std::shared_ptr<Component> component = CreateRigidbody(parent);
+        return component;
+    }
+    else if (type == typeid(Image).name()) {
+        std::shared_ptr<Component> component = CreateImage(parent);
         return component;
     }
     else if (type == typeid(PlayerMovement).name()) {
@@ -82,6 +92,16 @@ std::shared_ptr<CubeMap> ComponentFactory::CreateCubeMap(const std::shared_ptr<G
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
     GloomEngine::GetInstance()->AddComponent(component);
     return component;
+}
+
+std::shared_ptr<Animator> ComponentFactory::CreateAnimator(const std::shared_ptr<GameObject> &parent) {
+	std::shared_ptr<Animator> component = parent->GetComponent<Animator>();
+	if (component != nullptr) return component;
+	id++;
+	component = std::make_shared<Animator>(parent, id);
+	std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
+	GloomEngine::GetInstance()->AddComponent(component);
+	return component;
 }
 
 std::shared_ptr<Camera> ComponentFactory::CreateCamera(const std::shared_ptr<GameObject> &parent) {
@@ -192,6 +212,16 @@ std::shared_ptr<Rigidbody> ComponentFactory::CreateRigidbody(const std::shared_p
     if (component != nullptr) return component;
     id++;
     component = std::make_shared<Rigidbody>(parent, id);
+    std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
+    GloomEngine::GetInstance()->AddComponent(component);
+    return component;
+}
+
+std::shared_ptr<Image> ComponentFactory::CreateImage(const std::shared_ptr<GameObject> &parent) {
+    std::shared_ptr<Image> component = parent->GetComponent<Image>();
+    if (component != nullptr) return component;
+    id++;
+    component = std::make_shared<Image>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
     GloomEngine::GetInstance()->AddComponent(component);
     return component;

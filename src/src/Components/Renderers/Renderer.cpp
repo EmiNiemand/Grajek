@@ -44,8 +44,4 @@ void Renderer::Draw() {
     model->Draw();
 }
 
-void Renderer::OnUpdate() {
-    RendererManager::GetInstance()->UpdateLight(id);
-    Component::OnUpdate();
-}
 

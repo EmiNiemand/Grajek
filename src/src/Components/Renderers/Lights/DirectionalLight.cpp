@@ -18,6 +18,7 @@ const glm::vec3 &DirectionalLight::GetAmbient() const {
 
 void DirectionalLight::SetAmbient(const glm::vec3 &ambient) {
     DirectionalLight::ambient = ambient;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -27,6 +28,7 @@ const glm::vec3 &DirectionalLight::GetDiffuse() const {
 
 void DirectionalLight::SetDiffuse(const glm::vec3 &diffuse) {
     DirectionalLight::diffuse = diffuse;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -36,6 +38,7 @@ const glm::vec3 &DirectionalLight::GetSpecular() const {
 
 void DirectionalLight::SetSpecular(const glm::vec3 &specular) {
     DirectionalLight::specular = specular;
+    OnUpdate();
     Component::OnUpdate();
 }
 
@@ -45,5 +48,11 @@ const glm::vec3 &DirectionalLight::GetColor() const {
 
 void DirectionalLight::SetColor(const glm::vec3 &color) {
     DirectionalLight::color = color;
+    OnUpdate();
+    Component::OnUpdate();
+}
+
+void DirectionalLight::OnUpdate() {
+    RendererManager::GetInstance()->UpdateLight(id);
     Component::OnUpdate();
 }

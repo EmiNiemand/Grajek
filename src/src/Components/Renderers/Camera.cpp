@@ -2,7 +2,7 @@
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-
+#include "Utilities.h"
 
 std::shared_ptr<GameObject> Camera::activeCamera = nullptr;
 
@@ -43,7 +43,8 @@ void Camera::Start() {
 }
 
 void Camera::Update() {
-    // we change desired zoom on the camera when pressing Z. 
+	//TODO: move these to some outer class
+    // we change desired zoom on the camera when pressing Z.
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_Z)) {
         if (!isZoomed) {
             isZoomed = true;
@@ -55,14 +56,9 @@ void Camera::Update() {
     }
     glm::vec3 playerPosition = player->transform->GetLocalPosition();
     glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
-    zoomLevel = Lerp(zoomLevel, desiredZoomLevel, parameter);
-    parent->transform->SetLocalPosition(Lerp(parent->transform->GetGlobalPosition(), playerPosition + cameraOffset * zoomLevel, parameter));
+	zoomLevel = Utilities::Lerp(zoomLevel, desiredZoomLevel, 0.02f);
+	parent->transform->SetLocalPosition(Utilities::Lerp(
+			parent->transform->GetGlobalPosition(),
+			playerPosition + cameraOffset * zoomLevel, 0.02f));
     Component::Update();
-}
-
-glm::vec3 Camera::Lerp(glm::vec3 firstPoint, glm::vec3 secondPoint, float parameter) {
-    return firstPoint + (secondPoint - firstPoint) * parameter;
-}
-float Camera::Lerp(float scalar1,float scalar2,float parameter) {
-    return scalar1 + (scalar2 - scalar1) * parameter;
 }

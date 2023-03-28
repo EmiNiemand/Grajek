@@ -12,6 +12,8 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
+#include "Components/Renderers/Animator.h"
+#include "Components/UI/Image.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -25,7 +27,6 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
     camera->cameraOffset = glm::vec3(0, 20, 20);
-    camera->parameter = 0.02f;
 
     // Set up player
     // -------------
@@ -62,6 +63,13 @@ void Game::InitializeGame() {
     auto skyCubeMap = sky->AddComponent<CubeMap>();
     skyCubeMap->LoadTextures("skybox/");
 
+    // Set up UI
+    // ---------
+    std::shared_ptr<GameObject> UI = GameObject::Instantiate("UI", activeScene);
+    UI->AddComponent<Image>();
+    // x,y,width, height from 0 to 1920
+    UI->GetComponent<Image>()->CreateMesh(0, 0, 1280, 180);
+    UI->GetComponent<Image>()->LoadTextures("UI/UI.png");
 
     // Set up cubes for collision testing
     // ----------------------------------
@@ -74,6 +82,15 @@ void Game::InitializeGame() {
         sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
         sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
+
+	// Set up animated model
+	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
+	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
+	//std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
+	//scenePropCollider->SetOffset({0, 1, 0});
+	animatedDood->transform->SetLocalPosition({0, 0, -25});
+	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

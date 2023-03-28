@@ -3,11 +3,9 @@
 //
 
 #include "Components/Renderers/CubeMap.h"
-#include <utility>
 #include "glad/glad.h"
 #include "stb_image.h"
 #include "Shapes/Cube.h"
-#include "glm/detail/type_mat4x4.hpp"
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 
@@ -33,7 +31,6 @@ CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Component(
 void CubeMap::LoadTextures(const std::string& basePath) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    printf("Texture ID: %d", textureID);
 
     int width, height, nrChannels;
     for (unsigned int i = 0; i < 6; i++)

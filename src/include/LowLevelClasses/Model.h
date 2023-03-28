@@ -9,8 +9,6 @@
 #include "assimp/scene.h"
 #include <string>
 
-unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
-
 class Model
 {
 private:
@@ -27,6 +25,7 @@ public:
     void Draw();
 
 private:
+    unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
     void LoadModel(std::string const &path);
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
