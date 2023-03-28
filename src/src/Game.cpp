@@ -13,6 +13,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Renderers/Animator.h"
+#include "Components/UI/Image.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -62,6 +63,13 @@ void Game::InitializeGame() {
     auto skyCubeMap = sky->AddComponent<CubeMap>();
     skyCubeMap->LoadTextures("skybox/");
 
+    // Set up UI
+    // ---------
+    std::shared_ptr<GameObject> UI = GameObject::Instantiate("UI", activeScene);
+    UI->AddComponent<Image>();
+    // x,y,width, height from 0 to 1920
+    UI->GetComponent<Image>()->CreateMesh(0, 0, 1280, 180);
+    UI->GetComponent<Image>()->LoadTextures("UI/UI.png");
 
     // Set up cubes for collision testing
     // ----------------------------------

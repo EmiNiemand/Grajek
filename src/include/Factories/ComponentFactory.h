@@ -20,6 +20,7 @@ class DirectionalLight;
 class SpotLight;
 class BoxCollider;
 class Rigidbody;
+class Image;
 class PlayerMovement;
 
 class ComponentFactory {
@@ -45,6 +46,7 @@ public:
     std::shared_ptr<SpotLight> CreateSpotLight(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<BoxCollider> CreateBoxCollider(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<Rigidbody> CreateRigidbody(const std::shared_ptr<GameObject> &parent);
+    std::shared_ptr<Image> CreateImage(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<PlayerMovement> CreatePlayerMovement(const std::shared_ptr<GameObject> &parent);
 
 private:
