@@ -31,7 +31,7 @@ CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Component(
 void CubeMap::LoadTextures(const std::string& basePath) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    printf("Texture ID: %d", textureID);
+//    printf("Texture ID: %d", textureID);
 
     int width, height, nrChannels;
     for (unsigned int i = 0; i < 6; i++)

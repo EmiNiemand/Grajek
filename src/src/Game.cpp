@@ -65,11 +65,11 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    std::shared_ptr<GameObject> UI = GameObject::Instantiate("UI", activeScene);
-    UI->AddComponent<Image>();
-    // x,y,width, height from 0 to 1920
-    UI->GetComponent<Image>()->CreateMesh(0, 0, 1280, 180);
-    UI->GetComponent<Image>()->LoadTextures("UI/UI.png");
+//    std::shared_ptr<GameObject> UI = GameObject::Instantiate("UI", activeScene);
+//    UI->AddComponent<Image>();
+//    // x,y,width, height from 0 to 1920
+//    UI->GetComponent<Image>()->CreateMesh(0, 0, 1280, 180);
+//    UI->GetComponent<Image>()->LoadTextures("UI/UI.png");
 
     // Set up cubes for collision testing
     // ----------------------------------
@@ -84,13 +84,13 @@ void Game::InitializeGame() {
     }
 
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
-	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
-	std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
-	scenePropCollider->SetOffset({0, 1, 0});
-	animatedDood->transform->SetLocalPosition({0, 0, -5});
-	animatedDood->transform->SetLocalScale({5, 5, 5});
+//	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
+//	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+//	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
+//	std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
+//	scenePropCollider->SetOffset({0, 1, 0});
+//	animatedDood->transform->SetLocalPosition({0, 0, -5});
+//	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

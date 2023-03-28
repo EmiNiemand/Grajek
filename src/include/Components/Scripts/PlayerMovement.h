@@ -11,7 +11,10 @@ class Rigidbody;
 
 class PlayerMovement : public Component {
 private:
-    float speed = 0.01;
+    float speed = 0.0f;
+    float maxSpeed = 1.5f;
+    float smoothingParam = 0.5f;
+    bool isMoving = false;
     std::shared_ptr<Rigidbody> rb;
 
 public:

@@ -18,25 +18,34 @@ void PlayerMovement::Start() {
 }
 
 void PlayerMovement::Update() {
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Impulse);
+    if (rb != nullptr) {
+        speed = std::lerp(speed, maxSpeed, smoothingParam);
+
+        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
+            rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Force);
+            isMoving = true;
         }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Impulse);
+
+        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
+            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Force);
+            isMoving = true;
         }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Impulse);
+
+        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
+            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Force);
+            isMoving = true;
         }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Impulse);
+
+        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
+            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Force);
+            isMoving = true;
         }
+
+        if (!isMoving) {
+            speed = 0.0f;
+        }
+
+        isMoving = false;
+        Component::Update();
     }
-    Component::Update();
 }
