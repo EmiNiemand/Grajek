@@ -166,7 +166,7 @@ void RendererManager::RemovePointLight(int lightNumber, const std::shared_ptr<Sh
     lightShader->SetVec3(light + ".specular", {0, 0, 0});
     lightShader->SetVec3(light + ".color", {0, 0, 0});
 
-    pointLights.find(lightNumber)->second = nullptr;
+    pointLights.find(lightNumber)->second.reset();
 }
 
 void RendererManager::RemoveDirectionalLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
@@ -179,7 +179,7 @@ void RendererManager::RemoveDirectionalLight(int lightNumber, const std::shared_
     lightShader->SetVec3(light + ".specular", {0, 0, 0});
     lightShader->SetVec3(light + ".color", {0, 0, 0});
 
-    directionalLights.find(lightNumber)->second = nullptr;
+    directionalLights.find(lightNumber)->second.reset();
 }
 
 void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
@@ -199,7 +199,7 @@ void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Sha
     lightShader->SetVec3(light + ".specular", {0, 0, 0});
     lightShader->SetVec3(light + ".color", {0, 0, 0});
 
-    spotLights.find(lightNumber)->second = nullptr;
+    spotLights.find(lightNumber)->second.reset();
 }
 
 void RendererManager::SetFov(float fov) {

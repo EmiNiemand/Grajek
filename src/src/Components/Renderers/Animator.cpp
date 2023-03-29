@@ -52,6 +52,7 @@ void Animator::LoadAnimation(std::string path)
 
 void Animator::Update() {
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
+    Draw();
     Component::Update();
 }
 

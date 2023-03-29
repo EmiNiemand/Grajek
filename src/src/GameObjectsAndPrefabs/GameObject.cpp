@@ -12,7 +12,9 @@ std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::share
 }
 
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
-    gameObject->parent->RemoveChild(gameObject->GetId());
+    gameObject->RemoveAllChildren();
+    gameObject->RemoveAllComponents();
+    GloomEngine::GetInstance()->RemoveGameObject(gameObject);
 }
 
 void GameObject::OnTransformUpdateComponents() {
@@ -46,6 +48,8 @@ void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
 void GameObject::RemoveChild(int childId) {
     if (!children.contains(childId)) return;
     children.find(childId)->second->RemoveAllChildren();
+    children.find(childId)->second->RemoveAllComponents();
+    GloomEngine::GetInstance()->RemoveGameObject(children.find(childId)->second);
     children.erase(childId);
 }
 
