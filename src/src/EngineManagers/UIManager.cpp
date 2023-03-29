@@ -6,8 +6,6 @@ UIManager* UIManager::uiManager = nullptr;
 
 UIManager::UIManager() {
     shader = std::make_shared<Shader>("UI.vert", "UI.frag");
-    //shader->Activate();
-    //shader->SetBool("isText", false);
 }
 
 UIManager::~UIManager() {}

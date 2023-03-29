@@ -80,6 +80,7 @@ void Image::Update() {
 
 void Image::Draw() {
     UIManager::GetInstance()->shader->Activate();
+    UIManager::GetInstance()->shader->SetBool("isText", false);
     glActiveTexture(GL_TEXTURE0);
     UIManager::GetInstance()->shader->SetInt("texture1", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);

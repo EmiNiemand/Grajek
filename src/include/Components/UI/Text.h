@@ -19,6 +19,7 @@ class Text : public Component {
 private:
     std::shared_ptr<Mesh> mesh;
     std::string text;
+    glm::vec3 color;
     GLfloat x, y;
     std::map<GLchar, Character> Characters;
 
@@ -27,7 +28,7 @@ public:
 
     void CreateMesh(float x, float y);
 
-    void LoadFont(std::string text, float x, float y, const std::string& path);
+    void LoadFont(std::string text, float x, float y, glm::vec3 color, const std::string& path);
 
     void Update() override;
 

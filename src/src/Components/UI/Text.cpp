@@ -35,7 +35,7 @@ void Text::CreateMesh(float x, float y) {
     mesh = std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Text::LoadFont(std::string text, float x, float y, const std::string& path) {
+void Text::LoadFont(std::string text, float x, float y, glm::vec3 color, const std::string& path) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
@@ -90,6 +90,7 @@ void Text::LoadFont(std::string text, float x, float y, const std::string& path)
     this->text = std::move(text);
     this->x = x;
     this->y = y;
+    this->color = color;
 }
 
 void Text::Update() {
@@ -99,8 +100,8 @@ void Text::Update() {
 
 void Text::Draw() {
     UIManager::GetInstance()->shader->Activate();
-    //UIManager::GetInstance()->shader->SetBool("isText", true);
-    //UIManager::GetInstance()->shader->SetVec3("textColor", glm::vec3(0.0f,0.0f,0.0f));
+    UIManager::GetInstance()->shader->SetBool("isText", true);
+    UIManager::GetInstance()->shader->SetVec3("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mesh->vao);
 
@@ -140,5 +141,4 @@ void Text::Draw() {
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-    //UIManager::GetInstance()->shader->SetBool("isText", false);
 }
