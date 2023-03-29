@@ -35,7 +35,7 @@ void Text::CreateMesh(float x, float y) {
     mesh = std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Text::LoadFont(std::string text, float x, float y, glm::vec3 color, const std::string& path) {
+void Text::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::vec3 color, const std::string& path) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
@@ -43,7 +43,7 @@ void Text::LoadFont(std::string text, float x, float y, glm::vec3 color, const s
     std::string file = BASE_PATH + path;
     if (FT_New_Face(ft, file.c_str(), 0, &face))
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Set_Pixel_Sizes(face, 0, fontSize);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     for (GLubyte c = 0; c < 128; c++)
     {

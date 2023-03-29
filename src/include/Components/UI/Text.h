@@ -28,7 +28,7 @@ public:
 
     void CreateMesh(float x, float y);
 
-    void LoadFont(std::string text, float x, float y, glm::vec3 color, const std::string& path);
+    void LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::vec3 color, const std::string& path);
 
     void Update() override;
 

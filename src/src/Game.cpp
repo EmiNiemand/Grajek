@@ -66,6 +66,10 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
+    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
+    tekst->AddComponent<Text>();
+    // x,y from 0 to 1920
+    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
     // x,y from 0 to 1920
@@ -73,10 +77,7 @@ void Game::InitializeGame() {
     std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
     mruczek->AddComponent<Image>();
     mruczek->GetComponent<Image>()->LoadTextures(1650, 0, "UI/kotek.png");
-    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
-    tekst->AddComponent<Text>();
-    // x,y from 0 to 1920
-    tekst->GetComponent<Text>()->LoadFont("tekst", 500, 500, glm::vec3(0.0f, 0.0f, 0.0f), "GrandHotel.otf");
+
 
 
     // Set up cubes for collision testing
