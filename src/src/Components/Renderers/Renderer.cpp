@@ -11,8 +11,7 @@
  * @attention Remember to call LoadModel if you want model to actually display
  */
 Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
-    objectColor = {1.0f, 1.0f, 1.0f};
-    shininess = 32.0f;
+    material = {{1.0f, 1.0f, 1.0f},32.0f,0,0};
 }
 
 Renderer::~Renderer() {
@@ -39,8 +38,11 @@ void Renderer::Draw() {
 
     RendererManager::GetInstance()->shader->Activate();
     RendererManager::GetInstance()->shader->SetMat4("model", parent->transform->GetModelMatrix());
-    RendererManager::GetInstance()->shader->SetFloat("shininess", shininess);
-    RendererManager::GetInstance()->shader->SetVec3("objectColor", objectColor);
+    RendererManager::GetInstance()->shader->SetVec3("material.color", material.color);
+    RendererManager::GetInstance()->shader->SetFloat("material.shininess", material.shininess);
+    RendererManager::GetInstance()->shader->SetFloat("material.reflection", material.reflection);
+    RendererManager::GetInstance()->shader->SetFloat("material.refraction", material.refraction);
+
     model->Draw();
 }
 

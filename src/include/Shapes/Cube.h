@@ -108,18 +108,18 @@ namespace Shape {
             shape.vertices.back().normal = downNormal;
             shape.vertices.push_back(vertices[1]);
             shape.vertices.back().normal = downNormal;
-            shape.vertices.push_back(vertices[2]);
-            shape.vertices.back().normal = downNormal;
             shape.vertices.push_back(vertices[3]);
+            shape.vertices.back().normal = downNormal;
+            shape.vertices.push_back(vertices[2]);
             shape.vertices.back().normal = downNormal;
             // Up face
             shape.vertices.push_back(vertices[4]);
             shape.vertices.back().normal = -downNormal;
             shape.vertices.push_back(vertices[5]);
             shape.vertices.back().normal = -downNormal;
-            shape.vertices.push_back(vertices[6]);
-            shape.vertices.back().normal = -downNormal;
             shape.vertices.push_back(vertices[7]);
+            shape.vertices.back().normal = -downNormal;
+            shape.vertices.push_back(vertices[6]);
             shape.vertices.back().normal = -downNormal;
 
             shape.indices = {0, 1, 2,

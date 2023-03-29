@@ -8,13 +8,21 @@
 
 class Model;
 
+struct Material {
+    glm::vec3 color;
+    float shininess;
+    // Values: <0, 1>
+    float reflection;
+    // Values: <0, 1>
+    float refraction;
+};
+
 class Renderer : public Component {
 private:
     std::shared_ptr<Model> model;
 public:
     std::string path;
-    glm::vec3 objectColor;
-    float shininess;
+    Material material;
 
 public:
     Renderer(const std::shared_ptr<GameObject> &parent, int id);
