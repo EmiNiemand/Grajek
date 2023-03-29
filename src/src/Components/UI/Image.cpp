@@ -16,16 +16,16 @@ void Image::CreateMesh(float x, float y, float width, float height) {
 
     Vertex vertex1, vertex2, vertex3, vertex4;
     // left bottom
-    vertex1.position = glm::vec3(2*x/1920-1, 2*y/1080-1, 0.0f);
+    vertex1.position = glm::vec3(x/960-1, y/540-1, 0.0f);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
-    vertex2.position = glm::vec3(2*x/1920-1, 2*y/1080-1 + height/540, 0.0f);
+    vertex2.position = glm::vec3(x/960-1, y/540-1 + height/540, 0.0f);
     vertex2.texCoords = glm::vec2(0.0f, 1.0f);
     // right bottom
-    vertex3.position = glm::vec3(2*x/1920-1 + width/960, 2*y/1080-1, 0.0f);
+    vertex3.position = glm::vec3(x/960-1 + width/960, y/540-1, 0.0f);
     vertex3.texCoords = glm::vec2(1.0f, 0.0f);
     // right top
-    vertex4.position = glm::vec3(2*x/1920-1 + width/960, 2*y/1080-1 + height/540, 0.0f);
+    vertex4.position = glm::vec3(x/960-1 + width/960, y/540-1 + height/540, 0.0f);
     vertex4.texCoords = glm::vec2(1.0f, 1.0f);
 
     vertices.push_back(vertex1);

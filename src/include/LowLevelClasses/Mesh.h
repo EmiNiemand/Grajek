@@ -52,6 +52,8 @@ public:
     // render the mesh
     void Draw(std::shared_ptr<Shader> &shader, int type);
 
+    unsigned int GetVBO();
+
 private:
     // render data
     unsigned int vbo, ebo;

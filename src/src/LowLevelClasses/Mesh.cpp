@@ -93,3 +93,6 @@ void Mesh::setupMesh()
     glBindVertexArray(0);
 }
 
+unsigned int Mesh::GetVBO(){
+    return vbo;
+}

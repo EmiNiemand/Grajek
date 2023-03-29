@@ -13,6 +13,7 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/UI/Image.h"
+#include "Components/UI/Text.h"
 #include "Components/Scripts/PlayerMovement.h"
 
 ComponentFactory* ComponentFactory::componentFactory = nullptr;
@@ -65,6 +66,10 @@ std::shared_ptr<Component> ComponentFactory::CreateComponent(std::string type, c
     }
     else if (type == typeid(Image).name()) {
         std::shared_ptr<Component> component = CreateImage(parent);
+        return component;
+    }
+    else if (type == typeid(Text).name()) {
+        std::shared_ptr<Component> component = CreateText(parent);
         return component;
     }
     else if (type == typeid(PlayerMovement).name()) {
@@ -222,6 +227,16 @@ std::shared_ptr<Image> ComponentFactory::CreateImage(const std::shared_ptr<GameO
     if (component != nullptr) return component;
     id++;
     component = std::make_shared<Image>(parent, id);
+    std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
+    GloomEngine::GetInstance()->AddComponent(component);
+    return component;
+}
+
+std::shared_ptr<Text> ComponentFactory::CreateText(const std::shared_ptr<GameObject> &parent) {
+    std::shared_ptr<Text> component = parent->GetComponent<Text>();
+    if (component != nullptr) return component;
+    id++;
+    component = std::make_shared<Text>(parent, id);
     std::shared_ptr<Component> parentComponent = std::dynamic_pointer_cast<Component>(component);
     GloomEngine::GetInstance()->AddComponent(component);
     return component;
