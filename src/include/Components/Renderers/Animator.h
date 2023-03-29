@@ -5,17 +5,19 @@
 #ifndef GLOOMENGINE_ANIMATOR_H
 #define GLOOMENGINE_ANIMATOR_H
 
-#include "Components/Component.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "LowLevelClasses/Animation.h"
-
 #include <vector>
 
+#include "Components/Component.h"
+#include "LowLevelClasses/Animation.h"
 
 class Animator : public Component {
 private:
+    static std::map<uint32_t, std::shared_ptr<AnimationModel>> animationModels;
+    static std::map<uint32_t, std::shared_ptr<Animation>> animations;
+
     std::vector<glm::mat4> finalBoneMatrices;
     std::shared_ptr<Animation> currentAnimation;
 	std::shared_ptr<AnimationModel> model;
@@ -26,6 +28,7 @@ public:
     Animator(const std::shared_ptr<GameObject> &parent, int id);
     ~Animator() override;
 
+    void LoadAnimationModel(std::string path);
 	void LoadAnimation(std::string path);
 
 	void Update() override;
@@ -34,8 +37,12 @@ public:
     void PlayAnimation(std::shared_ptr<Animation> pAnimation);
 	void PauseAnimation();
 
-    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+    void Draw();
     std::vector<glm::mat4> GetFinalBoneMatrices();
+
+private:
+    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+
 };
 
 
