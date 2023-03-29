@@ -13,6 +13,7 @@
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
+#include "Components/UI/Text.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -72,6 +73,10 @@ void Game::InitializeGame() {
     std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
     mruczek->AddComponent<Image>();
     mruczek->GetComponent<Image>()->LoadTextures(1650, 0, "UI/kotek.png");
+    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
+    tekst->AddComponent<Text>();
+    // x,y from 0 to 1920
+    tekst->GetComponent<Text>()->LoadFont("tekst", 500, 500, glm::vec3(0.0f, 0.0f, 0.0f), "GrandHotel.otf");
 
 
     // Set up cubes for collision testing

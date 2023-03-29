@@ -2,10 +2,14 @@
 
 #include "Components/Renderers/Renderer.h"
 #include "GloomEngine.h"
+#include "Utilities.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Model.h"
 #include "Components/Renderers/Camera.h"
+#include <filesystem>
+
+std::map<uint32_t, std::shared_ptr<Model>> Renderer::models;
 
 /**
  * @attention Remember to call LoadModel if you want model to actually display
@@ -19,7 +23,6 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Update() {
-    if(path.empty()) return;
     Draw();
     Component::Update();
 }
@@ -28,20 +31,29 @@ void Renderer::Update() {
  * @attention Needs to be called after renderer's constructor
  * @param newPath - relative path starting in res/models/
  */
-void Renderer::LoadModel(std::string newPath) {
-    path = std::move(newPath);
-    model = std::make_shared<Model>( "res/models/"+path, RendererManager::GetInstance()->shader, GL_TRIANGLES);
+void Renderer::LoadModel(std::string path) {
+    std::string newPath = "res/models/" + path;
+    std::filesystem::path normalizedPath(newPath);
+    uint32_t hash = Utilities::Hash(newPath);
+
+    if (!models.contains(hash)) {
+        models.insert({hash, std::make_shared<Model>( normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
+    }
+
+    model = models.at(hash);
 }
 
 void Renderer::Draw() {
-    if(path.empty()) return;
+    if(model == nullptr) return;
 
-    RendererManager::GetInstance()->shader->Activate();
-    RendererManager::GetInstance()->shader->SetMat4("model", parent->transform->GetModelMatrix());
-    RendererManager::GetInstance()->shader->SetVec3("material.color", material.color);
-    RendererManager::GetInstance()->shader->SetFloat("material.shininess", material.shininess);
-    RendererManager::GetInstance()->shader->SetFloat("material.reflection", material.reflection);
-    RendererManager::GetInstance()->shader->SetFloat("material.refraction", material.refraction);
+    auto shader = RendererManager::GetInstance()->shader;
+
+    shader->Activate();
+    shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec3("material.color", material.color);
+    shader->SetFloat("material.shininess", material.shininess);
+    shader->SetFloat("material.reflection", material.reflection);
+    shader->SetFloat("material.refraction", material.refraction);
 
     model->Draw();
 }

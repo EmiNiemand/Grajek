@@ -4,6 +4,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include <map>
+
 #include "Components/Component.h"
 
 class Model;
@@ -19,9 +21,10 @@ struct Material {
 
 class Renderer : public Component {
 private:
+    static std::map<uint32_t, std::shared_ptr<Model>> models;
     std::shared_ptr<Model> model;
+
 public:
-    std::string path;
     Material material;
 
 public:
@@ -31,7 +34,7 @@ public:
 
     void Update() override;
 
-    void LoadModel(std::string newPath);
+    void LoadModel(std::string path);
 
 private:
     void Draw();

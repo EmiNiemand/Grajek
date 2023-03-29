@@ -6,7 +6,6 @@ UIManager* UIManager::uiManager = nullptr;
 
 UIManager::UIManager() {
     shader = std::make_shared<Shader>("UI.vert", "UI.frag");
-    //stbi_set_flip_vertically_on_load(true);
 }
 
 UIManager::~UIManager() {}

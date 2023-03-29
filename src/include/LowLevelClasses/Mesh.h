@@ -53,6 +53,8 @@ public:
     // "textured" is a temporary workaround for cubemap problem
     void Draw(std::shared_ptr<Shader> &shader, int type);
 
+    unsigned int GetVBO();
+
 private:
     // render data
     unsigned int vbo, ebo;

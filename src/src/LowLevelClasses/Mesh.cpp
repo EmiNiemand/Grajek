@@ -32,11 +32,12 @@ void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {
             number = std::to_string(normalNr++);
         else if (name == "texture_height")
             number = std::to_string(heightNr++);
+        name.append("[").append(number).append("]");
 
         // now set the sampler to the correct texture unit
         glUniform1i(glGetUniformLocation(
                 shader->GetShader(),
-                (name.append("[").append(number).append("]")).c_str()),i+1);
+                name.c_str()),i+1);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
@@ -94,3 +95,6 @@ void Mesh::setupMesh()
     glBindVertexArray(0);
 }
 
+unsigned int Mesh::GetVBO(){
+    return vbo;
+}
