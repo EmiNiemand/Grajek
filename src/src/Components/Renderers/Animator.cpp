@@ -7,9 +7,6 @@
 #include <filesystem>
 #include <utility>
 
-std::map<uint32_t, std::shared_ptr<AnimationModel>> Animator::animationModels;
-std::map<uint32_t, std::shared_ptr<Animation>> Animator::animations;
-
 Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     currentTime = 0.0;
     finalBoneMatrices.reserve(100);

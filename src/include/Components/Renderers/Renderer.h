@@ -4,7 +4,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include <map>
+#include <unordered_map>
 
 #include "Components/Component.h"
 
@@ -21,7 +21,7 @@ struct Material {
 
 class Renderer : public Component {
 private:
-    static std::map<uint32_t, std::shared_ptr<Model>> models;
+    inline static std::unordered_map<uint32_t, std::shared_ptr<Model>> models;
     std::shared_ptr<Model> model;
 
 public:

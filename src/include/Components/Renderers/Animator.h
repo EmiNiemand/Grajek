@@ -9,14 +9,15 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <vector>
+#include <unordered_map>
 
 #include "Components/Component.h"
 #include "LowLevelClasses/Animation.h"
 
 class Animator : public Component {
 private:
-    static std::map<uint32_t, std::shared_ptr<AnimationModel>> animationModels;
-    static std::map<uint32_t, std::shared_ptr<Animation>> animations;
+    inline static std::unordered_map<uint32_t, std::shared_ptr<AnimationModel>> animationModels;
+    inline static std::unordered_map<uint32_t, std::shared_ptr<Animation>> animations;
 
     std::vector<glm::mat4> finalBoneMatrices;
     std::shared_ptr<Animation> currentAnimation;

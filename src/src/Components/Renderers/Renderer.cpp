@@ -9,8 +9,6 @@
 #include "Components/Renderers/Camera.h"
 #include <filesystem>
 
-std::map<uint32_t, std::shared_ptr<Model>> Renderer::models;
-
 /**
  * @attention Remember to call LoadModel if you want model to actually display
  */
