@@ -10,6 +10,7 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "Components/Scripts/PlayerManager.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
@@ -37,11 +38,14 @@ void Game::InitializeGame() {
     // Set up player
     // -------------
     std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
+    // Adding components
     std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
     playerRenderer->LoadModel("domek/domek.obj");
     playerRenderer->material.reflection = 0.5f;
     std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
     player->AddComponent<PlayerMovement>();
+    player->AddComponent<PlayerManager>();
+    // Setting values
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
     player->transform->SetLocalPosition({0, 2, -10});
     player->transform->SetLocalScale({0.5, 1, 0.5});

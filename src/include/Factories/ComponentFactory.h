@@ -22,6 +22,7 @@ class BoxCollider;
 class Rigidbody;
 class Image;
 class Text;
+class PlayerManager;
 class PlayerMovement;
 
 class ComponentFactory {
@@ -49,6 +50,7 @@ public:
     std::shared_ptr<Rigidbody> CreateRigidbody(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<Image> CreateImage(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<Text> CreateText(const std::shared_ptr<GameObject> &parent);
+    std::shared_ptr<PlayerManager> CreatePlayerManager(const std::shared_ptr<GameObject> &parent);
     std::shared_ptr<PlayerMovement> CreatePlayerMovement(const std::shared_ptr<GameObject> &parent);
 
 private:
