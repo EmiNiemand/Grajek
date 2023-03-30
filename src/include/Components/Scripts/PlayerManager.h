@@ -20,6 +20,7 @@ private:
 
 public:
     bool inputEnabled;
+	bool uiActive;
     glm::vec2 moveVector;
 
 private:
@@ -30,6 +31,10 @@ private:
 
     void OnMove(glm::vec2 moveVector);
     void OnInteract();
+	void OnSaveLoad(bool save);
+	void OnMenuToggle();
+	void OnApply();
+
 public:
     PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
 };

@@ -31,6 +31,18 @@ public:
     inline static std::unordered_map<Key, int> Interact = {
             {Key::KEY_E, 0}
     };
+	inline static std::unordered_map<Key, int> Save = {
+			{Key::KEY_1, 0}
+	};
+	inline static std::unordered_map<Key, int> Load = {
+			{Key::KEY_2, 0}
+	};
+	inline static std::unordered_map<Key, int> Menu = {
+			{Key::KEY_ESC, 0}
+	};
+	inline static std::unordered_map<Key, int> Apply = {
+			{Key::KEY_ENTER, 0}
+	};
 };
 
 #endif //GLOOMENGINE_PLAYERINPUT_H
