@@ -5,12 +5,20 @@
 #ifndef GLOOMENGINE_HIERARCHYMANAGER_H
 #define GLOOMENGINE_HIERARCHYMANAGER_H
 #include <GloomEngine.h>
+#include <GameObjectsAndPrefabs/GameObject.h>
 
 
 class HierarchyManager {
 private:
 	static HierarchyManager* hierarchyManager;
 	explicit HierarchyManager();
+
+	bool displaySelected;
+	std::shared_ptr<GameObject> selected;
+
+
+
+	void processChildren(std::shared_ptr<GameObject> gameObject);
 public:
 	HierarchyManager(HierarchyManager& other) = delete;
 	void operator=(const HierarchyManager&) = delete;
@@ -20,6 +28,7 @@ public:
 
 	void Initialize(GLFWwindow* window, const char* glsl_version);
 	void Render();
+	void Free();
 
 };
 
