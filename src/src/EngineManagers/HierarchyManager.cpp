@@ -6,6 +6,8 @@
 #include "imgui.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "windows.h"
+#include "psapi.h"
 
 
 
@@ -43,9 +45,14 @@ void HierarchyManager::Render() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     {
         ImGui::Begin("TurboNiuchacz 3000");
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        displaySystemInfo();
+
+        ImGui::Text("Hierarchy Tree");
         ImGui::Text(SceneManager::GetInstance()->activeScene.get()->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton("Open")) {
@@ -73,6 +80,7 @@ void HierarchyManager::Render() {
         static float inputVector1[3] = {0.0f,0.0f,0.0f};
         static float inputVector2[3] = {0.0f,0.0f,0.0f};
         ImGui::Begin("Properties");
+        ImGui::Text(selected->GetName().c_str());
         ImGui::InputFloat3("inputVector1", inputVector1);
         ImGui::InputFloat3("inputVector1", inputVector2);
         ImGui::Checkbox("inputBool", &inputBool);
@@ -101,4 +109,23 @@ void HierarchyManager::processChildren(std::shared_ptr<GameObject> gameObject) {
         processChildren(child.second);
     }
     ImGui::Unindent();
+}
+void HierarchyManager::displaySystemInfo() {
+    MEMORYSTATUSEX memInfo;
+    memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+    GlobalMemoryStatusEx(&memInfo);
+    DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
+    ImGui::Text("Total Virtual Memory: %s bytes",std::to_string(totalVirtualMem).c_str());
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+    ImGui::Text("VMemory Used: %s bytes", std::to_string(virtualMemUsedByMe).c_str());
+
+    DWORDLONG totalPhysMem = memInfo.ullTotalPhys;
+    ImGui::Text("Total Physical Memory: %s bytes", std::to_string(totalPhysMem).c_str());
+
+    SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+    ImGui::Text("Physical Memory Usage: %s bytes", std::to_string(physMemUsedByMe).c_str());
+
+
 }

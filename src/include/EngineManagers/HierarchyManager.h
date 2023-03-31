@@ -17,8 +17,9 @@ private:
 	std::shared_ptr<GameObject> selected;
 
 
-
 	void processChildren(std::shared_ptr<GameObject> gameObject);
+	//Function to display RAM and CPU usage.
+	void displaySystemInfo();
 public:
 	HierarchyManager(HierarchyManager& other) = delete;
 	void operator=(const HierarchyManager&) = delete;
