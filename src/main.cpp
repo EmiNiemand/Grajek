@@ -13,7 +13,7 @@ int main(int, char**)
     // ________________________
     while (!endGame)
     {
-        endGame = GloomEngine::GetInstance()->Update();
+        endGame = GloomEngine::GetInstance()->MainLoop();
     }
 
     GloomEngine::GetInstance()->Free();

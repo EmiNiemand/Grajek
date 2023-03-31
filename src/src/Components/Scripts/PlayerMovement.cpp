@@ -17,7 +17,7 @@ void PlayerMovement::Start() {
     Component::Start();
 }
 
-void PlayerMovement::Update() {
+void PlayerMovement::FixedUpdate() {
     if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
         if (rb != nullptr) {
             rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Impulse);
@@ -38,5 +38,5 @@ void PlayerMovement::Update() {
             rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Impulse);
         }
     }
-    Component::Update();
+    Component::FixedUpdate();
 }

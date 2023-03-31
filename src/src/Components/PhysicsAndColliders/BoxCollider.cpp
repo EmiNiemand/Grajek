@@ -10,9 +10,9 @@ BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
     offset = {0.0f, 0.0f, 0.0f};
 }
 
-BoxCollider::~BoxCollider() {}
+BoxCollider::~BoxCollider() = default;
 
-void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
+void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider>& other) {
     glm::vec3 rotation = parent->transform->GetLocalRotation();
     glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
 
@@ -57,7 +57,7 @@ void BoxCollider::HandleCollision(std::shared_ptr<BoxCollider> other) {
                  point.y <= maxOtherPos.y &&
                  point.z >= minOtherPos.z &&
                  point.z <= maxOtherPos.z)) {
-                points.push_back(std::make_pair(point, vector));
+                points.emplace_back(point, vector);
             }
         }
 
@@ -164,7 +164,7 @@ glm::mat4 BoxCollider::GetModelMatrix() {
     return parent->transform->GetModelMatrix() * glm::mat4(size.x, 0, 0, 0, 0, size.y, 0, 0, 0, 0, size.z, 0, offset.x, offset.y, offset.z, 1);
 }
 
-bool BoxCollider::GetOBBCollision(std::shared_ptr<BoxCollider> other) {
+bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
     const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
     const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));

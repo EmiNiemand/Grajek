@@ -20,7 +20,7 @@ private:
 
 public:
     float fov = 45.0f;
-    glm::mat4 projection;
+    glm::mat4 projection{};
 
     // pair of id and ptr to light
     std::map<int, std::shared_ptr<PointLight>> pointLights;
@@ -38,11 +38,11 @@ public:
 
     static RendererManager* GetInstance();
 
-    void Free();
+    void Free() const;
 
-    void UpdateRenderer();
-    void UpdateProjection();
-    void UpdateCamera();
+    void UpdateRenderer() const;
+    void UpdateProjection() const;
+    void UpdateCamera() const;
 
     void UpdateLight(int componentId);
     void RemoveLight(int componentId);

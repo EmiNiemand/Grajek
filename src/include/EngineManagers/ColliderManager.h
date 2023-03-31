@@ -32,7 +32,8 @@ public:
 
     static ColliderManager* GetInstance();
 
-    void Update();
+    void ManageCollision();
+    void DrawColliders();
     void Free();
 
     void OnBoxColliderAdd();

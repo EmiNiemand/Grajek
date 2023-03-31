@@ -22,7 +22,7 @@ RendererManager::RendererManager() {
 //    stbi_set_flip_vertically_on_load(true);
 }
 
-RendererManager::~RendererManager() {}
+RendererManager::~RendererManager() = default;
 
 RendererManager* RendererManager::GetInstance() {
     if (rendererManager == nullptr) {
@@ -31,17 +31,17 @@ RendererManager* RendererManager::GetInstance() {
     return rendererManager;
 }
 
-void RendererManager::Free() {
+void RendererManager::Free() const {
     shader->Delete();
     cubeMapShader->Delete();
 }
 
-void RendererManager::UpdateRenderer() {
+void RendererManager::UpdateRenderer() const {
     UpdateProjection();
     UpdateCamera();
 }
 
-void RendererManager::UpdateProjection() {
+void RendererManager::UpdateProjection() const {
     shader->Activate();
     shader->SetMat4("projection", projection);
 
@@ -52,7 +52,7 @@ void RendererManager::UpdateProjection() {
 	animatedShader->SetMat4("projection", projection);
 }
 
-void RendererManager::UpdateCamera() {
+void RendererManager::UpdateCamera() const {
     shader->Activate();
     shader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());

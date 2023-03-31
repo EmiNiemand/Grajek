@@ -21,7 +21,7 @@ GloomEngine::GloomEngine() {
     height = 780;
 }
 
-GloomEngine::~GloomEngine() {}
+GloomEngine::~GloomEngine() = default;
 
 GloomEngine* GloomEngine::GetInstance() {
     if (gloomEngine == nullptr) {
@@ -41,7 +41,8 @@ void GloomEngine::Initialize() {
 }
 
 void GloomEngine::Awake() {
-    lastFrameTime = glfwGetTime();
+    lastFrameTime = (float)glfwGetTime();
+    lastFixedFrameTime = (float)glfwGetTime();
     // Setup all engine components
     RendererManager::GetInstance()->UpdateRenderer();
 
@@ -56,39 +57,66 @@ void GloomEngine::Start() {
     }
 }
 
-bool GloomEngine::Update() {
-    float currentTime = glfwGetTime();
+bool GloomEngine::MainLoop() {
+    auto currentTime = (float)glfwGetTime();
 
     glfwPollEvents();
     glfwSetWindowSize(window, width, height);
 
-    glfwMakeContextCurrent(window);
-    glViewport(0, 0, width, height);
-    glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
+    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
+    if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
+        glfwMakeContextCurrent(window);
+        glViewport(0, 0, width, height);
+        glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        Update();
+
+#ifdef DEBUG
+        ColliderManager::GetInstance()->DrawColliders();
+#endif
+
+        deltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
+
+        glfwMakeContextCurrent(window);
+        glfwSwapBuffers(window);
+    }
+
+    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
+    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
+    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        FixedUpdate();
+        fixedDeltaTime = currentTime - lastFixedFrameTime;
+        lastFixedFrameTime = currentTime;
+    }
+
+    bool endGame = game->GameLoop();
+
+    return glfwWindowShouldClose(window) || endGame;
+}
+
+void GloomEngine::Update() {
     for (auto&& component : components){
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
 
-    bool endGame = game->Update();
-
     HIDManager::GetInstance()->Update();
-    ColliderManager::GetInstance()->Update();
     RendererManager::GetInstance()->UpdateRenderer();
-
-    deltaTime = currentTime - lastFrameTime;
-    lastFrameTime = currentTime;
-
-    glfwMakeContextCurrent(window);
-    glfwSwapBuffers(window);
-
-    return glfwWindowShouldClose(window) || endGame;
 }
 
-void GloomEngine::Free() {
+void GloomEngine::FixedUpdate() {
+    for (auto&& component : components){
+        if (component.second->enabled) component.second->FixedUpdate();
+    }
+
+    ColliderManager::GetInstance()->ManageCollision();
+}
+
+void GloomEngine::Free() const {
     ColliderManager::GetInstance()->Free();
     RendererManager::GetInstance()->Free();
     SceneManager::GetInstance()->Free();
@@ -101,7 +129,7 @@ std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(int id) {
     return gameObjects.find(id)->second;
 }
 
-std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithName(std::string name) {
+std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithName(const std::string& name) {
     if (!gameObjects.empty()) {
         for (auto&& object : gameObjects) {
             if (object.second->GetName() == name) return object.second;
@@ -131,7 +159,7 @@ void GloomEngine::InitializeWindow() {
         throw;
     glfwMakeContextCurrent(window);
     // Enable vsync
-    glfwSwapInterval(true);
+    glfwSwapInterval(false);
 
     // Center window on the screen
     const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -163,19 +191,19 @@ void GloomEngine::InitializeWindow() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void GloomEngine::AddGameObject(std::shared_ptr<GameObject> gameObject) {
+void GloomEngine::AddGameObject(const std::shared_ptr<GameObject>& gameObject) {
     gameObjects.insert({gameObject->GetId(), gameObject});
 }
 
-void GloomEngine::AddComponent(std::shared_ptr<Component> component) {
+void GloomEngine::AddComponent(const std::shared_ptr<Component>& component) {
     components.insert({component->GetId(), component});
 }
 
-void GloomEngine::RemoveGameObject(std::shared_ptr<GameObject> gameObject) {
+void GloomEngine::RemoveGameObject(const std::shared_ptr<GameObject>& gameObject) {
     gameObjects.erase(gameObject->GetId());
 }
 
-void GloomEngine::RemoveComponent(std::shared_ptr<Component> component) {
+void GloomEngine::RemoveComponent(const std::shared_ptr<Component>& component) {
     int componentId = component->GetId();
     RendererManager::GetInstance()->RemoveLight(componentId);
     ColliderManager::GetInstance()->RemoveBoxCollider(componentId);

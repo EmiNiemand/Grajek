@@ -18,7 +18,7 @@ ColliderManager::ColliderManager() {
     glGenBuffers(1, &ebo);
 }
 
-ColliderManager::~ColliderManager() {}
+ColliderManager::~ColliderManager() = default;
 
 ColliderManager* ColliderManager::GetInstance() {
     if (colliderManager == nullptr) {
@@ -28,7 +28,7 @@ ColliderManager* ColliderManager::GetInstance() {
 }
 
 
-void ColliderManager::Update() {
+void ColliderManager::ManageCollision() {
     if (boxColliders.empty()) return;
 
     if (boxColliders.size() > 1) {
@@ -42,8 +42,9 @@ void ColliderManager::Update() {
             }
         }
     }
+}
 
-#ifdef DEBUG
+void ColliderManager::DrawColliders() {
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
     colliderDebugShader->SetMat4("projection", RendererManager::GetInstance()->projection);
@@ -54,7 +55,6 @@ void ColliderManager::Update() {
         glDrawElements(GL_LINES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
-#endif
 }
 
 void ColliderManager::Free() {

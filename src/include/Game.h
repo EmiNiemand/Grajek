@@ -17,7 +17,7 @@ public:
 
     /// Should be used to load main menu scene
     void InitializeGame();
-    bool Update();
+    bool GameLoop();
 };
 
 

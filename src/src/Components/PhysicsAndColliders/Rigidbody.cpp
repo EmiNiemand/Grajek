@@ -7,19 +7,19 @@ Rigidbody::Rigidbody(const std::shared_ptr<GameObject> &parent, int id) : Compon
     parent->AddComponent<BoxCollider>();
 }
 
-Rigidbody::~Rigidbody() {}
+Rigidbody::~Rigidbody() = default;
 
 
-void Rigidbody::Update() {
+void Rigidbody::FixedUpdate() {
     parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() + velocity);
     this->AddForce(glm::vec3(0, -1, 0) * gravityScale, ForceMode::Force);
     this->AddForce(-velocity * linearDrag, ForceMode::Force);
-    Component::Update();
+    Component::FixedUpdate();
 }
 
 void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
     if (forceMode == ForceMode::Force) {
-        velocity += vector / mass * GloomEngine::GetInstance()->deltaTime;
+        velocity += vector / mass * GloomEngine::GetInstance()->fixedDeltaTime;
     }
     else {
         velocity += vector / mass;

@@ -107,6 +107,6 @@ void Game::InitializeGame() {
     camera->SetTarget(nullptr);
 }
 
-bool Game::Update() {
+bool Game::GameLoop() {
     return false;
 }

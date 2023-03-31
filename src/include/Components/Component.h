@@ -22,13 +22,15 @@ public:
     virtual ~Component() = 0;
 
     /// Called once on creation even if disabled
-    virtual void Awake(){callOnAwake = false;};
+    inline virtual void Awake(){callOnAwake = false;};
     /// Called once on creation if enabled
-    virtual void Start(){callOnStart = false;};
-    /// Called every frame
-    virtual void Update(){};
+    inline virtual void Start(){callOnStart = false;};
+    /// Called with 60Hz rate
+    inline virtual void Update(){};
+    /// Called with 120Hz rate
+    inline virtual void FixedUpdate(){};
     /// Called on game object transform change
-    virtual void OnUpdate(){};
+    inline virtual void OnUpdate(){};
 
     // Getters
     [[nodiscard]] int GetId() const;
