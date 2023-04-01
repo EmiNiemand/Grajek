@@ -14,7 +14,30 @@ SpotLight::SpotLight(const std::shared_ptr<GameObject> &parent, int id) : Compon
     color = {1.0f, 1.0f, 1.0f};
 }
 
-SpotLight::~SpotLight() {}
+SpotLight::~SpotLight() = default;
+
+void SpotLight::OnCreate() {
+    bool isAdded = false;
+    int number = 0;
+
+    for (auto&& spotLight : RendererManager::GetInstance()->spotLights) {
+        if (spotLight.second == nullptr) {
+            RendererManager::GetInstance()->spotLights.find(number)->second =
+                    std::dynamic_pointer_cast<SpotLight>(shared_from_this());
+            isAdded = true;
+        }
+        number++;
+    }
+    if (!isAdded) RendererManager::GetInstance()->spotLights.insert(
+            {number, std::dynamic_pointer_cast<SpotLight>(shared_from_this())});
+    RendererManager::GetInstance()->UpdateLight(id);
+    Component::OnCreate();
+}
+
+void SpotLight::OnDestroy() {
+    RendererManager::GetInstance()->RemoveLight(id);
+    Component::OnDestroy();
+}
 
 float SpotLight::GetCutOff() const {
     return cutOff;

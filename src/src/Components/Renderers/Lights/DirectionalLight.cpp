@@ -9,8 +9,30 @@ DirectionalLight::DirectionalLight(const std::shared_ptr<GameObject> &parent, in
     color = {1.0f, 1.0f, 1.0f};
 }
 
-DirectionalLight::~DirectionalLight() {}
+DirectionalLight::~DirectionalLight() = default;
 
+void DirectionalLight::OnCreate() {
+    bool isAdded = false;
+    int number = 0;
+
+    for (auto&& directionalLight : RendererManager::GetInstance()->directionalLights) {
+        if (directionalLight.second == nullptr) {
+            RendererManager::GetInstance()->directionalLights.find(number)->second =
+                    std::dynamic_pointer_cast<DirectionalLight>(shared_from_this());
+            isAdded = true;
+        }
+        number++;
+    }
+    if (!isAdded) RendererManager::GetInstance()->directionalLights.insert(
+            {number,std::dynamic_pointer_cast<DirectionalLight>(shared_from_this())});
+    RendererManager::GetInstance()->UpdateLight(id);
+    Component::OnCreate();
+}
+
+void DirectionalLight::OnDestroy() {
+    RendererManager::GetInstance()->RemoveLight(id);
+    Component::OnDestroy();
+}
 
 const glm::vec3 &DirectionalLight::GetAmbient() const {
     return ambient;

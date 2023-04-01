@@ -10,11 +10,9 @@
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
 
-DataPersistanceManager* DataPersistanceManager::dataPersistanceManager = nullptr;
+DataPersistanceManager::DataPersistanceManager() = default;
 
-DataPersistanceManager::DataPersistanceManager() {}
-
-DataPersistanceManager::~DataPersistanceManager() {}
+DataPersistanceManager::~DataPersistanceManager() = default;
 
 DataPersistanceManager* DataPersistanceManager::GetInstance() {
     if (dataPersistanceManager == nullptr) {
@@ -36,6 +34,11 @@ void DataPersistanceManager::LoadGame(const std::string &dataDirectoryPath, cons
     for (const auto& object : dataPersistanceObjects) {
         object->LoadData(gameData);
     }
+#ifdef DEBUG
+    spdlog::info("Loading game: " + std::to_string(gameData->money) + ", " + std::to_string(gameData->reputation)
+                 + ", [" + std::to_string(gameData->playerPosition.x) + ", " + std::to_string(gameData->playerPosition.y)
+                 + ", " + std::to_string(gameData->playerPosition.z) + "]");
+#endif
 }
 
 void DataPersistanceManager::SaveGame(const std::string &dataDirectoryPath, const std::string &dataFileName) {
@@ -47,6 +50,11 @@ void DataPersistanceManager::SaveGame(const std::string &dataDirectoryPath, cons
 
     FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
     fileDataHandler.SaveGame(gameData);
+#ifdef DEBUG
+    spdlog::info("Saving game: " + std::to_string(gameData->money) + ", " + std::to_string(gameData->reputation)
+    + ", [" + std::to_string(gameData->playerPosition.x) + ", " + std::to_string(gameData->playerPosition.y)
+    + ", " + std::to_string(gameData->playerPosition.z) + "]");
+#endif
 }
 
 std::vector<std::shared_ptr<IDataPersistance>> DataPersistanceManager::FindAllDataPersistanceObjects() {

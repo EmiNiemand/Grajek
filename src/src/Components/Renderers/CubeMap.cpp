@@ -66,8 +66,10 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     shader = RendererManager::GetInstance()->shader;
     shader->Activate();
     shader->SetInt("skybox", 0);
-    //TODO: fix setting bool in shader
-    shader->SetBool("isReflective", true);
+
+    shader = RendererManager::GetInstance()->animatedShader;
+    shader->Activate();
+    shader->SetInt("skybox", 0);
 }
 
 void CubeMap::Draw() {
@@ -78,7 +80,7 @@ void CubeMap::Draw() {
     shader->Activate();
 
     glBindVertexArray(skyboxMesh->vao);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE10);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     glBindVertexArray(skyboxMesh->vao);

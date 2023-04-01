@@ -1,52 +1,73 @@
-//
-// Created by szymo on 27/03/2023.
-//
-
 #include "Components/Renderers/Animator.h"
+#include "GloomEngine.h"
+#include "Utilities.h"
+#include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Bone.h"
-#include "EngineManagers/RendererManager.h"
-#include "GloomEngine.h"
 #include <filesystem>
 #include <utility>
 
-#define BASE_PATH "res/models/"
-
-Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
+Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
     currentTime = 0.0;
     finalBoneMatrices.reserve(100);
 
     for (int i = 0; i < 100; i++) finalBoneMatrices.emplace_back(1.0f);
 }
 
-Animator::~Animator() {}
+Animator::~Animator() {
+    model.reset();
+    currentAnimation.reset();
+}
+
+void Animator::LoadAnimationModel(std::string path) {
+    std::string newPath = "res/models/" + path;
+    std::filesystem::path normalizedPath(newPath);
+    uint32_t hash = Utilities::Hash(newPath);
+
+    if (!animationModels.contains(hash)) {
+        animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
+                                                               RendererManager::GetInstance()->animatedShader)});
+    }
+    model = animationModels.at(hash);
+}
 
 void Animator::LoadAnimation(std::string path)
 {
-	std::filesystem::path normalizedPath(BASE_PATH + path);
-	model = std::make_shared<AnimationModel>(
-			normalizedPath.string().c_str(),
-			RendererManager::GetInstance()->animatedShader);
-	currentAnimation = std::make_shared<Animation>(
-			normalizedPath.string(), model.get());
+    std::string newPath = "res/models/" + path;
+    std::filesystem::path normalizedPath(newPath);
+    uint32_t hash = Utilities::Hash(newPath);
+
+    if (model == nullptr) LoadAnimationModel(path);
+
+    if (!animations.contains(hash)) {
+        animations.insert({hash, std::make_shared<Animation>(normalizedPath.string(), model.get())});
+    }
+
+	currentAnimation = animations.at(hash);
 }
 
 
 void Animator::Update() {
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
-
-	//TODO: improve (ugly)
-	auto shader = RendererManager::GetInstance()->animatedShader;
-	shader->Activate();
-	for (int i = 0; i < finalBoneMatrices.size(); ++i)
-		shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
-	//TODO: I don't even know man
-	shader->SetMat4("model", parent->transform->GetModelMatrix());
-	model->Draw();
-
-    Component::Update();
+    Drawable::Update();
 }
 
+void Animator::Draw() {
+    if(model == nullptr) return;
+
+    auto shader = RendererManager::GetInstance()->animatedShader;
+
+    shader->Activate();
+    for (int i = 0; i < finalBoneMatrices.size(); ++i)
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
+    shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec3("material.color", material.color);
+    shader->SetFloat("material.shininess", material.shininess);
+    shader->SetFloat("material.reflection", material.reflection);
+    shader->SetFloat("material.refraction", material.refraction);
+
+    model->Draw();
+}
 
 void Animator::UpdateAnimation(float deltaTime) {
 	//if(!isPlaying) return;
@@ -64,6 +85,11 @@ void Animator::PlayAnimation(std::shared_ptr<Animation> pAnimation) {
 }
 
 void Animator::PauseAnimation() { isPlaying = false; }
+
+std::vector<glm::mat4> Animator::GetFinalBoneMatrices()
+{
+    return finalBoneMatrices;
+}
 
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
@@ -90,9 +116,4 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 
     for (int i = 0; i < node->childrenCount; i++)
 		CalculateBoneTransform(&node->children[i], globalTransformation);
-}
-
-std::vector<glm::mat4> Animator::GetFinalBoneMatrices()
-{
-    return finalBoneMatrices;
 }

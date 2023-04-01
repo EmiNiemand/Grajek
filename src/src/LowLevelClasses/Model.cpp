@@ -52,8 +52,8 @@ Model::Model(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shad
 
 void Model::Draw()
 {
-    for(unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shader, type);
+    for(auto & mesh : meshes)
+        mesh.Draw(shader, type);
 }
 
 void Model::LoadModel(std::string const &path)

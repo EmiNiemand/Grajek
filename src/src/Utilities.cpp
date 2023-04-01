@@ -20,3 +20,8 @@ Utilities *Utilities::GetInstance() {
     }
     return utilities;
 }
+
+uint32_t Utilities::Hash(const std::string& text) {
+    std::hash<std::string> hash;
+    return hash(text);
+}

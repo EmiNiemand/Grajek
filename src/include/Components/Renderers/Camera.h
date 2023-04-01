@@ -13,7 +13,7 @@ private:
     std::shared_ptr<GameObject> player;
 
 public:
-    static std::shared_ptr<GameObject> activeCamera;
+    inline static std::shared_ptr<GameObject> activeCamera;
 
     glm::vec3 cameraOffset = glm::vec3(0,0,0);
     float zoomLevel = 1.0f; // effective level of zoom. defined as multiplier to the offset on the camera
@@ -26,6 +26,7 @@ public:
 
     void Start() override;
     void Update() override;
+    void OnUpdate() override;
 
     void SetTarget(const std::shared_ptr<GameObject> &target);
     void SetZoomLevel(float newZoom);

@@ -1,18 +1,19 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
-#include "Components/Component.h"
 
 GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
                                                                         name(name), id(id), parent(parent), tag(tag) {}
 
-GameObject::~GameObject() {}
+GameObject::~GameObject() = default;
 
 std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
     return GameObjectFactory::GetInstance()->CreateGameObject(name, parent, tag);
 }
 
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
-    gameObject->parent->RemoveChild(gameObject->GetId());
+    gameObject->RemoveAllChildren();
+    gameObject->RemoveAllComponents();
+    GloomEngine::GetInstance()->RemoveGameObject(gameObject);
 }
 
 void GameObject::OnTransformUpdateComponents() {
@@ -23,13 +24,13 @@ void GameObject::OnTransformUpdateComponents() {
 
 void GameObject::RemoveComponent(int componentId) {
     if (!components.contains(componentId)) return;
-    GloomEngine::GetInstance()->RemoveComponent(components.find(componentId)->second);
+    components.find(componentId)->second->OnDestroy();
     components.erase(componentId);
 }
 
 void GameObject::RemoveAllComponents() {
     for (auto&& component : components){
-        GloomEngine::GetInstance()->RemoveComponent(component.second);
+        component.second->OnDestroy();
     }
     components.clear();
 }
@@ -46,6 +47,8 @@ void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
 void GameObject::RemoveChild(int childId) {
     if (!children.contains(childId)) return;
     children.find(childId)->second->RemoveAllChildren();
+    children.find(childId)->second->RemoveAllComponents();
+    GloomEngine::GetInstance()->RemoveGameObject(children.find(childId)->second);
     children.erase(childId);
 }
 
@@ -82,8 +85,4 @@ int GameObject::GetId() const {
 
 const std::string &GameObject::GetName() const {
     return name;
-}
-
-void GameObject::AddComponentToList(std::shared_ptr<Component> component) {
-    components.insert({component->GetId(), component});
 }

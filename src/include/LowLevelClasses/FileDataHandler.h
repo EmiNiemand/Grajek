@@ -16,7 +16,7 @@ private:
     std::string dataFileName;
 
 public:
-    FileDataHandler(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    FileDataHandler(std::string dataDirectoryPath, std::string dataFileName);
     virtual ~FileDataHandler();
 
     std::shared_ptr<GameData> LoadGame();

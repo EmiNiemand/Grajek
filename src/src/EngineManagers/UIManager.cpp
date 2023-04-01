@@ -2,14 +2,11 @@
 #include "LowLevelClasses/Shader.h"
 #include "stb_image.h"
 
-UIManager* UIManager::uiManager = nullptr;
-
 UIManager::UIManager() {
     shader = std::make_shared<Shader>("UI.vert", "UI.frag");
-    //stbi_set_flip_vertically_on_load(true);
 }
 
-UIManager::~UIManager() {}
+UIManager::~UIManager() = default;
 
 UIManager* UIManager::GetInstance() {
     if (uiManager == nullptr) {
@@ -18,6 +15,6 @@ UIManager* UIManager::GetInstance() {
     return uiManager;
 }
 
-void UIManager::Free() {
+void UIManager::Free() const {
     shader->Delete();
 }

@@ -50,7 +50,10 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     // render the mesh
+    // "textured" is a temporary workaround for cubemap problem
     void Draw(std::shared_ptr<Shader> &shader, int type);
+
+    unsigned int GetVBO();
 
 private:
     // render data

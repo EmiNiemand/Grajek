@@ -2,11 +2,11 @@
 #define OPENGLGP_COMPONENTFACTORY_H
 
 #include "ProjectSettings.h"
+#include "GloomEngine.h"
 
 #include <memory>
 #include <string>
 
-class GloomEngine;
 class GameObject;
 
 // Component classes - add component classes after creating new component
@@ -21,12 +21,15 @@ class SpotLight;
 class BoxCollider;
 class Rigidbody;
 class Image;
+class Text;
+class PlayerManager;
 class PlayerMovement;
+class PlayerEquipment;
 
 class ComponentFactory {
 private:
     int id = 0;
-    static ComponentFactory* componentFactory;
+    inline static ComponentFactory* componentFactory;
 
 public:
     ComponentFactory(ComponentFactory &other) = delete;
@@ -34,20 +37,13 @@ public:
 
     static ComponentFactory* GetInstance();
 
-    std::shared_ptr<Component> CreateComponent(std::string type, const std::shared_ptr<GameObject> &parent);
-
-    // Creators - add creator for every component class
-    std::shared_ptr<Renderer> CreateRenderer(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<CubeMap> CreateCubeMap(const std::shared_ptr<GameObject> &parent);
-	std::shared_ptr<Animator> CreateAnimator(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<Camera> CreateCamera(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<PointLight> CreatePointLight(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<DirectionalLight> CreateDirectionalLight(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<SpotLight> CreateSpotLight(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<BoxCollider> CreateBoxCollider(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<Rigidbody> CreateRigidbody(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<Image> CreateImage(const std::shared_ptr<GameObject> &parent);
-    std::shared_ptr<PlayerMovement> CreatePlayerMovement(const std::shared_ptr<GameObject> &parent);
+    template<class T>
+    std::shared_ptr<T> CreateComponent(const std::shared_ptr<GameObject> &parent) {
+        id++;
+        std::shared_ptr<T> component = std::make_shared<T>(parent, id);
+        std::shared_ptr<T> parentComponent = std::dynamic_pointer_cast<T>(component);
+        return component;
+    };
 
 private:
     explicit ComponentFactory();

@@ -1,47 +1,53 @@
 #include <utility>
 
 #include "Components/Renderers/Renderer.h"
-#include "GloomEngine.h"
+#include "Utilities.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Model.h"
-#include "Components/Renderers/Camera.h"
+#include <filesystem>
 
 /**
  * @attention Remember to call LoadModel if you want model to actually display
  */
-Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
-    objectColor = {1.0f, 1.0f, 1.0f};
-    shininess = 32.0f;
-}
+Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {}
 
 Renderer::~Renderer() {
     model.reset();
 }
 
 void Renderer::Update() {
-    if(path.empty()) return;
-    Draw();
-    Component::Update();
+    Drawable::Update();
+}
+
+void Renderer::Draw() {
+    if(model == nullptr) return;
+
+    auto shader = RendererManager::GetInstance()->shader;
+
+    shader->Activate();
+    shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec3("material.color", material.color);
+    shader->SetFloat("material.shininess", material.shininess);
+    shader->SetFloat("material.reflection", material.reflection);
+    shader->SetFloat("material.refraction", material.refraction);
+
+    model->Draw();
 }
 
 /**
  * @attention Needs to be called after renderer's constructor
  * @param newPath - relative path starting in res/models/
  */
-void Renderer::LoadModel(std::string newPath) {
-    path = std::move(newPath);
-    model = std::make_shared<Model>( "res/models/"+path, RendererManager::GetInstance()->shader, GL_TRIANGLES);
+void Renderer::LoadModel(std::string path) {
+    std::string newPath = "res/models/" + path;
+    std::filesystem::path normalizedPath(newPath);
+    uint32_t hash = Utilities::Hash(newPath);
+
+    if (!models.contains(hash)) {
+        models.insert({hash, std::make_shared<Model>( normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
+    }
+
+    model = models.at(hash);
 }
-
-void Renderer::Draw() {
-    if(path.empty()) return;
-
-    RendererManager::GetInstance()->shader->Activate();
-    RendererManager::GetInstance()->shader->SetMat4("model", parent->transform->GetModelMatrix());
-    RendererManager::GetInstance()->shader->SetFloat("shininess", shininess);
-    RendererManager::GetInstance()->shader->SetVec3("objectColor", objectColor);
-    model->Draw();
-}
-
 

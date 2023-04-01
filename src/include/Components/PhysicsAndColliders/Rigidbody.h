@@ -22,7 +22,7 @@ public:
     Rigidbody(const std::shared_ptr<GameObject> &parent, int id);
     ~Rigidbody() override;
 
-    void Update() override;
+    void FixedUpdate() override;
 
     void AddForce(glm::vec3 vector, ForceMode forceMode);
 };

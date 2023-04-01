@@ -7,7 +7,7 @@ class Shader;
 
 class UIManager {
 private:
-    static UIManager* uiManager;
+    inline static UIManager* uiManager;
 
 public:
     std::shared_ptr<Shader> shader;
@@ -19,7 +19,7 @@ public:
 
     static UIManager* GetInstance();
 
-    void Free();
+    void Free() const;
 
 private:
     explicit UIManager();

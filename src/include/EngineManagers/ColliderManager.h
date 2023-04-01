@@ -14,7 +14,7 @@ class BoxCollider;
 
 class ColliderManager {
 private:
-    static ColliderManager* colliderManager;
+    inline static ColliderManager* colliderManager;
 
     unsigned int vao, vbo, ebo;
     std::vector<glm::vec3> vertices;
@@ -32,10 +32,11 @@ public:
 
     static ColliderManager* GetInstance();
 
-    void Update();
+    void ManageCollision();
+    void DrawColliders();
     void Free();
 
-    void OnBoxColliderAdd();
+    void OnBoxCollidersChange();
     void RemoveBoxCollider(int componentId);
 
 private:
