@@ -2,16 +2,16 @@
 // Created by MasterKtos on 28.03.2023.
 //
 
-#ifndef GLOOMENGINE_HIERARCHYMANAGER_H
-#define GLOOMENGINE_HIERARCHYMANAGER_H
+#ifndef GLOOMENGINE_DEBUGMANAGER_H
+#define GLOOMENGINE_DEBUGMANAGER_H
 #include <GloomEngine.h>
 #include <GameObjectsAndPrefabs/GameObject.h>
 
 
-class HierarchyManager {
+class DebugManager {
 private:
-	static HierarchyManager* hierarchyManager;
-	explicit HierarchyManager();
+	inline static DebugManager* hierarchyManager;
+	explicit DebugManager();
 
 	bool displaySelected;
 	std::shared_ptr<GameObject> selected;
@@ -21,11 +21,11 @@ private:
 	void DisplaySystemInfo();
 	//Function to display RAM and CPU usage.
 public:
-	HierarchyManager(HierarchyManager& other) = delete;
-	void operator=(const HierarchyManager&) = delete;
-	virtual ~HierarchyManager();
+	DebugManager(DebugManager& other) = delete;
+	void operator=(const DebugManager&) = delete;
+	virtual ~DebugManager();
 
-	static HierarchyManager* GetInstance();
+	static DebugManager* GetInstance();
 
 	void Initialize(GLFWwindow* window, const char* glsl_version);
 	void Render();
@@ -34,4 +34,4 @@ public:
 };
 
 
-#endif //GLOOMENGINE_HIERARCHYMANAGER_H
+#endif //GLOOMENGINE_DEBUGMANAGER_H

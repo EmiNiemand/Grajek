@@ -2,30 +2,26 @@
 // Created by MasterKtos on 28.03.2023.
 //
 
-#include "EngineManagers/HierarchyManager.h"
+#include "EngineManagers/DebugManager.h"
 #include "imgui.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "windows.h"
 #include "psapi.h"
 
-
-
-HierarchyManager* HierarchyManager::hierarchyManager = nullptr;
-
-HierarchyManager::HierarchyManager() {
+DebugManager::DebugManager() {
     displaySelected = false;
 }
-HierarchyManager::~HierarchyManager() {}
+DebugManager::~DebugManager() = default;
 
-HierarchyManager* HierarchyManager::GetInstance() {
+DebugManager* DebugManager::GetInstance() {
 	if (hierarchyManager == nullptr) {
-		hierarchyManager = new HierarchyManager();
+		hierarchyManager = new DebugManager();
 	}
 	return hierarchyManager;
 }
 
-void HierarchyManager::Initialize(GLFWwindow* window, const char* glsl_version) {
+void DebugManager::Initialize(GLFWwindow* window, const char* glsl_version) {
 	ImGui::CreateContext();
 
     // Setup Dear ImGui context
@@ -41,7 +37,7 @@ void HierarchyManager::Initialize(GLFWwindow* window, const char* glsl_version) 
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-void HierarchyManager::Render() {
+void DebugManager::Render() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -49,7 +45,7 @@ void HierarchyManager::Render() {
     DisplaySystemInfo();
 
     {
-        ImGui::Begin("TurboNiuchacz 3000");
+        ImGui::Begin("Debug Window");
 
         ImGui::Text("Hierarchy Tree");
         ImGui::Text(SceneManager::GetInstance()->activeScene.get()->GetName().c_str());
@@ -93,7 +89,7 @@ void HierarchyManager::Render() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-void HierarchyManager::processChildren(std::shared_ptr<GameObject> gameObject) {
+void DebugManager::processChildren(std::shared_ptr<GameObject> gameObject) {
     if (gameObject.get()->children.empty())
         return;
     ImGui::Indent();
@@ -109,7 +105,7 @@ void HierarchyManager::processChildren(std::shared_ptr<GameObject> gameObject) {
     }
     ImGui::Unindent();
 }
-void HierarchyManager::DisplaySystemInfo() {
+void DebugManager::DisplaySystemInfo() {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     {
         ImGui::Begin("Usage Info");
@@ -118,17 +114,17 @@ void HierarchyManager::DisplaySystemInfo() {
         memInfo.dwLength = sizeof(MEMORYSTATUSEX);
         GlobalMemoryStatusEx(&memInfo);
         DWORDLONG totalVirtualMem = memInfo.ullTotalPageFile;
-        ImGui::Text("Total Virtual Memory: %s bytes", std::to_string(totalVirtualMem).c_str());
+        ImGui::Text("Total Virtual Memory: %s Mb", std::to_string(totalVirtualMem / 100000).c_str());
         PROCESS_MEMORY_COUNTERS_EX pmc;
         GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
         SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
-        ImGui::Text("VMemory Used: %s bytes", std::to_string(virtualMemUsedByMe).c_str());
+        ImGui::Text("VMemory Used: %s Mb", std::to_string(virtualMemUsedByMe / 100000).c_str());
 
         DWORDLONG totalPhysMem = memInfo.ullTotalPhys;
-        ImGui::Text("Total Physical Memory: %s bytes", std::to_string(totalPhysMem).c_str());
+        ImGui::Text("Total Physical Memory: %s Mb", std::to_string(totalPhysMem / 100000).c_str());
 
         SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
-        ImGui::Text("Physical Memory Usage: %s bytes", std::to_string(physMemUsedByMe).c_str());
+        ImGui::Text("Physical Memory Usage: %s Mb", std::to_string(physMemUsedByMe / 100000).c_str());
         ImGui::End();
     }
 }

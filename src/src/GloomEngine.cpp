@@ -4,7 +4,7 @@
 #include "EngineManagers/ColliderManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
-#include "EngineManagers/HierarchyManager.h"
+#include "EngineManagers/DebugManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/Camera.h"
@@ -104,6 +104,7 @@ void GloomEngine::Update() {
 
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
+    DebugManager::GetInstance()->Render();
 #endif
 
     HIDManager::GetInstance()->ManageInput();
@@ -187,7 +188,7 @@ void GloomEngine::InitializeWindow() {
     spdlog::info("Successfully initialized OpenGL loader!");
 
 #ifdef DEBUG
-    HierarchyManager::GetInstance()->Initialize(window, glsl_version);
+    DebugManager::GetInstance()->Initialize(window, glsl_version);
 #endif
 
     glEnable(GL_DEPTH_TEST);
