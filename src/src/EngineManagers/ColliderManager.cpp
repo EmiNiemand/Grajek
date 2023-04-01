@@ -63,10 +63,10 @@ void ColliderManager::Free() {
 }
 
 void ColliderManager::RemoveBoxCollider(int componentId) {
-    if (!boxColliders.contains(componentId)) boxColliders.erase(componentId);
+    if (boxColliders.contains(componentId)) boxColliders.erase(componentId);
 }
 
-void ColliderManager::OnBoxColliderAdd() {
+void ColliderManager::OnBoxCollidersChange() {
     vertices.clear();
     indices.clear();
     int i = 0;
@@ -138,6 +138,7 @@ void ColliderManager::OnBoxColliderAdd() {
         i++;
     }
 
+    if (vertices.empty() || indices.empty()) return;
     glBindVertexArray(vao);
     // load data into vertex buffers
     glBindBuffer(GL_ARRAY_BUFFER, vbo);

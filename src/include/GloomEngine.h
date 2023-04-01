@@ -53,13 +53,6 @@ class Component;
 
 class GloomEngine {
 private:
-    friend class GameObject;
-    friend class GameObjectFactory;
-    friend class ComponentFactory;
-    friend class RendererManager;
-    friend class ColliderManager;
-    friend class HIDManager;
-    friend class DebugManager;
     friend class SceneManager;
     friend class DataPersistanceManager;
 
@@ -109,16 +102,15 @@ public:
     std::shared_ptr<GameObject> FindGameObjectWithId(int id);
     std::shared_ptr<GameObject> FindGameObjectWithName(const std::string& name);
 
-private:
-    GloomEngine();
-    void InitializeWindow();
-    static void glfwErrorCallback(int error, const char* description);
-
     void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
     void AddComponent(const std::shared_ptr<Component>& component);
 
     void RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
     void RemoveComponent(const std::shared_ptr<Component>& component);
+private:
+    GloomEngine();
+    void InitializeWindow();
+    static void glfwErrorCallback(int error, const char* description);
 };
 
 

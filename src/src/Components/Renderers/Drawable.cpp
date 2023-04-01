@@ -15,6 +15,6 @@ void Drawable::Update() {
 }
 
 void Drawable::AddToDraw() {
-    RendererManager::GetInstance()->AddToDrawBuffer(shared_from_this());
+    RendererManager::GetInstance()->AddToDrawBuffer(std::dynamic_pointer_cast<Drawable>(shared_from_this()));
 }
 

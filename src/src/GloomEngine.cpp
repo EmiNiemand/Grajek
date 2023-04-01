@@ -5,6 +5,7 @@
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
 #include "EngineManagers/DebugManager.h"
+#include "EngineManagers/DataPersistanceManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/Camera.h"
@@ -14,6 +15,8 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
+
+#include <filesystem>
 
 GloomEngine::GloomEngine() {
     width = 1200;
@@ -38,6 +41,9 @@ void GloomEngine::Initialize() {
 
     game = std::make_shared<Game>();
     game->InitializeGame();
+
+    std::filesystem::path path = std::filesystem::current_path();
+    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
 }
 
 void GloomEngine::Awake() {
@@ -89,7 +95,10 @@ bool GloomEngine::MainLoop() {
     }
 
     bool endGame = game->GameLoop();
-
+    if (glfwWindowShouldClose(window) || endGame) {
+        std::filesystem::path path = std::filesystem::current_path();
+        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
+    }
     return glfwWindowShouldClose(window) || endGame;
 }
 
@@ -210,8 +219,6 @@ void GloomEngine::RemoveGameObject(const std::shared_ptr<GameObject>& gameObject
 
 void GloomEngine::RemoveComponent(const std::shared_ptr<Component>& component) {
     int componentId = component->GetId();
-    RendererManager::GetInstance()->RemoveLight(componentId);
-    ColliderManager::GetInstance()->RemoveBoxCollider(componentId);
     components.erase(componentId);
 }
 

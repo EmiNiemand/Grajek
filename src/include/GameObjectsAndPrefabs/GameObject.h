@@ -5,13 +5,13 @@
 #include "Components/Transform.h"
 #include "Factories/GameObjectFactory.h"
 #include "Factories/ComponentFactory.h"
+#include "Components/Component.h"
 
 #include <memory>
 #include <string>
 #include <map>
 
 class GloomEngine;
-class Component;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
 private:
@@ -39,10 +39,14 @@ public:
 
     template<class T>
     std::shared_ptr<T> AddComponent() {
-        std::shared_ptr<T> component = std::dynamic_pointer_cast<T>(ComponentFactory::GetInstance()->CreateComponent(typeid(T).name(), shared_from_this()));
-        AddComponentToList(component);
+        std::shared_ptr<T> component = parent->GetComponent<T>();
+        if (component != nullptr) return component;
+        component = ComponentFactory::GetInstance()->CreateComponent<T>(shared_from_this());
+        component->OnCreate();
+        components.insert({component->GetId(), component});
         return component;
     };
+
     template<class T>
     std::shared_ptr<T> GetComponent() {
         for (auto&& component : components) {
@@ -69,9 +73,6 @@ public:
 
     int GetId() const;
     const std::string &GetName() const;
-
-private:
-    void AddComponentToList(std::shared_ptr<Component> component);
 };
 
 

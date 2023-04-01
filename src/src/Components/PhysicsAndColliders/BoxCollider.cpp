@@ -12,6 +12,18 @@ BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
 
 BoxCollider::~BoxCollider() = default;
 
+void BoxCollider::OnCreate() {
+    ColliderManager::GetInstance()->boxColliders.insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+    ColliderManager::GetInstance()->OnBoxCollidersChange();
+    Component::OnCreate();
+}
+
+void BoxCollider::OnDestroy() {
+    ColliderManager::GetInstance()->RemoveBoxCollider(id);
+    ColliderManager::GetInstance()->OnBoxCollidersChange();
+    Component::OnDestroy();
+}
+
 void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider>& other) {
     glm::vec3 rotation = parent->transform->GetLocalRotation();
     glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();

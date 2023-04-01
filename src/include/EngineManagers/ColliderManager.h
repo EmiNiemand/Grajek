@@ -36,7 +36,7 @@ public:
     void DrawColliders();
     void Free();
 
-    void OnBoxColliderAdd();
+    void OnBoxCollidersChange();
     void RemoveBoxCollider(int componentId);
 
 private:

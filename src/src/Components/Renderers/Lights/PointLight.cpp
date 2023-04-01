@@ -12,7 +12,30 @@ PointLight::PointLight(const std::shared_ptr<GameObject> &parent, int id) : Comp
     color = {1.0f, 1.0f, 1.0f};
 }
 
-PointLight::~PointLight() {}
+PointLight::~PointLight() = default;
+
+void PointLight::OnCreate() {
+    bool isAdded = false;
+    int number = 0;
+
+    for (auto&& pointLight : RendererManager::GetInstance()->pointLights) {
+        if (pointLight.second == nullptr) {
+            RendererManager::GetInstance()->pointLights.find(number)->second =
+                    std::dynamic_pointer_cast<PointLight>(shared_from_this());
+            isAdded = true;
+        }
+        number++;
+    }
+    if (!isAdded) RendererManager::GetInstance()->pointLights.insert(
+            {number, std::dynamic_pointer_cast<PointLight>(shared_from_this())});
+    RendererManager::GetInstance()->UpdateLight(id);
+    Component::OnCreate();
+}
+
+void PointLight::OnDestroy() {
+    RendererManager::GetInstance()->RemoveLight(id);
+    Component::OnDestroy();
+}
 
 float PointLight::GetConstant() const {
     return constant;

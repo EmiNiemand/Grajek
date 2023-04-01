@@ -1,11 +1,10 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
-#include "Components/Component.h"
 
 GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
                                                                         name(name), id(id), parent(parent), tag(tag) {}
 
-GameObject::~GameObject() {}
+GameObject::~GameObject() = default;
 
 std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
     return GameObjectFactory::GetInstance()->CreateGameObject(name, parent, tag);
@@ -25,13 +24,13 @@ void GameObject::OnTransformUpdateComponents() {
 
 void GameObject::RemoveComponent(int componentId) {
     if (!components.contains(componentId)) return;
-    GloomEngine::GetInstance()->RemoveComponent(components.find(componentId)->second);
+    components.find(componentId)->second->OnDestroy();
     components.erase(componentId);
 }
 
 void GameObject::RemoveAllComponents() {
     for (auto&& component : components){
-        GloomEngine::GetInstance()->RemoveComponent(component.second);
+        component.second->OnDestroy();
     }
     components.clear();
 }
@@ -86,8 +85,4 @@ int GameObject::GetId() const {
 
 const std::string &GameObject::GetName() const {
     return name;
-}
-
-void GameObject::AddComponentToList(std::shared_ptr<Component> component) {
-    components.insert({component->GetId(), component});
 }

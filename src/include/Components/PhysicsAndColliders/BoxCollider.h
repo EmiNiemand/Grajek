@@ -10,7 +10,7 @@
 
 class GameObject;
 
-class BoxCollider : public Component, public std::enable_shared_from_this<BoxCollider> {
+class BoxCollider : public Component {
 private:
     // Size of the box from center to direction
     glm::vec3 size{};
@@ -19,6 +19,9 @@ private:
 public:
     BoxCollider(const std::shared_ptr<GameObject> &parent, int id);
     ~BoxCollider() override;
+
+    void OnCreate() override;
+    void OnDestroy() override;
 
     void HandleCollision(const std::shared_ptr<BoxCollider>& other);
     std::vector<glm::vec3> GetBoxPoints();

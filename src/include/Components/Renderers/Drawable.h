@@ -21,7 +21,7 @@ struct Material {
     float refraction;
 };
 
-class Drawable : public Component, public std::enable_shared_from_this<Drawable> {
+class Drawable : public Component {
 public:
     Material material = {{1.0f, 1.0f, 1.0f},32.0f,0,0};
 

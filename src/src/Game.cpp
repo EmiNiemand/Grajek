@@ -45,6 +45,7 @@ void Game::InitializeGame() {
     std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
     player->AddComponent<PlayerMovement>();
     player->AddComponent<PlayerManager>();
+    player->AddComponent<PlayerEquipment>();
     // Setting values
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
     player->transform->SetLocalPosition({0, 2, -10});

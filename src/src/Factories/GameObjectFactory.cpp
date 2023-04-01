@@ -28,7 +28,7 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
         int i = 1;
         while(!endLoop) {
             if (i == 1) name = name + std::to_string(i);
-            else if (i > 1) name = name.substr(0, name.size() - 1) + std::to_string(i);
+            else if (i > 1) name = name.substr(0, name.size() - std::to_string(i - 1).size()) + std::to_string(i);
             if(GloomEngine::GetInstance()->FindGameObjectWithName(name) == nullptr) endLoop = true;
             i++;
         }
