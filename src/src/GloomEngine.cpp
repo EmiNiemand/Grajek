@@ -4,6 +4,7 @@
 #include "EngineManagers/ColliderManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
+#include "EngineManagers/HierarchyManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/Camera.h"
@@ -185,6 +186,9 @@ void GloomEngine::InitializeWindow() {
     }
     spdlog::info("Successfully initialized OpenGL loader!");
 
+#ifdef DEBUG
+    HierarchyManager::GetInstance()->Initialize(window, glsl_version);
+#endif
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);

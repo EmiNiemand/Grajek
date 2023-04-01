@@ -59,6 +59,7 @@ private:
     friend class RendererManager;
     friend class ColliderManager;
     friend class HIDManager;
+    friend class HierarchyManager;
     friend class SceneManager;
     friend class DataPersistanceManager;
 
