@@ -7,8 +7,6 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
-ColliderManager* ColliderManager::colliderManager = nullptr;
-
 ColliderManager::ColliderManager() {
     colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");
 

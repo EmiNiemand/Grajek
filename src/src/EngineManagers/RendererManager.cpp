@@ -1,14 +1,13 @@
 #include "EngineManagers/RendererManager.h"
-#include "LowLevelClasses/Shader.h"
 #include "GloomEngine.h"
+#include "LowLevelClasses/Shader.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Camera.h"
+#include "Components/Renderers/Drawable.h"
 #include "Components/Renderers/Lights/PointLight.h"
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "stb_image.h"
-
-RendererManager* RendererManager::rendererManager = nullptr;
 
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
@@ -34,11 +33,18 @@ RendererManager* RendererManager::GetInstance() {
 void RendererManager::Free() const {
     shader->Delete();
     cubeMapShader->Delete();
+    animatedShader->Delete();
 }
 
-void RendererManager::UpdateRenderer() const {
-    UpdateProjection();
-    UpdateCamera();
+void RendererManager::DrawObjects() {
+    for (const auto& drawable : drawBuffer) {
+        drawable->Draw();
+    }
+    drawBuffer.clear();
+}
+
+void RendererManager::AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableComponent) {
+    drawBuffer.emplace_back(DrawableComponent);
 }
 
 void RendererManager::UpdateProjection() const {

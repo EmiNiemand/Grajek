@@ -1,13 +1,11 @@
 #include "EngineManagers/HIDManager.h"
 #include "GloomEngine.h"
 
-HIDManager* HIDManager::hidManager = nullptr;
-
 HIDManager::HIDManager() {
     glfwSetKeyCallback(GloomEngine::GetInstance()->window, HIDManager::KeyActionCallback);
 }
 
-HIDManager::~HIDManager() {}
+HIDManager::~HIDManager() = default;
 
 
 HIDManager* HIDManager::GetInstance() {
@@ -17,7 +15,7 @@ HIDManager* HIDManager::GetInstance() {
     return hidManager;
 }
 
-void HIDManager::Update() {
+void HIDManager::ManageInput() {
     keysDown.clear();
     keysPressed.clear();
     keysUp.clear();

@@ -14,8 +14,6 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 
-GloomEngine* GloomEngine::gloomEngine = nullptr;
-
 GloomEngine::GloomEngine() {
     width = 1200;
     height = 780;
@@ -35,6 +33,7 @@ void GloomEngine::Initialize() {
     InitializeWindow();
 
     SceneManager::GetInstance()->InitializeScene();
+    RendererManager::GetInstance()->UpdateProjection();
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -43,10 +42,8 @@ void GloomEngine::Initialize() {
 void GloomEngine::Awake() {
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
-    // Setup all engine components
-    RendererManager::GetInstance()->UpdateRenderer();
 
-    for (auto&& component : components){
+    for (auto&& component : components) {
         component.second->Awake();
     }
 }
@@ -73,10 +70,6 @@ bool GloomEngine::MainLoop() {
 
         Update();
 
-#ifdef DEBUG
-        ColliderManager::GetInstance()->DrawColliders();
-#endif
-
         deltaTime = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
 
@@ -87,7 +80,9 @@ bool GloomEngine::MainLoop() {
     int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
     int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+
         FixedUpdate();
+
         fixedDeltaTime = currentTime - lastFixedFrameTime;
         lastFixedFrameTime = currentTime;
     }
@@ -104,8 +99,13 @@ void GloomEngine::Update() {
         if (component.second->enabled) component.second->Update();
     }
 
-    HIDManager::GetInstance()->Update();
-    RendererManager::GetInstance()->UpdateRenderer();
+    RendererManager::GetInstance()->DrawObjects();
+
+#ifdef DEBUG
+    ColliderManager::GetInstance()->DrawColliders();
+#endif
+
+    HIDManager::GetInstance()->ManageInput();
 }
 
 void GloomEngine::FixedUpdate() {

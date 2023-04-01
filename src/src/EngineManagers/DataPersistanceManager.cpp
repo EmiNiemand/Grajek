@@ -10,11 +10,9 @@
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
 
-DataPersistanceManager* DataPersistanceManager::dataPersistanceManager = nullptr;
+DataPersistanceManager::DataPersistanceManager() = default;
 
-DataPersistanceManager::DataPersistanceManager() {}
-
-DataPersistanceManager::~DataPersistanceManager() {}
+DataPersistanceManager::~DataPersistanceManager() = default;
 
 DataPersistanceManager* DataPersistanceManager::GetInstance() {
     if (dataPersistanceManager == nullptr) {

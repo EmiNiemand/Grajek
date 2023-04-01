@@ -63,7 +63,7 @@ private:
     friend class DataPersistanceManager;
 
     /// Do not touch this variable
-    static GloomEngine* gloomEngine;
+    inline static GloomEngine* gloomEngine;
 
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};

@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <utility>
 
-Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
+Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
     currentTime = 0.0;
     finalBoneMatrices.reserve(100);
 
@@ -49,8 +49,24 @@ void Animator::LoadAnimation(std::string path)
 
 void Animator::Update() {
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
-    Draw();
-    Component::Update();
+    Drawable::Update();
+}
+
+void Animator::Draw() {
+    if(model == nullptr) return;
+
+    auto shader = RendererManager::GetInstance()->animatedShader;
+
+    shader->Activate();
+    for (int i = 0; i < finalBoneMatrices.size(); ++i)
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
+    shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec3("material.color", material.color);
+    shader->SetFloat("material.shininess", material.shininess);
+    shader->SetFloat("material.reflection", material.reflection);
+    shader->SetFloat("material.refraction", material.refraction);
+
+    model->Draw();
 }
 
 void Animator::UpdateAnimation(float deltaTime) {
@@ -73,19 +89,6 @@ void Animator::PauseAnimation() { isPlaying = false; }
 std::vector<glm::mat4> Animator::GetFinalBoneMatrices()
 {
     return finalBoneMatrices;
-}
-
-void Animator::Draw() {
-    if(model == nullptr) return;
-
-    auto shader = RendererManager::GetInstance()->animatedShader;
-
-    shader->Activate();
-    for (int i = 0; i < finalBoneMatrices.size(); ++i)
-        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
-    shader->SetMat4("model", parent->transform->GetModelMatrix());
-
-    model->Draw();
 }
 
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)

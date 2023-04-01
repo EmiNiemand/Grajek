@@ -3,11 +3,9 @@
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
-SceneManager* SceneManager::sceneManager = nullptr;
+SceneManager::SceneManager() = default;
 
-SceneManager::SceneManager() {}
-
-SceneManager::~SceneManager() {}
+SceneManager::~SceneManager() = default;
 
 SceneManager* SceneManager::GetInstance() {
     if (sceneManager == nullptr) {

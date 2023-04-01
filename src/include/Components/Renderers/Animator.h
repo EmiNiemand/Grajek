@@ -5,16 +5,13 @@
 #ifndef GLOOMENGINE_ANIMATOR_H
 #define GLOOMENGINE_ANIMATOR_H
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 #include <vector>
-#include <unordered_map>
 
-#include "Components/Component.h"
+#include "Drawable.h"
 #include "LowLevelClasses/Animation.h"
 
-class Animator : public Component {
+class Animator : public Drawable {
 private:
     inline static std::unordered_map<uint32_t, std::shared_ptr<AnimationModel>> animationModels;
     inline static std::unordered_map<uint32_t, std::shared_ptr<Animation>> animations;
@@ -23,7 +20,7 @@ private:
     std::shared_ptr<Animation> currentAnimation;
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
-	bool isPlaying;
+	bool isPlaying = false;
 
 public:
     Animator(const std::shared_ptr<GameObject> &parent, int id);
@@ -33,12 +30,12 @@ public:
 	void LoadAnimation(std::string path);
 
 	void Update() override;
+    void Draw() override;
 
 	void UpdateAnimation(float deltaTime);
     void PlayAnimation(std::shared_ptr<Animation> pAnimation);
 	void PauseAnimation();
 
-    void Draw();
     std::vector<glm::mat4> GetFinalBoneMatrices();
 
 private:

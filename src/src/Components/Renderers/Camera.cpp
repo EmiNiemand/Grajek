@@ -4,11 +4,9 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Utilities.h"
 
-std::shared_ptr<GameObject> Camera::activeCamera = nullptr;
-
 Camera::Camera(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-Camera::~Camera() {}
+Camera::~Camera() = default;
 
 glm::mat4 Camera::GetViewMatrix() {
     glm::vec3 position = parent->transform->GetGlobalPosition();
@@ -26,12 +24,13 @@ glm::mat4 Camera::GetViewMatrix() {
 
 void Camera::SetTarget(const std::shared_ptr<GameObject> &target) {
     Camera::target = target;
+    RendererManager::GetInstance()->UpdateCamera();
 }
 
 void Camera::SetZoomLevel(float newZoom)
 {
-    if(newZoom > 0.01f)
-    desiredZoomLevel = newZoom;
+    if(newZoom > 0.01f) desiredZoomLevel = newZoom;
+    RendererManager::GetInstance()->UpdateCamera();
 }
 
 void Camera::Start() {
@@ -61,4 +60,9 @@ void Camera::Update() {
 			parent->transform->GetGlobalPosition(),
 			playerPosition + cameraOffset * zoomLevel, 0.02f));
     Component::Update();
+}
+
+void Camera::OnUpdate() {
+    RendererManager::GetInstance()->UpdateCamera();
+    Component::OnUpdate();
 }

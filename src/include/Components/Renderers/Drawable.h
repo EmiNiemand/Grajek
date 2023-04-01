@@ -1,0 +1,40 @@
+//
+// Created by szymo on 01/04/2023.
+//
+
+#ifndef GLOOMENGINE_DRAWABLE_H
+#define GLOOMENGINE_DRAWABLE_H
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+#include <unordered_map>
+
+#include "Components/Component.h"
+
+struct Material {
+    glm::vec3 color;
+    float shininess;
+    // Values: <0, 1>
+    float reflection;
+    // Values: <0, 1>
+    float refraction;
+};
+
+class Drawable : public Component, public std::enable_shared_from_this<Drawable> {
+public:
+    Material material = {{1.0f, 1.0f, 1.0f},32.0f,0,0};
+
+public:
+    Drawable(const std::shared_ptr<GameObject> &parent, int id);
+    ~Drawable() override;
+
+    void Update() override;
+    virtual void Draw() = 0;
+
+private:
+    void AddToDraw();
+};
+
+
+#endif //GLOOMENGINE_DRAWABLE_H
