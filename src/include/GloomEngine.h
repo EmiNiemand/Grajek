@@ -53,17 +53,11 @@ class Component;
 
 class GloomEngine {
 private:
-    friend class GameObject;
-    friend class GameObjectFactory;
-    friend class ComponentFactory;
-    friend class RendererManager;
-    friend class ColliderManager;
-    friend class HIDManager;
     friend class SceneManager;
     friend class DataPersistanceManager;
 
     /// Do not touch this variable
-    static GloomEngine* gloomEngine;
+    inline static GloomEngine* gloomEngine;
 
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};
@@ -78,7 +72,9 @@ public:
     std::shared_ptr<Game> game;
 
     float deltaTime = 0.0f;
+    float fixedDeltaTime = 0.0f;
     float lastFrameTime = 0.0f;
+    float lastFixedFrameTime = 0.0f;
 
 public:
     GloomEngine(GloomEngine &other) = delete;
@@ -95,24 +91,26 @@ public:
     void Start();
     /// Return false if game should not end
     /// Return true to end the update loop and end the game
-    /// Update only enabled components
-    bool Update();
+    bool MainLoop();
+    /// Updates components with 60Hz rate
+    void Update();
+    /// Updates components with 120Hz rate
+    void FixedUpdate();
     /// Free memory
-    void Free();
+    void Free() const;
 
     std::shared_ptr<GameObject> FindGameObjectWithId(int id);
-    std::shared_ptr<GameObject> FindGameObjectWithName(std::string name);
+    std::shared_ptr<GameObject> FindGameObjectWithName(const std::string& name);
 
+    void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
+    void AddComponent(const std::shared_ptr<Component>& component);
+
+    void RemoveGameObject(const std::shared_ptr<GameObject>& gameObject);
+    void RemoveComponent(const std::shared_ptr<Component>& component);
 private:
     GloomEngine();
     void InitializeWindow();
     static void glfwErrorCallback(int error, const char* description);
-
-    void AddGameObject(std::shared_ptr<GameObject> gameObject);
-    void AddComponent(std::shared_ptr<Component> component);
-
-    void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
-    void RemoveComponent(std::shared_ptr<Component> component);
 };
 
 

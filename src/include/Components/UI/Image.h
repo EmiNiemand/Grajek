@@ -19,7 +19,7 @@ public:
 
     void CreateMesh(float x, float y, float width, float height);
 
-    void LoadTextures(const std::string& path);
+    void LoadTextures(float x, float y, const std::string& path);
 
     void Update() override;
 

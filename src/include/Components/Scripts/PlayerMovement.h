@@ -22,7 +22,7 @@ public:
     ~PlayerMovement() override;
 
     void Start() override;
-    void Update() override;
+    void FixedUpdate() override;
 };
 
 

@@ -9,7 +9,8 @@ class GameObject;
 
 class SceneManager {
 private:
-    static SceneManager* sceneManager;
+    inline static SceneManager* sceneManager;
+
 public:
     std::shared_ptr<GameObject> activeScene;
 

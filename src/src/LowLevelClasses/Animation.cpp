@@ -19,7 +19,7 @@ Animation::Animation(const std::string& animationPath, AnimationModel* model)
     ReadMissingBones(animation, *model);
 }
 
-Animation::~Animation() {}
+Animation::~Animation() = default;
 
 Bone* Animation::FindBone(const std::string& name)
 {

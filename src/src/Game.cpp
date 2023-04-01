@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "GloomEngine.h"
-#include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
@@ -11,9 +10,11 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "Components/Scripts/PlayerManager.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
+#include "Components/UI/Text.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -28,13 +29,24 @@ void Game::InitializeGame() {
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
     camera->cameraOffset = glm::vec3(0, 20, 20);
 
+    // Set up cubemap
+    // --------------
+    auto sky = GameObject::Instantiate("CubeMap", activeScene);
+    auto skyCubeMap = sky->AddComponent<CubeMap>();
+    skyCubeMap->LoadTextures("skybox/");
+
     // Set up player
     // -------------
     std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
+    // Adding components
     std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
     playerRenderer->LoadModel("domek/domek.obj");
+    playerRenderer->material.reflection = 0.5f;
     std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
     player->AddComponent<PlayerMovement>();
+    player->AddComponent<PlayerManager>();
+    player->AddComponent<PlayerEquipment>();
+    // Setting values
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
     player->transform->SetLocalPosition({0, 2, -10});
     player->transform->SetLocalScale({0.5, 1, 0.5});
@@ -57,19 +69,21 @@ void Game::InitializeGame() {
     sun->AddComponent<PointLight>();
     sun->transform->SetLocalPosition({25, 100, 25});
 
-    // Set up cubemap
-    // --------------
-    auto sky = GameObject::Instantiate("CubeMap", activeScene);
-    auto skyCubeMap = sky->AddComponent<CubeMap>();
-    skyCubeMap->LoadTextures("skybox/");
-
     // Set up UI
     // ---------
-//    std::shared_ptr<GameObject> UI = GameObject::Instantiate("UI", activeScene);
-//    UI->AddComponent<Image>();
-//    // x,y,width, height from 0 to 1920
-//    UI->GetComponent<Image>()->CreateMesh(0, 0, 1280, 180);
-//    UI->GetComponent<Image>()->LoadTextures("UI/UI.png");
+    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
+    tekst->AddComponent<Text>();
+    // x,y from 0 to 1920
+    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+    std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
+    reksio->AddComponent<Image>();
+    // x,y from 0 to 1920
+    reksio->GetComponent<Image>()->LoadTextures(50, 0, "UI/piesek.png");
+    std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
+    mruczek->AddComponent<Image>();
+    mruczek->GetComponent<Image>()->LoadTextures(1650, 0, "UI/kotek.png");
+
+
 
     // Set up cubes for collision testing
     // ----------------------------------
@@ -84,18 +98,16 @@ void Game::InitializeGame() {
     }
 
 	// Set up animated model
-//	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
-//	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-//	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
-//	std::shared_ptr<BoxCollider> scenePropCollider = animatedDood->AddComponent<BoxCollider>();
-//	scenePropCollider->SetOffset({0, 1, 0});
-//	animatedDood->transform->SetLocalPosition({0, 0, -5});
-//	animatedDood->transform->SetLocalScale({5, 5, 5});
+	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
+	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
+	animatedDood->transform->SetLocalPosition({0, 0, -25});
+	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
 }
 
-bool Game::Update() {
+bool Game::GameLoop() {
     return false;
 }

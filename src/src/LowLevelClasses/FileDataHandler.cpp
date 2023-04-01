@@ -8,16 +8,20 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <utility>
 
 
-FileDataHandler::FileDataHandler(const std::string &dataDirectoryPath, const std::string &dataFileName)
-        : dataDirectoryPath(dataDirectoryPath), dataFileName(dataFileName) {}
+FileDataHandler::FileDataHandler(std::string dataDirectoryPath, std::string dataFileName)
+        : dataDirectoryPath(std::move(dataDirectoryPath)), dataFileName(std::move(dataFileName)) {}
 
-FileDataHandler::~FileDataHandler() {}
+FileDataHandler::~FileDataHandler() = default;
 
 std::shared_ptr<GameData> FileDataHandler::LoadGame() {
     std::filesystem::path path(dataDirectoryPath);
     path /= dataFileName + ".json";
+#ifdef DEBUG
+    spdlog::info("Save path: " + path.string());
+#endif
 
     std::shared_ptr<GameData> gameData = std::make_shared<GameData>();
 
@@ -38,6 +42,10 @@ std::shared_ptr<GameData> FileDataHandler::LoadGame() {
 void FileDataHandler::SaveGame(std::shared_ptr<GameData> gameData) {
     std::filesystem::path path(dataDirectoryPath);
     path /= dataFileName + ".json";
+
+#ifdef DEBUG
+    spdlog::info("Save path: " + path.string());
+#endif
 
     try {
         nlohmann::json json;

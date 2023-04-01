@@ -24,6 +24,9 @@ public:
     SpotLight(const std::shared_ptr<GameObject> &parent, int id);
     ~SpotLight() override;
 
+    void OnCreate() override;
+    void OnDestroy() override;
+
     void OnUpdate() override;
 
     float GetCutOff() const;

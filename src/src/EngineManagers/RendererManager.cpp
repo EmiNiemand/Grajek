@@ -1,14 +1,13 @@
 #include "EngineManagers/RendererManager.h"
-#include "LowLevelClasses/Shader.h"
 #include "GloomEngine.h"
+#include "LowLevelClasses/Shader.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Camera.h"
+#include "Components/Renderers/Drawable.h"
 #include "Components/Renderers/Lights/PointLight.h"
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "stb_image.h"
-
-RendererManager* RendererManager::rendererManager = nullptr;
 
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
@@ -22,7 +21,7 @@ RendererManager::RendererManager() {
 //    stbi_set_flip_vertically_on_load(true);
 }
 
-RendererManager::~RendererManager() {}
+RendererManager::~RendererManager() = default;
 
 RendererManager* RendererManager::GetInstance() {
     if (rendererManager == nullptr) {
@@ -31,17 +30,24 @@ RendererManager* RendererManager::GetInstance() {
     return rendererManager;
 }
 
-void RendererManager::Free() {
+void RendererManager::Free() const {
     shader->Delete();
     cubeMapShader->Delete();
+    animatedShader->Delete();
 }
 
-void RendererManager::UpdateRenderer() {
-    UpdateProjection();
-    UpdateCamera();
+void RendererManager::DrawObjects() {
+    for (const auto& drawable : drawBuffer) {
+        drawable->Draw();
+    }
+    drawBuffer.clear();
 }
 
-void RendererManager::UpdateProjection() {
+void RendererManager::AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableComponent) {
+    drawBuffer.emplace_back(DrawableComponent);
+}
+
+void RendererManager::UpdateProjection() const {
     shader->Activate();
     shader->SetMat4("projection", projection);
 
@@ -52,7 +58,7 @@ void RendererManager::UpdateProjection() {
 	animatedShader->SetMat4("projection", projection);
 }
 
-void RendererManager::UpdateCamera() {
+void RendererManager::UpdateCamera() const {
     shader->Activate();
     shader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
@@ -166,7 +172,7 @@ void RendererManager::RemovePointLight(int lightNumber, const std::shared_ptr<Sh
     lightShader->SetVec3(light + ".specular", {0, 0, 0});
     lightShader->SetVec3(light + ".color", {0, 0, 0});
 
-    pointLights.find(lightNumber)->second = nullptr;
+    pointLights.find(lightNumber)->second.reset();
 }
 
 void RendererManager::RemoveDirectionalLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
@@ -179,7 +185,7 @@ void RendererManager::RemoveDirectionalLight(int lightNumber, const std::shared_
     lightShader->SetVec3(light + ".specular", {0, 0, 0});
     lightShader->SetVec3(light + ".color", {0, 0, 0});
 
-    directionalLights.find(lightNumber)->second = nullptr;
+    directionalLights.find(lightNumber)->second.reset();
 }
 
 void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Shader>& lightShader) {
@@ -199,7 +205,7 @@ void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Sha
     lightShader->SetVec3(light + ".specular", {0, 0, 0});
     lightShader->SetVec3(light + ".color", {0, 0, 0});
 
-    spotLights.find(lightNumber)->second = nullptr;
+    spotLights.find(lightNumber)->second.reset();
 }
 
 void RendererManager::SetFov(float fov) {

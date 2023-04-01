@@ -17,7 +17,7 @@ class IDataPersistance;
 class DataPersistanceManager {
 private:
     std::shared_ptr<GameData> gameData;
-    static DataPersistanceManager* dataPersistanceManager;
+    inline static DataPersistanceManager* dataPersistanceManager;
 
 private:
     DataPersistanceManager();

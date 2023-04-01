@@ -11,7 +11,7 @@ class GloomEngine;
 
 class HIDManager {
 private:
-    static HIDManager* hidManager;
+    inline static HIDManager* hidManager;
 
 public:
     std::vector<Key> keysDown;
@@ -29,7 +29,7 @@ public:
     static HIDManager* GetInstance();
 
     /// Should be called at the end of engine update function
-    void Update();
+    void ManageInput();
 
     bool IsKeyDown(Key key);
     bool IsKeyPressed(Key key);

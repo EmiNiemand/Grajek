@@ -16,16 +16,16 @@ void Image::CreateMesh(float x, float y, float width, float height) {
 
     Vertex vertex1, vertex2, vertex3, vertex4;
     // left bottom
-    vertex1.position = glm::vec3(2*x/1920-1, 2*y/1080-1, 0.0f);
+    vertex1.position = glm::vec3(x/960-1, y/540-1, 0.0f);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
-    vertex2.position = glm::vec3(2*x/1920-1, 2*y/1080-1 + height/540, 0.0f);
+    vertex2.position = glm::vec3(x/960-1, y/540-1 + height/540, 0.0f);
     vertex2.texCoords = glm::vec2(0.0f, 1.0f);
     // right bottom
-    vertex3.position = glm::vec3(2*x/1920-1 + width/960, 2*y/1080-1, 0.0f);
+    vertex3.position = glm::vec3(x/960-1 + width/960, y/540-1, 0.0f);
     vertex3.texCoords = glm::vec2(1.0f, 0.0f);
     // right top
-    vertex4.position = glm::vec3(2*x/1920-1 + width/960, 2*y/1080-1 + height/540, 0.0f);
+    vertex4.position = glm::vec3(x/960-1 + width/960, y/540-1 + height/540, 0.0f);
     vertex4.texCoords = glm::vec2(1.0f, 1.0f);
 
     vertices.push_back(vertex1);
@@ -36,7 +36,7 @@ void Image::CreateMesh(float x, float y, float width, float height) {
     mesh = std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Image::LoadTextures(const std::string &path) {
+void Image::LoadTextures(float x, float y, const std::string &path) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int width, height, nrChannels;
@@ -60,6 +60,8 @@ void Image::LoadTextures(const std::string &path) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        this->CreateMesh(x, y, width, height);
     }
     else
     {
@@ -78,6 +80,7 @@ void Image::Update() {
 
 void Image::Draw() {
     UIManager::GetInstance()->shader->Activate();
+    UIManager::GetInstance()->shader->SetBool("isText", false);
     glActiveTexture(GL_TEXTURE0);
     UIManager::GetInstance()->shader->SetInt("texture1", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);
