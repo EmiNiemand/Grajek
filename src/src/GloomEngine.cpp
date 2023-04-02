@@ -42,6 +42,7 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
+    // Load game
     std::filesystem::path path = std::filesystem::current_path();
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
 }
@@ -49,15 +50,16 @@ void GloomEngine::Initialize() {
 void GloomEngine::Awake() {
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
+    lastAIFrameTime = (float)glfwGetTime();
 
     for (auto&& component : components) {
-        component.second->Awake();
+        if (component.second->callOnAwake) component.second->Awake();
     }
 }
 
 void GloomEngine::Start() {
     for (auto&& component : components){
-        if (component.second->enabled) component.second->Start();
+        if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
 }
 
@@ -94,7 +96,19 @@ bool GloomEngine::MainLoop() {
         lastFixedFrameTime = currentTime;
     }
 
+    int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
+    int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
+    if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
+
+        AIUpdate();
+
+        AIDeltaTime = currentTime - lastAIFrameTime;
+        lastAIFrameTime = currentTime;
+    }
+
     bool endGame = game->GameLoop();
+
+    // Save game on quit
     if (glfwWindowShouldClose(window) || endGame) {
         std::filesystem::path path = std::filesystem::current_path();
         DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
@@ -103,9 +117,9 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
-    for (auto&& component : components){
+    for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
-        if (component.second->callOnStart) component.second->Start();
+        if (component.second->callOnStart && component.second->enabled) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
 
@@ -120,11 +134,17 @@ void GloomEngine::Update() {
 }
 
 void GloomEngine::FixedUpdate() {
-    for (auto&& component : components){
+    for (auto&& component : components) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
     ColliderManager::GetInstance()->ManageCollision();
+}
+
+void GloomEngine::AIUpdate() {
+    for (auto&& component : components) {
+        if (component.second->enabled) component.second->AIUpdate();
+    }
 }
 
 void GloomEngine::Free() const {
