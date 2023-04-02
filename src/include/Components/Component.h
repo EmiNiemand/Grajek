@@ -34,6 +34,8 @@ public:
     inline virtual void Update(){};
     /// Called with 120Hz rate
     inline virtual void FixedUpdate(){};
+    /// Called with 2Hz rate
+    inline virtual void AIUpdate(){};
     /// Called on game object transform change
     inline virtual void OnUpdate(){};
 

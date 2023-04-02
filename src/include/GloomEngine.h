@@ -71,10 +71,17 @@ public:
 
     std::shared_ptr<Game> game;
 
+    // Timers for update
     float deltaTime = 0.0f;
-    float fixedDeltaTime = 0.0f;
     float lastFrameTime = 0.0f;
+
+    // Timers for fixedUpdate
+    float fixedDeltaTime = 0.0f;
     float lastFixedFrameTime = 0.0f;
+
+    // Timers for AI update
+    float AIDeltaTime = 0.0f;
+    float lastAIFrameTime = 0.0f;
 
 public:
     GloomEngine(GloomEngine &other) = delete;
@@ -96,6 +103,8 @@ public:
     void Update();
     /// Updates components with 120Hz rate
     void FixedUpdate();
+    /// Updates components with 2Hz rate
+    void AIUpdate();
     /// Free memory
     void Free() const;
 
