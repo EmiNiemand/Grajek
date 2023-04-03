@@ -33,7 +33,7 @@ std::shared_ptr<GameObject> Prefab::GetPlayer(std::string name) {
     player->AddComponent<PlayerManager>();
     // Setting values
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
-    player->transform->SetLocalPosition({0, 2, -10});
+    player->transform->SetLocalPosition({0, 5, -10});
     player->transform->SetLocalScale({0.5, 1, 0.5});
     std::shared_ptr<GameObject> pivot = GameObject::Instantiate("Cube", player);
     pivot->transform->SetLocalPosition({0, 1, -10});

@@ -8,7 +8,7 @@
 
 class MusicPattern {
 private:
-    std::vector<InstrumentSound> sounds;
+    //std::vector<InstrumentSound> sounds;
 };
 
 

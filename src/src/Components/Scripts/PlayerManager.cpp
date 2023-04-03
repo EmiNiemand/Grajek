@@ -65,13 +65,12 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Load)
 		if(hid->IsKeyDown(key.first)) OnSaveLoad(false);
 
-    if(readMoveVector != glm::vec2(0)/* || readMoveVector != moveVector*/)
+    if(readMoveVector != glm::vec2(0))
         OnMove(readMoveVector);
-    moveVector = readMoveVector;
 }
 
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-	movement->Move(moveVector);
+	movement->Move(glm::normalize(moveVector));
 }
 
 void PlayerManager::OnInteract() {

@@ -22,7 +22,7 @@ public:
     std::shared_ptr<Image> icon;
 
     Instrument(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
-    void AddPatterns(std::vector<MusicPattern>());
+    //void AddPatterns(std::vector<MusicPattern>());
 };
 
 

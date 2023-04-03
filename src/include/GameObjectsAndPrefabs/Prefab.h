@@ -6,6 +6,7 @@
 #define GLOOMENGINE_PREFAB_H
 
 #include <memory>
+#include <string>
 
 class GameObject;
 

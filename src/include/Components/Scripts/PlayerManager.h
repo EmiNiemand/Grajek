@@ -21,7 +21,6 @@ private:
 public:
     bool inputEnabled;
 	bool uiActive;
-    glm::vec2 moveVector;
 
 private:
     void Start() override;

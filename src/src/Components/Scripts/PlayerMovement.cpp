@@ -18,31 +18,37 @@ void PlayerMovement::Start() {
 }
 
 void PlayerMovement::FixedUpdate() {
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Impulse);
-        }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Impulse);
-        }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Impulse);
-        }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Impulse);
-        }
-    }
+    if(moveVector == glm::vec2(0)) return;
+    if(!rb) return;
+
+    rb->AddForce(glm::vec3(moveVector.x, 0, -moveVector.y) * speed,
+                 ForceMode::Impulse);
+
     Component::FixedUpdate();
+
+//    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
+//        if (rb != nullptr) {
+//            rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Impulse);
+//        }
+//    }
+//    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
+//        if (rb != nullptr) {
+//            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Impulse);
+//        }
+//    }
+//    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
+//        if (rb != nullptr) {
+//            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Impulse);
+//        }
+//    }
+//    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
+//        if (rb != nullptr) {
+//            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Impulse);
+//        }
+//    }
+//    Component::FixedUpdate();
 }
 
-void PlayerMovement::Move(glm::vec2 moveVector) {
-    if(!rb) return;
-    //TODO: might need to normalize vector
-    rb->AddForce(glm::vec3(moveVector.x, 0, moveVector.y) * speed, ForceMode::Impulse);
+void PlayerMovement::Move(glm::vec2 inputVector) {
+    moveVector = inputVector;
 }

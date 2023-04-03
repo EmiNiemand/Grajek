@@ -14,6 +14,7 @@ class PlayerMovement : public Component {
 private:
     float speed = 0.01;
     std::shared_ptr<Rigidbody> rb;
+	glm::vec2 moveVector;
 
 public:
     PlayerMovement(const std::shared_ptr<GameObject> &parent, int id);
