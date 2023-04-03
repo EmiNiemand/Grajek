@@ -31,3 +31,7 @@ void PlayerEquipment::SaveData(std::shared_ptr<GameData> &data) {
     data->reputation = rep;
     data->playerPosition = parent->transform->GetLocalPosition();
 }
+
+int PlayerEquipment::GetCash() const { return cash; }
+
+int PlayerEquipment::GetRep() const { return rep; }

@@ -35,7 +35,7 @@ void ColliderManager::ManageCollision() {
             if (box.second->GetParent()->GetComponent<Rigidbody>() != nullptr) {
                 for(auto&& box2 : boxColliders) {
                     if (box2.second == box.second) continue;
-                    box.second->HandleCollision(box2.second);
+                    box.second->CheckCollision(box2.second);
                 }
             }
         }

@@ -6,9 +6,13 @@
 #define GLOOMENGINE_INSTRUMENTSOUND_H
 
 
+#include "Instrument.h"
+
 class InstrumentSound {
 public:
-
+    //TODO: mock class, will need to implement when sounds are done
+    InstrumentName instrumentName;
+    int audioClip;
 };
 
 

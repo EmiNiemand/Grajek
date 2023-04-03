@@ -22,6 +22,9 @@ public:
 
     void LoadData(std::shared_ptr<GameData> data) override;
     void SaveData(std::shared_ptr<GameData> &data) override;
+
+    int GetCash() const;
+    int GetRep() const;
 };
 
 

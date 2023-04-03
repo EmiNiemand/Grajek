@@ -2,4 +2,4 @@
 // Created by masterktos on 03.04.23.
 //
 
-#include "InstrumentSound.h"
+#include "Components/Scripts/InstrumentSound.h"

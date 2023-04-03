@@ -6,6 +6,7 @@
 
 #include "Components/Component.h"
 #include <vector>
+#include <unordered_map>
 #include <cmath>
 
 class GameObject;
@@ -16,6 +17,11 @@ private:
     glm::vec3 size{};
     glm::vec3 offset{};
 
+    std::unordered_map<int, std::shared_ptr<GameObject>> collisionsBuffer;
+
+public:
+    bool isTrigger = false;
+
 public:
     BoxCollider(const std::shared_ptr<GameObject> &parent, int id);
     ~BoxCollider() override;
@@ -23,7 +29,7 @@ public:
     void OnCreate() override;
     void OnDestroy() override;
 
-    void HandleCollision(const std::shared_ptr<BoxCollider>& other);
+    void CheckCollision(const std::shared_ptr<BoxCollider>& other);
     std::vector<glm::vec3> GetBoxPoints();
 
     const glm::vec3 &GetSize() const;
@@ -33,7 +39,13 @@ public:
     void SetOffset(const glm::vec3 &offset);
 
     glm::mat4 GetModelMatrix();
-    bool GetOBBCollision(const std::shared_ptr<BoxCollider> &other);
+private:
+    bool GetOBBCollision(const std::shared_ptr<BoxCollider>& other);
+    void HandleCollision(const std::shared_ptr<BoxCollider>& other);
+
+    std::vector<std::pair<glm::vec3, glm::vec3>> CalculateShiftedPoints(const std::shared_ptr<BoxCollider>& other,
+                                                                      glm::vec3 position, glm::vec3 otherPosition);
+    glm::vec3 GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, glm::vec3>> points, glm::vec3 position);
 };
 
 #endif //OPENGLGP_BOXCOLLIDER_H

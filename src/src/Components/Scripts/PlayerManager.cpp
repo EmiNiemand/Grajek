@@ -4,16 +4,22 @@
 
 #include "Components/Scripts/PlayerManager.h"
 #include "EngineManagers/HIDManager.h"
-#include "Components/Scripts/PlayerInput.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Scripts/PlayerInput.h"
+#include "Components/Scripts/PlayerMovement.h"
+#include "Components/Scripts/PlayerEquipment.h"
+#include "Components/Scripts/PlayerUI.h"
 #include "spdlog/spdlog.h"
 
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {
     movement = parent->GetComponent<PlayerMovement>();
+    equipment = parent->GetComponent<PlayerEquipment>();
+    ui = parent->GetComponent<PlayerUI>();
+
+    moveInput = glm::vec2(0);
     inputEnabled = true;
 	uiActive = false;
-    equipment = parent->GetComponent<PlayerEquipment>();
 }
 
 void PlayerManager::Start() {
@@ -23,6 +29,13 @@ void PlayerManager::Start() {
 void PlayerManager::Update() {
     Component::Update();
     PollInput();
+}
+
+bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &instrument) {
+    if(!equipment->BuyInstrument(price, instrument)) return false;
+
+    ui->UpdateCash(equipment->GetCash());
+    return true;
 }
 
 void PlayerManager::PollInput() {
@@ -65,8 +78,9 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Load)
 		if(hid->IsKeyDown(key.first)) OnSaveLoad(false);
 
-    if(readMoveVector != glm::vec2(0))
+    if(readMoveVector != moveInput)
         OnMove(readMoveVector);
+    moveInput = readMoveVector;
 }
 
 void PlayerManager::OnMove(glm::vec2 moveVector) {
@@ -107,4 +121,3 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
     //TODO: Place to plug everything up for Kamil
     spdlog::info("Moving inside UI!");
 }
-

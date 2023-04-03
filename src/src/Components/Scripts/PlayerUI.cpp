@@ -11,13 +11,13 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     cashText = GameObject::Instantiate("CashText", parent)->AddComponent<Text>();
     repText = GameObject::Instantiate("RepText", parent)->AddComponent<Text>();
 
-    cashText->LoadFont("Cash", 10, 60, 20, glm::vec3(1.0f, 1.0f, 1.0f), GameFont::Eggnog);
-    repText->LoadFont("Rep", 10, 100, 20, glm::vec3(1.0f, 1.0f, 1.0f), GameFont::Eggnog);
+    cashText->LoadFont("Cash: 5", 10, 330, 30, glm::vec3(0), GameFont::Eggnog);
+    repText->LoadFont("Rep:  5", 10, 300, 30, glm::vec3(0), GameFont::Eggnog);
 }
 
 void PlayerUI::UpdateCash(int newAmount) {
     //TODO: update text
-    //cashText.UpdateText("$$$: " + std::to_string(newAmount));
+    //cashText.UpdateText("Cash: " + std::to_string(newAmount));
     spdlog::info("[PUI] Updated cash! [needs implementation]");
 }
 

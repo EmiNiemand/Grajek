@@ -34,8 +34,14 @@ public:
     inline virtual void Update(){};
     /// Called with 120Hz rate
     inline virtual void FixedUpdate(){};
+    /// Called with 2Hz rate
+    inline virtual void AIUpdate(){};
     /// Called on game object transform change
     inline virtual void OnUpdate(){};
+
+    inline virtual void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject){};
+    inline virtual void OnTriggerStay(const std::shared_ptr<GameObject>& gameObject){};
+    inline virtual void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject){};
 
     // Getters
     [[nodiscard]] int GetId() const;
