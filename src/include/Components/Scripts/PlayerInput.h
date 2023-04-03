@@ -11,9 +11,9 @@
 /**@attention
  * Default value of key is zero. For 1D or 2D inputs (e.g. Move)
  * inputs have increasing value, starting from up and going clockwise<br/>
- * ..N..........0..     <br/>
- * W...E......3...1     <br/>
- * ..S..........2..     <br/>
+ * ....N..........0..     <br/>
+ *   W...E......3...1     <br/>
+ * ....S..........2..     <br/>
  */
 class PlayerInput
 {
@@ -43,6 +43,13 @@ public:
 	inline static std::unordered_map<Key, int> Apply = {
 			{Key::KEY_ENTER, 0}
 	};
+
+    // Here value corresponds to number of sound being played
+    inline static std::unordered_map<Key, int> PlaySound = {
+            {Key::KEY_R, 0},
+            {Key::KEY_U, 1},
+            {Key::KEY_P, 2}
+    };
 };
 
 #endif //GLOOMENGINE_PLAYERINPUT_H

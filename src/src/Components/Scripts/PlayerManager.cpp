@@ -13,7 +13,7 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
     movement = parent->GetComponent<PlayerMovement>();
     inputEnabled = true;
 	uiActive = false;
-//    equipment = parent->GetComponent<PlayerEquipment>();
+    equipment = parent->GetComponent<PlayerEquipment>();
 }
 
 void PlayerManager::Start() {
@@ -31,7 +31,10 @@ void PlayerManager::PollInput() {
     auto hid = HIDManager::GetInstance();
     glm::vec2 readMoveVector(0);
 
-	//TODO: ugly, improve
+
+    for (auto key : PlayerInput::Menu)
+        if(hid->IsKeyDown(key.first)) OnMenuToggle();
+
 	if(uiActive) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
@@ -39,16 +42,21 @@ void PlayerManager::PollInput() {
 				readMoveVector.x = key.second == 1 ? 1 : key.second == 3 ? -1 : readMoveVector.x;
 			}
 		}
+
+        for (auto key : PlayerInput::Apply)
+            if(hid->IsKeyDown(key.first)) OnApply();
+        if(readMoveVector != glm::vec2(0))
+            OnUIMove(readMoveVector);
+
+        return;
 	}
-	else
-	{
-		for (auto key: PlayerInput::Move) {
-			if (hid->IsKeyPressed(key.first)) {
-				readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
-				readMoveVector.x = key.second == 1 ? 1 : key.second == 3 ? -1 : readMoveVector.x;
-			}
-		}
-	}
+
+    for (auto key: PlayerInput::Move) {
+        if (hid->IsKeyPressed(key.first)) {
+            readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
+            readMoveVector.x = key.second == 1 ? 1 : key.second == 3 ? -1 : readMoveVector.x;
+        }
+    }
     for (auto key : PlayerInput::Interact)
         if(hid->IsKeyDown(key.first)) OnInteract();
 
@@ -57,24 +65,13 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Load)
 		if(hid->IsKeyDown(key.first)) OnSaveLoad(false);
 
-	for (auto key : PlayerInput::Menu)
-		if(hid->IsKeyDown(key.first)) OnMenuToggle();
-
-	for (auto key : PlayerInput::Apply)
-		if(hid->IsKeyDown(key.first)) OnApply();
-
-    if(readMoveVector != glm::vec2(0) || readMoveVector != moveVector)
+    if(readMoveVector != glm::vec2(0)/* || readMoveVector != moveVector*/)
         OnMove(readMoveVector);
     moveVector = readMoveVector;
 }
 
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-//    spdlog::info(std::to_string(moveVector.x) + " | " + std::to_string(moveVector.y));
-	if(uiActive)
-	{
-		//TODO: Place to plug everything up for Kamil
-		spdlog::info("Moving inside UI!");
-	}
+	movement->Move(moveVector);
 }
 
 void PlayerManager::OnInteract() {
@@ -97,12 +94,7 @@ void PlayerManager::OnSaveLoad(bool save) {
 void PlayerManager::OnMenuToggle() {
 	//TODO: Place to plug everything up for Kamil
 	uiActive = !uiActive;
-	if(uiActive) {
-		spdlog::info("[PM] Menu activated!");
-	}
-	else {
-		spdlog::info("[PM] Menu disabled!");
-	}
+    spdlog::info("[PM] Menu" + std::string(uiActive?"enabled":"disabled") + "!");
 }
 
 void PlayerManager::OnApply() {
@@ -110,5 +102,10 @@ void PlayerManager::OnApply() {
 
 	//TODO: Place to plug everything up for Kamil
 	spdlog::info("[PM] Applied some option in menu!");
+}
+
+void PlayerManager::OnUIMove(glm::vec2 moveVector) {
+    //TODO: Place to plug everything up for Kamil
+    spdlog::info("Moving inside UI!");
 }
 

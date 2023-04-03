@@ -24,6 +24,7 @@ class Image;
 class Text;
 class PlayerManager;
 class PlayerMovement;
+class PlayerUI;
 class PlayerEquipment;
 
 class ComponentFactory {

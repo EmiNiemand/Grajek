@@ -5,6 +5,11 @@
 #ifndef GLOOMENGINE_INSTRUMENT_H
 #define GLOOMENGINE_INSTRUMENT_H
 
+#include <memory>
+#include <vector>
+
+class Image;
+
 enum InstrumentName { Clap, Drums };
 enum MusicGenre { Jazz = 80, RnB = 110 };
 
@@ -14,9 +19,10 @@ private:
 public:
     InstrumentName name;
     MusicGenre genre;
+    std::shared_ptr<Image> icon;
 
-    void CreateInstrument(InstrumentName instrumentName, MusicGenre musicGenre);
-//    void AddPattern(std::vector<Pattern>());
+    Instrument(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
+    void AddPatterns(std::vector<MusicPattern>());
 };
 
 

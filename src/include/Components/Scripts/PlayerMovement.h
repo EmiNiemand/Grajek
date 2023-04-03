@@ -6,6 +6,7 @@
 #define OPENGLGP_PLAYERMOVEMENT_H
 
 #include "Components/Component.h"
+#include "glm/vec2.hpp"
 
 class Rigidbody;
 
@@ -20,6 +21,7 @@ public:
 
     void Start() override;
     void FixedUpdate() override;
+    void Move(glm::vec2 moveVector);
 };
 
 

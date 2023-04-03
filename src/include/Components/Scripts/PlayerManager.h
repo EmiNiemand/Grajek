@@ -32,6 +32,8 @@ private:
     void OnMove(glm::vec2 moveVector);
     void OnInteract();
 	void OnSaveLoad(bool save);
+    //UI methods
+    void OnUIMove(glm::vec2 moveVector);
 	void OnMenuToggle();
 	void OnApply();
 

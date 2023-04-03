@@ -10,8 +10,14 @@ void PlayerEquipment::Setup() {
 
 }
 
-void PlayerEquipment::BuyInstrument(int price, Instrument instrument) {
+bool PlayerEquipment::BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument) {
+    if(price > cash || instruments.contains(instrument))
+        return false;
 
+    cash -= price;
+    instruments.insert({instrument, 0});
+
+    return true;
 }
 
 void PlayerEquipment::LoadData(std::shared_ptr<GameData> data) {

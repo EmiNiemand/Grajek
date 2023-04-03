@@ -15,6 +15,7 @@
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -37,29 +38,11 @@ void Game::InitializeGame() {
 
     // Set up player
     // -------------
-    std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
-    // Adding components
-    std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
-    playerRenderer->LoadModel("domek/domek.obj");
-    playerRenderer->material.reflection = 0.5f;
-    std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
-    player->AddComponent<PlayerMovement>();
-    player->AddComponent<PlayerManager>();
-    player->AddComponent<PlayerEquipment>();
-    // Setting values
-    player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
-    player->transform->SetLocalPosition({0, 2, -10});
-    player->transform->SetLocalScale({0.5, 1, 0.5});
-    std::shared_ptr<GameObject> pivot = GameObject::Instantiate("Cube", player, Tags::DEFAULT);;
-    pivot->transform->SetLocalPosition({0, 1, -10});
+    std::shared_ptr<GameObject> player2 = Prefab::GetPlayer();
 
     // Set up ground
     // -------------
-    std::shared_ptr<GameObject> ground = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> groundRenderer = ground->AddComponent<Renderer>();
-    groundRenderer->LoadModel("domek/domek.obj");
-    std::shared_ptr<BoxCollider> groundCollider = ground->AddComponent<BoxCollider>();
-    groundCollider->SetOffset({0, 1, 0});
+    std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
     ground->transform->SetLocalScale({20, 2, 20});
 
@@ -88,19 +71,13 @@ void Game::InitializeGame() {
     // Set up cubes for collision testing
     // ----------------------------------
     for (int i = 0; i < 10; i++) {
-        std::shared_ptr<GameObject> sceneProp = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-        std::shared_ptr<Renderer> scenePropRenderer = sceneProp->AddComponent<Renderer>();
-        scenePropRenderer->LoadModel("domek/domek.obj");
-        std::shared_ptr<BoxCollider> scenePropCollider = sceneProp->AddComponent<BoxCollider>();
-        scenePropCollider->SetOffset({0, 1, 0});
+        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
         sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
         sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
 
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
-	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
+	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
 	animatedDood->transform->SetLocalPosition({0, 0, -25});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
 

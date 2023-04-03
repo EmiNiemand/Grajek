@@ -5,6 +5,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <string>
 
+class GameFont {
+public:
+    inline static const std::string Eggnog="Eggnog.ttf";
+};
+
 class Utilities {
 private:
     static Utilities* utilities;

@@ -40,3 +40,9 @@ void PlayerMovement::FixedUpdate() {
     }
     Component::FixedUpdate();
 }
+
+void PlayerMovement::Move(glm::vec2 moveVector) {
+    if(!rb) return;
+    //TODO: might need to normalize vector
+    rb->AddForce(glm::vec3(moveVector.x, 0, moveVector.y) * speed, ForceMode::Impulse);
+}
