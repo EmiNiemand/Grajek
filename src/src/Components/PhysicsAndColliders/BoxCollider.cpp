@@ -24,118 +24,32 @@ void BoxCollider::OnDestroy() {
     Component::OnDestroy();
 }
 
-void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider>& other) {
-    glm::vec3 rotation = parent->transform->GetLocalRotation();
-    glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
+void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
+    bool isColliding = GetOBBCollision(other);
 
-    glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
-    glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
-
-    glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
-    glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
+    if (!isColliding) {
+        // OnTriggerExit
+        if (isTrigger && collisionsBuffer.contains(other->id)) {
+            for (const auto& component : parent->components) component.second->OnTriggerExit(other->parent);
+            collisionsBuffer.erase(other->id);
+            return;
+        }
+    }
 
     // OBB
-    if (GetOBBCollision(other)) {
-        const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-        // Y * X * Z
-        const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-        // Walls' normal vectors
-        glm::vec3 vectors[6];
-        vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
-        vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
-        vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,-1,1));
-        vectors[3] = -vectors[0];
-        vectors[4] = -vectors[1];
-        vectors[5] = -vectors[2];
-
-        glm::vec3 position = parent->transform->GetLocalPosition() + offset * parent->transform->GetLocalScale();
-        glm::vec3 otherPosition = other->parent->transform->GetLocalPosition()+ other->offset * other->parent->transform->GetLocalScale();
-        glm::vec3 diffPos = position - otherPosition;
-        diffPos = glm::vec3(std::abs(diffPos.x), std::abs(diffPos.y), std::abs(diffPos.z));
-
-        std::vector<std::pair<glm::vec3, glm::vec3>> points;
-
-        // Calculate shift point in normal direction to check if it is within the walls of other collider and to look
-        // the closest point to the first collider
-        for (auto vector : vectors) {
-            glm::vec3 point = otherPosition + glm::normalize(vector) * diffPos;
-            if(!(point.x >= minOtherPos.x &&
-                 point.x <= maxOtherPos.x &&
-                 point.y >= minOtherPos.y &&
-                 point.y <= maxOtherPos.y &&
-                 point.z >= minOtherPos.z &&
-                 point.z <= maxOtherPos.z)) {
-                points.emplace_back(point, vector);
-            }
+    if (isColliding) {
+        // OnTriggerEnter
+        if (isTrigger && !collisionsBuffer.contains(other->id)) {
+            for (const auto& component : parent->components) component.second->OnTriggerEnter(other->parent);
+            collisionsBuffer.insert({other->id, other->parent});
+        }
+        // OnTriggerStay
+        if (isTrigger && collisionsBuffer.contains(other->id)) {
+            for (const auto& component : parent->components) component.second->OnTriggerStay(other->parent);
+            return;
         }
 
-        if (points.empty()) return;
-        float minDistance = glm::distance(points[0].first, position);
-        glm::vec3 closestVector = glm::vec3(0, 0, 0);
-
-        for (auto point : points) {
-            float distance = glm::distance(point.first, position);
-            if (distance < minDistance + 0.0001 && distance > minDistance - 0.0001) {
-                closestVector += point.second;
-            }
-            else if (distance < minDistance - 0.0001) {
-                minDistance = distance;
-                closestVector = point.second;
-            }
-        }
-
-        closestVector = glm::normalize(closestVector);
-
-        if (parent->GetComponent<Rigidbody>() != nullptr) {
-            float cos = glm::dot(glm::vec3(1, 0, 0), closestVector);
-            float absCos = std::abs(cos);
-            // Collision handling for not rotated collider
-            if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
-                float value = closestVector.x + closestVector.y + closestVector.z;
-                glm::vec3 velocityOffset = closestVector * glm::vec3(0.001);
-
-                glm::vec3 velocity = closestVector * parent->GetComponent<Rigidbody>()->velocity;
-                if (std::round(closestVector.y) == 1) {
-                    velocityOffset = glm::vec3(0);
-                }
-                if (value > 0) {
-                    velocity = -velocity;
-                }
-                parent->GetComponent<Rigidbody>()->AddForce(velocity + velocityOffset, ForceMode::Impulse);
-            }
-            // Collision handling for rotated colliders
-            else {
-                glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
-                glm::vec3 normalizedVelocity = glm::normalize(velocity);
-
-                glm::vec3 cross = glm::cross(normalizedVelocity, closestVector);
-                float rad = std::acos(glm::dot(normalizedVelocity, closestVector));
-
-                glm::mat4 tMatrix = glm::rotate(glm::mat4(1.0f), rad, cross);
-                glm::vec3 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
-
-                vel = glm::normalize(vel);
-
-                // Check if rotated vector is equal normal vector of the wall
-                if (!(vel.x <= closestVector.x + 0.001 &&
-                      vel.y <= closestVector.y + 0.001 &&
-                      vel.z <= closestVector.z + 0.001 &&
-                      vel.x >= closestVector.x - 0.001 &&
-                      vel.y >= closestVector.y - 0.001 &&
-                      vel.z >= closestVector.z - 0.001))
-                {
-                    tMatrix = glm::rotate(glm::mat4(1.0f), -rad, cross);
-                    vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
-                }
-
-                vel = vel * glm::length(velocity);
-                parent->GetComponent<Rigidbody>()->AddForce(vel, ForceMode::Impulse);
-            }
-        }
+        HandleCollision(other);
     }
 }
 
@@ -256,5 +170,117 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * fabs(rMatrix[1][1]) + scaledSize.y * fabs(rMatrix[0][2]) +
             scaledOtherSize.x * fabs(rMatrix[2][1]) + scaledOtherSize.y * fabs(rMatrix[2][0]))) return false;
     return true;
+}
+
+void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
+    glm::vec3 rotation = parent->transform->GetLocalRotation();
+    glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
+
+    glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
+    glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
+
+    glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
+    glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
+
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // Y * X * Z
+    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+    // Walls' normal vectors
+    glm::vec3 vectors[6];
+    vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
+    vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
+    vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,-1,1));
+    vectors[3] = -vectors[0];
+    vectors[4] = -vectors[1];
+    vectors[5] = -vectors[2];
+
+    glm::vec3 position = parent->transform->GetLocalPosition() + offset * parent->transform->GetLocalScale();
+    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition()+ other->offset * other->parent->transform->GetLocalScale();
+    glm::vec3 diffPos = position - otherPosition;
+    diffPos = glm::vec3(std::abs(diffPos.x), std::abs(diffPos.y), std::abs(diffPos.z));
+
+    std::vector<std::pair<glm::vec3, glm::vec3>> points;
+
+    // Calculate shift point in normal direction to check if it is within the walls of other collider and to look
+    // the closest point to the first collider
+    for (auto vector : vectors) {
+        glm::vec3 point = otherPosition + glm::normalize(vector) * diffPos;
+        if(!(point.x >= minOtherPos.x &&
+             point.x <= maxOtherPos.x &&
+             point.y >= minOtherPos.y &&
+             point.y <= maxOtherPos.y &&
+             point.z >= minOtherPos.z &&
+             point.z <= maxOtherPos.z)) {
+            points.emplace_back(point, vector);
+        }
+    }
+
+    if (points.empty()) return;
+    float minDistance = glm::distance(points[0].first, position);
+    glm::vec3 closestVector = glm::vec3(0, 0, 0);
+
+    for (auto point : points) {
+        float distance = glm::distance(point.first, position);
+        if (distance < minDistance + 0.0001 && distance > minDistance - 0.0001) {
+            closestVector += point.second;
+        }
+        else if (distance < minDistance - 0.0001) {
+            minDistance = distance;
+            closestVector = point.second;
+        }
+    }
+
+    closestVector = glm::normalize(closestVector);
+
+    if (parent->GetComponent<Rigidbody>() != nullptr) {
+        float cos = glm::dot(glm::vec3(1, 0, 0), closestVector);
+        float absCos = std::abs(cos);
+        // Collision handling for not rotated collider
+        if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
+            float value = closestVector.x + closestVector.y + closestVector.z;
+            glm::vec3 velocityOffset = closestVector * glm::vec3(0.001);
+
+            glm::vec3 velocity = closestVector * parent->GetComponent<Rigidbody>()->velocity;
+            if (std::round(closestVector.y) == 1) {
+                velocityOffset = glm::vec3(0);
+            }
+            if (value > 0) {
+                velocity = -velocity;
+            }
+            parent->GetComponent<Rigidbody>()->AddForce(velocity + velocityOffset, ForceMode::Impulse);
+        }
+            // Collision handling for rotated colliders
+        else {
+            glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
+            glm::vec3 normalizedVelocity = glm::normalize(velocity);
+
+            glm::vec3 cross = glm::cross(normalizedVelocity, closestVector);
+            float rad = std::acos(glm::dot(normalizedVelocity, closestVector));
+
+            glm::mat4 tMatrix = glm::rotate(glm::mat4(1.0f), rad, cross);
+            glm::vec3 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
+
+            vel = glm::normalize(vel);
+
+            // Check if rotated vector is equal normal vector of the wall
+            if (!(vel.x <= closestVector.x + 0.001 &&
+                  vel.y <= closestVector.y + 0.001 &&
+                  vel.z <= closestVector.z + 0.001 &&
+                  vel.x >= closestVector.x - 0.001 &&
+                  vel.y >= closestVector.y - 0.001 &&
+                  vel.z >= closestVector.z - 0.001))
+            {
+                tMatrix = glm::rotate(glm::mat4(1.0f), -rad, cross);
+                vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
+            }
+
+            vel = vel * glm::length(velocity);
+            parent->GetComponent<Rigidbody>()->AddForce(vel, ForceMode::Impulse);
+        }
+    }
 }
 
