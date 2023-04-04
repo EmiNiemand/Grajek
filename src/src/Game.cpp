@@ -77,7 +77,6 @@ void Game::InitializeGame() {
     button->AddComponent<Button>();
     button->GetComponent<Button>()->LoadFont("start", 505, 520, 12, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
     button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
-    mruczek->GetComponent<Image>()->LoadTextures(1650, 0, "UI/kotek.png");
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
     sphere->transform->SetLocalPosition({0, 2, 0});
