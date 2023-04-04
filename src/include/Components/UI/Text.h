@@ -27,7 +27,10 @@ public:
     Text(const std::shared_ptr<GameObject> &parent, int id);
 
     void CreateMesh(float x, float y);
-
+    /**
+    * x from 0 to 1920\n
+    * y from 0 to 1080
+    */
     void LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::vec3 color, const std::string& path);
 
     void Update() override;

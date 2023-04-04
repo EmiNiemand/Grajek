@@ -65,3 +65,8 @@ void PlayerMovement::FixedUpdate() {
         Component::Update();
     }
 }
+
+void PlayerMovement::Move(glm::vec2 inputVector) {
+    // Need to invert horizontal/Z axis
+    moveVector = inputVector * glm::vec2(1, -1);
+}

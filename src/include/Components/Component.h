@@ -39,6 +39,10 @@ public:
     /// Called on game object transform change
     inline virtual void OnUpdate(){};
 
+    inline virtual void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject){};
+    inline virtual void OnTriggerStay(const std::shared_ptr<GameObject>& gameObject){};
+    inline virtual void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject){};
+
     // Getters
     [[nodiscard]] int GetId() const;
     [[nodiscard]] const std::shared_ptr<GameObject> &GetParent() const;

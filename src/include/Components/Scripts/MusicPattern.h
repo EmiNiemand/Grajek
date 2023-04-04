@@ -5,9 +5,12 @@
 #ifndef GLOOMENGINE_MUSICPATTERN_H
 #define GLOOMENGINE_MUSICPATTERN_H
 
+#include <vector>
+#include "InstrumentSound.h"
 
 class MusicPattern {
-
+private:
+    std::vector<InstrumentSound> sounds;
 };
 
 

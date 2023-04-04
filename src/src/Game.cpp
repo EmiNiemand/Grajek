@@ -15,6 +15,8 @@
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
+#include "Components/UI/Button.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -37,70 +39,59 @@ void Game::InitializeGame() {
 
     // Set up player
     // -------------
-    std::shared_ptr<GameObject> player = GameObject::Instantiate("Player", activeScene, Tags::DEFAULT);
-    // Adding components
-    std::shared_ptr<Renderer> playerRenderer = player->AddComponent<Renderer>();
-    playerRenderer->LoadModel("domek/domek.obj");
-    playerRenderer->material.reflection = 0.5f;
-    std::shared_ptr<Rigidbody> cubeRigidbody = player->AddComponent<Rigidbody>();
-    player->AddComponent<PlayerMovement>();
-    player->AddComponent<PlayerManager>();
-    player->AddComponent<PlayerEquipment>();
-    // Setting values
-    player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
-    player->transform->SetLocalPosition({0, 2, -10});
-    player->transform->SetLocalScale({0.5, 1, 0.5});
-    std::shared_ptr<GameObject> pivot = GameObject::Instantiate("Cube", player, Tags::DEFAULT);;
-    pivot->transform->SetLocalPosition({0, 1, -10});
+    std::shared_ptr<GameObject> player2 = Prefab::GetPlayer();
 
     // Set up ground
     // -------------
-    std::shared_ptr<GameObject> ground = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-    std::shared_ptr<Renderer> groundRenderer = ground->AddComponent<Renderer>();
-    groundRenderer->LoadModel("domek/domek.obj");
-    std::shared_ptr<BoxCollider> groundCollider = ground->AddComponent<BoxCollider>();
-    groundCollider->SetOffset({0, 1, 0});
+    std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
     ground->transform->SetLocalScale({20, 2, 20});
 
     // Set up lights
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
-    sun->AddComponent<PointLight>();
-    sun->transform->SetLocalPosition({25, 100, 25});
+    sun->AddComponent<DirectionalLight>();
+    sun->transform->SetLocalPosition({0, 0, 0});
+    sun->transform->SetLocalRotation({45, 45, 0});
+
+
+//    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
+//    pointLight->AddComponent<PointLight>();
+//    pointLight->transform->SetLocalPosition({0, 4, -10});
+//    pointLight->GetComponent<PointLight>()->SetAmbient({0.2, 0.2, 0.2});
+//    pointLight->GetComponent<PointLight>()->SetDiffuse({0.6, 0.6, 0.6});
+//    pointLight->GetComponent<PointLight>()->SetSpecular({0.9, 0.9, 0.9});
 
     // Set up UI
     // ---------
     std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
     tekst->AddComponent<Text>();
-    // x,y from 0 to 1920
     tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
-    // x,y from 0 to 1920
-    reksio->GetComponent<Image>()->LoadTextures(50, 0, "UI/piesek.png");
+    reksio->GetComponent<Image>()->LoadTexture(50, 0, "UI/piesek.png");
     std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
     mruczek->AddComponent<Image>();
-    mruczek->GetComponent<Image>()->LoadTextures(1650, 0, "UI/kotek.png");
+    mruczek->GetComponent<Image>()->LoadTexture(1650, 0, "UI/kotek.png");
+    std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", activeScene);
+    button->AddComponent<Button>();
+    button->GetComponent<Button>()->LoadFont("start", 505, 520, 12, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
 
-
+    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+    sphere->transform->SetLocalPosition({0, 2, 0});
+    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
 
     // Set up cubes for collision testing
     // ----------------------------------
     for (int i = 0; i < 10; i++) {
-        std::shared_ptr<GameObject> sceneProp = GameObject::Instantiate("Cube", activeScene, Tags::DEFAULT);
-        std::shared_ptr<Renderer> scenePropRenderer = sceneProp->AddComponent<Renderer>();
-        scenePropRenderer->LoadModel("domek/domek.obj");
-        std::shared_ptr<BoxCollider> scenePropCollider = sceneProp->AddComponent<BoxCollider>();
-        scenePropCollider->SetOffset({0, 1, 0});
+        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
         sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
         sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
 
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("dood", activeScene, Tags::DEFAULT);
-	std::shared_ptr<Animator> animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-	animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
+	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
 	animatedDood->transform->SetLocalPosition({0, 0, -25});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
 

@@ -18,8 +18,11 @@ public:
     Image(const std::shared_ptr<GameObject> &parent, int id);
 
     void CreateMesh(float x, float y, float width, float height);
-
-    void LoadTextures(float x, float y, const std::string& path);
+    /**
+    * x from 0 to 1920\n
+    * y from 0 to 1080
+    */
+    void LoadTexture(float x, float y, const std::string& path);
 
     void Update() override;
 

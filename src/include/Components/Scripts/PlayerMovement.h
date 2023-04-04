@@ -6,6 +6,7 @@
 #define OPENGLGP_PLAYERMOVEMENT_H
 
 #include "Components/Component.h"
+#include "glm/vec2.hpp"
 
 class Rigidbody;
 
@@ -19,6 +20,7 @@ private:
     float vertical = 0.0f;
     float rotationAngle = 0.0f;
     std::shared_ptr<Rigidbody> rb;
+	glm::vec2 moveVector;
 
 public:
     PlayerMovement(const std::shared_ptr<GameObject> &parent, int id);
@@ -26,6 +28,7 @@ public:
 
     void Start() override;
     void FixedUpdate() override;
+    void Move(glm::vec2 moveVector);
 };
 
 
