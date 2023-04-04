@@ -1,6 +1,7 @@
 #include "GloomEngine.h"
 #include "Game.h"
 #include "EngineManagers/RendererManager.h"
+#include "EngineManagers/PostProcessingManager.h"
 #include "EngineManagers/ColliderManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
@@ -73,6 +74,9 @@ bool GloomEngine::MainLoop() {
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
         glfwMakeContextCurrent(window);
+        glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
+        glEnable(GL_DEPTH_TEST);
+
         glViewport(0, 0, width, height);
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -124,6 +128,7 @@ void GloomEngine::Update() {
     }
 
     RendererManager::GetInstance()->DrawObjects();
+    PostProcessingManager::GetInstance()->DrawBuffer();
 
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
