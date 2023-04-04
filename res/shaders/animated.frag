@@ -55,7 +55,7 @@ struct Material {
 // ---------
 
 #define NR_POINT_LIGHTS 32
-#define NR_DIRECTIONAL_LIGHTS 32
+#define NR_DIRECTIONAL_LIGHTS 1
 #define NR_SPOT_LIGHTS 32
 
 #define NR_DIFFUSE 1
@@ -103,45 +103,51 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 
 void main()
 {
-    vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 N = normalize(Normal);
+    vec3 V = normalize(viewPos - FragPos);
     vec3 result = vec3(0.0f);
 
     // phase 1: directional lights
     for(int i = 0; i < NR_DIRECTIONAL_LIGHTS; i++){
         if(directionalLights[i].isActive) {
-            result += CalculateDirectionalLight(directionalLights[i], norm, viewDir);
+            result += CalculateDirectionalLight(directionalLights[i], N, V);
         }
     }
 
     // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++){
         if(pointLights[i].isActive){
-            result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);
+            result += CalculatePointLight(pointLights[i], N, FragPos, V);
         }
     }
 
     // phase 3: spot lights
     for(int i = 0; i < NR_SPOT_LIGHTS; i++){
         if(spotLights[i].isActive){
-            result += CalculateSpotLight(spotLights[i], norm, FragPos, viewDir);
+            result += CalculateSpotLight(spotLights[i], N, FragPos, V);
         }
     }
     result = result * material.color;
 
     //Apply reflection
     if(material.reflection > 0.001) {
-        vec3 I = normalize(FragPos - viewPos);
-        vec3 R = reflect(I, norm);
+        vec3 I = -V;
+        vec3 R = reflect(I, N);
         result = mix(result, texture(skybox, R).rgb, material.reflection);
     }
     if(material.refraction > 0.001) {
         // How much light bends
         float ratio = 1.00 / 1.52;
-        vec3 I = normalize(FragPos - viewPos);
-        vec3 R = refract(I, normalize(Normal), ratio);
+        vec3 I = -V;
+        vec3 R = refract(I, N, ratio);
         result = mix(result, texture(skybox, R).rgb, material.refraction);
     }
+
+    vec3 rimLight = result * 0.5 * pow((1 - dot(V, N)), 1.5);
+    rimLight = smoothstep(0.3, 0.4, result);
+
+    result = result + rimLight;
+
     FragColor = vec4(result, 1.0f);
 }
 

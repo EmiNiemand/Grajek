@@ -69,6 +69,7 @@ struct Material {
 in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragPos;
+in vec2 vsUV;
 
 // UNIFORMS
 // --------
@@ -103,28 +104,28 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 
 void main()
 {
-    vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 N = normalize(Normal);
+    vec3 V = normalize(viewPos - FragPos);
     vec3 result = vec3(0.0f);
 
     // phase 1: directional lights
     for(int i = 0; i < NR_DIRECTIONAL_LIGHTS; i++){
         if(directionalLights[i].isActive) {
-            result += CalculateDirectionalLight(directionalLights[i], norm, viewDir);
+            result += CalculateDirectionalLight(directionalLights[i], N, V);
         }
     }
 
     // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++){
         if(pointLights[i].isActive){
-            result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);
+            result += CalculatePointLight(pointLights[i], N, FragPos, V);
         }
     }
 
     // phase 3: spot lights
     for(int i = 0; i < NR_SPOT_LIGHTS; i++){
         if(spotLights[i].isActive){
-            result += CalculateSpotLight(spotLights[i], norm, FragPos, viewDir);
+            result += CalculateSpotLight(spotLights[i], N, FragPos, V);
         }
     }
     result = result * material.color;
@@ -132,7 +133,7 @@ void main()
     //Apply reflection
     if(material.reflection > 0.001) {
         vec3 I = normalize(FragPos - viewPos);
-        vec3 R = reflect(I, norm);
+        vec3 R = reflect(I, N);
         result = mix(result, texture(skybox, R).rgb, material.reflection);
     }
     if(material.refraction > 0.001) {
@@ -142,6 +143,36 @@ void main()
         vec3 R = refract(I, normalize(Normal), ratio);
         result = mix(result, texture(skybox, R).rgb, material.refraction);
     }
+
+    //cel shading
+    vec3 reflectDir = normalize(reflect(normalize(directionalLights[0].direction), N));
+
+    float spec = max(dot(reflectDir, V), 0.0);
+    float diffuse = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
+
+    float intensity = 0.6 * diffuse + 0.4 * spec;
+
+    if (intensity > 0.8) {
+        intensity = 0.5;
+    }
+    else if (intensity > 0.5) {
+        intensity = 0.3;
+    }
+    else {
+        intensity = 0.1;
+    }
+
+
+    vec3 color = vec3(intensity, intensity, intensity);
+
+    result = color;
+
+//     rim light
+    vec3 rimLight = result * pow(max(0, (1 - dot(normalize(viewPos), N))), 1.5);
+//    rimLight = smoothstep(0.3, 0.4, result);
+
+    result = result + rimLight;
+
     FragColor = vec4(result, 1.0f);
 }
 
