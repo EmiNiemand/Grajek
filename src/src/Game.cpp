@@ -50,8 +50,17 @@ void Game::InitializeGame() {
     // Set up lights
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
-    sun->AddComponent<PointLight>();
-    sun->transform->SetLocalPosition({25, 100, 25});
+    sun->AddComponent<DirectionalLight>();
+    sun->transform->SetLocalPosition({0, 0, 0});
+    sun->transform->SetLocalRotation({45, 45, 0});
+
+
+//    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
+//    pointLight->AddComponent<PointLight>();
+//    pointLight->transform->SetLocalPosition({0, 4, -10});
+//    pointLight->GetComponent<PointLight>()->SetAmbient({0.2, 0.2, 0.2});
+//    pointLight->GetComponent<PointLight>()->SetDiffuse({0.6, 0.6, 0.6});
+//    pointLight->GetComponent<PointLight>()->SetSpecular({0.9, 0.9, 0.9});
 
     // Set up UI
     // ---------
@@ -68,6 +77,10 @@ void Game::InitializeGame() {
     button->AddComponent<Button>();
     button->GetComponent<Button>()->LoadFont("start", 505, 520, 12, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
     button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
+
+    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+    sphere->transform->SetLocalPosition({0, 2, 0});
+    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
 
     // Set up cubes for collision testing
     // ----------------------------------
