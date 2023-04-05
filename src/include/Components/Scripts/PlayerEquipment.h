@@ -13,6 +13,9 @@ private:
     int rep = 0;
     std::unordered_map<std::shared_ptr<Instrument>, int> instruments;
 
+	inline static int maxCashReward = 5;
+	inline static int maxRepReward = 10;
+
 public:
     PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerEquipment() override;

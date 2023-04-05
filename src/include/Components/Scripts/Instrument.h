@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include "MusicPattern.h"
 
 class Image;
 
@@ -20,6 +21,9 @@ public:
     InstrumentName name;
     MusicGenre genre;
     std::shared_ptr<Image> icon;
+
+	std::vector<MusicPattern> patterns;
+	std::vector<Sample> samples;
 
     Instrument(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
     //void AddPatterns(std::vector<MusicPattern>());
