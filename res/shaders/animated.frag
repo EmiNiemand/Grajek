@@ -167,12 +167,13 @@ void main()
 
 
     vec3 celColor = vec3(intensity, intensity, intensity);
+    vec3 color = vec3(0.8, 0.6, 0.5);
     result = result + result * celColor;
 
-    vec3 rimLight = result * pow((1 - dot(V, N)), 1.5);
-//    rimLight = smoothstep(0.7, 0.8, result);
+    //     rim light
+    vec3 rimLight = result * pow(max(0, (1 - dot(normalize(viewPos), N))), 4);
 
-    result = result * rimLight;
+    result = result + rimLight;
 
     FragColor = vec4(result, 1.0f);
 }

@@ -169,7 +169,7 @@ void main()
 
     vec3 celColor = vec3(intensity, intensity, intensity);
     vec3 color = vec3(0.8, 0.6, 0.5);
-    result = color + color * celColor;
+    result = result + result * celColor;
 
     //     rim light
     vec3 rimLight = result * pow(max(0, (1 - dot(normalize(viewPos), N))), 4);
