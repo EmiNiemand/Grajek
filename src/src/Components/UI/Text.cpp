@@ -5,7 +5,7 @@
 
 #define BASE_PATH "res/fonts/"
 
-Text::Text(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Text::Text(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
 void Text::CreateMesh(float x, float y) {
     std::vector<Vertex> vertices;
@@ -94,8 +94,7 @@ void Text::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::v
 }
 
 void Text::Update() {
-    Draw();
-    Component::Update();
+    UIComponent::Update();
 }
 
 void Text::Draw() {

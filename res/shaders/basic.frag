@@ -144,6 +144,38 @@ void main()
         result = mix(result, texture(skybox, R).rgb, material.refraction);
     }
 
+    //cel shading
+    float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
+
+    if (intensity > 0.9) {
+        intensity = 0.8;
+    }
+    else if (intensity > 0.7) {
+        intensity = 0.6;
+    }
+    else if (intensity > 0.5) {
+        intensity = 0.4;
+    }
+    else if (intensity > 0.3) {
+        intensity = 0.25;
+    }
+    else if (intensity > 0.01) {
+        intensity = 0.1;
+    }
+    else {
+        intensity = 0.0;
+    }
+
+
+    vec3 celColor = vec3(intensity, intensity, intensity);
+    vec3 color = vec3(0.8, 0.6, 0.5);
+    result = color + color * celColor;
+
+    //     rim light
+    vec3 rimLight = result * pow(max(0, (1 - dot(normalize(viewPos), N))), 4);
+
+    result = result + rimLight;
+
     FragColor = vec4(result, 1.0f);
 }
 

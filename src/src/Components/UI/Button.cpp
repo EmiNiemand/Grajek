@@ -7,7 +7,7 @@
 #define BASE_PATH_FONT "res/fonts/"
 #define BASE_PATH_TEXTURE "res/textures/"
 
-Button::Button(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Button::Button(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
 std::shared_ptr<Mesh> Button::CreateMesh(float x, float y, float width, float height) {
     std::vector<Vertex> vertices;
@@ -161,8 +161,7 @@ void Button::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm:
 }
 
 void Button::Update() {
-    Draw();
-    Component::Update();
+    UIComponent::Update();
 }
 
 void Button::Draw() {

@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "EngineManagers/RendererManager.h"
 #include "EngineManagers/PostProcessingManager.h"
+#include "EngineManagers/UIManager.h"
 #include "EngineManagers/ColliderManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
@@ -129,6 +130,7 @@ void GloomEngine::Update() {
 
     RendererManager::GetInstance()->DrawObjects();
     PostProcessingManager::GetInstance()->DrawBuffer();
+    UIManager::GetInstance()->DrawUI();
 
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
