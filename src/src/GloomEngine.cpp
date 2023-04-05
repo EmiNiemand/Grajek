@@ -130,12 +130,11 @@ void GloomEngine::Update() {
 
     RendererManager::GetInstance()->DrawObjects();
     PostProcessingManager::GetInstance()->DrawBuffer();
-    UIManager::GetInstance()->DrawUI();
-
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
 #endif
+    UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();
 }
