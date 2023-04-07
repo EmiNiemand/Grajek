@@ -39,7 +39,7 @@ void Game::InitializeGame() {
 
     // Set up player
     // -------------
-    std::shared_ptr<GameObject> player2 = Prefab::GetPlayer();
+    std::shared_ptr<GameObject> player = Prefab::GetPlayer();
 
     // Set up ground
     // -------------
