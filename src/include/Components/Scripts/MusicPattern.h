@@ -6,7 +6,10 @@
 #define GLOOMENGINE_MUSICPATTERN_H
 
 #include <vector>
-#include "Instrument.h"
+#include <memory>
+
+enum InstrumentName { Clap, Drums };
+enum MusicGenre { Jazz = 80, RnB = 110 };
 
 // AudioClip but fancy
 struct Sample
@@ -18,16 +21,18 @@ struct Sample
 
 struct Sound
 {
-	Sample sample;
+	std::shared_ptr<Sample> sample;
 	// Delay from the previously played sound; 1 = 1 metronome tact
 	float delay;
+
+    Sound(const std::shared_ptr<Sample> &sample, float delay) : sample(sample), delay(delay) {}
 };
 
 
 class MusicPattern {
 public:
-	InstrumentName InstrumentName;
-    std::vector<Sound> sounds;
+	InstrumentName instrumentName;
+    std::vector<std::shared_ptr<Sound>> sounds;
 };
 
 

@@ -125,7 +125,18 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Load)
 		if(hid->IsKeyDown(key.first)) OnSaveLoad(false);
 
+    //if(session)
+    for (auto key: PlayerInput::PlaySound) {
+        if (hid->IsKeyDown(key.first)) {
+            OnSoundPlay(key.second);
+        }
+    }
+
 	if(readMoveVector != moveInput)
 		OnMove(readMoveVector);
 	moveInput = readMoveVector;
+}
+
+void PlayerManager::OnSoundPlay(int index) {
+    spdlog::info("[PM] Played sound "+std::to_string(index)+"!");
 }

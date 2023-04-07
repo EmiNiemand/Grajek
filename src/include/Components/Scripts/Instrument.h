@@ -11,9 +11,6 @@
 
 class Image;
 
-enum InstrumentName { Clap, Drums };
-enum MusicGenre { Jazz = 80, RnB = 110 };
-
 class Instrument {
 private:
 
@@ -22,11 +19,11 @@ public:
     MusicGenre genre;
     std::shared_ptr<Image> icon;
 
-	std::vector<MusicPattern> patterns;
-	std::vector<Sample> samples;
+	std::vector<std::shared_ptr<MusicPattern>> patterns;
+	std::vector<std::shared_ptr<Sample>> samples;
 
-    Instrument(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
-    //void AddPatterns(std::vector<MusicPattern>());
+    void Setup(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
+    void AddPatterns(std::vector<std::shared_ptr<MusicPattern>> newPatterns);
 };
 
 

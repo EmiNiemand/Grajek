@@ -50,7 +50,7 @@ void PlayerMovement::FixedUpdate() {
             speed = 0.0f;
         } else {
             // Calculate rotation angles by using tangent function
-            rotationAngle = std::atan2f(vertical, horizontal) * 180.0f/std::numbers::pi;
+            rotationAngle = atan2f(vertical, horizontal) * 180.0f/std::numbers::pi;
 
             if (rotationAngle < 0.0f) {
                 rotationAngle += 360.0f;

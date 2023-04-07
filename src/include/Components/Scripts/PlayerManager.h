@@ -30,6 +30,9 @@ private:
 
     void PollInput();
 
+    //Session methods
+    void OnSoundPlay(int index);
+
     //Equipment methods
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     //Movement methods
@@ -44,6 +47,22 @@ private:
 
 public:
     PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
+
+    //Session methods
+    // Argument pat is null when player failed playing pattern
+    void PlayedPattern(const std::shared_ptr<MusicPattern>& pat)
+    {
+        //TODO: uncomment when crowd manager gets implemented
+//        crowdManager.PlayedPattern(pat);
+
+        if (!pat) return;
+
+        //TODO: uncomment when crowd manager gets implemented
+        equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
+
+        ui->UpdateCash(equipment->cash);
+        ui->UpdateRep(equipment->rep);
+    }
 };
 
 
