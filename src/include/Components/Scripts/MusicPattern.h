@@ -31,7 +31,10 @@ struct Sound
 
 class MusicPattern {
 public:
-	InstrumentName instrumentName;
+//    MusicPattern(InstrumentName instrumentName, const std::vector<std::shared_ptr<Sound>> &sounds);
+
+
+    InstrumentName instrumentName;
     std::vector<std::shared_ptr<Sound>> sounds;
 };
 

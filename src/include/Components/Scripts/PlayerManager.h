@@ -10,12 +10,15 @@
 #include "PlayerEquipment.h"
 #include "PlayerUI.h"
 #include "glm/vec2.hpp"
+#include "SessionUI.h"
+#include "MusicSession.h"
 
 class PlayerManager : public Component {
 private:
     std::shared_ptr<PlayerMovement> movement;
 //    PlayerCamera camera;
-    std::shared_ptr<PlayerUI> ui;
+    std::shared_ptr<PlayerUI> playerUI;
+    std::shared_ptr<MusicSession> session;
 //    PlayerCollider collider;
     std::shared_ptr<PlayerEquipment> equipment;
     glm::vec2 moveInput;
@@ -60,8 +63,8 @@ public:
         //TODO: uncomment when crowd manager gets implemented
         equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
 
-        ui->UpdateCash(equipment->cash);
-        ui->UpdateRep(equipment->rep);
+        playerUI->UpdateCash(equipment->cash);
+        playerUI->UpdateRep(equipment->rep);
     }
 };
 

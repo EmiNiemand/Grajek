@@ -12,18 +12,34 @@
 #include "spdlog/spdlog.h"
 
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
-                            : Component(parent, id) {
-    movement = parent->GetComponent<PlayerMovement>();
-    equipment = parent->GetComponent<PlayerEquipment>();
-    ui = parent->GetComponent<PlayerUI>();
+                            : Component(parent, id) {}
+
+void PlayerManager::Start() {
+    Component::Start();
+    movement = parent->AddComponent<PlayerMovement>();
+    equipment = parent->AddComponent<PlayerEquipment>();
+    playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
+
+    // Temporary instrument, delete later
+    std::vector<std::shared_ptr<Sample>> samples { std::make_shared<Sample>(), std::make_shared<Sample>(), std::make_shared<Sample>() };
+    for (int i = 0; i < 3; ++i) samples[i]->id = i;
+    auto pattern = std::make_shared<MusicPattern>();
+    pattern->instrumentName = InstrumentName::Clap;
+    pattern->sounds.push_back(std::make_shared<Sound>(samples[0], 0));
+    pattern->sounds.push_back(std::make_shared<Sound>(samples[1], 1));
+    pattern->sounds.push_back(std::make_shared<Sound>(samples[1], 1));
+
+    auto instrument = std::make_shared<Instrument>();
+    instrument->Setup(InstrumentName::Clap);
+    instrument->samples = samples;
+    instrument->patterns.push_back(pattern);
+
+    session = parent->AddComponent<MusicSession>();
+    session->Setup(instrument);
 
     moveInput = glm::vec2(0);
     inputEnabled = true;
 	uiActive = false;
-}
-
-void PlayerManager::Start() {
-    Component::Start();
 }
 
 void PlayerManager::Update() {
@@ -35,7 +51,7 @@ void PlayerManager::Update() {
 bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &instrument) {
     if(!equipment->BuyInstrument(price, instrument)) return false;
 
-    ui->UpdateCash(equipment->GetCash());
+    playerUI->UpdateCash(equipment->GetCash());
     return true;
 }
 #pragma endregion
@@ -120,11 +136,6 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Interact)
 		if(hid->IsKeyDown(key.first)) OnInteract();
 
-	for (auto key : PlayerInput::Save)
-		if(hid->IsKeyDown(key.first)) OnSaveLoad(true);
-	for (auto key : PlayerInput::Load)
-		if(hid->IsKeyDown(key.first)) OnSaveLoad(false);
-
     //if(session)
     for (auto key: PlayerInput::PlaySound) {
         if (hid->IsKeyDown(key.first)) {
@@ -139,4 +150,6 @@ void PlayerManager::PollInput() {
 
 void PlayerManager::OnSoundPlay(int index) {
     spdlog::info("[PM] Played sound "+std::to_string(index)+"!");
+
+    session->PlaySample(index);
 }

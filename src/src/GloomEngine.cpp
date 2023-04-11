@@ -69,50 +69,50 @@ bool GloomEngine::MainLoop() {
     glfwPollEvents();
     glfwSetWindowSize(window, width, height);
 
-//    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
-//    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
-//    if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
-//        glfwMakeContextCurrent(window);
-//        glViewport(0, 0, width, height);
-//        glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//        Update();
-//
-//        deltaTime = currentTime - lastFrameTime;
-//        lastFrameTime = currentTime;
-//
-//        glfwMakeContextCurrent(window);
-//        glfwSwapBuffers(window);
-//    }
-//
-//    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
-//    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
-//    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
-//
-//        FixedUpdate();
-//
-//        fixedDeltaTime = currentTime - lastFixedFrameTime;
-//        lastFixedFrameTime = currentTime;
-//    }
-//
-//    int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
-//    int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
-//    if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
-//
-//        AIUpdate();
-//
-//        AIDeltaTime = currentTime - lastAIFrameTime;
-//        lastAIFrameTime = currentTime;
-//    }
-//
-//    bool endGame = game->GameLoop();
-//
-//    // Save game on quit
-//    if (glfwWindowShouldClose(window) || endGame) {
-//        std::filesystem::path path = std::filesystem::current_path();
-//        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
-//    }
+    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
+    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
+    if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
+        glfwMakeContextCurrent(window);
+        glViewport(0, 0, width, height);
+        glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Update();
+
+        deltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
+
+        glfwMakeContextCurrent(window);
+        glfwSwapBuffers(window);
+    }
+
+    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
+    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
+    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+
+        FixedUpdate();
+
+        fixedDeltaTime = currentTime - lastFixedFrameTime;
+        lastFixedFrameTime = currentTime;
+    }
+
+    int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
+    int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
+    if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
+
+        AIUpdate();
+
+        AIDeltaTime = currentTime - lastAIFrameTime;
+        lastAIFrameTime = currentTime;
+    }
+
+    bool endGame = game->GameLoop();
+
+    // Save game on quit
+    if (glfwWindowShouldClose(window) || endGame) {
+        std::filesystem::path path = std::filesystem::current_path();
+        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
+    }
     return glfwWindowShouldClose(window);// || endGame;
 }
 

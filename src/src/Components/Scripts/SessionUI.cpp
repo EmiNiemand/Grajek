@@ -5,18 +5,19 @@
 #include "Components/Scripts/SessionUI.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
-#include "Components/Scripts/MusicPattern.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Utilities.h"
 
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void SessionUI::Setup(int bpm, std::vector<std::shared_ptr<Sample>> samples, std::shared_ptr<Image> metronomeImage) {
+void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>& samples, std::shared_ptr<Image> metronome) {
     metronomeSoundEnabled = true;
     metronomeVisualEnabled = true;
 
-    this->metronomeImage = std::move(metronomeImage);
+    metronomeImage = std::move(metronome);
 
     accuracyFeedback = GameObject::Instantiate("AccuracyFeedback", parent)->AddComponent<Text>();
+    accuracyFeedback->LoadFont("Good", 500, 1280, 20, glm::vec3(1.0f), GameFont::Eggnog);
 
     //TODO: uncomment when sound gets implemented
 //        sampleSources = new List<AudioSource>();

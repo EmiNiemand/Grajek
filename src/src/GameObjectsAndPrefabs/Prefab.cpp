@@ -26,10 +26,6 @@ std::shared_ptr<GameObject> Prefab::GetPlayer(std::string name) {
     playerRenderer->material.reflection = 0.5f;
     auto cubeRigidbody = player->AddComponent<Rigidbody>();
     //Adding scripts
-    player->AddComponent<PlayerMovement>();
-    player->AddComponent<PlayerEquipment>();
-    auto playerCanvas = GameObject::Instantiate("PlayerUI", player);
-    playerCanvas->AddComponent<PlayerUI>();
     player->AddComponent<PlayerManager>();
     // Setting values
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});

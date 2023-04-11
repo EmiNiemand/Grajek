@@ -11,12 +11,12 @@
 
 MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void MusicSession::Setup(std::shared_ptr<PlayerManager> manager, std::shared_ptr<Instrument> playerInstrument) {
+void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
     instrument = std::move(playerInstrument);
 
     bpm = (int)instrument->genre;
 
-    playerManager = std::move(manager);
+    playerManager = parent->GetComponent<PlayerManager>();
 
     sessionUI = GameObject::Instantiate("SessionUI", parent)->AddComponent<SessionUI>();
     sessionUI->Setup(bpm, instrument->samples, nullptr);
@@ -30,7 +30,7 @@ void MusicSession::Update() {
 }
 
 void MusicSession::PlaySample(int index) {
-    if (instrument->samples.size()-1 < index) return;
+    if(instrument->samples.empty() || instrument->samples.size()-1 < index) return;
 
     sessionUI->PlaySound(index);
 
@@ -39,7 +39,7 @@ void MusicSession::PlaySample(int index) {
     float currentTime = glfwGetTime();
     float rhythmDiff = GetRhythmValue(currentTime - lastTime);
 
-    recordedSounds.emplace_back(Sound(instrument->samples[index], rhythmDiff));
+    recordedSounds.emplace_back(instrument->samples[index], rhythmDiff);
     lastTime = currentTime;
 
     DetectPattern();
