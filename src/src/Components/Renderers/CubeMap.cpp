@@ -91,5 +91,5 @@ void CubeMap::Draw() {
 }
 
 void CubeMap::Update() {
-    Draw();
+//    Draw();
 }

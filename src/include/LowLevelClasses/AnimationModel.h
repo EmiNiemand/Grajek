@@ -39,6 +39,7 @@ public:
     AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES, bool gamma = false);
     AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
     void Draw();
+    void Draw(std::shared_ptr<Shader> useShader);
     auto& GetBoneInfoMap() { return boneInfoMap; }
     uint16_t& GetBoneCount() { return boneCounter; }
 

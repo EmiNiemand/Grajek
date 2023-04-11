@@ -32,7 +32,9 @@ public:
 	void Update() override;
     void Draw() override;
 
-	void UpdateAnimation(float deltaTime);
+    void Draw(std::shared_ptr<Shader> shader) override;
+
+    void UpdateAnimation(float deltaTime);
     void PlayAnimation(std::shared_ptr<Animation> pAnimation);
 	void PauseAnimation();
 

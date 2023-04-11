@@ -11,6 +11,8 @@ layout(location = 6) in vec4 weights;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
+uniform mat4 lightSpaceMatrix;
+
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -19,6 +21,8 @@ uniform mat4 finalBonesMatrices[MAX_BONES];
 out vec2 TexCoords;
 out vec3 Normal;
 out vec3 FragPos;
+out vec4 FragPosLightSpace;
+
 
 void main()
 {
@@ -40,8 +44,7 @@ void main()
     TexCoords = aTexCoords;
     FragPos = vec3(model * totalPosition);
     Normal = mat3(transpose(inverse(model))) * aNormal;
-
-    mat4 viewModel = view * model;
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
     gl_Position =  projection * view * model * totalPosition;
 
 }

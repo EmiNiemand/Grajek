@@ -51,8 +51,17 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({0, 0, 0});
-    sun->transform->SetLocalRotation({45, 45, 0});
+    sun->transform->SetLocalPosition({0, 10, -5});
+    sun->transform->SetLocalRotation({-45, 20, 0});
+    spdlog::info(std::to_string(sun->transform->GetForward().x)+", "+
+                         std::to_string(sun->transform->GetForward().y)+", "+
+                         std::to_string(sun->transform->GetForward().z));
+
+    for (int i = 0; i < 2; i++) {
+        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
+        sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
+        sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
+    }
 
 
 //    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
@@ -82,11 +91,11 @@ void Game::InitializeGame() {
     sphere->transform->SetLocalPosition({0, 2, 0});
     sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
 
-    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
-    lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
-    lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
-    lowPolyHouse->transform->SetLocalScale({4, 4, 4});
-    lowPolyHouse->AddComponent<Renderer>()->LoadModel("/OBJ/Shop.obj");
+//    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
+//    lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
+//    lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
+//    lowPolyHouse->transform->SetLocalScale({4, 4, 4});
+//    lowPolyHouse->AddComponent<Renderer>()->LoadModel("/OBJ/Shop.obj");
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
