@@ -123,6 +123,7 @@ void GloomEngine::Update() {
         if (component.second->callOnStart && component.second->enabled) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
+    glEnable(GL_DEPTH_TEST);
 
     // Prepare shadow framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
@@ -148,8 +149,7 @@ void GloomEngine::Update() {
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
 #endif
-
-    glEnable(GL_DEPTH_TEST);
+    
     UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();

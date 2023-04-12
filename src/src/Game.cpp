@@ -88,11 +88,11 @@ void Game::InitializeGame() {
     sphere->transform->SetLocalPosition({0, 2, 0});
     sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
 
-//    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
-//    lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
-//    lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
-//    lowPolyHouse->transform->SetLocalScale({4, 4, 4});
-//    lowPolyHouse->AddComponent<Renderer>()->LoadModel("/OBJ/Shop.obj");
+    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
+    lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
+    lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
+    lowPolyHouse->transform->SetLocalScale({4, 4, 4});
+    lowPolyHouse->AddComponent<Renderer>()->LoadModel("OBJ/Shop.obj");
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
