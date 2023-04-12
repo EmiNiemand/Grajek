@@ -29,6 +29,9 @@ ShadowManager::ShadowManager() {
 
     RendererManager::GetInstance()->shader->Activate();
     RendererManager::GetInstance()->shader->SetInt("shadowMap", depthMap);
+
+    RendererManager::GetInstance()->animatedShader->Activate();
+    RendererManager::GetInstance()->animatedShader->SetInt("shadowMap", depthMap);
 }
 
 ShadowManager::~ShadowManager() = default;
@@ -44,24 +47,29 @@ void ShadowManager::PrepareShadow() {
     glm::mat4 lightProjection, lightView;
     glm::mat4 lightSpaceMatrix;
     glm::vec3 lightPos = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetGlobalPosition();
-    lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)shadowWidth / (GLfloat)shadowHeight, nearPlane, farPlane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-//    lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
+//    lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)shadowWidth / (GLfloat)shadowHeight, 0.1f, 10.0f); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+    lightProjection = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, nearPlane, farPlane);
     lightView = glm::lookAt(lightPos, RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetForward(),
                             RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetUp());
     lightSpaceMatrix = lightProjection * lightView;
-
-    RendererManager::GetInstance()->shader->Activate();
-    RendererManager::GetInstance()->shader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     // render scene from light's point of view
     shadowShader->Activate();
     shadowShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+    RendererManager::GetInstance()->shader->Activate();
+    RendererManager::GetInstance()->shader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+    RendererManager::GetInstance()->animatedShader->Activate();
+    RendererManager::GetInstance()->animatedShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+
     glViewport(0, 0, shadowWidth, shadowHeight);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
+    glCullFace(GL_FRONT);
     for (const auto& drawable : RendererManager::GetInstance()->drawBuffer) {
         drawable->Draw(shadowShader);
     }
+    glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

@@ -69,7 +69,6 @@ struct Material {
 in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragPos;
-in vec2 vsUV;
 in vec4 FragPosLightSpace;
 
 // UNIFORMS
@@ -276,7 +275,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
     vec3 normal = normalize(Normal);
-    vec3 lightDir = directionalLights[0].direction;
+    vec3 lightDir = -directionalLights[0].direction;
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;

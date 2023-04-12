@@ -34,5 +34,6 @@ void main()
 
     float g = sqrt(pow(gx, 2.0) + pow(gy, 2.0));
 
-    FragColor = vec4(diffuse - vec3(g), 1.0);
+    //    FragColor = vec4(diffuse - vec3(g), 1.0);
+    FragColor = vec4(diffuse, 1.0);
 }

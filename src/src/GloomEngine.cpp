@@ -76,6 +76,7 @@ bool GloomEngine::MainLoop() {
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
         glfwMakeContextCurrent(window);
+        glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
 
         Update();
 
@@ -127,24 +128,28 @@ void GloomEngine::Update() {
     glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
     ShadowManager::GetInstance()->PrepareShadow();
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
     glViewport(0, 0, width, height);
-    glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
 
     // Prepare texture framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+    glBindTexture(GL_TEXTURE_2D,  ShadowManager::GetInstance()->depthMap);
     RendererManager::GetInstance()->DrawObjects();
     PostProcessingManager::GetInstance()->DrawBuffer();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
 #endif
+
+    glEnable(GL_DEPTH_TEST);
     UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();

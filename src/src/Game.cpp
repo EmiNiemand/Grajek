@@ -51,11 +51,8 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({0, 10, -5});
-    sun->transform->SetLocalRotation({-45, 20, 0});
-    spdlog::info(std::to_string(sun->transform->GetForward().x)+", "+
-                         std::to_string(sun->transform->GetForward().y)+", "+
-                         std::to_string(sun->transform->GetForward().z));
+    sun->transform->SetLocalPosition({5, 10, 5});
+    sun->transform->SetLocalRotation({-50, 70, 0});
 
     for (int i = 0; i < 2; i++) {
         std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
@@ -99,7 +96,7 @@ void Game::InitializeGame() {
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
-	animatedDood->transform->SetLocalPosition({0, 0, -25});
+	animatedDood->transform->SetLocalPosition({0, 0, -4});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);

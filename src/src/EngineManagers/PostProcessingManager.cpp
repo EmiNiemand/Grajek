@@ -65,7 +65,6 @@ void PostProcessingManager::DrawBuffer() {
     glBindVertexArray(quadVAO);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    glEnable(GL_DEPTH_TEST);
 }
 
 void PostProcessingManager::Free() const {
