@@ -18,6 +18,7 @@ public:
     void ShowMenu();
     void HideMenu();
     void ChangeActiveButton(glm::vec2 moveVector);
+    void OnClick();
 };
 
 #endif //GLOOMENGINE_PAUSEMENU_H

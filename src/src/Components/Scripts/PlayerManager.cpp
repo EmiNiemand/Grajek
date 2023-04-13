@@ -119,9 +119,9 @@ void PlayerManager::OnMenuToggle() {
 }
 
 void PlayerManager::OnApply() {
+    //TODO: Place to plug everything up for Kamil
 	if(!uiActive) return;
-
-	//TODO: Place to plug everything up for Kamil
+    pauseMenu->OnClick();
 	spdlog::info("[PM] Applied some option in menu!");
 }
 

@@ -35,3 +35,11 @@ void PauseMenu::ChangeActiveButton(glm::vec2 moveVector) {
         activeButton->isActive = true;
     }
 }
+
+void PauseMenu::OnClick() {
+    if(GloomEngine::GetInstance()->FindGameObjectWithName("Button")->GetComponent<Button>()->isActive) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Tekst")->GetComponent<Text>()->text = "Button";
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Button2")->GetComponent<Button>()->isActive) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Tekst")->GetComponent<Text>()->text = "Buttonnnn";
+    }
+}
