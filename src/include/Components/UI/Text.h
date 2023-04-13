@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "Components/Component.h"
+#include "Components/UI/UIComponent.h"
 #include "LowLevelClasses/Mesh.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -15,13 +15,15 @@ struct Character {
     GLuint Advance;    // Horizontal offset to advance to next glyph
 };
 
-class Text : public Component {
+class Text : public UIComponent {
 private:
     std::shared_ptr<Mesh> mesh;
-    std::string text;
     glm::vec3 color;
     GLfloat x, y;
     std::map<GLchar, Character> Characters;
+
+public:
+    std::string text;
 
 public:
     Text(const std::shared_ptr<GameObject> &parent, int id);
@@ -35,7 +37,7 @@ public:
 
     void Update() override;
 
-    void Draw();
+    void Draw() override;
 };
 
 #endif //GLOOMENGINE_TEXT_H

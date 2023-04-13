@@ -23,6 +23,7 @@ public:
     Model(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma = false);
     Model(Mesh mesh, std::shared_ptr<Shader> &shader, int type);
     void Draw();
+    void Draw(std::shared_ptr<Shader> useShader);
 
 private:
     unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);

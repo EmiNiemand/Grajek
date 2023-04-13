@@ -51,8 +51,14 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({0, 0, 0});
-    sun->transform->SetLocalRotation({45, 45, 0});
+    sun->transform->SetLocalPosition({5, 10, 5});
+    sun->transform->SetLocalRotation({-50, 70, 0});
+
+    for (int i = 0; i < 2; i++) {
+        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
+        sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
+        sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
+    }
 
 
 //    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
@@ -64,35 +70,40 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
-    tekst->AddComponent<Text>();
-    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+    // Texts at the end
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
     reksio->GetComponent<Image>()->LoadTexture(50, 0, "UI/piesek.png");
     std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
     mruczek->AddComponent<Image>();
     mruczek->GetComponent<Image>()->LoadTexture(1650, 0, "UI/kotek.png");
-    std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", activeScene);
+    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
+    tekst->AddComponent<Text>();
+    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+    std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
+    std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
+    pauseBackground->AddComponent<Image>();
+    pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
+    std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", pause);
     button->AddComponent<Button>();
-    button->GetComponent<Button>()->LoadFont("start", 505, 520, 12, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
-    button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
+    button->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
+    button->GetComponent<Button>()->LoadFont("Exit", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    pause->DisableSelfAndChildren();
+
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
     sphere->transform->SetLocalPosition({0, 2, 0});
     sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
 
-    // Set up cubes for collision testing
-    // ----------------------------------
-    for (int i = 0; i < 10; i++) {
-        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
-        sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
-        sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
-    }
+    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
+    lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
+    lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
+    lowPolyHouse->transform->SetLocalScale({4, 4, 4});
+    lowPolyHouse->AddComponent<Renderer>()->LoadModel("OBJ/Shop.obj");
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
-	animatedDood->transform->SetLocalPosition({0, 0, -25});
+	animatedDood->transform->SetLocalPosition({0, 0, -4});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);

@@ -7,7 +7,7 @@
 #define BASE_PATH_FONT "res/fonts/"
 #define BASE_PATH_TEXTURE "res/textures/"
 
-Button::Button(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Button::Button(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
 std::shared_ptr<Mesh> Button::CreateMesh(float x, float y, float width, float height) {
     std::vector<Vertex> vertices;
@@ -161,11 +161,27 @@ void Button::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm:
 }
 
 void Button::Update() {
-    Draw();
-    Component::Update();
+    UIComponent::Update();
 }
 
 void Button::Draw() {
+    // Render texture
+    UIManager::GetInstance()->shader->Activate();
+    UIManager::GetInstance()->shader->SetBool("isText", false);
+    glActiveTexture(GL_TEXTURE0);
+    if(isActive) {
+        UIManager::GetInstance()->shader->SetInt("texture1", 0);
+        glBindTexture(GL_TEXTURE_2D, textureIsActive);
+    } else {
+        UIManager::GetInstance()->shader->SetInt("texture1", 0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+    }
+    glBindVertexArray(textureMesh->vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
+
+
     // Render text
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", true);
@@ -209,20 +225,4 @@ void Button::Draw() {
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    // Render texture
-    UIManager::GetInstance()->shader->Activate();
-    UIManager::GetInstance()->shader->SetBool("isText", false);
-    glActiveTexture(GL_TEXTURE0);
-    if(isActive) {
-        UIManager::GetInstance()->shader->SetInt("texture1", 0);
-        glBindTexture(GL_TEXTURE_2D, textureIsActive);
-    } else {
-        UIManager::GetInstance()->shader->SetInt("texture1", 0);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-    }
-    glBindVertexArray(textureMesh->vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-    glActiveTexture(GL_TEXTURE0);
 }

@@ -85,6 +85,11 @@ void PlayerManager::OnSaveLoad(bool save) {
 void PlayerManager::OnMenuToggle() {
 	//TODO: Place to plug everything up for Kamil
 	uiActive = !uiActive;
+    if (uiActive) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->EnableSelfAndChildren();
+    } else {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->DisableSelfAndChildren();
+    }
     spdlog::info("[PM] Menu" + std::string(uiActive?"enabled":"disabled") + "!");
 }
 
