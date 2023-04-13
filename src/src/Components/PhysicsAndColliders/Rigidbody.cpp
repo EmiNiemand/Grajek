@@ -29,21 +29,27 @@ void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
 }
 
 void Rigidbody::AddTorque(float angle, ForceMode forceMode) {
-    // TODO: improve rotation based on the distance (angle needed to rotate)
-
-    if (rotation.y == 360.0f) {
-        rotation.y = 0.0f;
+    if (angle == 0.0f && rotation.y > 180.0f) {
+        angle = 360.0f;
     }
 
+    if ((angle + 360.0f - rotation.y) < (rotation.y - angle)) {
+        targetRotation.y = 360.0f + angle;
+    } else {
+        targetRotation.y = angle;
+    }
+
+    if (rotation.y > 360.0f) {
+        rotation.y -= 360.0f;
+        targetRotation.y -= 360.f;
+    }
+
+    spdlog::info(rotation.y );
     if (forceMode == ForceMode::Force) {
-        if (angle == 0.0f && rotation.y > 180.0f) {
-            rotation.y = std::lerp(rotation.y, angle + 360.0f, GloomEngine::GetInstance()->fixedDeltaTime * turnSpeed);
-        } else {
-            rotation.y = std::lerp(rotation.y, angle, GloomEngine::GetInstance()->fixedDeltaTime * turnSpeed);
-        }
+        rotation.y = std::lerp(rotation.y, targetRotation.y, GloomEngine::GetInstance()->fixedDeltaTime * turnSpeed);
     }
     else {
-        rotation.y = angle / mass;
+        rotation.y = std::lerp(rotation.y, targetRotation.y, turnSpeed);
     }
 }
 
