@@ -70,18 +70,6 @@ void PlayerManager::OnInteract() {
 #pragma endregion
 
 #pragma region UI Events
-void PlayerManager::OnSaveLoad(bool save) {
-	//TODO: Place to plug everything up for Szymon
-	if(save)
-	{
-		spdlog::info("[PM] Saving game...");
-	}
-	else
-	{
-		spdlog::info("[PM] Loading game...");
-	}
-}
-
 void PlayerManager::OnMenuToggle() {
 	//TODO: Place to plug everything up for Kamil
 	uiActive = !uiActive;
