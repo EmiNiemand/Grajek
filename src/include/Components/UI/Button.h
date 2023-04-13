@@ -1,14 +1,14 @@
 #ifndef GLOOMENGINE_BUTTON_H
 #define GLOOMENGINE_BUTTON_H
 
-#include "Components/Component.h"
+#include "Components/UI/UIComponent.h"
 #include "Components/UI/Text.h"
 #include "LowLevelClasses/Mesh.h"
 #include <map>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-class Button : public Component{
+class Button : public UIComponent{
 private:
     unsigned int textureID;
     unsigned int textureIsActive;
@@ -39,7 +39,7 @@ public:
 
     void Update() override;
 
-    void Draw();
+    void Draw() override;
 };
 
 

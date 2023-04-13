@@ -79,7 +79,7 @@ void RendererManager::UpdateLight(int componentId) {
     for (int i = 0; i < directionalLights.size(); i++) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
             for(const auto& lightShader : {shader, animatedShader}) UpdateDirectionalLight(i, lightShader);
-            return;
+        return;
         }
     }
     for (int i = 0; i < pointLights.size(); i++) {

@@ -63,8 +63,8 @@ void GameObject::RemoveAllChildren() {
 
 void GameObject::UpdateSelfAndChildren() {
     if (transform != nullptr) {
-        OnTransformUpdateComponents();
         ForceUpdateSelfAndChildren();
+        OnTransformUpdateComponents();
     }
 }
 

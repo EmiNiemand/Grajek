@@ -51,8 +51,11 @@ AnimationModel::AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int t
 
 void AnimationModel::Draw()
 {
-    for(auto & meshe : meshes)
-        meshe.Draw(shader, type);
+    for(auto & mesh : meshes) mesh.Draw(shader, type);
+}
+
+void AnimationModel::Draw(std::shared_ptr<Shader> useShader) {
+    for(auto & mesh : meshes) mesh.Draw(useShader, type);
 }
 
 void AnimationModel::LoadModel(std::string const &path)

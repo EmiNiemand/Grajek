@@ -1,7 +1,10 @@
 #include "GloomEngine.h"
 #include "Game.h"
 #include "EngineManagers/RendererManager.h"
+#include "EngineManagers/PostProcessingManager.h"
+#include "EngineManagers/UIManager.h"
 #include "EngineManagers/ColliderManager.h"
+#include "EngineManagers/ShadowManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
 #include "EngineManagers/DebugManager.h"
@@ -73,9 +76,7 @@ bool GloomEngine::MainLoop() {
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
         glfwMakeContextCurrent(window);
-        glViewport(0, 0, width, height);
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Update();
 
@@ -109,10 +110,10 @@ bool GloomEngine::MainLoop() {
     bool endGame = game->GameLoop();
 
     // Save game on quit
-    if (glfwWindowShouldClose(window) || endGame) {
-        std::filesystem::path path = std::filesystem::current_path();
-        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
-    }
+//    if (glfwWindowShouldClose(window) || endGame) {
+//        std::filesystem::path path = std::filesystem::current_path();
+//        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
+//    }
     return glfwWindowShouldClose(window) || endGame;
 }
 
@@ -122,13 +123,34 @@ void GloomEngine::Update() {
         if (component.second->callOnStart && component.second->enabled) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
+    glEnable(GL_DEPTH_TEST);
 
+    // Prepare shadow framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    ShadowManager::GetInstance()->PrepareShadow();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glViewport(0, 0, width, height);
+
+    // Prepare texture framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glBindTexture(GL_TEXTURE_2D,  ShadowManager::GetInstance()->depthMap);
     RendererManager::GetInstance()->DrawObjects();
+    PostProcessingManager::GetInstance()->DrawBuffer();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
 #endif
+    
+    UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();
 }

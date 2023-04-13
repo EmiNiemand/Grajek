@@ -12,6 +12,8 @@
 
 #include "Components/Component.h"
 
+class Shader;
+
 struct Material {
     glm::vec3 color;
     float shininess;
@@ -31,6 +33,7 @@ public:
 
     void Update() override;
     virtual void Draw() = 0;
+    virtual void Draw(std::shared_ptr<Shader> shader) = 0;
 
 private:
     void AddToDraw();

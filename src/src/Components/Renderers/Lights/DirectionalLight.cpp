@@ -3,9 +3,9 @@
 #include "EngineManagers/RendererManager.h"
 
 DirectionalLight::DirectionalLight(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
-    ambient = {0.1f, 0.1f, 0.1f};
-    diffuse = {0.25f, 0.25f, 0.25f};
-    specular = {0.33f, 0.33f, 0.33f};
+    ambient = {0.4f, 0.4f, 0.4f};
+    diffuse = {0.69f, 0.69f, 0.69f};
+    specular = {0.9f, 0.9f, 0.9f};
     color = {1.0f, 1.0f, 1.0f};
 }
 
