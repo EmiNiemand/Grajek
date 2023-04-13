@@ -33,9 +33,9 @@ void Game::InitializeGame() {
 
     // Set up cubemap
     // --------------
-    auto sky = GameObject::Instantiate("CubeMap", activeScene);
-    auto skyCubeMap = sky->AddComponent<CubeMap>();
-    skyCubeMap->LoadTextures("skybox/");
+//    auto sky = GameObject::Instantiate("CubeMap", activeScene);
+//    auto skyCubeMap = sky->AddComponent<CubeMap>();
+//    skyCubeMap->LoadTextures("skybox/");
 
     // Set up player
     // -------------

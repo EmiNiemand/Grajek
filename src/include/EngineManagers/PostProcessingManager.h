@@ -12,14 +12,12 @@ class Shader;
 class PostProcessingManager{
 private:
     // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-    float quadVertices[24] = {
-            // positions   // texCoords
-            -1.0f,  1.0f,  0.0f, 1.0f,
-            -1.0f, -1.0f,  0.0f, 0.0f,
-            1.0f, -1.0f,  1.0f, 0.0f,
-            -1.0f,  1.0f,  0.0f, 1.0f,
-            1.0f, -1.0f,  1.0f, 0.0f,
-            1.0f,  1.0f,  1.0f, 1.0f
+    float quadVertices[20] = {
+            // positions        // texture Coords
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
     };
 
     inline static PostProcessingManager* postProcessingManager;
@@ -30,7 +28,8 @@ private:
 
 public:
     unsigned int framebuffer;
-    unsigned int textureColorBuffer;
+    unsigned int  textureScreen, texturePosition, textureNormal, textureColor;
+    unsigned int attachments[4];
 
 public:
     PostProcessingManager(PostProcessingManager &other) = delete;

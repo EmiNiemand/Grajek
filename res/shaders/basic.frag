@@ -3,7 +3,11 @@
 // OUTPUT
 // ------
 
-out vec4 FragColor;
+
+layout (location = 0) out vec4 screenTexture;
+layout (location = 1) out vec4 texturePosition;
+layout (location = 2) out vec4 textureNormal;
+layout (location = 3) out vec4 textureColor;
 
 // STRUCTS
 // -------
@@ -73,17 +77,16 @@ in vec4 FragPosLightSpace;
 
 // UNIFORMS
 // --------
-
-layout(binding = 0) uniform samplerCube skybox;
-layout(binding = 1) uniform sampler2D texture_diffuse[NR_DIFFUSE];
-layout(binding = 2) uniform sampler2D texture_specular[NR_SPECULAR];
+uniform sampler2D shadowMap;
+//uniform samplerCube skybox;
+uniform sampler2D texture_diffuse[NR_DIFFUSE];
+uniform sampler2D texture_specular[NR_SPECULAR];
 // TODO: Apply normal and height maps
-layout(binding = 3) uniform sampler2D texture_normal[NR_NORMAL];
-layout(binding = 4) uniform sampler2D texture_hieght[NR_HEIGHT];
+uniform sampler2D texture_normal[NR_NORMAL];
+uniform sampler2D texture_height[NR_HEIGHT];
 
 // EXTERNALLY SET VARIABLES
 // ------------------------
-uniform sampler2D shadowMap;
 uniform vec3 viewPos;
 uniform DirectionalLight directionalLights[NR_DIRECTIONAL_LIGHTS];
 uniform PointLight pointLights[NR_POINT_LIGHTS];
@@ -95,9 +98,9 @@ uniform Material material = Material(vec3(1, 1, 1), 32.0f, 0.0f, 0.0f);
 // --------------------
 
 vec3 ApplyMaterial(Material material, vec3 fragPos);
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3[3] CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir);
+vec3[3] CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3[3] CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 float ShadowCalculation(vec4 fragPosLightSpace);
 
 // GLOBAL VARIABLE
@@ -110,46 +113,45 @@ void main()
 {
     vec3 N = normalize(Normal);
     vec3 V = normalize(viewPos - FragPos);
-    vec3 result = vec3(0.0f);
 
-    // calculate shadow
+    texturePosition = vec4(FragPos, 1.0f);
+    textureNormal = vec4(N, 1.0f);
+
+    vec3 result = vec3(0.0f);
+    vec3 shadowResult = vec3(0.0f);
+
+    vec3[3] lightSettings;
+
     shadow = ShadowCalculation(FragPosLightSpace);
 
     // phase 1: directional lights
     for(int i = 0; i < NR_DIRECTIONAL_LIGHTS; i++){
         if(directionalLights[i].isActive) {
-            result += CalculateDirectionalLight(directionalLights[i], N, V);
+            lightSettings = CalculateDirectionalLight(directionalLights[i], N, V);
+            result += lightSettings[0] + lightSettings[1] + lightSettings[2];
+            shadowResult += lightSettings[0] + (1 - shadow) * (lightSettings[1] + lightSettings[2]);
         }
     }
 
     // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++){
         if(pointLights[i].isActive){
-            result += CalculatePointLight(pointLights[i], N, FragPos, V);
+            lightSettings = CalculatePointLight(pointLights[i], N, FragPos, V);
+            result += lightSettings[0] + lightSettings[1] + lightSettings[2];
+            shadowResult += lightSettings[0] + (1 - shadow) * (lightSettings[1] + lightSettings[2]);
         }
     }
 
     // phase 3: spot lights
     for(int i = 0; i < NR_SPOT_LIGHTS; i++){
         if(spotLights[i].isActive){
-            result += CalculateSpotLight(spotLights[i], N, FragPos, V);
+            lightSettings = CalculateSpotLight(spotLights[i], N, FragPos, V);
+            result += lightSettings[0] + lightSettings[1] + lightSettings[2];
+            shadowResult += lightSettings[0] + (1 - shadow) * (lightSettings[1] + lightSettings[2]);
         }
     }
     result = result * material.color;
-
-    //Apply reflection
-    if(material.reflection > 0.001) {
-        vec3 I = normalize(FragPos - viewPos);
-        vec3 R = reflect(I, N);
-        result = mix(result, texture(skybox, R).rgb, material.reflection);
-    }
-    if(material.refraction > 0.001) {
-        // How much light bends
-        float ratio = 1.00 / 1.52;
-        vec3 I = normalize(FragPos - viewPos);
-        vec3 R = refract(I, normalize(Normal), ratio);
-        result = mix(result, texture(skybox, R).rgb, material.refraction);
-    }
+    shadowResult = shadowResult * material.color;
 
     //cel shading
     float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
@@ -158,16 +160,16 @@ void main()
         intensity = 0.8;
     }
     else if (intensity > 0.7) {
-        intensity = 0.6;
+        intensity = 0.65;
     }
     else if (intensity > 0.5) {
-        intensity = 0.4;
+        intensity = 0.50;
     }
     else if (intensity > 0.3) {
-        intensity = 0.25;
+        intensity = 0.35;
     }
     else if (intensity > 0.01) {
-        intensity = 0.1;
+        intensity = 0.20;
     }
     else {
         intensity = 0.0;
@@ -175,21 +177,24 @@ void main()
 
 
     vec3 celColor = vec3(intensity, intensity, intensity);
-    vec3 color = vec3(0.8, 0.6, 0.5);
+
     result = result + result * celColor;
+    shadowResult = shadowResult + shadowResult * celColor;
 
     //     rim light
-    vec3 rimLight = result * pow(max(0, (1 - dot(normalize(viewPos), N))), 4);
+    float rimLight = pow(max(0, (1 - dot(normalize(viewPos), N))), 4);
 
-    result = result + rimLight;
+    result = result + result * rimLight;
+    shadowResult = shadowResult + shadowResult * rimLight;
 
-    FragColor = vec4(result, 1.0f);
+    textureColor = vec4(result, 1.0f);
+    screenTexture = vec4(shadowResult, 1.0f);
 }
 
 // LIGHT FUNCTIONS
 // ---------------
 
-vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+vec3[3] CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
     // diffuse shading
@@ -202,11 +207,12 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     vec3 ambient = light.ambient * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
     vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
     vec3 specular = light.specular * spec * vec3(texture(texture_specular[0], TexCoords)) * light.color;
-    return (ambient + (1.0 - shadow) * (diffuse + specular));
+    vec3[3] lightSettings = {ambient, diffuse, specular};
+    return lightSettings;
 }
 
 // calculates the color when using a point light.
-vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3[3] CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
     // diffuse shading
@@ -225,11 +231,12 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
-    return (ambient + (1.0 - shadow) * (diffuse + specular));
+    vec3[3] lightSettings = {ambient, diffuse, specular};
+    return lightSettings;
 }
 
 // calculates the color when using a spot light.
-vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3[3] CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
     // diffuse shading
@@ -252,7 +259,8 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
-    return (ambient + (1.0 - shadow) * (diffuse + specular));
+    vec3[3] lightSettings = {ambient, diffuse, specular};
+    return lightSettings;
 }
 
 // MATERIAL FUNCTIONS

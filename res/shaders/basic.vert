@@ -15,7 +15,7 @@ out vec4 FragPosLightSpace;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
-uniform mat4 lightSpaceMatrix;
+uniform mat4 lightSpaceMatrix = mat4(0.0f);
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -39,13 +39,16 @@ void main()
     }
     if (totalPosition != vec4(0.0f)) {
         FragPos = vec3(model * totalPosition);
+        TexCoords = aTexCoords;
+        Normal = mat3(transpose(inverse(model))) * aNormal;
+        FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
         gl_Position =  projection * view * model * totalPosition;
     }
     else {
         FragPos = vec3(model * vec4(aPos, 1.0));
+        TexCoords = aTexCoords;
+        Normal = mat3(transpose(inverse(model))) * aNormal;
+        FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
         gl_Position = projection * view * model * vec4(aPos, 1.0);
     }
-    TexCoords = aTexCoords;
-    Normal = mat3(transpose(inverse(model))) * aNormal;
-    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 }
