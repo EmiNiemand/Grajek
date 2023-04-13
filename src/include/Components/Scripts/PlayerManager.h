@@ -9,6 +9,7 @@
 #include "PlayerMovement.h"
 #include "PlayerEquipment.h"
 #include "PlayerUI.h"
+#include "PauseMenu.h"
 #include "glm/vec2.hpp"
 
 class PlayerManager : public Component {
@@ -18,6 +19,7 @@ private:
     std::shared_ptr<PlayerUI> ui;
 //    PlayerCollider collider;
     std::shared_ptr<PlayerEquipment> equipment;
+    std::shared_ptr<PauseMenu> pauseMenu;
     glm::vec2 moveInput;
 
 public:

@@ -2,6 +2,7 @@
 // Created by masterktos on 30.03.23.
 //
 
+#include "GloomEngine.h"
 #include "Components/Scripts/PlayerManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -23,6 +24,7 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 }
 
 void PlayerManager::Start() {
+    pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     Component::Start();
 }
 
@@ -107,10 +109,11 @@ void PlayerManager::OnSaveLoad(bool save) {
 void PlayerManager::OnMenuToggle() {
 	//TODO: Place to plug everything up for Kamil
 	uiActive = !uiActive;
+
     if (uiActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->EnableSelfAndChildren();
+        pauseMenu->ShowMenu();
     } else {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->DisableSelfAndChildren();
+        pauseMenu->HideMenu();
     }
     spdlog::info("[PM] Menu" + std::string(uiActive?"enabled":"disabled") + "!");
 }
@@ -124,5 +127,6 @@ void PlayerManager::OnApply() {
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
     //TODO: Place to plug everything up for Kamil
+    pauseMenu->ChangeActiveButton(moveVector);
     spdlog::info("Moving inside UI!");
 }

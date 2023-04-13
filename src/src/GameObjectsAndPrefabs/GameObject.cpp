@@ -112,3 +112,7 @@ int GameObject::GetId() const {
 const std::string &GameObject::GetName() const {
     return name;
 }
+
+bool GameObject::GetEnabled() const {
+    return enabled;
+}

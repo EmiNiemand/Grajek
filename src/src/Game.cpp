@@ -12,6 +12,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerManager.h"
 #include "Components/Scripts/PlayerMovement.h"
+#include "Components/Scripts/PauseMenu.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
@@ -81,13 +82,22 @@ void Game::InitializeGame() {
     tekst->AddComponent<Text>();
     tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
+    pause->AddComponent<PauseMenu>();
     std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
     pauseBackground->AddComponent<Image>();
     pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
     std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", pause);
     button->AddComponent<Button>();
     button->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
-    button->GetComponent<Button>()->LoadFont("Exit", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    button->GetComponent<Button>()->LoadFont("Back", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    std::shared_ptr<GameObject> button2 = GameObject::Instantiate("Button2", pause);
+    button2->AddComponent<Button>();
+    button2->GetComponent<Button>()->LoadTexture(900, 400, "UI/button.png", "UI/activeButton.png");
+    button2->GetComponent<Button>()->LoadFont("Exit", 905, 420, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    button->GetComponent<Button>()->previousButton = button2->GetComponent<Button>();
+    button->GetComponent<Button>()->nextButton = button2->GetComponent<Button>();
+    button2->GetComponent<Button>()->previousButton = button->GetComponent<Button>();
+    button2->GetComponent<Button>()->nextButton = button->GetComponent<Button>();
     pause->DisableSelfAndChildren();
 
 

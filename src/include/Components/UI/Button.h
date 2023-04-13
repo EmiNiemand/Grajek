@@ -21,6 +21,7 @@ private:
 
 public:
     bool isActive = false;
+    std::shared_ptr<Button> previousButton, nextButton;
 
 public:
     Button(const std::shared_ptr<GameObject> &parent, int id);
