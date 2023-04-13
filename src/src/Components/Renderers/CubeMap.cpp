@@ -12,9 +12,11 @@
 #define BASE_PATH "res/textures/"
 
 
-CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
+CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
     skyboxMesh = Shape::Cube::GetWithNormals(std::vector<Texture>());
 }
+
+CubeMap::~CubeMap() = default;
 
 /**
  * Loads cubemap's source textures.
@@ -66,10 +68,10 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     shader = RendererManager::GetInstance()->shader;
     shader->Activate();
     shader->SetInt("skybox", 0);
+}
 
-    shader = RendererManager::GetInstance()->animatedShader;
-    shader->Activate();
-    shader->SetInt("skybox", 0);
+void CubeMap::Update() {
+    Drawable::Update();
 }
 
 void CubeMap::Draw() {
@@ -80,7 +82,7 @@ void CubeMap::Draw() {
     shader->Activate();
 
     glBindVertexArray(skyboxMesh->vao);
-    glActiveTexture(GL_TEXTURE10);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     glBindVertexArray(skyboxMesh->vao);
@@ -90,6 +92,5 @@ void CubeMap::Draw() {
     glDepthFunc(GL_LESS); // set depth function back to default
 }
 
-void CubeMap::Update() {
-//    Draw();
-}
+// leave it empty or else it's gonna be drawn in shadow map
+void CubeMap::Draw(std::shared_ptr<Shader> shader) {}

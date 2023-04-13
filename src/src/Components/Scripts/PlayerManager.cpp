@@ -143,6 +143,5 @@ void PlayerManager::PollInput() {
 
 void PlayerManager::OnSoundPlay(int index) {
     spdlog::info("[PM] Played sound "+std::to_string(index)+"!");
-
     session->PlaySample(index);
 }
