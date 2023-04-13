@@ -78,7 +78,7 @@ in vec4 FragPosLightSpace;
 // UNIFORMS
 // --------
 uniform sampler2D shadowMap;
-//uniform samplerCube skybox;
+uniform samplerCube skybox;
 uniform sampler2D texture_diffuse[NR_DIFFUSE];
 uniform sampler2D texture_specular[NR_SPECULAR];
 // TODO: Apply normal and height maps
@@ -152,6 +152,20 @@ void main()
     }
     result = result * material.color;
     shadowResult = shadowResult * material.color;
+
+    if(material.reflection > 0.001) {
+        vec3 I = normalize(FragPos - viewPos);
+        vec3 R = reflect(I, N);
+        result = mix(result, texture(skybox, R).rgb, material.reflection);
+    }
+    if(material.refraction > 0.001) {
+        // How much light bends
+        float ratio = 1.00 / 1.52;
+        vec3 I = normalize(FragPos - viewPos);
+        vec3 R = refract(I, N, ratio);
+        result = mix(result, texture(skybox, R).rgb, material.refraction);
+    }
+
 
     //cel shading
     float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
