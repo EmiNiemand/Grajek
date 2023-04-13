@@ -66,10 +66,6 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     shader = RendererManager::GetInstance()->shader;
     shader->Activate();
     shader->SetInt("skybox", 0);
-
-    shader = RendererManager::GetInstance()->animatedShader;
-    shader->Activate();
-    shader->SetInt("skybox", 0);
 }
 
 void CubeMap::Draw() {

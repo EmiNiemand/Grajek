@@ -26,7 +26,7 @@ void Animator::LoadAnimationModel(std::string path) {
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
-                                                               RendererManager::GetInstance()->animatedShader)});
+                                                               RendererManager::GetInstance()->shader)});
     }
     model = animationModels.at(hash);
 }
@@ -55,7 +55,7 @@ void Animator::Update() {
 void Animator::Draw() {
     if(model == nullptr) return;
 
-    auto shader = RendererManager::GetInstance()->animatedShader;
+    auto shader = RendererManager::GetInstance()->shader;
 
     shader->Activate();
     for (int i = 0; i < finalBoneMatrices.size(); ++i)

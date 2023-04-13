@@ -29,9 +29,6 @@ ShadowManager::ShadowManager() {
 
     RendererManager::GetInstance()->shader->Activate();
     RendererManager::GetInstance()->shader->SetInt("shadowMap", depthMap);
-
-    RendererManager::GetInstance()->animatedShader->Activate();
-    RendererManager::GetInstance()->animatedShader->SetInt("shadowMap", depthMap);
 }
 
 ShadowManager::~ShadowManager() = default;
@@ -59,9 +56,6 @@ void ShadowManager::PrepareShadow() {
 
     RendererManager::GetInstance()->shader->Activate();
     RendererManager::GetInstance()->shader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-    RendererManager::GetInstance()->animatedShader->Activate();
-    RendererManager::GetInstance()->animatedShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     glViewport(0, 0, shadowWidth, shadowHeight);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
