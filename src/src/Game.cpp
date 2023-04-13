@@ -70,19 +70,26 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
-    tekst->AddComponent<Text>();
-    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+    // Texts at the end
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
     reksio->GetComponent<Image>()->LoadTexture(50, 0, "UI/piesek.png");
     std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
     mruczek->AddComponent<Image>();
     mruczek->GetComponent<Image>()->LoadTexture(1650, 0, "UI/kotek.png");
-    std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", activeScene);
+    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
+    tekst->AddComponent<Text>();
+    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+    std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
+    std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
+    pauseBackground->AddComponent<Image>();
+    pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
+    std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", pause);
     button->AddComponent<Button>();
-    button->GetComponent<Button>()->LoadFont("start", 505, 520, 12, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
-    button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
+    button->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
+    button->GetComponent<Button>()->LoadFont("Exit", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    pause->DisableSelfAndChildren();
+
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
     sphere->transform->SetLocalPosition({0, 2, 0});

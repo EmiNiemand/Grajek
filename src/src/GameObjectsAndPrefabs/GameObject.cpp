@@ -79,6 +79,32 @@ void GameObject::ForceUpdateSelfAndChildren() {
     }
 }
 
+void GameObject::EnableSelfAndChildren() {
+    if (enabled) return;
+
+    enabled = true;
+    for (auto&& child : children)
+    {
+        child.second->EnableSelfAndChildren();
+    }
+    for (auto&& component : components){
+        component.second->enabled = true;
+    }
+}
+
+void GameObject::DisableSelfAndChildren() {
+    if (!enabled) return;
+
+    enabled = false;
+    for (auto&& child : children)
+    {
+        child.second->DisableSelfAndChildren();
+    }
+    for (auto&& component : components){
+        component.second->enabled = false;
+    }
+}
+
 int GameObject::GetId() const {
     return id;
 }
