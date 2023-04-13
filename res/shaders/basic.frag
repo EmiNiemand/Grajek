@@ -153,20 +153,6 @@ void main()
     result = result * material.color;
     shadowResult = shadowResult * material.color;
 
-    if(material.reflection > 0.001) {
-        vec3 I = normalize(FragPos - viewPos);
-        vec3 R = reflect(I, N);
-        result = mix(result, texture(skybox, R).rgb, material.reflection);
-    }
-    if(material.refraction > 0.001) {
-        // How much light bends
-        float ratio = 1.00 / 1.52;
-        vec3 I = normalize(FragPos - viewPos);
-        vec3 R = refract(I, N, ratio);
-        result = mix(result, texture(skybox, R).rgb, material.refraction);
-    }
-
-
     //cel shading
     float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
 
@@ -200,6 +186,21 @@ void main()
 
     result = result + result * rimLight;
     shadowResult = shadowResult + shadowResult * rimLight;
+
+    if(material.reflection > 0.001) {
+        vec3 I = -V;
+        vec3 R = reflect(I, N);
+        result = mix(result, texture(skybox, R).rgb, material.reflection);
+        shadowResult = mix(shadowResult, texture(skybox, R).rgb, material.reflection);
+    }
+    if(material.refraction > 0.001) {
+        // How much light bends
+        float ratio = 1.00 / 1.52;
+        vec3 I = -V;
+        vec3 R = refract(I, N, ratio);
+        result = mix(result, texture(skybox, R).rgb, material.refraction);
+        shadowResult = mix(shadowResult, texture(skybox, R).rgb, material.refraction);
+    }
 
     textureColor = vec4(result, 1.0f);
     screenTexture = vec4(shadowResult, 1.0f);

@@ -85,8 +85,11 @@ void Game::InitializeGame() {
     button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-    sphere->transform->SetLocalPosition({0, 2, 0});
+    sphere->transform->SetLocalPosition({-5, 2, 0});
+    sphere->transform->SetLocalScale({2, 2, 2});
     sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+    rSphere->material.refraction = 1.0f;
 
     std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
     lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
