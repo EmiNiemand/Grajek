@@ -63,11 +63,11 @@ void CubeMap::LoadTextures(const std::string& basePath) {
 
     auto shader = RendererManager::GetInstance()->cubeMapShader;
     shader->Activate();
-    shader->SetInt("skybox", 0);
+    shader->SetInt("skybox", 5);
 
     shader = RendererManager::GetInstance()->shader;
     shader->Activate();
-    shader->SetInt("skybox", 0);
+    shader->SetInt("skybox", 5);
 }
 
 void CubeMap::Update() {
@@ -82,7 +82,7 @@ void CubeMap::Draw() {
     shader->Activate();
 
     glBindVertexArray(skyboxMesh->vao);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     glBindVertexArray(skyboxMesh->vao);
