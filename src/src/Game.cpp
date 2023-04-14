@@ -99,13 +99,14 @@ void Game::InitializeGame() {
     lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
     lowPolyHouse->transform->SetLocalScale({4, 4, 4});
     lowPolyHouse->AddComponent<Renderer>()->LoadModel("OBJ/Shop.obj");
-
-    std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
-    sceneProp->transform->SetLocalPosition({0, 0, 0});
-    auto sourceTest = sceneProp->AddComponent<AudioSource>();
-    sourceTest->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
-    sourceTest->SetMaxDistance(10.0f);
-    sourceTest->PlaySound();
+    auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
+    portalRadioSound->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
+    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 2.0f});
+    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
+    portalRadioSound->SetMaxDistance(20.0f);
+    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {60.0f, 135.0f});
+    portalRadioSound->IsLooping(true);
+    portalRadioSound->PlaySound();
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();

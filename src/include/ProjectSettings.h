@@ -38,4 +38,9 @@ enum class AudioType {
     Music,
 };
 
+enum class AudioDistanceMode {
+    Continuous,
+    Paused,
+};
+
 #endif //OPENGLGP_PROJECTSETTINGS_H

@@ -21,11 +21,14 @@ class Transform;
 class AudioSource : public Component {
     std::shared_ptr<Transform> playerPos;
     glm::vec3 position = {};
+    glm::vec3 positionOffset = {};
     ALuint bufferId;
     ALuint sourceId;
     ALint currentState;
     float gain = 1.0f;
     float maxDistance = 0.0f;
+    bool isMovingTarget = false;
+    AudioDistanceMode distanceMode = AudioDistanceMode::Paused;
 
 public:
     AudioSource(const std::shared_ptr<GameObject> &parent, int id);
@@ -42,12 +45,16 @@ public:
     void PlaySound() const;
     void PlaySoundForce() const;
     void PauseSound() const;
+    void StopSound() const;
+    void SetPositionOffset(glm::vec3 offset);
+    void SetDistanceMode(AudioDistanceMode mode);
     void SetGain(float val);
     void SetPitch(float val) const;
     void SetVelocity(glm::vec3 velocity) const;
     void SetMaxDistance(float val);
-    void SetLooping(bool state) const;
-    void SetCone(glm::vec3 direction, glm::vec3 cone) const;
+    void IsLooping(bool state) const;
+    void IsMoving(bool state);
+    void SetCone(glm::vec3 direction, glm::vec2 cone) const;
 
 };
 

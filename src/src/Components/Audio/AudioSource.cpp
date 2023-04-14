@@ -20,10 +20,18 @@ void AudioSource::Update() {
     alGetSourcei(sourceId, AL_SOURCE_STATE, &currentState);
 
     if (maxDistance >= 0.0) {
-        if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance) {
-            alSourcef(sourceId, AL_GAIN, 0.0f);
+        if (distanceMode == AudioDistanceMode::Paused) {
+            if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance) {
+                PauseSound();
+            } else {
+                PlaySound();
+            }
         } else {
-            alSourcef(sourceId, AL_GAIN, gain);
+            if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance) {
+                alSourcef(sourceId, AL_GAIN, 0.0f);
+            } else {
+                alSourcef(sourceId, AL_GAIN, gain);
+            }
         }
     }
 
@@ -41,7 +49,10 @@ void AudioSource::OnDestroy() {
 }
 
 void AudioSource::OnUpdate() {
-    position = parent->transform->GetLocalPosition();
+    if (isMovingTarget) {
+        position = parent->transform->GetLocalPosition() + positionOffset;
+        alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
+    }
     Component::OnUpdate();
 }
 
@@ -70,6 +81,8 @@ void AudioSource::LoadAudioData(const char* path, AudioType type) {
     alSourcef(sourceId, AL_GAIN, gain);
 
     if (type == AudioType::Sound) {
+        position = parent->transform->GetLocalPosition() + positionOffset;
+
         alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
         alSource3f(sourceId, AL_VELOCITY, 0, 0, 0);
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
@@ -98,6 +111,30 @@ void AudioSource::PauseSound() const {
     }
 }
 
+// Stops the sound (useful for resets)
+void AudioSource::StopSound() const {
+    if (currentState == AL_PLAYING) {
+        alSourceStop(sourceId);
+    }
+}
+
+// Sets offset which will be added to the current
+// position. Type: glm::vec3, default {0, 0, 0}
+void AudioSource::SetPositionOffset(glm::vec3 offset) {
+    positionOffset = offset;
+    position += positionOffset;
+    alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
+}
+
+// Sets audio distance mode. 
+// If set to Paused, audio will be paused
+// until player is again in audio range.
+// If set to Continuous, audio will still play with 0 volume
+// until player is again in audio range.
+void AudioSource::SetDistanceMode(AudioDistanceMode mode) {
+    distanceMode = mode;
+}
+
 // Sets audio pitch. Type: flaot [0.5 - 2.0], default 1.0
 void AudioSource::SetPitch(float val) const {
     alSourcef(sourceId, AL_PITCH, val);
@@ -110,7 +147,7 @@ void AudioSource::SetGain(float val) {
     alSourcef(sourceId, AL_GAIN, val);
 }
 
-// Sets audio velocity. Type: glm::vec3.
+// Sets audio velocity. Type: glm::vec3, default {0, 0, 0}
 // Used in calculating doppler shift (moving objects emitting sound)
 void AudioSource::SetVelocity(glm::vec3 velocity) const {
     alSource3f(sourceId, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
@@ -123,21 +160,26 @@ void AudioSource::SetMaxDistance(float val) {
     if (val == 0.0f) {
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
     } else {
-        alSourcef(sourceId, AL_ROLLOFF_FACTOR, gain * (maxDistance - 1.0f) / (1.0f + gain));
+        alSourcef(sourceId, AL_ROLLOFF_FACTOR, 2 * gain * (maxDistance - 1.0f) / (1.0f + gain));
     }
 }
 
-// Sets audio looping state. Type: glm::vec3, default false
-void AudioSource::SetLooping(bool state) const {
+// Sets audio looping state. Type: bool, default false
+void AudioSource::IsLooping(bool state) const {
     alSourcei(sourceId, AL_LOOPING, state);
 }
 
+// Sets if the target will be moving. If set to true, then the position
+// will be updated every time target moves. Type: bool, default false
+void AudioSource::IsMoving(bool state) {
+    isMovingTarget = state;
+}
+
 // Sets audio cone settings. Type: glm::vec3.
-// First is a sound direction, second are cone settings (gain, inner angle, outer angle).
+// First is a sound direction, second are cone settings (inner angle, outer angle).
 // NOTE: Outer angle is basically 360.0f - Inner angle.
-void AudioSource::SetCone(glm::vec3 direction, glm::vec3 cone) const {
+void AudioSource::SetCone(glm::vec3 direction, glm::vec2 cone) const {
     alSource3f(sourceId, AL_DIRECTION, direction.x, direction.y, direction.z);
-    alSourcef(sourceId, AL_CONE_OUTER_GAIN, cone.x);
-    alSourcef(sourceId, AL_CONE_INNER_ANGLE, cone.y);
-    alSourcef(sourceId, AL_CONE_OUTER_ANGLE, cone.z);
+    alSourcef(sourceId, AL_CONE_INNER_ANGLE, cone.x);
+    alSourcef(sourceId, AL_CONE_OUTER_ANGLE, cone.y);
 }
