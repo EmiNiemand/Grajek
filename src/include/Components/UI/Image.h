@@ -1,7 +1,7 @@
 #ifndef GLOOMENGINE_IMAGE_H
 #define GLOOMENGINE_IMAGE_H
 
-#include "Components/Component.h"
+#include "Components/UI/UIComponent.h"
 #include "LowLevelClasses/Shader.h"
 #include "LowLevelClasses/Mesh.h"
 #include "glm/matrix.hpp"
@@ -9,7 +9,7 @@
 #include <vector>
 #include <memory>
 
-class Image : public Component {
+class Image : public UIComponent {
 private:
     unsigned int textureID;
     std::shared_ptr<Mesh> mesh;
@@ -26,7 +26,7 @@ public:
 
     void Update() override;
 
-    void Draw();
+    void Draw() override;
 };
 
 #endif //GLOOMENGINE_IMAGE_H

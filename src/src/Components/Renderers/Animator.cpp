@@ -26,7 +26,7 @@ void Animator::LoadAnimationModel(std::string path) {
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
-                                                               RendererManager::GetInstance()->animatedShader)});
+                                                               RendererManager::GetInstance()->shader)});
     }
     model = animationModels.at(hash);
 }
@@ -55,7 +55,7 @@ void Animator::Update() {
 void Animator::Draw() {
     if(model == nullptr) return;
 
-    auto shader = RendererManager::GetInstance()->animatedShader;
+    auto shader = RendererManager::GetInstance()->shader;
 
     shader->Activate();
     for (int i = 0; i < finalBoneMatrices.size(); ++i)
@@ -68,6 +68,22 @@ void Animator::Draw() {
 
     model->Draw();
 }
+
+void Animator::Draw(std::shared_ptr<Shader> shader) {
+    if(model == nullptr) return;
+
+    shader->Activate();
+    for (int i = 0; i < finalBoneMatrices.size(); ++i)
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
+    shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec3("material.color", material.color);
+    shader->SetFloat("material.shininess", material.shininess);
+    shader->SetFloat("material.reflection", material.reflection);
+    shader->SetFloat("material.refraction", material.refraction);
+
+    model->Draw(shader);
+}
+
 
 void Animator::UpdateAnimation(float deltaTime) {
 	//if(!isPlaying) return;

@@ -30,7 +30,6 @@ public:
 
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Shader> cubeMapShader;
-	std::shared_ptr<Shader> animatedShader;
 
 public:
     RendererManager(RendererManager &other) = delete;

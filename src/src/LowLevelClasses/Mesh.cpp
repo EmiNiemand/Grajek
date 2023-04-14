@@ -3,6 +3,7 @@
 //
 
 #include "LowLevelClasses/Mesh.h"
+#include "EngineManagers/ShadowManager.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
     this->vertices = vertices;

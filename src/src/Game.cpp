@@ -54,8 +54,14 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({0, 0, 0});
-    sun->transform->SetLocalRotation({45, 45, 0});
+    sun->transform->SetLocalPosition({5, 10, 5});
+    sun->transform->SetLocalRotation({-50, 70, 0});
+
+    for (int i = 0; i < 2; i++) {
+        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
+        sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
+        sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
+    }
 
 
 //    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
@@ -82,16 +88,17 @@ void Game::InitializeGame() {
     button->GetComponent<Button>()->LoadTexture(500, 500, "UI/button.png", "UI/activeButton.png");
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-    sphere->transform->SetLocalPosition({0, 2, 0});
+    sphere->transform->SetLocalPosition({-5, 2, 0});
+    sphere->transform->SetLocalScale({2, 2, 2});
     sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+    rSphere->material.refraction = 1.0f;
 
-    // Set up cubes for collision testing
-    // ----------------------------------
-    for (int i = 0; i < 10; i++) {
-        std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
-        sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
-        sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
-    }
+    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("LowPolyHouse", activeScene);
+    lowPolyHouse->transform->SetLocalPosition({10, 0, -20});
+    lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
+    lowPolyHouse->transform->SetLocalScale({4, 4, 4});
+    lowPolyHouse->AddComponent<Renderer>()->LoadModel("OBJ/Shop.obj");
 
     std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
     sceneProp->transform->SetLocalPosition({0, 0, 0});
@@ -102,7 +109,7 @@ void Game::InitializeGame() {
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
-	animatedDood->transform->SetLocalPosition({0, 0, -25});
+	animatedDood->transform->SetLocalPosition({0, 0, -4});
 	animatedDood->transform->SetLocalScale({5, 5, 5});
 
     //camera->SetTarget(pivot);
