@@ -33,4 +33,9 @@ enum class ForceMode{
     Impulse
 };
 
+enum class AudioType {
+    Sound,
+    Music,
+};
+
 #endif //OPENGLGP_PROJECTSETTINGS_H

@@ -17,6 +17,8 @@
 #include "Components/UI/Text.h"
 #include "Components/UI/Button.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
+#include "Components/Audio/AudioListener.h"
+#include "Components/Audio/AudioSource.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -40,6 +42,7 @@ void Game::InitializeGame() {
     // Set up player
     // -------------
     std::shared_ptr<GameObject> player2 = Prefab::GetPlayer();
+    auto listener = player2->AddComponent<AudioListener>();
 
     // Set up ground
     // -------------
@@ -89,6 +92,13 @@ void Game::InitializeGame() {
         sceneProp->transform->SetLocalPosition({i * std::cos(i) * 10, 0, -20 + i * std::sin(i)});
         sceneProp->transform->SetLocalRotation({0, cos(i) * 90, 0});
     }
+
+    std::shared_ptr<GameObject> sceneProp = Prefab::GetCube();
+    sceneProp->transform->SetLocalPosition({0, 0, 0});
+    auto sourceTest = sceneProp->AddComponent<AudioSource>();
+    sourceTest->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
+    sourceTest->SetMaxDistance(10.0f);
+    sourceTest->PlaySound();
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
