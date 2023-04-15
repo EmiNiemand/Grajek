@@ -13,6 +13,7 @@
 #include "Components/Scripts/PlayerManager.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PauseMenu.h"
+#include "Components/Scripts/OptionsMenu.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
@@ -81,16 +82,18 @@ void Game::InitializeGame() {
     std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
     tekst->AddComponent<Text>();
     tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+
+    // Set up pause menu
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
     pause->AddComponent<PauseMenu>();
     std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
     pauseBackground->AddComponent<Image>();
     pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
-    std::shared_ptr<GameObject> button = GameObject::Instantiate("Button", pause);
+    std::shared_ptr<GameObject> button = GameObject::Instantiate("OptionsButton", pause);
     button->AddComponent<Button>();
     button->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
-    button->GetComponent<Button>()->LoadFont("Back", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
-    std::shared_ptr<GameObject> button2 = GameObject::Instantiate("Button2", pause);
+    button->GetComponent<Button>()->LoadFont("Options", 885, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    std::shared_ptr<GameObject> button2 = GameObject::Instantiate("ExitToMainMenu", pause);
     button2->AddComponent<Button>();
     button2->GetComponent<Button>()->LoadTexture(900, 400, "UI/button.png", "UI/activeButton.png");
     button2->GetComponent<Button>()->LoadFont("Exit", 905, 420, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
@@ -99,6 +102,18 @@ void Game::InitializeGame() {
     button2->GetComponent<Button>()->previousButton = button->GetComponent<Button>();
     button2->GetComponent<Button>()->nextButton = button->GetComponent<Button>();
     pause->DisableSelfAndChildren();
+
+    // Set up options menu
+    std::shared_ptr<GameObject> options = GameObject::Instantiate("Options", activeScene);
+    options->AddComponent<OptionsMenu>();
+    std::shared_ptr<GameObject> optionsBackground = GameObject::Instantiate("Background1", options);
+    optionsBackground->AddComponent<Image>();
+    optionsBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/options.png");
+    std::shared_ptr<GameObject> backToPauseMenu = GameObject::Instantiate("BackToPauseMenu", options);
+    backToPauseMenu->AddComponent<Button>();
+    backToPauseMenu->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
+    backToPauseMenu->GetComponent<Button>()->LoadFont("Back", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    options->DisableSelfAndChildren();
 
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);

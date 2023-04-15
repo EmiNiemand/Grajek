@@ -1,3 +1,4 @@
+#include <iostream>
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
 
@@ -93,7 +94,9 @@ void GameObject::EnableSelfAndChildren() {
 }
 
 void GameObject::DisableSelfAndChildren() {
+//    std::cout<<this->GetName()<<std::endl;
     if (!enabled) return;
+//    std::cout<<this->GetName()<<std::endl;
 
     enabled = false;
     for (auto&& child : children)

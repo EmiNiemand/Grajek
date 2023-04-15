@@ -2,20 +2,21 @@
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
+#include "Components/Scripts/OptionsMenu.h"
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 PauseMenu::~PauseMenu() {}
 
 void PauseMenu::Start() {
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Button")->GetComponent<Button>();
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsButton")->GetComponent<Button>();
     Component::Start();
 }
 
 void PauseMenu::ShowMenu() {
     parent->EnableSelfAndChildren();
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Button")->GetComponent<Button>();
-    GloomEngine::GetInstance()->FindGameObjectWithName("Button")->GetComponent<Button>()->isActive = true;
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsButton")->GetComponent<Button>();
+    activeButton->isActive = true;
 }
 
 void PauseMenu::HideMenu() {
@@ -37,9 +38,10 @@ void PauseMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 void PauseMenu::OnClick() {
-    if(GloomEngine::GetInstance()->FindGameObjectWithName("Button")->GetComponent<Button>()->isActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Tekst")->GetComponent<Text>()->text = "Button";
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Button2")->GetComponent<Button>()->isActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Tekst")->GetComponent<Text>()->text = "Buttonnnn";
+    if(GloomEngine::GetInstance()->FindGameObjectWithName("OptionsButton")->GetComponent<Button>()->isActive) {
+        HideMenu();
+        GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("ExitToMainMenu")->GetComponent<Button>()->isActive) {
+        // TODO load main menu scene
     }
 }

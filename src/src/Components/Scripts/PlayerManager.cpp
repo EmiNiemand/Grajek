@@ -107,26 +107,29 @@ void PlayerManager::OnSaveLoad(bool save) {
 }
 
 void PlayerManager::OnMenuToggle() {
-	//TODO: Place to plug everything up for Kamil
-	uiActive = !uiActive;
+    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        uiActive = !uiActive;
 
-    if (uiActive) {
-        pauseMenu->ShowMenu();
-    } else {
-        pauseMenu->HideMenu();
+        if (uiActive) {
+            pauseMenu->ShowMenu();
+        } else {
+            pauseMenu->HideMenu();
+        }
+        spdlog::info("[PM] Menu " + std::string(uiActive ? "enabled" : "disabled") + "!");
     }
-    spdlog::info("[PM] Menu" + std::string(uiActive?"enabled":"disabled") + "!");
 }
 
 void PlayerManager::OnApply() {
-    //TODO: Place to plug everything up for Kamil
 	if(!uiActive) return;
-    pauseMenu->OnClick();
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
+        pauseMenu->OnClick();
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        optionsMenu->OnClick();
+    }
 	spdlog::info("[PM] Applied some option in menu!");
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
-    //TODO: Place to plug everything up for Kamil
     pauseMenu->ChangeActiveButton(moveVector);
     spdlog::info("Moving inside UI!");
 }
