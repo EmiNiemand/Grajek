@@ -25,6 +25,7 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 
 void PlayerManager::Start() {
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     Component::Start();
 }
 
@@ -115,7 +116,6 @@ void PlayerManager::OnMenuToggle() {
         } else {
             pauseMenu->HideMenu();
         }
-        spdlog::info("[PM] Menu " + std::string(uiActive ? "enabled" : "disabled") + "!");
     }
 }
 
@@ -126,10 +126,12 @@ void PlayerManager::OnApply() {
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
         optionsMenu->OnClick();
     }
-	spdlog::info("[PM] Applied some option in menu!");
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
-    pauseMenu->ChangeActiveButton(moveVector);
-    spdlog::info("Moving inside UI!");
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
+        pauseMenu->ChangeActiveButton(moveVector);
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        optionsMenu->ChangeActiveButton(moveVector);
+    }
 }

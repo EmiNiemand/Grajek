@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Components/Scripts/OptionsMenu.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -21,14 +20,7 @@ void OptionsMenu::ShowMenu() {
 }
 
 void OptionsMenu::HideMenu() {
-
-
-    std::cout<<GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetName()<<std::endl;
-    // TU SIE WYWALA
     parent->DisableSelfAndChildren();
-    std::cout<<GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetName()<<std::endl;
-
-
     activeButton->isActive = false;
 }
 

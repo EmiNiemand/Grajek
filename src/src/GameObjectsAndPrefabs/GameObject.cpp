@@ -1,4 +1,3 @@
-#include <iostream>
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
 
@@ -83,22 +82,19 @@ void GameObject::ForceUpdateSelfAndChildren() {
 void GameObject::EnableSelfAndChildren() {
     if (enabled) return;
 
-    enabled = true;
+    for (auto&& component : components){
+        component.second->enabled = true;
+    }
     for (auto&& child : children)
     {
         child.second->EnableSelfAndChildren();
     }
-    for (auto&& component : components){
-        component.second->enabled = true;
-    }
+    enabled = true;
 }
 
 void GameObject::DisableSelfAndChildren() {
-//    std::cout<<this->GetName()<<std::endl;
     if (!enabled) return;
-//    std::cout<<this->GetName()<<std::endl;
 
-    enabled = false;
     for (auto&& child : children)
     {
         child.second->DisableSelfAndChildren();
@@ -106,6 +102,7 @@ void GameObject::DisableSelfAndChildren() {
     for (auto&& component : components){
         component.second->enabled = false;
     }
+    enabled = false;
 }
 
 int GameObject::GetId() const {

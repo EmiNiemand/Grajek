@@ -81,7 +81,7 @@ void Game::InitializeGame() {
     mruczek->GetComponent<Image>()->LoadTexture(1650, 0, "UI/kotek.png");
     std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
     tekst->AddComponent<Text>();
-    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10, 18, glm::vec3(1.0f, 1.0f, 1.0f), "Eggnog.ttf");
+    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10);
 
     // Set up pause menu
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
@@ -89,18 +89,18 @@ void Game::InitializeGame() {
     std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
     pauseBackground->AddComponent<Image>();
     pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
-    std::shared_ptr<GameObject> button = GameObject::Instantiate("OptionsButton", pause);
-    button->AddComponent<Button>();
-    button->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
-    button->GetComponent<Button>()->LoadFont("Options", 885, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
-    std::shared_ptr<GameObject> button2 = GameObject::Instantiate("ExitToMainMenu", pause);
-    button2->AddComponent<Button>();
-    button2->GetComponent<Button>()->LoadTexture(900, 400, "UI/button.png", "UI/activeButton.png");
-    button2->GetComponent<Button>()->LoadFont("Exit", 905, 420, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
-    button->GetComponent<Button>()->previousButton = button2->GetComponent<Button>();
-    button->GetComponent<Button>()->nextButton = button2->GetComponent<Button>();
-    button2->GetComponent<Button>()->previousButton = button->GetComponent<Button>();
-    button2->GetComponent<Button>()->nextButton = button->GetComponent<Button>();
+    std::shared_ptr<GameObject> optionsButton = GameObject::Instantiate("OptionsButton", pause);
+    optionsButton->AddComponent<Button>();
+    optionsButton->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
+    optionsButton->GetComponent<Button>()->LoadFont("Options", 885, 520);
+    std::shared_ptr<GameObject> exitToMainMenuButton = GameObject::Instantiate("ExitToMainMenu", pause);
+    exitToMainMenuButton->AddComponent<Button>();
+    exitToMainMenuButton->GetComponent<Button>()->LoadTexture(900, 400, "UI/button.png", "UI/activeButton.png");
+    exitToMainMenuButton->GetComponent<Button>()->LoadFont("Exit", 905, 420);
+    optionsButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
+    optionsButton->GetComponent<Button>()->nextButton = exitToMainMenuButton->GetComponent<Button>();
+    exitToMainMenuButton->GetComponent<Button>()->previousButton = optionsButton->GetComponent<Button>();
+    exitToMainMenuButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
     pause->DisableSelfAndChildren();
 
     // Set up options menu
@@ -112,7 +112,31 @@ void Game::InitializeGame() {
     std::shared_ptr<GameObject> backToPauseMenu = GameObject::Instantiate("BackToPauseMenu", options);
     backToPauseMenu->AddComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
-    backToPauseMenu->GetComponent<Button>()->LoadFont("Back", 905, 520, 18, glm::vec3(0.0f, 0.0f, 0.0f), "Eggnog.ttf");
+    backToPauseMenu->GetComponent<Button>()->LoadFont("Back", 905, 520);
+    std::shared_ptr<GameObject> decreaseVolume = GameObject::Instantiate("DecreaseVolume", options);
+    decreaseVolume->AddComponent<Button>();
+    decreaseVolume->GetComponent<Button>()->LoadTexture(1000, 800, "UI/button.png", "UI/activeButton.png");
+    decreaseVolume->GetComponent<Button>()->LoadFont("-", 1015, 810, 64);
+    std::shared_ptr<GameObject> increaseVolume = GameObject::Instantiate("IncreaseVolume", options);
+    increaseVolume->AddComponent<Button>();
+    increaseVolume->GetComponent<Button>()->LoadTexture(1100, 800, "UI/button.png", "UI/activeButton.png");
+    increaseVolume->GetComponent<Button>()->LoadFont("+", 1115, 810, 64);
+    std::shared_ptr<GameObject> decreaseResolution = GameObject::Instantiate("DecreaseResolution", options);
+    decreaseResolution->AddComponent<Button>();
+    decreaseResolution->GetComponent<Button>()->LoadTexture(1000, 700, "UI/button.png", "UI/activeButton.png");
+    std::shared_ptr<GameObject> increaseResolution = GameObject::Instantiate("IncreaseResolution", options);
+    increaseResolution->AddComponent<Button>();
+    increaseResolution->GetComponent<Button>()->LoadTexture(1100, 700, "UI/button.png", "UI/activeButton.png");
+    decreaseVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
+    decreaseVolume->GetComponent<Button>()->nextButton = increaseVolume->GetComponent<Button>();
+    increaseVolume->GetComponent<Button>()->previousButton = decreaseVolume->GetComponent<Button>();
+    increaseVolume->GetComponent<Button>()->nextButton = decreaseResolution->GetComponent<Button>();
+    decreaseResolution->GetComponent<Button>()->previousButton = increaseVolume->GetComponent<Button>();
+    decreaseResolution->GetComponent<Button>()->nextButton = increaseResolution->GetComponent<Button>();
+    increaseResolution->GetComponent<Button>()->previousButton = decreaseResolution->GetComponent<Button>();
+    increaseResolution->GetComponent<Button>()->nextButton = backToPauseMenu->GetComponent<Button>();
+    backToPauseMenu->GetComponent<Button>()->previousButton = increaseResolution->GetComponent<Button>();
+    backToPauseMenu->GetComponent<Button>()->nextButton = decreaseVolume->GetComponent<Button>();
     options->DisableSelfAndChildren();
 
 
