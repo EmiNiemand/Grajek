@@ -104,10 +104,10 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     const glm::mat4 otherRotationMatrix = otherTransformX * otherTransformY * otherTransformZ;
 
     glm::vec3 otherPos = other->parent->transform->GetLocalPosition();
-    otherPos += other->offset * other->parent->transform->GetLocalScale();
+    otherPos += glm::vec3(otherRotationMatrix * glm::vec4(other->offset * other->parent->transform->GetLocalScale(), 1.0f));
 
     glm::vec3 pos = parent->transform->GetLocalPosition();
-    pos += offset * parent->transform->GetLocalScale();
+    pos += glm::vec3(rotationMatrix * glm::vec4(offset * parent->transform->GetLocalScale(), 1.0f));
 
     glm::vec3 t = otherPos - pos;
     t = glm::vec3(glm::dot(t, glm::vec3(rotationMatrix[0])), glm::dot(t, glm::vec3(rotationMatrix[1])), glm::dot(t, glm::vec3(rotationMatrix[2])));
@@ -174,7 +174,7 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
 
 void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     glm::vec3 position = parent->transform->GetLocalPosition() + offset * parent->transform->GetLocalScale();
-    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition()+ other->offset * other->parent->transform->GetLocalScale();
+    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition() + other->offset * other->parent->transform->GetLocalScale();
 
     std::vector<std::pair<glm::vec3, glm::vec3>> points = CalculateShiftedPoints(other, position, otherPosition);
 

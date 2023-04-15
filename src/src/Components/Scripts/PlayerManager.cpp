@@ -62,7 +62,9 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 
 #pragma region Movement Events
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-	movement->Move(glm::normalize(moveVector));
+    if(moveVector != glm::vec2(0))
+        moveVector = glm::normalize(moveVector);
+    movement->Move(moveVector);
 }
 #pragma endregion
 
