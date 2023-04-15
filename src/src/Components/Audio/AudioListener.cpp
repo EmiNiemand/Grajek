@@ -15,9 +15,9 @@ AudioListener::~AudioListener() = default;
 void AudioListener::Start() {
     position = parent->transform->GetLocalPosition();
 
-    alListenerf(AL_GAIN, 1.0f);
+    alListenerf(AL_GAIN, gain);
     alListener3f(AL_POSITION, position.x, position.y, position.z);
-    alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+    alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 
     // "up" and "at" vectors, i.e. at the head of the player
     ALfloat listenerOrientation[] = {0.0,0.0,-1.0, 0.0,1.0,0.0};
@@ -38,12 +38,14 @@ void AudioListener::OnCreate() {
 }
 
 // Sets player audio gain. Type: float, default 1.0f
-void AudioListener::SetGain(float val) const {
-    alListenerf(AL_GAIN, val);
+void AudioListener::SetGain(float val) {
+    gain = val;
+    alListenerf(AL_GAIN, gain);
 }
 
 // Sets player audio velocity. Type: glm::vec3.
 // Used in calculating doppler shift (moving objects emitting sound)
-void AudioListener::SetVelocity(glm::vec3 velocity) const {
+void AudioListener::SetVelocity(glm::vec3 vel) {
+    velocity = vel;
     alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }

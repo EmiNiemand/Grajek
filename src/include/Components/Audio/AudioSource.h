@@ -43,7 +43,7 @@ public:
 
     void LoadAudioData(const char* path, AudioType type);
     void PlaySound() const;
-    void PlaySoundForce() const;
+    void ForcePlaySound() const;
     void PauseSound() const;
     void StopSound() const;
     void SetPositionOffset(glm::vec3 offset);

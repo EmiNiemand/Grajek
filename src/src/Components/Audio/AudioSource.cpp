@@ -100,7 +100,7 @@ void AudioSource::PlaySound() const {
 }
 
 // Force plays the sound
-void AudioSource::PlaySoundForce() const {
+void AudioSource::ForcePlaySound() const {
     alSourcePlay(sourceId);
 }
 
@@ -160,7 +160,7 @@ void AudioSource::SetMaxDistance(float val) {
     if (val == 0.0f) {
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
     } else {
-        alSourcef(sourceId, AL_ROLLOFF_FACTOR, 2 * gain * (maxDistance - 1.0f) / (1.0f + gain));
+        alSourcef(sourceId, AL_ROLLOFF_FACTOR, gain * (maxDistance / 2 - 1.0f) / (1.0f + gain));
     }
 }
 

@@ -16,6 +16,8 @@ class GameObject;
 
 class AudioListener : public Component {
     glm::vec3 position = {};
+    glm::vec3 velocity = {};
+    float gain = 1.0f;
 
 public:
     AudioListener(const std::shared_ptr<GameObject> &parent, int id);
@@ -25,8 +27,8 @@ public:
     void Update() override;
     void OnCreate() override;
 
-    void SetGain(float val) const;
-    void SetVelocity(glm::vec3 velocity) const;
+    void SetGain(float val);
+    void SetVelocity(glm::vec3 velocity);
 };
 
 #endif //GLOOMENGINE_AUDIOLISTENER_H
