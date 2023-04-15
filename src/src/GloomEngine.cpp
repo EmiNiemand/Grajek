@@ -81,7 +81,7 @@ bool GloomEngine::MainLoop() {
 
         Update();
 
-        deltaTime = currentTime - lastFrameTime;
+        deltaTime = (currentTime - lastFrameTime) * timeScale;
         lastFrameTime = currentTime;
 
         glfwMakeContextCurrent(window);
@@ -92,9 +92,11 @@ bool GloomEngine::MainLoop() {
     int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
 
-        FixedUpdate();
+        if (timeScale != 0) {
+            FixedUpdate();
+        }
 
-        fixedDeltaTime = currentTime - lastFixedFrameTime;
+        fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
         lastFixedFrameTime = currentTime;
     }
 
@@ -102,11 +104,16 @@ bool GloomEngine::MainLoop() {
     int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
     if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
 
-        AIUpdate();
+        if (timeScale != 0) {
+            AIUpdate();
+        }
 
-        AIDeltaTime = currentTime - lastAIFrameTime;
+        AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
         lastAIFrameTime = currentTime;
     }
+
+
+
 
     bool endGame = game->GameLoop();
 
@@ -150,7 +157,7 @@ void GloomEngine::Update() {
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
 #endif
-    
+
     UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();

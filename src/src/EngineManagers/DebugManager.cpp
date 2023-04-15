@@ -89,7 +89,7 @@ void DebugManager::Render() {
         positionHolder = InjectFloat3IntoVec3(inputVector1);
 
         selected->transform.get()->SetLocalPosition(positionHolder);
-        
+
 
         ImGui::Begin("Properties");
         ImGui::Text(selected->GetName().c_str());

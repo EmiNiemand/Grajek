@@ -3,7 +3,6 @@
 // OUTPUT
 // ------
 
-
 layout (location = 0) out vec4 screenTexture;
 layout (location = 1) out vec4 texturePosition;
 layout (location = 2) out vec4 textureNormal;

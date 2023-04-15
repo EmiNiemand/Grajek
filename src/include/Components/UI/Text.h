@@ -18,10 +18,12 @@ struct Character {
 class Text : public UIComponent {
 private:
     std::shared_ptr<Mesh> mesh;
-    std::string text;
     glm::vec3 color;
     GLfloat x, y;
     std::map<GLchar, Character> Characters;
+
+public:
+    std::string text;
 
 public:
     Text(const std::shared_ptr<GameObject> &parent, int id);

@@ -26,6 +26,8 @@ class PlayerManager;
 class PlayerMovement;
 class PlayerUI;
 class PlayerEquipment;
+class SessionUI;
+class MusicSession;
 
 class ComponentFactory {
 private:
