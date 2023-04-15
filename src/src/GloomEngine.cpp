@@ -1,5 +1,6 @@
 #include "GloomEngine.h"
 #include "Game.h"
+#include "EngineManagers/AudioManager.h"
 #include "EngineManagers/RendererManager.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "EngineManagers/UIManager.h"
@@ -35,12 +36,12 @@ GloomEngine* GloomEngine::GetInstance() {
     return gloomEngine;
 }
 
-
 void GloomEngine::Initialize() {
     InitializeWindow();
 
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
+    AudioManager::GetInstance()->InitializeAudio();
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -80,7 +81,7 @@ bool GloomEngine::MainLoop() {
 
         Update();
 
-        deltaTime = currentTime - lastFrameTime;
+        deltaTime = (currentTime - lastFrameTime) * timeScale;
         lastFrameTime = currentTime;
 
         glfwMakeContextCurrent(window);
@@ -91,9 +92,11 @@ bool GloomEngine::MainLoop() {
     int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
 
-        FixedUpdate();
+        if (timeScale != 0) {
+            FixedUpdate();
+        }
 
-        fixedDeltaTime = currentTime - lastFixedFrameTime;
+        fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
         lastFixedFrameTime = currentTime;
     }
 
@@ -101,11 +104,16 @@ bool GloomEngine::MainLoop() {
     int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
     if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
 
-        AIUpdate();
+        if (timeScale != 0) {
+            AIUpdate();
+        }
 
-        AIDeltaTime = currentTime - lastAIFrameTime;
+        AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
         lastAIFrameTime = currentTime;
     }
+
+
+
 
     bool endGame = game->GameLoop();
 
@@ -123,7 +131,6 @@ void GloomEngine::Update() {
         if (component.second->callOnStart && component.second->enabled) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
-    glEnable(GL_DEPTH_TEST);
 
     // Prepare shadow framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
@@ -140,19 +147,22 @@ void GloomEngine::Update() {
 
     glBindTexture(GL_TEXTURE_2D,  ShadowManager::GetInstance()->depthMap);
     RendererManager::GetInstance()->DrawObjects();
-    PostProcessingManager::GetInstance()->DrawBuffer();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    PostProcessingManager::GetInstance()->DrawBuffer();
 
 
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
 #endif
-    
+
     UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void GloomEngine::FixedUpdate() {

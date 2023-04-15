@@ -67,9 +67,11 @@ public:
     int32_t width;
     int32_t height;
 
-    glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
+    glm::vec4 screenColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.00f);
 
     std::shared_ptr<Game> game;
+    /// set to 0 to pause, 1 to resume
+    float timeScale = 1;
 
     // Timers for update
     float deltaTime = 0.0f;

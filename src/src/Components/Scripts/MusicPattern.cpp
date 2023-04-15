@@ -3,3 +3,6 @@
 //
 
 #include "Components/Scripts/MusicPattern.h"
+
+//MusicPattern::MusicPattern(InstrumentName instrumentName, const std::vector<std::shared_ptr<Sound>> &sounds)
+//        : instrumentName(instrumentName), sounds(sounds) {}

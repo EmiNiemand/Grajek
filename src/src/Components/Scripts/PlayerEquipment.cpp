@@ -20,6 +20,11 @@ bool PlayerEquipment::BuyInstrument(int price, const std::shared_ptr<Instrument>
     return true;
 }
 
+void PlayerEquipment::AddReward(float crowdSatisfaction) {
+    cash += (int)(crowdSatisfaction * maxCashReward);
+    rep += (int)(crowdSatisfaction * maxRepReward);
+}
+
 void PlayerEquipment::LoadData(std::shared_ptr<GameData> data) {
     cash = data->money;
     rep = data->reputation;
