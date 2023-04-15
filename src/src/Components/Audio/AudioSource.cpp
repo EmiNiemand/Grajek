@@ -2,6 +2,7 @@
 // Created by Adrian on 05.04.2023.
 //
 
+#include <iostream>
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Audio/AudioSource.h"
 #include "EngineManagers/AudioManager.h"
@@ -82,7 +83,7 @@ void AudioSource::LoadAudioData(const char* path, AudioType type) {
 
     if (type == AudioType::Sound) {
         position = parent->transform->GetLocalPosition() + positionOffset;
-
+std::cout << position.x << " " << position .y << " " << position.z << std::endl;
         alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
         alSource3f(sourceId, AL_VELOCITY, 0, 0, 0);
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
@@ -160,7 +161,8 @@ void AudioSource::SetMaxDistance(float val) {
     if (val == 0.0f) {
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
     } else {
-        alSourcef(sourceId, AL_ROLLOFF_FACTOR, gain * (maxDistance / 2 - 1.0f) / (1.0f + gain));
+        alSourcef(sourceId, AL_ROLLOFF_FACTOR,
+                  gain * (maxDistance * 2.0f - 1.0f) / (1.5f + gain * 2.0f));
     }
 }
 

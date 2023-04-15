@@ -104,7 +104,7 @@ void Game::InitializeGame() {
     portalRadioSound->SetPositionOffset({0.0f, 0.0f, 2.0f});
     portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
     portalRadioSound->SetMaxDistance(20.0f);
-    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {60.0f, 135.0f});
+    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
     portalRadioSound->IsLooping(true);
     portalRadioSound->PlaySound();
 
