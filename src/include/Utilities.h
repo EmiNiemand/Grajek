@@ -11,6 +11,17 @@ public:
 	inline static const std::string KanitLight="Kanit-Light.ttf";
 };
 
+class Color {
+public:
+    inline static const glm::vec3 Black = glm::vec3(0);
+    inline static const glm::vec3 White = glm::vec3(1);
+    inline static const glm::vec3 Red = glm::vec3(1, 0, 0);
+    inline static const glm::vec3 Green = glm::vec3(0, 1, 0);
+    inline static const glm::vec3 Blue = glm::vec3(0, 0, 1);
+    inline static const glm::vec3 Yellow = glm::vec3(1, 1, 0);
+    inline static const glm::vec3 Cyan = glm::vec3(0, 1, 1);
+};
+
 class Utilities {
 private:
     static Utilities* utilities;

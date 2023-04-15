@@ -28,7 +28,7 @@ private:
     float lastTime = 0;
 
     float timeoutCounter = 0.0f;
-    float timeout = 1.0f;
+    float timeout = 3.0f;
 
 public:
     std::shared_ptr<Instrument> instrument;

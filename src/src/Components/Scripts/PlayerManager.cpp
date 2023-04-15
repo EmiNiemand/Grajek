@@ -21,8 +21,10 @@ void PlayerManager::Start() {
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
 
     // Temporary instrument, delete later
-    std::vector<std::shared_ptr<Sample>> samples { std::make_shared<Sample>(), std::make_shared<Sample>(), std::make_shared<Sample>() };
-    for (int i = 0; i < 3; ++i) samples[i]->id = i;
+    std::vector<std::shared_ptr<Sample>> samples {
+        std::make_shared<Sample>(0, "res/sounds/drums/hat.wav"),
+        std::make_shared<Sample>(1, "res/sounds/drums/kick.wav"),
+        std::make_shared<Sample>(2, "res/sounds/drums/snare.wav") };
     auto pattern = std::make_shared<MusicPattern>();
     pattern->instrumentName = InstrumentName::Clap;
     pattern->sounds.push_back(std::make_shared<Sound>(samples[0], 0));
@@ -58,7 +60,9 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 
 #pragma region Movement Events
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-	movement->Move(glm::normalize(moveVector));
+    if(moveVector != glm::vec2(0))
+        moveVector = glm::normalize(moveVector);
+	movement->Move(moveVector);
 }
 #pragma endregion
 
@@ -142,6 +146,5 @@ void PlayerManager::PollInput() {
 }
 
 void PlayerManager::OnSoundPlay(int index) {
-    spdlog::info("[PM] Played sound "+std::to_string(index)+"!");
     session->PlaySample(index);
 }

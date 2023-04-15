@@ -5,18 +5,21 @@
 #ifndef GLOOMENGINE_MUSICPATTERN_H
 #define GLOOMENGINE_MUSICPATTERN_H
 
+#include <utility>
 #include <vector>
 #include <memory>
+#include "Components/Audio/AudioSource.h"
 
 enum InstrumentName { Clap, Drums };
 enum MusicGenre { Jazz = 80, RnB = 110 };
 
-// AudioClip but fancy
 struct Sample
 {
 	int id;
 	//TODO: plug it in when audio is implemented
-	//AudioClip clip;
+	std::string clipPath;
+
+    Sample(int id, std::string clip) : id(id), clipPath(std::move(clip)) {}
 };
 
 struct Sound
