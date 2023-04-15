@@ -17,6 +17,8 @@
 #include "Components/UI/Text.h"
 #include "Components/UI/Button.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
+#include "Components/Audio/AudioListener.h"
+#include "Components/Audio/AudioSource.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -40,6 +42,7 @@ void Game::InitializeGame() {
     // Set up player
     // -------------
     std::shared_ptr<GameObject> player = Prefab::GetPlayer();
+    auto listener = player->AddComponent<AudioListener>();
 
     // Set up ground
     // -------------
@@ -70,6 +73,7 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
+    // Texts at the end
     // Texts at the end
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
@@ -103,6 +107,14 @@ void Game::InitializeGame() {
     lowPolyHouse->transform->SetLocalRotation({0, 0, 0});
     lowPolyHouse->transform->SetLocalScale({4, 4, 4});
     lowPolyHouse->AddComponent<Renderer>()->LoadModel("OBJ/Shop.obj");
+    auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
+    portalRadioSound->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
+    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 2.0f});
+    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
+    portalRadioSound->SetMaxDistance(20.0f);
+    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {60.0f, 135.0f});
+    portalRadioSound->IsLooping(true);
+    portalRadioSound->PlaySound();
 
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();

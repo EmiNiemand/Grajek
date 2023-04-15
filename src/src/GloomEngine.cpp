@@ -1,5 +1,6 @@
 #include "GloomEngine.h"
 #include "Game.h"
+#include "EngineManagers/AudioManager.h"
 #include "EngineManagers/RendererManager.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "EngineManagers/UIManager.h"
@@ -35,12 +36,12 @@ GloomEngine* GloomEngine::GetInstance() {
     return gloomEngine;
 }
 
-
 void GloomEngine::Initialize() {
     InitializeWindow();
 
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
+    AudioManager::GetInstance()->InitializeAudio();
 
     game = std::make_shared<Game>();
     game->InitializeGame();

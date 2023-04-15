@@ -17,7 +17,7 @@ public:
     glm::vec3 rotation = {0, 0, 0}; // in degrees
     float mass = 1;
     float linearDrag = 10;
-    float turnSpeed = 5.0f;
+    float turnSpeed = 7.5f;
     float gravityScale = 5;
 
 public:
