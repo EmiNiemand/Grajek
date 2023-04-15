@@ -64,12 +64,12 @@ void PlayerManager::PollInput() {
         return;
 	}
 
-//    for (auto key: PlayerInput::Move) {
-//        if (hid->IsKeyPressed(key.first)) {
-//            readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
-//            readMoveVector.x = key.second == 1 ? 1 : key.second == 3 ? -1 : readMoveVector.x;
-//        }
-//    }
+    for (auto key: PlayerInput::Move) {
+        if (hid->IsKeyPressed(key.first)) {
+            readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
+            readMoveVector.x = key.second == 1 ? 1 : key.second == 3 ? -1 : readMoveVector.x;
+        }
+    }
     for (auto key : PlayerInput::Interact)
         if(hid->IsKeyDown(key.first)) OnInteract();
 
@@ -84,7 +84,9 @@ void PlayerManager::PollInput() {
 }
 
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-	movement->Move(glm::normalize(moveVector));
+    if(moveVector != glm::vec2(0))
+        moveVector = glm::normalize(moveVector);
+	movement->Move(moveVector);
 }
 
 void PlayerManager::OnInteract() {

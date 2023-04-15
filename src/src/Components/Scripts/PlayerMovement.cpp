@@ -15,21 +15,25 @@ PlayerMovement::~PlayerMovement() {}
 
 void PlayerMovement::Start() {
     rb = parent->GetComponent<Rigidbody>();
+    moveVector = glm::vec2(0);
     Component::Start();
 }
 
 void PlayerMovement::FixedUpdate() {
-    if (rb != nullptr) {
-        speed = std::lerp(speed, maxSpeed, smoothingParam);
+    if (rb == nullptr) return;
+
+    speed = std::lerp(speed, maxSpeed, smoothingParam);
 
 //        spdlog::info(moveVector.x);
 //        spdlog::info(moveVector.y);
-        if (moveVector.x != 0.0f || moveVector.y != 0.0f) {
-            rb->AddForce(glm::vec3(moveVector, 0.0f) * speed, ForceMode::Force);
-            horizontal = moveVector.x;
-            vertical = moveVector.y;
-            isMoving = true;
-        }
+    if (moveVector.x != 0.0f || moveVector.y != 0.0f) {
+        spdlog::info("MoveVector length: "+std::to_string(moveVector.length()));
+        spdlog::info("MoveVector length: "+std::to_string(moveVector.length()));
+        rb->AddForce(glm::vec3(moveVector.x, 0.0f, moveVector.y) * speed, ForceMode::Force);
+        horizontal = moveVector.x;
+        vertical = moveVector.y;
+        isMoving = true;
+    }
 
 //        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
 //            rb->AddForce(moveVector * speed, ForceMode::Force);
@@ -72,22 +76,22 @@ void PlayerMovement::FixedUpdate() {
 //        vertical = 0.0f;
 //        isMoving = false;
 
-        if (!isMoving) {
-            speed = 0.0f;
-        } else {
-            // Calculate rotation angles by using tangent function
-            rotationAngle = std::atan2f(moveVector.y, moveVector.x) * 180.0f/std::numbers::pi;
+    if (!isMoving) {
+        speed = 0.0f;
+    } else {
+        // Calculate rotation angles by using tangent function
+        rotationAngle = std::atan2f(moveVector.y, moveVector.x) * 180.0f/std::numbers::pi;
 
-            if (rotationAngle < 0.0f) {
-                rotationAngle += 360.0f;
-            }
-
-            rb->AddTorque(rotationAngle, ForceMode::Force);
+        if (rotationAngle < 0.0f) {
+            rotationAngle += 360.0f;
         }
 
-        isMoving = false;
-        Component::Update();
+        rb->AddTorque(rotationAngle, ForceMode::Force);
     }
+
+    isMoving = false;
+    Component::Update();
+
 }
 
 void PlayerMovement::Move(glm::vec2 inputVector) {
