@@ -9,7 +9,7 @@ file(GLOB_RECURSE HEADER_FILES
 	 *.hpp)
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/EngineManagers/ShadowManager.cpp include/EngineManagers/ShadowManager.h)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")
@@ -36,18 +36,19 @@ target_link_libraries(${PROJECT_NAME} freetype)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE")
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
-				   COMMAND ${CMAKE_COMMAND} -E create_symlink 
+set_target_properties(OpenAL
+		PROPERTIES
+		LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+set_target_properties(OpenAL
+		PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+				   COMMAND ${CMAKE_COMMAND} -E create_symlink
 				   ${CMAKE_SOURCE_DIR}/res 
 				   ${CMAKE_CURRENT_BINARY_DIR}/res)
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	file(GLOB DEBUG_PACKAGE
-			${CMAKE_SOURCE_DIR}/debug_package/*)
-
-	file(COPY ${DEBUG_PACKAGE}
-			DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
 
 if(MSVC)
     target_compile_definitions(${PROJECT_NAME} PUBLIC NOMINMAX)
