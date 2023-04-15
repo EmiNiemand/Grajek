@@ -160,7 +160,8 @@ void AudioSource::SetMaxDistance(float val) {
     if (val == 0.0f) {
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
     } else {
-        alSourcef(sourceId, AL_ROLLOFF_FACTOR, gain * (maxDistance / 2 - 1.0f) / (1.0f + gain));
+        alSourcef(sourceId, AL_ROLLOFF_FACTOR,
+                  gain * (maxDistance * 2.0f) / (1.5f + gain * 2.0f));
     }
 }
 
