@@ -22,35 +22,61 @@ void PlayerMovement::FixedUpdate() {
     if (rb != nullptr) {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
-        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
-            rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Force);
-            horizontal = 1.0f;
+//        spdlog::info(moveVector.x);
+//        spdlog::info(moveVector.y);
+        if (moveVector.x != 0.0f || moveVector.y != 0.0f) {
+            rb->AddForce(glm::vec3(moveVector, 0.0f) * speed, ForceMode::Force);
+            horizontal = moveVector.x;
+            vertical = moveVector.y;
             isMoving = true;
         }
 
-        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
-            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Force);
-            horizontal = -1.0f;
-            isMoving = true;
-        }
+//        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
+//            rb->AddForce(moveVector * speed, ForceMode::Force);
+//            horizontal = 1.0f;
+//            isMoving = true;
+//        }
+//
+//        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
+//            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Force);
+//            horizontal = -1.0f;
+//            isMoving = true;
+//        }
+//
+//        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
+//            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Force);
+//            vertical = 1.0f;
+//            isMoving = true;
+//        }
+//
+//        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
+//            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Force);
+//            vertical = -1.0f;
+//            isMoving = true;
+//        }
 
-        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
-            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Force);
-            vertical = 1.0f;
-            isMoving = true;
-        }
-
-        if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
-            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Force);
-            vertical = -1.0f;
-            isMoving = true;
-        }
+//        if (!isMoving) {
+//            speed = 0.0f;
+//        } else {
+//            // Calculate rotation angles by using tangent function
+//            rotationAngle = std::atan2f(vertical, horizontal) * 180.0f/std::numbers::pi;
+//
+//            if (rotationAngle < 0.0f) {
+//                rotationAngle += 360.0f;
+//            }
+//
+//            rb->AddTorque(rotationAngle, ForceMode::Force);
+//        }
+//
+//        horizontal = 0.0f;
+//        vertical = 0.0f;
+//        isMoving = false;
 
         if (!isMoving) {
             speed = 0.0f;
         } else {
             // Calculate rotation angles by using tangent function
-            rotationAngle = std::atan2f(vertical, horizontal) * 180.0f/std::numbers::pi;
+            rotationAngle = std::atan2f(moveVector.y, moveVector.x) * 180.0f/std::numbers::pi;
 
             if (rotationAngle < 0.0f) {
                 rotationAngle += 360.0f;
@@ -59,8 +85,6 @@ void PlayerMovement::FixedUpdate() {
             rb->AddTorque(rotationAngle, ForceMode::Force);
         }
 
-        horizontal = 0.0f;
-        vertical = 0.0f;
         isMoving = false;
         Component::Update();
     }
