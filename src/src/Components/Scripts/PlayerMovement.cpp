@@ -27,8 +27,6 @@ void PlayerMovement::FixedUpdate() {
 //        spdlog::info(moveVector.x);
 //        spdlog::info(moveVector.y);
     if (moveVector.x != 0.0f || moveVector.y != 0.0f) {
-        spdlog::info("MoveVector length: "+std::to_string(moveVector.length()));
-        spdlog::info("MoveVector length: "+std::to_string(moveVector.length()));
         rb->AddForce(glm::vec3(moveVector.x, 0.0f, moveVector.y) * speed, ForceMode::Force);
         horizontal = moveVector.x;
         vertical = moveVector.y;
