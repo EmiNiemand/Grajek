@@ -97,4 +97,6 @@ std::shared_ptr<Instrument> Prefab::GetInstrument(InstrumentName instrumentName)
         }
     }
     instrument->patterns = patterns;
+
+    return instrument;
 }
