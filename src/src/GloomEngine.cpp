@@ -152,7 +152,7 @@ void GloomEngine::Update() {
 
     PostProcessingManager::GetInstance()->DrawBuffer();
 
-
+    glEnable(GL_DEPTH_TEST);
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
@@ -161,8 +161,6 @@ void GloomEngine::Update() {
     UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();
-
-    glEnable(GL_DEPTH_TEST);
 }
 
 void GloomEngine::FixedUpdate() {

@@ -87,7 +87,7 @@ void BoxCollider::SetOffset(const glm::vec3 &offset) {
 }
 
 glm::mat4 BoxCollider::GetModelMatrix() {
-    return parent->transform->GetModelMatrix() * (glm::translate(glm::mat4(1.0f), offset) * glm::scale(glm::mat4(1.0f), size));
+    return parent->transform->GetModelMatrix() * glm::mat4(size.x, 0, 0, 0, 0, size.y, 0, 0, 0, 0, size.z, 0, offset.x, offset.y, offset.z, 1);
 }
 
 bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
@@ -103,21 +103,18 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     // Y * X * Z
     const glm::mat4 otherRotationMatrix = otherTransformY * otherTransformX * otherTransformZ;
 
-    glm::vec3 otherPos = other->parent->transform->GetLocalPosition();
-    otherPos += glm::vec3(otherRotationMatrix * glm::vec4(other->offset * other->parent->transform->GetLocalScale(), 1.0f));
-
-    glm::vec3 pos = parent->transform->GetLocalPosition();
-    pos += glm::vec3(rotationMatrix * glm::vec4(offset * parent->transform->GetLocalScale(), 1.0f));
+    glm::vec3 otherPos = other->GetModelMatrix() * glm::vec4(0,0,0,1);
+    glm::vec3 pos = GetModelMatrix() * glm::vec4(0,0,0,1);
 
     glm::vec3 vectors[3];
     vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
     vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
-    vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,-1,1));
+    vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,1,1));
 
     glm::vec3 otherVectors[3];
     otherVectors[0] = glm::vec3(otherRotationMatrix * glm::vec4(1,0,0,1));
     otherVectors[1] = glm::vec3(otherRotationMatrix * glm::vec4(0,1,0,1));
-    otherVectors[2] = glm::vec3(otherRotationMatrix * glm::vec4(0,0,-1,1));
+    otherVectors[2] = glm::vec3(otherRotationMatrix * glm::vec4(0,0,1,1));
 
     glm::vec3 t = otherPos - pos;
     t = glm::vec3(glm::dot(t, vectors[0]), glm::dot(t, vectors[1]), glm::dot(t, vectors[2]));
@@ -188,23 +185,8 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
 }
 
 void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
-    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
-    // Y * X * Z
-    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-    const glm::mat4 otherTransformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 otherTransformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 otherTransformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
-    // Y * X * Z
-    const glm::mat4 otherRotationMatrix = otherTransformY * otherTransformX * otherTransformZ;
-
-    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition();
-    otherPosition += glm::vec3(otherRotationMatrix * glm::vec4(other->offset * other->parent->transform->GetLocalScale(), 1.0f));
-
-    glm::vec3 position = parent->transform->GetLocalPosition();
-    position += glm::vec3(rotationMatrix * glm::vec4(offset * parent->transform->GetLocalScale(), 1.0f));
+    glm::vec3 otherPosition = other->GetModelMatrix() * glm::vec4(0,0,0,1);
+    glm::vec3 position = GetModelMatrix() * glm::vec4(0,0,0,1);
 
     std::vector<std::pair<glm::vec3, glm::vec3>> points = CalculateShiftedPoints(other, position, otherPosition);
 
@@ -250,7 +232,8 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
                 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
             }
 
-            vel = vel * glm::length(velocity);
+            vel = glm::normalize(vel) * glm::length(velocity);
+
             parent->GetComponent<Rigidbody>()->AddForce(vel, ForceMode::Impulse);
         }
     }
