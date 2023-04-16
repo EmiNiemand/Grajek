@@ -5,6 +5,7 @@
 #include "Components/Scripts/PlayerManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Scripts/PlayerInput.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PlayerEquipment.h"
@@ -21,23 +22,8 @@ void PlayerManager::Start() {
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
 
     // Temporary instrument, delete later
-    std::vector<std::shared_ptr<Sample>> samples {
-        std::make_shared<Sample>(0, "res/sounds/drums/hat.wav"),
-        std::make_shared<Sample>(1, "res/sounds/drums/kick.wav"),
-        std::make_shared<Sample>(2, "res/sounds/drums/snare.wav") };
-    auto pattern = std::make_shared<MusicPattern>();
-    pattern->instrumentName = InstrumentName::Clap;
-    pattern->sounds.push_back(std::make_shared<Sound>(samples[0], 0));
-    pattern->sounds.push_back(std::make_shared<Sound>(samples[1], 1));
-    pattern->sounds.push_back(std::make_shared<Sound>(samples[1], 1));
-
-    auto instrument = std::make_shared<Instrument>();
-    instrument->Setup(InstrumentName::Clap);
-    instrument->samples = samples;
-    instrument->patterns.push_back(pattern);
-
     session = parent->AddComponent<MusicSession>();
-    session->Setup(instrument);
+    session->Setup(Prefab::GetInstrument(InstrumentName::Clap));
 
     moveInput = glm::vec2(0);
     inputEnabled = true;

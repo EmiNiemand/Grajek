@@ -42,7 +42,6 @@ void Game::InitializeGame() {
     // Set up player
     // -------------
     std::shared_ptr<GameObject> player = Prefab::GetPlayer();
-    auto listener = player->AddComponent<AudioListener>();
 
     // Set up ground
     // -------------
@@ -73,7 +72,6 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    // Texts at the end
     // Texts at the end
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
