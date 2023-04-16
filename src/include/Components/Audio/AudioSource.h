@@ -28,7 +28,7 @@ class AudioSource : public Component {
     float gain = 1.0f;
     float maxDistance = 0.0f;
     bool isMovingTarget = false;
-    AudioDistanceMode distanceMode = AudioDistanceMode::Paused;
+    AudioDistanceMode distanceMode = AudioDistanceMode::Continuous;
 
 public:
     AudioSource(const std::shared_ptr<GameObject> &parent, int id);

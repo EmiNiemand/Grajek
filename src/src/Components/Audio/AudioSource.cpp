@@ -19,7 +19,7 @@ void AudioSource::Start() {
 void AudioSource::Update() {
     alGetSourcei(sourceId, AL_SOURCE_STATE, &currentState);
 
-    if (maxDistance >= 0.0) {
+    if (maxDistance > 0.0f) {
         if (distanceMode == AudioDistanceMode::Paused) {
             if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance) {
                 PauseSound();

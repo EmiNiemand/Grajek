@@ -31,7 +31,7 @@ void SessionUI::SetCheatSheet(std::shared_ptr<Image> newCheatSheet) { cheatSheet
 void SessionUI::PlaySound(int index) {
     //TODO: play some kind of visual confirmation of playing sound
     //animator.SetTrigger("Sound"+index);
-    sampleSources[index]->PlaySound();
+    sampleSources[index]->ForcePlaySound();
     spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
 }
 

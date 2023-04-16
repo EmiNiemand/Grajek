@@ -20,7 +20,7 @@ void AudioListener::Start() {
     alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 
     // "up" and "at" vectors, i.e. at the head of the player
-    ALfloat listenerOrientation[] = {0.0,0.0,-1.0, 0.0,1.0,0.0};
+    ALfloat listenerOrientation[] = {0.0, 0.0, -1.0,  0.0, 1.0, 0.0};
     alListenerfv(AL_ORIENTATION,listenerOrientation);
 
     Component::Start();
