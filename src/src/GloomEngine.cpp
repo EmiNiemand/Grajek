@@ -52,10 +52,6 @@ void GloomEngine::Initialize() {
 }
 
 void GloomEngine::Awake() {
-    lastFrameTime = (float)glfwGetTime();
-    lastFixedFrameTime = (float)glfwGetTime();
-    lastAIFrameTime = (float)glfwGetTime();
-
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
     }
@@ -65,6 +61,10 @@ void GloomEngine::Start() {
     for (auto&& component : components){
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
+
+    lastFrameTime = (float)glfwGetTime();
+    lastFixedFrameTime = (float)glfwGetTime();
+    lastAIFrameTime = (float)glfwGetTime();
 }
 
 bool GloomEngine::MainLoop() {

@@ -87,7 +87,7 @@ void BoxCollider::SetOffset(const glm::vec3 &offset) {
 }
 
 glm::mat4 BoxCollider::GetModelMatrix() {
-    return parent->transform->GetModelMatrix() * glm::mat4(size.x, 0, 0, 0, 0, size.y, 0, 0, 0, 0, size.z, 0, offset.x, offset.y, offset.z, 1);
+    return parent->transform->GetModelMatrix() * (glm::translate(glm::mat4(1.0f), offset) * glm::scale(glm::mat4(1.0f), size));
 }
 
 bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
@@ -101,7 +101,7 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     const glm::mat4 otherTransformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
     const glm::mat4 otherTransformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
     // Y * X * Z
-    const glm::mat4 otherRotationMatrix = otherTransformX * otherTransformY * otherTransformZ;
+    const glm::mat4 otherRotationMatrix = otherTransformY * otherTransformX * otherTransformZ;
 
     glm::vec3 otherPos = other->parent->transform->GetLocalPosition();
     otherPos += glm::vec3(otherRotationMatrix * glm::vec4(other->offset * other->parent->transform->GetLocalScale(), 1.0f));
@@ -109,19 +109,34 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     glm::vec3 pos = parent->transform->GetLocalPosition();
     pos += glm::vec3(rotationMatrix * glm::vec4(offset * parent->transform->GetLocalScale(), 1.0f));
 
+    glm::vec3 vectors[3];
+    vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
+    vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
+    vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,-1,1));
+
+    glm::vec3 otherVectors[3];
+    otherVectors[0] = glm::vec3(otherRotationMatrix * glm::vec4(1,0,0,1));
+    otherVectors[1] = glm::vec3(otherRotationMatrix * glm::vec4(0,1,0,1));
+    otherVectors[2] = glm::vec3(otherRotationMatrix * glm::vec4(0,0,-1,1));
+
     glm::vec3 t = otherPos - pos;
-    t = glm::vec3(glm::dot(t, glm::vec3(rotationMatrix[0])), glm::dot(t, glm::vec3(rotationMatrix[1])), glm::dot(t, glm::vec3(rotationMatrix[2])));
+    t = glm::vec3(glm::dot(t, vectors[0]), glm::dot(t, vectors[1]), glm::dot(t, vectors[2]));
 
-    glm::mat4 rMatrix = otherRotationMatrix * glm::inverse(rotationMatrix);
+    auto rMatrix = glm::mat3(1.0f);
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            rMatrix[i][j] = glm::dot(vectors[i], otherVectors[j]);
+        }
+    }
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             rMatrix[i][j] = fabs(rMatrix[i][j]) + 0.001f;
         }
     }
 
     glm::vec3 scaledOtherSize = other->size * other->parent->transform->GetLocalScale();
-
     glm::vec3 scaledSize = size * parent->transform->GetLocalScale();
 
     // 1
@@ -167,14 +182,29 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     if (fabs(t.y * rMatrix[0][1] - t.x * rMatrix[1][1]) > (scaledSize.x * fabs(rMatrix[1][1]) + scaledSize.y * fabs(rMatrix[0][1]) +
             scaledOtherSize.x * fabs(rMatrix[2][2]) + scaledOtherSize.z * fabs(rMatrix[2][0]))) return false;
     // 15
-    if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * fabs(rMatrix[1][1]) + scaledSize.y * fabs(rMatrix[0][2]) +
+    if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * fabs(rMatrix[1][2]) + scaledSize.y * fabs(rMatrix[0][2]) +
             scaledOtherSize.x * fabs(rMatrix[2][1]) + scaledOtherSize.y * fabs(rMatrix[2][0]))) return false;
     return true;
 }
 
 void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
-    glm::vec3 position = parent->transform->GetLocalPosition() + offset * parent->transform->GetLocalScale();
-    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition() + other->offset * other->parent->transform->GetLocalScale();
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+    // Y * X * Z
+    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+    const glm::mat4 otherTransformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 otherTransformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 otherTransformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+    // Y * X * Z
+    const glm::mat4 otherRotationMatrix = otherTransformY * otherTransformX * otherTransformZ;
+
+    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition();
+    otherPosition += glm::vec3(otherRotationMatrix * glm::vec4(other->offset * other->parent->transform->GetLocalScale(), 1.0f));
+
+    glm::vec3 position = parent->transform->GetLocalPosition();
+    position += glm::vec3(rotationMatrix * glm::vec4(offset * parent->transform->GetLocalScale(), 1.0f));
 
     std::vector<std::pair<glm::vec3, glm::vec3>> points = CalculateShiftedPoints(other, position, otherPosition);
 

@@ -48,7 +48,7 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
-    ground->transform->SetLocalScale({20, 2, 20});
+    ground->transform->SetLocalScale({40, 2, 40});
 
     // Set up lights
     // -------------
@@ -63,7 +63,7 @@ void Game::InitializeGame() {
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
     bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench->GetComponent<BoxCollider>()->SetSize({1.25, 2, 3});
+    bench->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
 
 
 //    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
@@ -110,7 +110,7 @@ void Game::InitializeGame() {
     lowPolyHouse->transform->SetLocalScale({1.5, 1.5, 2});
     lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
     lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3, 2, 1.5});
+    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
     auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
     portalRadioSound->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
     portalRadioSound->SetPositionOffset({0.0f, 0.0f, 2.5f});
