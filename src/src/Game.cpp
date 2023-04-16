@@ -54,7 +54,7 @@ void Game::InitializeGame() {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({5, 10, 5});
+    sun->transform->SetLocalPosition({10, 20, 10});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);

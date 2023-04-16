@@ -16,7 +16,7 @@ public:
 
     unsigned int shadowWidth = 1024;
     unsigned int shadowHeight = 1024;
-    float nearPlane = 1.0f, farPlane = 30.0f;
+    float nearPlane = 1.0f, farPlane = 60.0f;
 
 public:
     ShadowManager(ShadowManager &other) = delete;
