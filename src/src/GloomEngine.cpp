@@ -23,8 +23,8 @@
 #include <filesystem>
 
 GloomEngine::GloomEngine() {
-    width = 1200;
-    height = 780;
+    width = 1440;
+    height = 810;
 }
 
 GloomEngine::~GloomEngine() = default;
@@ -52,10 +52,6 @@ void GloomEngine::Initialize() {
 }
 
 void GloomEngine::Awake() {
-    lastFrameTime = (float)glfwGetTime();
-    lastFixedFrameTime = (float)glfwGetTime();
-    lastAIFrameTime = (float)glfwGetTime();
-
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
     }
@@ -65,6 +61,10 @@ void GloomEngine::Start() {
     for (auto&& component : components){
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
+
+    lastFrameTime = (float)glfwGetTime();
+    lastFixedFrameTime = (float)glfwGetTime();
+    lastAIFrameTime = (float)glfwGetTime();
 }
 
 bool GloomEngine::MainLoop() {

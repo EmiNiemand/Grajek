@@ -81,8 +81,10 @@ void PlayerManager::OnMenuToggle() {
         uiActive = !uiActive;
 
         if (uiActive) {
+            GloomEngine::GetInstance()->timeScale = 0;
             pauseMenu->ShowMenu();
         } else {
+            GloomEngine::GetInstance()->timeScale = 1;
             pauseMenu->HideMenu();
         }
     }
