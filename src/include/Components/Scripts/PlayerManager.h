@@ -34,6 +34,7 @@ private:
     void PollInput();
 
     //Session methods
+    void OnSessionToggle();
     void OnSoundPlay(int index);
 
     //Equipment methods
@@ -51,19 +52,7 @@ public:
 
     //Session methods
     // Argument pat is null when player failed playing pattern
-    void PlayedPattern(const std::shared_ptr<MusicPattern>& pat)
-    {
-        //TODO: uncomment when crowd manager gets implemented
-//        crowdManager.PlayedPattern(pat);
-
-        if (!pat) return;
-
-        //TODO: uncomment when crowd manager gets implemented
-        equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
-
-        playerUI->UpdateCash(equipment->cash);
-        playerUI->UpdateRep(equipment->rep);
-    }
+    void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
 };
 
 

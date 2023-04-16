@@ -21,10 +21,6 @@ void PlayerManager::Start() {
     equipment = parent->AddComponent<PlayerEquipment>();
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
 
-    // Temporary instrument, delete later
-    session = parent->AddComponent<MusicSession>();
-    session->Setup(Prefab::GetInstrument(InstrumentName::Clap));
-
     moveInput = glm::vec2(0);
     inputEnabled = true;
 	uiActive = false;
@@ -84,13 +80,47 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 }
 #pragma endregion
 
+#pragma region Music Session Events
+void PlayerManager::OnSessionToggle() {
+    if(!session)
+    {
+        session = parent->AddComponent<MusicSession>();
+        //TODO: Insert player's chosen instrument
+        session->Setup(Prefab::GetInstrument(InstrumentName::Clap));
+        return;
+    }
+
+    session->Stop();
+}
+
+void PlayerManager::OnSoundPlay(int index) {
+    if(!session) return;
+
+    session->PlaySample(index);
+}
+void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
+    //TODO: uncomment when crowd manager gets implemented
+//        crowdManager.PlayedPattern(pat);
+
+    if (!pat) return;
+
+    //TODO: uncomment when crowd manager gets implemented
+    equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
+
+    playerUI->UpdateCash(equipment->cash);
+    playerUI->UpdateRep(equipment->rep);
+}
+
+#pragma endregion
+
 void PlayerManager::PollInput() {
 	if(!inputEnabled) return;
 
 	auto hid = HIDManager::GetInstance();
 	glm::vec2 readMoveVector(0);
 
-
+    // UI Input
+    // --------
 	for (auto key : PlayerInput::Menu)
 		if(hid->IsKeyDown(key.first)) OnMenuToggle();
 
@@ -119,18 +149,13 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Interact)
 		if(hid->IsKeyDown(key.first)) OnInteract();
 
-    //if(session)
-    for (auto key: PlayerInput::PlaySound) {
-        if (hid->IsKeyDown(key.first)) {
-            OnSoundPlay(key.second);
-        }
-    }
+    for (auto key: PlayerInput::PlaySound)
+        if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
+
+    for (auto key: PlayerInput::StartSession)
+        if (hid->IsKeyDown(key.first)) OnSessionToggle();
 
 	if(readMoveVector != moveInput)
 		OnMove(readMoveVector);
 	moveInput = readMoveVector;
-}
-
-void PlayerManager::OnSoundPlay(int index) {
-    session->PlaySample(index);
 }

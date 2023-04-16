@@ -132,3 +132,8 @@ void MusicSession::PatternFail() {
 }
 
 float MusicSession::GetRhythmValue(float currentNoteLength) { return currentNoteLength * (bpm/60.0f); }
+
+void MusicSession::Stop() {
+    GameObject::Destroy(sessionUI->GetParent());
+    parent->RemoveComponent(GetId());
+}

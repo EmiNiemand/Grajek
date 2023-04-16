@@ -31,6 +31,7 @@ public:
      * sample index (in instrument) and delay value.
      */
     void GeneratePattern(std::vector<RawSample> newPattern);
+    void AddSamples(const std::vector<std::string>& paths);
 };
 
 

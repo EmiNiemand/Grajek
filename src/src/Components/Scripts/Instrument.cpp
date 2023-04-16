@@ -27,3 +27,9 @@ void Instrument::GeneratePattern(std::vector<RawSample> newPattern) {
     patterns.push_back(pattern);
 }
 
+void Instrument::AddSamples(const std::vector<std::string>& paths) {
+    for (const auto& path : paths) {
+        samples.push_back(std::make_shared<Sample>(samples.size()-1, path));
+    }
+}
+

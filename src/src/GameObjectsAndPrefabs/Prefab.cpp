@@ -64,25 +64,22 @@ std::shared_ptr<Instrument> Prefab::GetInstrument(InstrumentName instrumentName)
 
     // Add samples
     // -----------
-    std::vector<std::shared_ptr<Sample>> samples;
     switch (instrumentName) {
         case Clap:
-            samples = {
-                    std::make_shared<Sample>(0, "res/sounds/clap/clapWeak.wav"),
-                    std::make_shared<Sample>(1, "res/sounds/clap/clapStrong.wav"), };
+            instrument->AddSamples({
+                "res/sounds/clap/clapWeak.wav",
+                "res/sounds/clap/clapStrong.wav"});
             break;
         case Drums:
-            samples = {
-                    std::make_shared<Sample>(0, "res/sounds/drums/hat.wav"),
-                    std::make_shared<Sample>(1, "res/sounds/drums/kick.wav"),
-                    std::make_shared<Sample>(2, "res/sounds/drums/snare.wav") };
+            instrument->AddSamples({
+                "res/sounds/drums/hat.wav",
+                "res/sounds/drums/kick.wav",
+                "res/sounds/drums/snare.wav"});
             break;
     }
-    instrument->samples = samples;
 
     // Add patterns
     // ------------
-    std::vector<std::shared_ptr<MusicPattern>> patterns;
     switch (instrumentName) {
         case Clap: {
             instrument->GeneratePattern({
@@ -96,7 +93,6 @@ std::shared_ptr<Instrument> Prefab::GetInstrument(InstrumentName instrumentName)
             break;
         }
     }
-    instrument->patterns = patterns;
 
     return instrument;
 }
