@@ -62,10 +62,11 @@ void ShadowManager::PrepareShadow() {
     glViewport(0, 0, shadowWidth, shadowHeight);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     for (const auto& drawable : RendererManager::GetInstance()->drawBuffer) {
         drawable->Draw(shadowShader);
     }
-    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
