@@ -8,13 +8,13 @@ ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Componen
 ShopMenu::~ShopMenu() {}
 
 void ShopMenu::Start() {
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>();
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>();
     Component::Start();
 }
 
 void ShopMenu::ShowMenu() {
     parent->EnableSelfAndChildren();
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>();
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>();
     activeButton->isActive = true;
 }
 

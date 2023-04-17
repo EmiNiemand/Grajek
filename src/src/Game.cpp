@@ -172,14 +172,14 @@ void Game::InitializeGame() {
     std::shared_ptr<GameObject> shopBackground = GameObject::Instantiate("ShopBackground", shop);
     shopBackground->AddComponent<Image>();
     shopBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/Sklep/Sklep.png");
-    firstInstrument->GetComponent<Button>()->previousButton = fourthInstrument->GetComponent<Button>();
-    firstInstrument->GetComponent<Button>()->nextButton = secondInstrument->GetComponent<Button>();
-    secondInstrument->GetComponent<Button>()->previousButton = firstInstrument->GetComponent<Button>();
+    firstInstrument->GetComponent<Button>()->previousButton = thirdInstrument->GetComponent<Button>();
+    firstInstrument->GetComponent<Button>()->nextButton = fourthInstrument->GetComponent<Button>();
+    secondInstrument->GetComponent<Button>()->previousButton = fourthInstrument->GetComponent<Button>();
     secondInstrument->GetComponent<Button>()->nextButton = thirdInstrument->GetComponent<Button>();
     thirdInstrument->GetComponent<Button>()->previousButton = secondInstrument->GetComponent<Button>();
-    thirdInstrument->GetComponent<Button>()->nextButton = fourthInstrument->GetComponent<Button>();
-    fourthInstrument->GetComponent<Button>()->previousButton = thirdInstrument->GetComponent<Button>();
-    fourthInstrument->GetComponent<Button>()->nextButton = firstInstrument->GetComponent<Button>();
+    thirdInstrument->GetComponent<Button>()->nextButton = firstInstrument->GetComponent<Button>();
+    fourthInstrument->GetComponent<Button>()->previousButton = firstInstrument->GetComponent<Button>();
+    fourthInstrument->GetComponent<Button>()->nextButton = secondInstrument->GetComponent<Button>();
     shop->DisableSelfAndChildren();
 
 
