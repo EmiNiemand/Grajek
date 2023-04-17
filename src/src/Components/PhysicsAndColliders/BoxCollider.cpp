@@ -150,10 +150,10 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
             scaledSize.z * fabs(rMatrix[2][0])) + scaledOtherSize.x) return false;
     // 5
     if (fabs(t.x * rMatrix[0][1] + t.y * rMatrix[1][1] + t.z * rMatrix[2][1]) > (scaledSize.x * fabs(rMatrix[0][1]) + scaledSize.y * fabs(rMatrix[1][1]) +
-            scaledSize.z * fabs(rMatrix[2][1])) + scaledOtherSize.x) return false;
+            scaledSize.z * fabs(rMatrix[2][1])) + scaledOtherSize.y) return false;
     // 6
     if (fabs(t.x * rMatrix[0][2] + t.y * rMatrix[1][2] + t.z * rMatrix[2][2]) > (scaledSize.x * fabs(rMatrix[0][2]) + scaledSize.y * fabs(rMatrix[1][2]) +
-            scaledSize.z * fabs(rMatrix[2][2])) + scaledOtherSize.x) return false;
+            scaledSize.z * fabs(rMatrix[2][2])) + scaledOtherSize.z) return false;
     // 7
     if (fabs(t.z * rMatrix[1][0] - t.y * rMatrix[2][0]) > (scaledSize.y * fabs(rMatrix[2][0]) + scaledSize.z * fabs(rMatrix[1][0]) +
             scaledOtherSize.y * fabs(rMatrix[0][2]) + scaledOtherSize.z * fabs(rMatrix[0][1]))) return false;

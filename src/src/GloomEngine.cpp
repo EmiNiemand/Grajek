@@ -136,7 +136,6 @@ void GloomEngine::Update() {
     glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
     ShadowManager::GetInstance()->PrepareShadow();
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glViewport(0, 0, width, height);
@@ -213,7 +212,7 @@ void GloomEngine::InitializeWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-
+    glfwWindowHint(GLFW_SAMPLES, 4);
     // Create window with graphics context
     window = glfwCreateWindow(width, height, "Gloomies", NULL, NULL);
     if (window == nullptr)
@@ -249,7 +248,7 @@ void GloomEngine::InitializeWindow() {
 #ifdef DEBUG
     DebugManager::GetInstance()->Initialize(window, glsl_version);
 #endif
-
+    glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -38,7 +38,7 @@ void main()
     float g = sqrt(pow(gx, 2.0) + pow(gy, 2.0));
 
     // Try different values and see what happens
-    g = smoothstep(0.85, 0.95, g);
+    g = smoothstep(0.9, 0.95, g);
 
     vec3 edgeColor = vec3(0.1, 0.1, 0.1);
 
@@ -59,7 +59,7 @@ void main()
 
     vec4 position = texture(texturePosition, texCoord);
 
-    float depth =clamp(1.0 - ((far - position.y) / (far - near)), 0.0, 1.0);
+    float depth = clamp(1.0 - ((far - position.y) / (far - near)), 0.0, 1.0);
 
     float separation = mix(maxSeparation, minSeparation, depth);
 
