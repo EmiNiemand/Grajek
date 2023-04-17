@@ -11,6 +11,7 @@
 #include "PlayerUI.h"
 #include "PauseMenu.h"
 #include "OptionsMenu.h"
+#include "ShopMenu.h"
 #include "glm/vec2.hpp"
 #include "SessionUI.h"
 #include "MusicSession.h"
@@ -25,6 +26,7 @@ private:
     std::shared_ptr<PlayerEquipment> equipment;
     std::shared_ptr<PauseMenu> pauseMenu;
     std::shared_ptr<OptionsMenu> optionsMenu;
+    std::shared_ptr<ShopMenu> shopMenu;
     glm::vec2 moveInput;
 
 public:

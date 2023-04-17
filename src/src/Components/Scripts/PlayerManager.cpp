@@ -44,6 +44,7 @@ void PlayerManager::Start() {
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
+    shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetComponent<ShopMenu>();
 }
 
 void PlayerManager::Update() {
@@ -96,6 +97,8 @@ void PlayerManager::OnApply() {
         pauseMenu->OnClick();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
         optionsMenu->OnClick();
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
+        shopMenu->OnClick();
     }
 }
 
@@ -104,6 +107,8 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
         pauseMenu->ChangeActiveButton(moveVector);
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
         optionsMenu->ChangeActiveButton(moveVector);
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
+        shopMenu->ChangeActiveButton(moveVector);
     }
 }
 #pragma endregion
