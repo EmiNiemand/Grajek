@@ -29,6 +29,8 @@ public:
 
     void SetGain(float val);
     void SetVelocity(glm::vec3 velocity);
+
+    float GetGain();
 };
 
 #endif //GLOOMENGINE_AUDIOLISTENER_H

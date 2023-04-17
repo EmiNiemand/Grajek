@@ -165,23 +165,6 @@ void Button::Update() {
 }
 
 void Button::Draw() {
-    // Render texture
-    UIManager::GetInstance()->shader->Activate();
-    UIManager::GetInstance()->shader->SetBool("isText", false);
-    glActiveTexture(GL_TEXTURE0);
-    if(isActive) {
-        UIManager::GetInstance()->shader->SetInt("texture1", 0);
-        glBindTexture(GL_TEXTURE_2D, textureIsActive);
-    } else {
-        UIManager::GetInstance()->shader->SetInt("texture1", 0);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-    }
-    glBindVertexArray(textureMesh->vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-    glActiveTexture(GL_TEXTURE0);
-
-
     // Render text
     if (this->text != "") {
         UIManager::GetInstance()->shader->Activate();
@@ -228,4 +211,20 @@ void Button::Draw() {
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
+    // Render texture
+    UIManager::GetInstance()->shader->Activate();
+    UIManager::GetInstance()->shader->SetBool("isText", false);
+    glActiveTexture(GL_TEXTURE0);
+    if(isActive) {
+        UIManager::GetInstance()->shader->SetInt("texture1", 0);
+        glBindTexture(GL_TEXTURE_2D, textureIsActive);
+    } else {
+        UIManager::GetInstance()->shader->SetInt("texture1", 0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+    }
+    glBindVertexArray(textureMesh->vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
 }

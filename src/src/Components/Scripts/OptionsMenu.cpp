@@ -4,6 +4,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Scripts/PauseMenu.h"
 #include "EngineManagers/PostProcessingManager.h"
+#include "Components/Audio/AudioListener.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -43,9 +44,15 @@ void OptionsMenu::OnClick() {
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("DecreaseVolume")->GetComponent<Button>()->isActive) {
-        // TODO change audio volume
+        float gain = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->GetGain();
+        if (gain <= 0.0f) return;
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(gain - 0.1f);
+        GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeValue")->GetComponent<Text>()->text = std::to_string((int)std::ceil((gain - 0.1f) * 10));
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("IncreaseVolume")->GetComponent<Button>()->isActive) {
-
+        float gain = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->GetGain();
+        if (gain >= 1.0f) return;
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(gain + 0.1f);
+        GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeValue")->GetComponent<Text>()->text = std::to_string((int)std::ceil((gain + 0.1f) * 10));
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("DecreaseResolution")->GetComponent<Button>()->isActive) {
         if (GloomEngine::GetInstance()->width == 1920) {
             glfwSetWindowPos(GloomEngine::GetInstance()->window, 240, 135);
@@ -58,6 +65,7 @@ void OptionsMenu::OnClick() {
             GloomEngine::GetInstance()->height = 540;
             PostProcessingManager::GetInstance()->WindowResize();
         }
+        GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionValue")->GetComponent<Text>()->text = std::to_string(GloomEngine::GetInstance()->width) + " x " + std::to_string(GloomEngine::GetInstance()->height);
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("IncreaseResolution")->GetComponent<Button>()->isActive) {
         if (GloomEngine::GetInstance()->width == 960) {
             glfwSetWindowPos(GloomEngine::GetInstance()->window, 240, 135);
@@ -70,5 +78,6 @@ void OptionsMenu::OnClick() {
             GloomEngine::GetInstance()->height = 1080;
             PostProcessingManager::GetInstance()->WindowResize();
         }
+        GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionValue")->GetComponent<Text>()->text = std::to_string(GloomEngine::GetInstance()->width) + " x " + std::to_string(GloomEngine::GetInstance()->height);
     }
 }

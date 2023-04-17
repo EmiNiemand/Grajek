@@ -77,31 +77,27 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    // Texts at the end
     std::shared_ptr<GameObject> reksio = GameObject::Instantiate("Reksio", activeScene);
     reksio->AddComponent<Image>();
     reksio->GetComponent<Image>()->LoadTexture(50, 0, "UI/piesek.png");
     std::shared_ptr<GameObject> mruczek = GameObject::Instantiate("Mruczek", activeScene);
     mruczek->AddComponent<Image>();
     mruczek->GetComponent<Image>()->LoadTexture(1650, 0, "UI/kotek.png");
-    std::shared_ptr<GameObject> tekst = GameObject::Instantiate("Tekst", activeScene);
-    tekst->AddComponent<Text>();
-    tekst->GetComponent<Text>()->LoadFont("easter egg", 1725, 10);
 
     // Set up pause menu
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
     pause->AddComponent<PauseMenu>();
-    std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
-    pauseBackground->AddComponent<Image>();
-    pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
     std::shared_ptr<GameObject> optionsButton = GameObject::Instantiate("OptionsButton", pause);
     optionsButton->AddComponent<Button>();
     optionsButton->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
-    optionsButton->GetComponent<Button>()->LoadFont("Options", 885, 520);
+    optionsButton->GetComponent<Button>()->LoadFont("Options", 895, 520);
     std::shared_ptr<GameObject> exitToMainMenuButton = GameObject::Instantiate("ExitToMainMenu", pause);
     exitToMainMenuButton->AddComponent<Button>();
     exitToMainMenuButton->GetComponent<Button>()->LoadTexture(900, 400, "UI/button.png", "UI/activeButton.png");
-    exitToMainMenuButton->GetComponent<Button>()->LoadFont("Exit", 905, 420);
+    exitToMainMenuButton->GetComponent<Button>()->LoadFont("Exit", 910, 420);
+    std::shared_ptr<GameObject> pauseBackground = GameObject::Instantiate("Background", pause);
+    pauseBackground->AddComponent<Image>();
+    pauseBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/pause.png");
     optionsButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
     optionsButton->GetComponent<Button>()->nextButton = exitToMainMenuButton->GetComponent<Button>();
     exitToMainMenuButton->GetComponent<Button>()->previousButton = optionsButton->GetComponent<Button>();
@@ -111,9 +107,6 @@ void Game::InitializeGame() {
     // Set up options menu
     std::shared_ptr<GameObject> options = GameObject::Instantiate("Options", activeScene);
     options->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> optionsBackground = GameObject::Instantiate("OptionsBackground", options);
-    optionsBackground->AddComponent<Image>();
-    optionsBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/options.png");
     std::shared_ptr<GameObject> backToPauseMenu = GameObject::Instantiate("BackToPauseMenu", options);
     backToPauseMenu->AddComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->LoadTexture(900, 500, "UI/button.png", "UI/activeButton.png");
@@ -124,16 +117,31 @@ void Game::InitializeGame() {
     decreaseVolume->GetComponent<Button>()->LoadFont("-", 1010, 810, 64);
     std::shared_ptr<GameObject> increaseVolume = GameObject::Instantiate("IncreaseVolume", options);
     increaseVolume->AddComponent<Button>();
-    increaseVolume->GetComponent<Button>()->LoadTexture(1100, 800, "UI/button.png", "UI/activeButton.png");
-    increaseVolume->GetComponent<Button>()->LoadFont("+", 1110, 810, 64);
+    increaseVolume->GetComponent<Button>()->LoadTexture(1300, 800, "UI/button.png", "UI/activeButton.png");
+    increaseVolume->GetComponent<Button>()->LoadFont("+", 1310, 810, 64);
     std::shared_ptr<GameObject> decreaseResolution = GameObject::Instantiate("DecreaseResolution", options);
     decreaseResolution->AddComponent<Button>();
     decreaseResolution->GetComponent<Button>()->LoadTexture(1000, 700, "UI/button.png", "UI/activeButton.png");
     decreaseResolution->GetComponent<Button>()->LoadFont("<", 1010, 700, 64);
     std::shared_ptr<GameObject> increaseResolution = GameObject::Instantiate("IncreaseResolution", options);
     increaseResolution->AddComponent<Button>();
-    increaseResolution->GetComponent<Button>()->LoadTexture(1100, 700, "UI/button.png", "UI/activeButton.png");
-    increaseResolution->GetComponent<Button>()->LoadFont(">", 1110, 700, 64);
+    increaseResolution->GetComponent<Button>()->LoadTexture(1300, 700, "UI/button.png", "UI/activeButton.png");
+    increaseResolution->GetComponent<Button>()->LoadFont(">", 1310, 700, 64);
+    std::shared_ptr<GameObject> musicVolume = GameObject::Instantiate("MusicVolume", options);
+    musicVolume->AddComponent<Text>();
+    musicVolume->GetComponent<Text>()->LoadFont("Głośność muzyki", 500, 800, 42);
+    std::shared_ptr<GameObject> musicVolumeValue = GameObject::Instantiate("MusicVolumeValue", options);
+    musicVolumeValue->AddComponent<Text>();
+    musicVolumeValue->GetComponent<Text>()->LoadFont("10", 1150, 800, 42);
+    std::shared_ptr<GameObject> windowResolution = GameObject::Instantiate("WindowResolution", options);
+    windowResolution->AddComponent<Text>();
+    windowResolution->GetComponent<Text>()->LoadFont("Rozdzielczość ekranu", 500, 700, 42);
+    std::shared_ptr<GameObject> windowResolutionValue = GameObject::Instantiate("WindowResolutionValue", options);
+    windowResolutionValue->AddComponent<Text>();
+    windowResolutionValue->GetComponent<Text>()->LoadFont("1440 x 810", 1075, 700, 42);
+    std::shared_ptr<GameObject> optionsBackground = GameObject::Instantiate("OptionsBackground", options);
+    optionsBackground->AddComponent<Image>();
+    optionsBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/options.png");
     decreaseVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
     decreaseVolume->GetComponent<Button>()->nextButton = increaseVolume->GetComponent<Button>();
     increaseVolume->GetComponent<Button>()->previousButton = decreaseVolume->GetComponent<Button>();
@@ -149,21 +157,21 @@ void Game::InitializeGame() {
     // Set up shop menu
     std::shared_ptr<GameObject> shop = GameObject::Instantiate("Shop", activeScene);
     shop->AddComponent<ShopMenu>();
+    std::shared_ptr<GameObject> firstInstrument = GameObject::Instantiate("FirstInstrument", shop);
+    firstInstrument->AddComponent<Button>();
+    firstInstrument->GetComponent<Button>()->LoadTexture(10, 0, "UI/Sklep/Perkusja.png", "UI/Sklep/PerkusjaZRamka.png");
+    std::shared_ptr<GameObject> secondInstrument = GameObject::Instantiate("SecondInstrument", shop);
+    secondInstrument->AddComponent<Button>();
+    secondInstrument->GetComponent<Button>()->LoadTexture(1425, 525, "UI/Sklep/Trabka.png", "UI/Sklep/TrabkaZRamka.png");
+    std::shared_ptr<GameObject> thirdInstrument = GameObject::Instantiate("ThirdInstrument", shop);
+    thirdInstrument->AddComponent<Button>();
+    thirdInstrument->GetComponent<Button>()->LoadTexture(1525, 250, "UI/Sklep/LaunbhPad.png", "UI/Sklep/LaunbhPadZRamka.png");
+    std::shared_ptr<GameObject> fourthInstrument = GameObject::Instantiate("FourthInstrument", shop);
+    fourthInstrument->AddComponent<Button>();
+    fourthInstrument->GetComponent<Button>()->LoadTexture(600, 700, "UI/Sklep/Gitara.png", "UI/Sklep/GitaraZRamka.png");
     std::shared_ptr<GameObject> shopBackground = GameObject::Instantiate("ShopBackground", shop);
     shopBackground->AddComponent<Image>();
     shopBackground->GetComponent<Image>()->LoadTexture(0, 0, "UI/Sklep/Sklep.png");
-    std::shared_ptr<GameObject> firstInstrument = GameObject::Instantiate("FirstInstrument", shop);
-    firstInstrument->AddComponent<Button>();
-    firstInstrument->GetComponent<Button>()->LoadTexture(10, 0, "UI/Sklep/PerkusjaZRamka.png", "UI/Sklep/PerkusjaZRamka.png");
-    std::shared_ptr<GameObject> secondInstrument = GameObject::Instantiate("SecondInstrument", shop);
-    secondInstrument->AddComponent<Button>();
-    secondInstrument->GetComponent<Button>()->LoadTexture(1425, 525, "UI/Sklep/TrabkaZRamka.png", "UI/Sklep/TrabkaZRamka.png");
-    std::shared_ptr<GameObject> thirdInstrument = GameObject::Instantiate("ThirdInstrument", shop);
-    thirdInstrument->AddComponent<Button>();
-    thirdInstrument->GetComponent<Button>()->LoadTexture(1525, 250, "UI/Sklep/LaunbhPadZRamka.png", "UI/Sklep/LaunbhPadZRamka.png");
-    std::shared_ptr<GameObject> fourthInstrument = GameObject::Instantiate("FourthInstrument", shop);
-    fourthInstrument->AddComponent<Button>();
-    fourthInstrument->GetComponent<Button>()->LoadTexture(600, 700, "UI/Sklep/GitaraZRamka.png", "UI/Sklep/GitaraZRamka.png");
     firstInstrument->GetComponent<Button>()->previousButton = fourthInstrument->GetComponent<Button>();
     firstInstrument->GetComponent<Button>()->nextButton = secondInstrument->GetComponent<Button>();
     secondInstrument->GetComponent<Button>()->previousButton = firstInstrument->GetComponent<Button>();
@@ -172,7 +180,7 @@ void Game::InitializeGame() {
     thirdInstrument->GetComponent<Button>()->nextButton = fourthInstrument->GetComponent<Button>();
     fourthInstrument->GetComponent<Button>()->previousButton = thirdInstrument->GetComponent<Button>();
     fourthInstrument->GetComponent<Button>()->nextButton = firstInstrument->GetComponent<Button>();
-//    shop->DisableSelfAndChildren();
+    shop->DisableSelfAndChildren();
 
 
     std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);

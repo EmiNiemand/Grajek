@@ -49,3 +49,7 @@ void AudioListener::SetVelocity(glm::vec3 vel) {
     velocity = vel;
     alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
+
+float AudioListener::GetGain() {
+    return gain;
+}
