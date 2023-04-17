@@ -52,10 +52,6 @@ void GloomEngine::Initialize() {
 }
 
 void GloomEngine::Awake() {
-    lastFrameTime = (float)glfwGetTime();
-    lastFixedFrameTime = (float)glfwGetTime();
-    lastAIFrameTime = (float)glfwGetTime();
-
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
     }
@@ -65,6 +61,10 @@ void GloomEngine::Start() {
     for (auto&& component : components){
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
+
+    lastFrameTime = (float)glfwGetTime();
+    lastFixedFrameTime = (float)glfwGetTime();
+    lastAIFrameTime = (float)glfwGetTime();
 }
 
 bool GloomEngine::MainLoop() {
@@ -136,7 +136,6 @@ void GloomEngine::Update() {
     glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
     ShadowManager::GetInstance()->PrepareShadow();
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glViewport(0, 0, width, height);
@@ -152,7 +151,7 @@ void GloomEngine::Update() {
 
     PostProcessingManager::GetInstance()->DrawBuffer();
 
-
+    glEnable(GL_DEPTH_TEST);
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
     DebugManager::GetInstance()->Render();
@@ -161,8 +160,6 @@ void GloomEngine::Update() {
     UIManager::GetInstance()->DrawUI();
 
     HIDManager::GetInstance()->ManageInput();
-
-    glEnable(GL_DEPTH_TEST);
 }
 
 void GloomEngine::FixedUpdate() {
@@ -215,7 +212,7 @@ void GloomEngine::InitializeWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-
+    glfwWindowHint(GLFW_SAMPLES, 4);
     // Create window with graphics context
     window = glfwCreateWindow(width, height, "Gloomies", NULL, NULL);
     if (window == nullptr)
@@ -251,7 +248,7 @@ void GloomEngine::InitializeWindow() {
 #ifdef DEBUG
     DebugManager::GetInstance()->Initialize(window, glsl_version);
 #endif
-
+    glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

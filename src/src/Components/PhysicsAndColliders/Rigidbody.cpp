@@ -12,10 +12,10 @@ Rigidbody::~Rigidbody() = default;
 
 void Rigidbody::FixedUpdate() {
     parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() + velocity);
+    parent->transform->SetLocalRotation(rotation);
+
     this->AddForce(glm::vec3(0, -1, 0) * gravityScale, ForceMode::Force);
     this->AddForce(-velocity * linearDrag, ForceMode::Force);
-
-    parent->transform->SetLocalRotation(rotation);
     Component::FixedUpdate();
 }
 
