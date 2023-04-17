@@ -11,6 +11,8 @@ private:
     std::shared_ptr<Button> activeButton;
 
 public:
+    bool gameShouldExit = false;
+
     PauseMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~PauseMenu() override;
 

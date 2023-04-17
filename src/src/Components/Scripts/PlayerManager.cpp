@@ -112,11 +112,14 @@ void PlayerManager::OnSessionToggle() {
     {
         session = parent->AddComponent<MusicSession>();
         //TODO: Insert player's chosen instrument
-        session->Setup(Prefab::GetInstrument(InstrumentName::Clap));
+        session->Setup(equipment->instruments.empty() ?
+                        Prefab::GetInstrument(InstrumentName::Clap) :
+                        equipment->instruments.begin()->first);
         return;
     }
 
     session->Stop();
+    session.reset();
 }
 
 void PlayerManager::OnSoundPlay(int index) {

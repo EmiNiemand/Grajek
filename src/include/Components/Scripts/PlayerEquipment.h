@@ -9,12 +9,12 @@
 
 class PlayerEquipment : public Component, public IDataPersistance {
 private:
-    std::unordered_map<std::shared_ptr<Instrument>, int> instruments;
-
 	inline static int maxCashReward = 5;
 	inline static int maxRepReward = 10;
 
 public:
+    std::unordered_map<std::shared_ptr<Instrument>, int> instruments;
+
     int cash = 0;
     int rep = 0;
 

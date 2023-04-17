@@ -1,6 +1,8 @@
 #include "Components/Scripts/ShopMenu.h"
+#include "Components/Scripts/PlayerManager.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/UI/Button.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
@@ -37,7 +39,11 @@ void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 void ShopMenu::OnClick() {
+    auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     if (GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>()->isActive) {
-        // TODO buy first instrument
+        if(playerManager->BuyInstrument(10, Prefab::GetInstrument(InstrumentName::Drums)))
+            spdlog::info("[SM] Bought first instrument (percussion)!");
+        else
+            spdlog::info("[SM] Not enough money for first instrument (percussion)");
     }
 }
