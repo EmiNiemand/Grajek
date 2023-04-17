@@ -55,8 +55,17 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 
 #pragma region Interaction Events
 void PlayerManager::OnInteract() {
-	//TODO: Place to plug everything up for Kamil
-    spdlog::info("[PM] Interacting!");
+    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled() && !GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        uiActive = !uiActive;
+
+        if (uiActive) {
+            GloomEngine::GetInstance()->timeScale = 0;
+            shopMenu->ShowMenu();
+        } else {
+            GloomEngine::GetInstance()->timeScale = 1;
+            shopMenu->HideMenu();
+        }
+    }
 }
 #pragma endregion
 
@@ -141,6 +150,9 @@ void PlayerManager::PollInput() {
 	for (auto key : PlayerInput::Menu)
 		if(hid->IsKeyDown(key.first)) OnMenuToggle();
 
+    for (auto key : PlayerInput::Interact)
+        if(hid->IsKeyDown(key.first)) OnInteract();
+
 	if(uiActive) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
@@ -163,8 +175,6 @@ void PlayerManager::PollInput() {
 			readMoveVector.x = key.second == 1 ? 1 : key.second == 3 ? -1 : readMoveVector.x;
 		}
 	}
-	for (auto key : PlayerInput::Interact)
-		if(hid->IsKeyDown(key.first)) OnInteract();
 
     for (auto key: PlayerInput::PlaySound)
         if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
