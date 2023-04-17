@@ -2,6 +2,7 @@
 // Created by masterktos on 30.03.23.
 //
 
+#include "GloomEngine.h"
 #include "Components/Scripts/PlayerManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -24,6 +25,10 @@ void PlayerManager::Start() {
     moveInput = glm::vec2(0);
     inputEnabled = true;
 	uiActive = false;
+
+    pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
+    shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetComponent<ShopMenu>();
 }
 
 void PlayerManager::Update() {
@@ -57,26 +62,38 @@ void PlayerManager::OnInteract() {
 
 #pragma region UI Events
 void PlayerManager::OnMenuToggle() {
-	//TODO: Place to plug everything up for Kamil
-	uiActive = !uiActive;
-    if (uiActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->EnableSelfAndChildren();
-    } else {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->DisableSelfAndChildren();
+    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        uiActive = !uiActive;
+
+        if (uiActive) {
+            GloomEngine::GetInstance()->timeScale = 0;
+            pauseMenu->ShowMenu();
+        } else {
+            GloomEngine::GetInstance()->timeScale = 1;
+            pauseMenu->HideMenu();
+        }
     }
-    spdlog::info("[PM] Menu" + std::string(uiActive?"enabled":"disabled") + "!");
 }
 
 void PlayerManager::OnApply() {
-	if(!uiActive) return;
-
-	//TODO: Place to plug everything up for Kamil
-	spdlog::info("[PM] Applied some option in menu!");
+    if(!uiActive) return;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
+        pauseMenu->OnClick();
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        optionsMenu->OnClick();
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
+        shopMenu->OnClick();
+    }
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
-    //TODO: Place to plug everything up for Kamil
-    spdlog::info("Moving inside UI!");
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
+        pauseMenu->ChangeActiveButton(moveVector);
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+        optionsMenu->ChangeActiveButton(moveVector);
+    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
+        shopMenu->ChangeActiveButton(moveVector);
+    }
 }
 #pragma endregion
 

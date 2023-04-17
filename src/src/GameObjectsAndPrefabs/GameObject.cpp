@@ -82,20 +82,19 @@ void GameObject::ForceUpdateSelfAndChildren() {
 void GameObject::EnableSelfAndChildren() {
     if (enabled) return;
 
-    enabled = true;
+    for (auto&& component : components){
+        component.second->enabled = true;
+    }
     for (auto&& child : children)
     {
         child.second->EnableSelfAndChildren();
     }
-    for (auto&& component : components){
-        component.second->enabled = true;
-    }
+    enabled = true;
 }
 
 void GameObject::DisableSelfAndChildren() {
     if (!enabled) return;
 
-    enabled = false;
     for (auto&& child : children)
     {
         child.second->DisableSelfAndChildren();
@@ -103,6 +102,7 @@ void GameObject::DisableSelfAndChildren() {
     for (auto&& component : components){
         component.second->enabled = false;
     }
+    enabled = false;
 }
 
 int GameObject::GetId() const {
@@ -111,4 +111,8 @@ int GameObject::GetId() const {
 
 const std::string &GameObject::GetName() const {
     return name;
+}
+
+bool GameObject::GetEnabled() const {
+    return enabled;
 }

@@ -33,7 +33,7 @@ public:
     * x from 0 to 1920\n
     * y from 0 to 1080
     */
-    void LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::vec3 color, const std::string& path);
+    void LoadFont(std::string text, float x, float y, FT_UInt fontSize = 18, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), const std::string& path = "Eggnog.ttf");
 
     void Update() override;
 

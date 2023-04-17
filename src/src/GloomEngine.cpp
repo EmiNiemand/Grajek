@@ -23,8 +23,8 @@
 #include <filesystem>
 
 GloomEngine::GloomEngine() {
-    width = 1200;
-    height = 780;
+    width = 1440;
+    height = 810;
 }
 
 GloomEngine::~GloomEngine() = default;

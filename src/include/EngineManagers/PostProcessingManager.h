@@ -41,6 +41,8 @@ public:
     void DrawBuffer();
     void Free() const;
 
+    void WindowResize();
+
 private:
     explicit PostProcessingManager();
 

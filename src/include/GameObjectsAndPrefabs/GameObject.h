@@ -77,6 +77,7 @@ public:
 
     int GetId() const;
     const std::string &GetName() const;
+    bool GetEnabled() const;
 };
 
 

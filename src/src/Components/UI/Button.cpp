@@ -183,46 +183,49 @@ void Button::Draw() {
 
 
     // Render text
-    UIManager::GetInstance()->shader->Activate();
-    UIManager::GetInstance()->shader->SetBool("isText", true);
-    UIManager::GetInstance()->shader->SetVec3("textColor", color);
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(textMesh->vao);
+    if (this->text != "") {
+        UIManager::GetInstance()->shader->Activate();
+        UIManager::GetInstance()->shader->SetBool("isText", true);
+        UIManager::GetInstance()->shader->SetVec3("textColor", color);
+        glActiveTexture(GL_TEXTURE0);
+        glBindVertexArray(textMesh->vao);
 
-    // Iterate through all characters
-    GLfloat x2 = this->x;
-    GLfloat y2 = this->y;
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++)
-    {
-        Character ch = Characters[*c];
+        // Iterate through all characters
+        GLfloat x2 = this->x;
+        GLfloat y2 = this->y;
+        std::string::const_iterator c;
+        for (c = text.begin(); c != text.end(); c++) {
+            Character ch = Characters[*c];
 
-        GLfloat xpos = x2 + ch.Bearing.x;
-        GLfloat ypos = y2 - (ch.Size.y - ch.Bearing.y);
+            GLfloat xpos = x2 + ch.Bearing.x;
+            GLfloat ypos = y2 - (ch.Size.y - ch.Bearing.y);
 
-        GLfloat w = ch.Size.x;
-        GLfloat h = ch.Size.y;
-        // Update VBO for each character
-        this->textMesh->vertices[0].position.x = xpos/960-1;
-        this->textMesh->vertices[0].position.y = (ypos+h)/540-1;
-        this->textMesh->vertices[1].position.x = xpos/960-1;
-        this->textMesh->vertices[1].position.y = ypos/540-1;
-        this->textMesh->vertices[2].position.x = (xpos+w)/960-1;
-        this->textMesh->vertices[2].position.y = (ypos+h)/540-1;
-        this->textMesh->vertices[3].position.x = (xpos+w)/960-1;
-        this->textMesh->vertices[3].position.y = ypos/540-1;
+            GLfloat w = ch.Size.x;
+            GLfloat h = ch.Size.y;
+            // Update VBO for each character
+            this->textMesh->vertices[0].position.x = xpos / 960 - 1;
+            this->textMesh->vertices[0].position.y = (ypos + h) / 540 - 1;
+            this->textMesh->vertices[1].position.x = xpos / 960 - 1;
+            this->textMesh->vertices[1].position.y = ypos / 540 - 1;
+            this->textMesh->vertices[2].position.x = (xpos + w) / 960 - 1;
+            this->textMesh->vertices[2].position.y = (ypos + h) / 540 - 1;
+            this->textMesh->vertices[3].position.x = (xpos + w) / 960 - 1;
+            this->textMesh->vertices[3].position.y = ypos / 540 - 1;
 
-        // Render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // Update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, this->textMesh->GetVBO());
-        glBufferSubData(GL_ARRAY_BUFFER, 0, this->textMesh->vertices.size() * sizeof(Vertex), &this->textMesh->vertices[0]); // Be sure to use glBufferSubData and not glBufferData
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // Render quad
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x2 += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            // Render glyph texture over quad
+            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+            // Update content of VBO memory
+            glBindBuffer(GL_ARRAY_BUFFER, this->textMesh->GetVBO());
+            glBufferSubData(GL_ARRAY_BUFFER, 0, this->textMesh->vertices.size() * sizeof(Vertex),
+                            &this->textMesh->vertices[0]); // Be sure to use glBufferSubData and not glBufferData
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // Render quad
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            x2 += (ch.Advance
+                    >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+        }
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
