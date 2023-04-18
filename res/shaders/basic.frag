@@ -76,6 +76,7 @@ in vec4 FragPosLightSpace;
 
 // UNIFORMS
 // --------
+uniform sampler2D rampTexture;
 uniform sampler2D shadowMap;
 uniform samplerCube skybox;
 uniform sampler2D texture_diffuse[NR_DIFFUSE];

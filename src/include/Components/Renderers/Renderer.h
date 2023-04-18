@@ -20,6 +20,8 @@ public:
     void Draw(std::shared_ptr<Shader> shader) override;
 
     void LoadModel(std::string path);
+
+    int TempBindTexture();
 };
 
 

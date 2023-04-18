@@ -207,15 +207,6 @@ void Game::InitializeGame() {
     lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
     lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
     lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
-    auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
-    portalRadioSound->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
-    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 4.5f});
-    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
-    portalRadioSound->SetMaxDistance(20.0f);
-    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
-    portalRadioSound->IsLooping(true);
-    portalRadioSound->PlaySound();
-
 
 //    std::shared_ptr<GameObject> pub = GameObject::Instantiate("Pub", activeScene);
 //    pub->transform->SetLocalPosition({-10, 0, -20});

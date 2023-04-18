@@ -76,6 +76,7 @@ in vec4 FragPosLightSpace;
 
 // UNIFORMS
 // --------
+uniform sampler2D rampMap;
 uniform sampler2D shadowMap;
 uniform samplerCube skybox;
 uniform sampler2D texture_diffuse[NR_DIFFUSE];
@@ -201,8 +202,13 @@ void main()
         shadowResult = mix(shadowResult, texture(skybox, R).rgb, material.refraction);
     }
 
+    // Map value from [-1, 1] to [0, 1]
+    float rampCoord = dot(V, N) * 0.5 + 0.5;
+
+    vec4 ramp = texture2D(rampMap, vec2(rampCoord, 0.5f));
+
     textureColor = vec4(result, 1.0f);
-    screenTexture = vec4(shadowResult, 1.0f);
+    screenTexture =  ramp * vec4(shadowResult, 1.0f);
 }
 
 // LIGHT FUNCTIONS
