@@ -6,8 +6,9 @@ PlayerEquipment::PlayerEquipment(const std::shared_ptr<GameObject> &parent, int 
 
 PlayerEquipment::~PlayerEquipment() = default;
 
-void PlayerEquipment::Setup() {
-
+void PlayerEquipment::Setup(int startCash, int startRep) {
+    cash = startCash;
+    rep = startRep;
 }
 
 bool PlayerEquipment::BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument) {

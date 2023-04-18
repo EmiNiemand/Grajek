@@ -20,7 +20,10 @@ void PlayerManager::Start() {
     Component::Start();
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
+    equipment->Setup(5, 10);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
+    playerUI->UpdateCash(equipment->GetCash());
+    playerUI->UpdateRep(equipment->GetRep());
 
     moveInput = glm::vec2(0);
     inputEnabled = true;

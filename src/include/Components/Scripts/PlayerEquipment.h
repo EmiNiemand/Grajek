@@ -21,7 +21,7 @@ public:
     PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerEquipment() override;
 
-    void Setup();
+    void Setup(int startCash=0, int startRep=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
     void AddReward(float crowdSatisfaction);
