@@ -12,6 +12,7 @@ AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, int id) : Co
 AudioSource::~AudioSource() = default;
 
 void AudioSource::Start() {
+    AudioManager::GetInstance()->audioSources.insert({id, std::dynamic_pointer_cast<AudioSource>(shared_from_this())});
     playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::Start();
 }
@@ -57,8 +58,10 @@ void AudioSource::OnUpdate() {
 }
 
 void AudioSource::Free() {
-    alDeleteSources(1, &sourceId);
+    alSourceStop(sourceId);
+    alSourcei(sourceId, AL_BUFFER, NULL);
     alDeleteBuffers(1, &bufferId);
+    alDeleteSources(1, &sourceId);
 }
 
 // Loads audio. Requires path to file and sound type.
@@ -143,7 +146,12 @@ void AudioSource::SetPitch(float val) const {
 // Sets audio gain. Type: flaot [0.0 - x], default 1.0.
 // Each division/multiply by 2 results in -6/+6 dB
 void AudioSource::SetGain(float val) {
-    gain = val;
+    if (val < 0.0f) {
+        gain = 0.0f;
+    } else {
+        gain = val;
+    }
+
     alSourcef(sourceId, AL_GAIN, val);
 }
 

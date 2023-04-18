@@ -37,10 +37,23 @@ void AudioListener::OnCreate() {
     Component::OnCreate();
 }
 
+// Maybe will be used in future
+void AudioListener::Free() { }
+
 // Sets player audio gain. Type: float, default 1.0f
 void AudioListener::SetGain(float val) {
-    gain = val;
+    if (val < 0.0f) {
+        gain = 0.0f;
+    } else {
+        gain = val;
+    }
+
     alListenerf(AL_GAIN, gain);
+}
+
+// Return current gain value
+const float AudioListener::GetGain() const {
+    return gain;
 }
 
 // Sets player audio velocity. Type: glm::vec3.
@@ -50,6 +63,4 @@ void AudioListener::SetVelocity(glm::vec3 vel) {
     alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
 
-float AudioListener::GetGain() {
-    return gain;
-}
+

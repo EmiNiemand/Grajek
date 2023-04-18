@@ -35,7 +35,7 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
 
         stbi_image_free(data);
     } else {
-        spdlog::info("Texture failed to load at path: ", path);
+        spdlog::info("Texture failed to load at path: " + (std::string)path);
         stbi_image_free(data);
     }
     return textureID;
