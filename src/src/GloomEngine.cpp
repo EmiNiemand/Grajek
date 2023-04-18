@@ -46,9 +46,7 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
-    // Load game
-    std::filesystem::path path = std::filesystem::current_path();
-    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
+
 }
 
 void GloomEngine::Awake() {
@@ -62,9 +60,15 @@ void GloomEngine::Start() {
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
 
+    // Load game
+    std::filesystem::path path = std::filesystem::current_path();
+    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
+
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
     lastAIFrameTime = (float)glfwGetTime();
+
+
 }
 
 bool GloomEngine::MainLoop() {
@@ -76,7 +80,6 @@ bool GloomEngine::MainLoop() {
     int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
-        glfwMakeContextCurrent(window);
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
 
         Update();
