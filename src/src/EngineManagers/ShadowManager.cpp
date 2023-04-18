@@ -70,3 +70,7 @@ void ShadowManager::PrepareShadow() {
     glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void ShadowManager::Free() const {
+    shadowShader->Delete();
+}

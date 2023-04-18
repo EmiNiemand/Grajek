@@ -77,7 +77,6 @@ bool GloomEngine::MainLoop() {
     int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
-        glfwMakeContextCurrent(window);
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
 
         Update();
@@ -177,7 +176,12 @@ void GloomEngine::AIUpdate() {
 void GloomEngine::Free() const {
     ColliderManager::GetInstance()->Free();
     RendererManager::GetInstance()->Free();
+    AudioManager::GetInstance()->Free();
+    DebugManager::GetInstance()->Free();
+    PostProcessingManager::GetInstance()->Free();
+    ShadowManager::GetInstance()->Free();
     SceneManager::GetInstance()->Free();
+    UIManager::GetInstance()->Free();
     glfwDestroyWindow(window);
     glfwTerminate();
 }

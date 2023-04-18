@@ -26,6 +26,7 @@ public:
 
     void PrepareShadow();
 
+    void Free() const;
 private:
     ShadowManager();
 };
