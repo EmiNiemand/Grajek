@@ -63,10 +63,13 @@ void AudioSource::Free() {
     alDeleteSources(1, &sourceId);
 }
 
-// Loads audio. Requires path to file and sound type.
-// NOTE: type is either placed in res/sounds as a Sound or in /res/music as a Music.
-// Sound offers 3D positioning and should be a Mono format.
-// Music DOES NOT offer 3D positioning and should be a Stereo format.
+/**
+ * @annotation
+ * Loads audio. Requires path to file and sound type. NOTE: types are either placed in res/sounds/direct or
+ * res/sounds/positional (indicating their purpose).
+ * @param path - path to .wav file
+ * @param type - Positional or Direct
+ */
 void AudioSource::LoadAudioData(const char* path, AudioType type) {
     std::unique_ptr<AudioLoader> loader = std::make_unique<AudioLoader>();
 
@@ -94,56 +97,79 @@ void AudioSource::LoadAudioData(const char* path, AudioType type) {
     alSourcei(sourceId, AL_BUFFER, bufferId);
 }
 
-// Plays the sound only if it is not currently playing
+/**
+ * @annotation
+ * Plays the sound only if it is not currently playing.
+ */
 void AudioSource::PlaySound() const {
     if (currentState != AL_PLAYING) {
         alSourcePlay(sourceId);
     }
 }
 
-// Force plays the sound
+/**
+ * @annotation
+ * Plays the sound despite its current status.
+ */
 void AudioSource::ForcePlaySound() const {
     alSourcePlay(sourceId);
 }
 
-// Pauses the sound
+/**
+ * @annotation
+ * Pauses the sound.
+ */
 void AudioSource::PauseSound() const {
     if (currentState == AL_PLAYING) {
         alSourcePause(sourceId);
     }
 }
 
-// Stops the sound (useful for resets)
+/**
+ * @annotation
+ * Stops the sound.
+ */
 void AudioSource::StopSound() const {
     if (currentState == AL_PLAYING) {
         alSourceStop(sourceId);
     }
 }
 
-// Sets offset which will be added to the current
-// position. Type: glm::vec3, default {0, 0, 0}
+/**
+ * @annotation
+ * Sets position offset.
+ * @param offset - vector3 added to position, default {0}
+ */
 void AudioSource::SetPositionOffset(glm::vec3 offset) {
     positionOffset = offset;
     position += positionOffset;
     alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
 }
 
-// Sets audio distance mode. 
-// If set to Paused, audio will be paused
-// until player is again in audio range.
-// If set to Continuous, audio will still play with 0 volume
-// until player is again in audio range.
+/**
+ * @annotation
+ * Sets audio distance mode. For Paused, audio will be paused until player is again in audio range. For Continuous,
+ * audio will still play with zero volume until player is again in audio range.
+ * @param mode - Paused or Continuous, default Continuous
+ */
 void AudioSource::SetDistanceMode(AudioDistanceMode mode) {
     distanceMode = mode;
 }
 
-// Sets audio pitch. Type: flaot [0.5 - 2.0], default 1.0
+/**
+ * @annotation
+ * Sets audio pitch.
+ * @param val - [0.5 - 2.0], default 1.0
+ */
 void AudioSource::SetPitch(float val) const {
     alSourcef(sourceId, AL_PITCH, val);
 }
 
-// Sets audio gain. Type: flaot [0.0 - x], default 1.0.
-// Each division/multiply by 2 results in -6/+6 dB
+/**
+ * @annotation
+ * Sets audio gain. Each division/multiply by 2 results in -6/+6 dB.
+ * @param val - [0.0 - x], default 1.0.
+ */
 void AudioSource::SetGain(float val) {
     if (val < 0.0f) {
         gain = 0.0f;
@@ -154,40 +180,59 @@ void AudioSource::SetGain(float val) {
     alSourcef(sourceId, AL_GAIN, val);
 }
 
-// Sets audio velocity. Type: glm::vec3, default {0, 0, 0}
-// Used in calculating doppler shift (moving objects emitting sound)
+/**
+ * @annotation
+ * Sets audio velocity. Used in calculating doppler shift (moving objects emitting sound).
+ * @param velocity - vector3, default {0}
+ */
 void AudioSource::SetVelocity(glm::vec3 velocity) const {
     alSource3f(sourceId, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
 
-// Sets max distance for playing audio. Type: float, default 0.0f
+/**
+ * @annotation
+ * Sets max distance for playing audio. Audio volume will be adjusted to better suit new distance
+ * for more realistic effect.
+ * @param val - [0.0f - x], default 0.0f
+ */
 void AudioSource::SetMaxDistance(float val) {
     maxDistance = val;
 
-    if (val == 0.0f) {
+    if (maxDistance == 0.0f) {
         alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
         alSourcef(sourceId, AL_MAX_DISTANCE, maxDistance);
-    } else {
+    } else if (maxDistance > 0.0f) {
         alSourcef(sourceId, AL_ROLLOFF_FACTOR,
                   gain * (maxDistance * 2.0f) / (1.5f + gain * 2.0f));
         alSourcef(sourceId, AL_MAX_DISTANCE, maxDistance);
     }
 }
 
-// Sets audio looping state. Type: bool, default false
+/**
+ * @annotation
+ * Sets audio looping state.
+ * @param state - true or false, default false
+ */
 void AudioSource::IsLooping(bool state) const {
     alSourcei(sourceId, AL_LOOPING, state);
 }
 
+/**
+ * @annotation
+ * Sets the target moving state. If set to true, then the position will be updated every time target moves.
+ * @param state - true or false, default false
+ */
 // Sets if the target will be moving. If set to true, then the position
-// will be updated every time target moves. Type: bool, default false
 void AudioSource::IsMoving(bool state) {
     isMovingTarget = state;
 }
 
-// Sets audio cone settings. Type: glm::vec3.
-// First is a sound direction, second are cone settings (inner angle, outer angle).
-// NOTE: Outer angle is basically 360.0f - Inner angle.
+/**
+ * @annotation
+ * Sets audio cone settings.
+ * @param direction - vector3, sound direction
+ * @param cone - vector2, inner angle and outer angle
+ */
 void AudioSource::SetCone(glm::vec3 direction, glm::vec2 cone) const {
     alSource3f(sourceId, AL_DIRECTION, direction.x, direction.y, direction.z);
     alSourcef(sourceId, AL_CONE_INNER_ANGLE, cone.x);
