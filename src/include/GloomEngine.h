@@ -73,6 +73,12 @@ public:
     /// set to 0 to pause, 1 to resume
     float timeScale = 1;
 
+#ifdef DEBUG
+    // Timers for Engine
+    float engineDeltaTime = 0.0f;
+    float lastEngineDeltaTime = 0.0f;
+#endif
+
     // Timers for update
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;

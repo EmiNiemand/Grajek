@@ -112,6 +112,11 @@ bool GloomEngine::MainLoop() {
         lastAIFrameTime = currentTime;
     }
 
+#ifdef DEBUG
+    engineDeltaTime = (currentTime - lastEngineDeltaTime);
+    lastEngineDeltaTime = currentTime;
+#endif
+
     bool endGame = game->GameLoop();
 
 //  Save game on quit
@@ -149,12 +154,16 @@ void GloomEngine::Update() {
     PostProcessingManager::GetInstance()->DrawBuffer();
 
     glEnable(GL_DEPTH_TEST);
+    
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
-    DebugManager::GetInstance()->Render();
 #endif
 
     UIManager::GetInstance()->DrawUI();
+
+#ifdef DEBUG
+    DebugManager::GetInstance()->Render();
+#endif
 
     HIDManager::GetInstance()->ManageInput();
 }
@@ -177,10 +186,11 @@ void GloomEngine::Free() const {
     ColliderManager::GetInstance()->Free();
     RendererManager::GetInstance()->Free();
     AudioManager::GetInstance()->Free();
-    PostProcessingManager::GetInstance()->Free();
     ShadowManager::GetInstance()->Free();
-    SceneManager::GetInstance()->Free();
+    PostProcessingManager::GetInstance()->Free();
     UIManager::GetInstance()->Free();
+    DebugManager::GetInstance()->Free();
+    SceneManager::GetInstance()->Free();
     glfwDestroyWindow(window);
     glfwTerminate();
 }
