@@ -11,6 +11,9 @@
 
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
+    shader1 = std::make_shared<Shader>("rim.vert", "rim.frag");
+    shader2 = std::make_shared<Shader>("ramp.vert", "ramp.frag");
+    shader3 = std::make_shared<Shader>("shader4.vert", "shader4.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
     projection = glm::perspective(glm::radians(45.0f),
                                   (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,

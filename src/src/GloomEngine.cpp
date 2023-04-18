@@ -77,6 +77,7 @@ bool GloomEngine::MainLoop() {
     int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
+        i = 0;
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
 
         Update();

@@ -29,6 +29,9 @@ public:
     std::vector<std::shared_ptr<Drawable>> drawBuffer;
 
     std::shared_ptr<Shader> shader;
+    std::shared_ptr<Shader> shader1;
+    std::shared_ptr<Shader> shader2;
+    std::shared_ptr<Shader> shader3;
     std::shared_ptr<Shader> cubeMapShader;
 
 public:
