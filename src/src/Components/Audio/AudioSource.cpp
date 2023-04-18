@@ -12,7 +12,6 @@ AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, int id) : Co
 AudioSource::~AudioSource() = default;
 
 void AudioSource::Start() {
-    AudioManager::GetInstance()->audioSources.insert({id, std::dynamic_pointer_cast<AudioSource>(shared_from_this())});
     playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::Start();
 }
