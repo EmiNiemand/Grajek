@@ -42,10 +42,12 @@ unsigned int AnimationModel::TextureFromFile(const char *path, const std::string
 
 AnimationModel::AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma) : shader(shader),  type(type), gammaCorrection(gamma)
 {
+    boneInfoMap.reserve(100);
     LoadModel(path);
 }
 
-AnimationModel::AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
+AnimationModel::AnimationModel(const Mesh& mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
+    boneInfoMap.reserve(100);
     meshes.push_back(mesh);
 }
 

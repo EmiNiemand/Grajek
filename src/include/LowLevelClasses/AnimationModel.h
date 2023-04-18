@@ -9,7 +9,7 @@
 #include "assimp/scene.h"
 #include<glm/gtc/quaternion.hpp>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 struct BoneInfo
 {
@@ -23,7 +23,7 @@ struct BoneInfo
 class AnimationModel
 {
 private:
-    std::map<std::string, BoneInfo> boneInfoMap;
+    std::unordered_map<std::string, BoneInfo> boneInfoMap;
     uint16_t boneCounter = 0;
 
     // model data
@@ -33,14 +33,14 @@ private:
     std::shared_ptr<Shader> shader;
 	// GL_TRIANGLES etc
     int type;
-    bool gammaCorrection;
+    bool gammaCorrection = false;
 
 public:
     AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES, bool gamma = false);
-    AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
+    AnimationModel(const Mesh& mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
     void Draw();
     void Draw(std::shared_ptr<Shader> useShader);
-    auto& GetBoneInfoMap() { return boneInfoMap; }
+    std::unordered_map<std::string, BoneInfo>& GetBoneInfoMap() { return boneInfoMap; }
     uint16_t& GetBoneCount() { return boneCounter; }
 
 private:
