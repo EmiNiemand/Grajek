@@ -177,7 +177,6 @@ void GloomEngine::Free() const {
     ColliderManager::GetInstance()->Free();
     RendererManager::GetInstance()->Free();
     AudioManager::GetInstance()->Free();
-    DebugManager::GetInstance()->Free();
     PostProcessingManager::GetInstance()->Free();
     ShadowManager::GetInstance()->Free();
     SceneManager::GetInstance()->Free();
