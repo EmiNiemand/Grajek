@@ -6,7 +6,6 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Model.h"
 #include <filesystem>
-#include <iostream>
 
 /**
  * @attention Remember to call LoadModel if you want model to actually display
@@ -27,7 +26,6 @@ void Renderer::Draw() {
     std::shared_ptr<Shader> shader;
     if (parent->GetName() == "House" || parent->GetName() == "House1" || parent->GetName() == "House2" || parent->GetName() == "House3") {
         if (GloomEngine::GetInstance()->i == 0) {
-            std::cout << "aaaaaaa" << std::endl;
             shader = RendererManager::GetInstance()->shader;
             shader->Activate();
             shader->SetMat4("model", parent->transform->GetModelMatrix());
@@ -36,7 +34,6 @@ void Renderer::Draw() {
             shader->SetFloat("material.reflection", material.reflection);
             shader->SetFloat("material.refraction", material.refraction);
         } else if (GloomEngine::GetInstance()->i == 1) {
-            std::cout << "bbbbbbbb" << std::endl;
             shader = RendererManager::GetInstance()->shader1;
             shader->Activate();
             shader->SetMat4("model", parent->transform->GetModelMatrix());
@@ -45,7 +42,6 @@ void Renderer::Draw() {
             shader->SetFloat("material.reflection", material.reflection);
             shader->SetFloat("material.refraction", material.refraction);
         } else if (GloomEngine::GetInstance()->i == 2) {
-            std::cout << "cccccccc" << std::endl;
             shader = RendererManager::GetInstance()->shader2;
             shader->Activate();
             shader->SetMat4("model", parent->transform->GetModelMatrix());
@@ -54,7 +50,6 @@ void Renderer::Draw() {
             shader->SetFloat("material.reflection", material.reflection);
             shader->SetFloat("material.refraction", material.refraction);
         } else if (GloomEngine::GetInstance()->i == 3) {
-            std::cout << "dddddddddddd" << std::endl << std::endl;
             shader = RendererManager::GetInstance()->shader3;
             shader->Activate();
             shader->SetMat4("model", parent->transform->GetModelMatrix());

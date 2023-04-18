@@ -31,6 +31,9 @@ RendererManager* RendererManager::GetInstance() {
 
 void RendererManager::Free() const {
     shader->Delete();
+    shader1->Delete();
+    shader2->Delete();
+    shader3->Delete();
     cubeMapShader->Delete();
 }
 
@@ -49,6 +52,15 @@ void RendererManager::UpdateProjection() const {
     shader->Activate();
     shader->SetMat4("projection", projection);
 
+    shader1->Activate();
+    shader1->SetMat4("projection", projection);
+
+    shader2->Activate();
+    shader2->SetMat4("projection", projection);
+
+    shader3->Activate();
+    shader3->SetMat4("projection", projection);
+
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("projection", projection);
 
@@ -58,6 +70,18 @@ void RendererManager::UpdateCamera() const {
     shader->Activate();
     shader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
+
+    shader1->Activate();
+    shader1->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
+    shader1->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
+
+    shader2->Activate();
+    shader2->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
+    shader2->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
+
+    shader3->Activate();
+    shader3->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
+    shader3->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("view", glm::mat4(glm::mat3(Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix())));
@@ -74,6 +98,9 @@ void RendererManager::UpdateLight(int componentId) {
     for (int i = 0; i < directionalLights.size(); i++) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
             UpdateDirectionalLight(i, shader);
+            UpdateDirectionalLight(i, shader1);
+            UpdateDirectionalLight(i, shader2);
+            UpdateDirectionalLight(i, shader3);
             return;
         }
     }

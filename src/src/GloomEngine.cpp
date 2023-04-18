@@ -139,15 +139,15 @@ void GloomEngine::Update() {
     glViewport(0, 0, width, height);
 
     // Prepare texture framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
+//    glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+//
     glBindTexture(GL_TEXTURE_2D,  ShadowManager::GetInstance()->depthMap);
     RendererManager::GetInstance()->DrawObjects();
+//
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    PostProcessingManager::GetInstance()->DrawBuffer();
+//    PostProcessingManager::GetInstance()->DrawBuffer();
 
     glEnable(GL_DEPTH_TEST);
 #ifdef DEBUG
