@@ -112,16 +112,13 @@ bool GloomEngine::MainLoop() {
         lastAIFrameTime = currentTime;
     }
 
-
-
-
     bool endGame = game->GameLoop();
 
-    // Save game on quit
-//    if (glfwWindowShouldClose(window) || endGame) {
-//        std::filesystem::path path = std::filesystem::current_path();
-//        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
-//    }
+//  Save game on quit
+    if (glfwWindowShouldClose(window) || endGame) {
+        std::filesystem::path path = std::filesystem::current_path();
+        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
+    }
     return glfwWindowShouldClose(window) || endGame;
 }
 

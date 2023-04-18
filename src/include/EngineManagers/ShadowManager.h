@@ -14,8 +14,7 @@ public:
     unsigned int depthMapFBO;
     unsigned int depthMap;
 
-    unsigned int shadowWidth = 2048;
-    unsigned int shadowHeight = 2048;
+    unsigned int shadowResolution = 2048;
     float nearPlane = 1.0f, farPlane = 60.0f;
 
 public:
