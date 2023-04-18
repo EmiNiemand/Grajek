@@ -46,9 +46,6 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
-    // Load game
-    std::filesystem::path path = std::filesystem::current_path();
-    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
 }
 
 void GloomEngine::Awake() {
@@ -61,6 +58,10 @@ void GloomEngine::Start() {
     for (auto&& component : components){
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
+
+    // Load game
+    std::filesystem::path path = std::filesystem::current_path();
+    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
 
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
