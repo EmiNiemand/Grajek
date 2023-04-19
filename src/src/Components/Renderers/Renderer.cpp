@@ -46,11 +46,10 @@ void Renderer::Draw() {
             shader = RendererManager::GetInstance()->shader2;
             shader->Activate();
             shader->SetMat4("model", parent->transform->GetModelMatrix());
-            shader->SetVec3("material.color", material.color);
-            shader->SetFloat("material.shininess", material.shininess);
-            shader->SetFloat("material.reflection", material.reflection);
-            shader->SetFloat("material.refraction", material.refraction);
-            shader->SetInt("rampMap", TempBindTexture());
+            int tex = TempBindTexture();
+            glActiveTexture(GL_TEXTURE8);
+            glBindTexture(GL_TEXTURE_2D, tex);
+            shader->SetInt("rampMap", 8);
         } else if (GloomEngine::GetInstance()->i == 3) {
             shader = RendererManager::GetInstance()->shader3;
             shader->Activate();

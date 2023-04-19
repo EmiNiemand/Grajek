@@ -144,9 +144,8 @@ void GloomEngine::Update() {
 //
     glBindTexture(GL_TEXTURE_2D,  ShadowManager::GetInstance()->depthMap);
     RendererManager::GetInstance()->DrawObjects();
-//
 //    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+//
 //    PostProcessingManager::GetInstance()->DrawBuffer();
 
     glEnable(GL_DEPTH_TEST);
