@@ -11,8 +11,7 @@
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
-#include "Components/Scripts/SessionStarter.h"
-#include "spdlog/spdlog.h"
+#include "Components/UI/Button.h"
 
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
@@ -24,6 +23,8 @@ void PlayerManager::Start() {
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
     playerUI->UpdateRep(equipment->GetRep());
+    sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
+    GameObject::Instantiate("SessionUI", parent);
 
     moveInput = glm::vec2(0);
     inputEnabled = true;
@@ -33,6 +34,8 @@ void PlayerManager::Start() {
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetComponent<ShopMenu>();
+
+    BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
     Component::Start();
 }
 
@@ -60,16 +63,16 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 
 #pragma region Interaction Events
 void PlayerManager::OnInteract() {
-    if (!pauseActive && !GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
-        uiActive = !uiActive;
+    if (pauseActive) return;
+    if (uiActive && !GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) return;
+    uiActive = !uiActive;
 
-        if (uiActive) {
-            GloomEngine::GetInstance()->timeScale = 0;
-            shopMenu->ShowMenu();
-        } else {
-            GloomEngine::GetInstance()->timeScale = 1;
-            shopMenu->HideMenu();
-        }
+    if (uiActive) {
+        GloomEngine::GetInstance()->timeScale = 0;
+        shopMenu->ShowMenu();
+    } else {
+        GloomEngine::GetInstance()->timeScale = 1;
+        shopMenu->HideMenu();
     }
 }
 #pragma endregion
@@ -97,6 +100,8 @@ void PlayerManager::OnApply() {
         optionsMenu->OnClick();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
         shopMenu->OnClick();
+    } else if (sessionStarter) {
+        sessionStarter->OnClick();
     }
 }
 
@@ -107,25 +112,32 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
         optionsMenu->ChangeActiveButton(moveVector);
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
         shopMenu->ChangeActiveButton(moveVector);
+    } else if (sessionStarter) {
+        sessionStarter->ChangeActiveButton(moveVector);
     }
 }
 #pragma endregion
 
 #pragma region Music Session Events
 void PlayerManager::OnSessionToggle() {
-    if(!session)
-    {
-        session = parent->AddComponent<MusicSession>();
-
-        //TODO: Insert player's chosen instrument
-        session->Setup(equipment->instruments.empty() ?
-                        Prefab::GetInstrument(InstrumentName::Clap) :
-                        equipment->instruments.begin()->first);
+    if (session) {
+        uiActive = false;
+        session->Stop();
+        session.reset();
+        return;
+    }
+    if (sessionStarter) {
+        uiActive = false;
+        sessionStarter->Stop();
+        sessionStarter.reset();
+        GloomEngine::GetInstance()->timeScale = 1;
         return;
     }
 
-    session->Stop();
-    session.reset();
+    uiActive = true;
+    GloomEngine::GetInstance()->timeScale = 0;
+    sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
+    sessionStarter->Setup(equipment->instruments);
 }
 
 void PlayerManager::OnSoundPlay(int index) {
@@ -146,6 +158,14 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     playerUI->UpdateRep(equipment->rep);
 }
 
+void PlayerManager::CreateMusicSession(std::shared_ptr<Instrument> instrument) {
+    GloomEngine::GetInstance()->timeScale = 1;
+    sessionStarter->Stop();
+    sessionStarter.reset();
+    session = parent->AddComponent<MusicSession>();
+    session->Setup(std::move(instrument));
+}
+
 #pragma endregion
 
 void PlayerManager::PollInput() {
@@ -162,7 +182,7 @@ void PlayerManager::PollInput() {
     for (auto key : PlayerInput::Interact)
         if(hid->IsKeyDown(key.first)) OnInteract();
 
-	if(uiActive || pauseActive) {
+	if((uiActive || pauseActive) && !session) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
 				readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;

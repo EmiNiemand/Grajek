@@ -15,6 +15,7 @@
 #include "glm/vec2.hpp"
 #include "SessionUI.h"
 #include "MusicSession.h"
+#include "SessionStarter.h"
 
 class PlayerManager : public Component {
 private:
@@ -22,6 +23,8 @@ private:
 //    PlayerCamera camera;
     std::shared_ptr<PlayerUI> playerUI;
     std::shared_ptr<MusicSession> session;
+    std::shared_ptr<SessionStarter> sessionStarter;
+    std::shared_ptr<GameObject> sessionStarterUI;
 //    PlayerCollider collider;
     std::shared_ptr<PlayerEquipment> equipment;
     std::shared_ptr<PauseMenu> pauseMenu;
@@ -61,6 +64,7 @@ public:
     //Session methods
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
+    void CreateMusicSession(std::shared_ptr<Instrument> instrument);
 };
 
 

@@ -42,12 +42,12 @@ std::shared_ptr<GameObject> Menu::AddText(std::string name, std::string text, in
 }
 
 std::shared_ptr<GameObject> Menu::AddButton(std::string name, int x, int y, const std::string &pathInactive, const std::string &pathActive,
-                     std::string text, FT_UInt fontSize, glm::vec3 color, const std::string &path) {
+                     std::string text, FT_UInt fontSize, glm::vec3 color, const std::string &fontPath) {
     std::shared_ptr<GameObject> button = GameObject::Instantiate(name, parent);
     button->AddComponent<Button>();
     button->GetComponent<Button>()->LoadTexture(x, y, pathInactive, pathActive);
     if (text != "") {
-        button->GetComponent<Button>()->LoadFont(text, fontSize, color, path);
+        button->GetComponent<Button>()->LoadFont(text, fontSize, color, fontPath);
     }
     return button;
 }
