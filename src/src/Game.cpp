@@ -169,45 +169,45 @@ void Game::InitializeGame() {
     shop->DisableSelfAndChildren();
 
 
-    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-    sphere->transform->SetLocalPosition({-5, 2, 0});
-    sphere->transform->SetLocalScale({2, 2, 2});
-    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-    rSphere->material.refraction = 1.0f;
+//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+//    sphere->transform->SetLocalPosition({-5, 2, 0});
+//    sphere->transform->SetLocalScale({2, 2, 2});
+//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+//    rSphere->material.refraction = 1.0f;
 
     std::shared_ptr<GameObject> lowPolyHouse1 = GameObject::Instantiate("House", activeScene);
-    lowPolyHouse1->transform->SetLocalPosition({-15, 0, -20});
+    lowPolyHouse1->transform->SetLocalPosition({0, 2, -20});
     lowPolyHouse1->transform->SetLocalRotation({0, -110, 0});
-    lowPolyHouse1->transform->SetLocalScale({1.5, 1.5, 2});
-    lowPolyHouse1->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+    lowPolyHouse1->transform->SetLocalScale({1, 1, 1});
+    lowPolyHouse1->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
     lowPolyHouse1->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-    lowPolyHouse1->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+    lowPolyHouse1->GetComponent<BoxCollider>()->SetSize({1, 1, 1});
 
     std::shared_ptr<GameObject> lowPolyHouse2 = GameObject::Instantiate("House", activeScene);
-    lowPolyHouse2->transform->SetLocalPosition({-5, 0, -20});
+    lowPolyHouse2->transform->SetLocalPosition({-5, 2, -20});
     lowPolyHouse2->transform->SetLocalRotation({0, -110, 0});
-    lowPolyHouse2->transform->SetLocalScale({1.5, 1.5, 2});
-    lowPolyHouse2->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+    lowPolyHouse2->transform->SetLocalScale({1, 1, 1});
+    lowPolyHouse2->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
     lowPolyHouse2->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-    lowPolyHouse2->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+    lowPolyHouse2->GetComponent<BoxCollider>()->SetSize({1, 1, 1});
 
     std::shared_ptr<GameObject> lowPolyHouse3 = GameObject::Instantiate("House", activeScene);
-    lowPolyHouse3->transform->SetLocalPosition({5, 0, -20});
+    lowPolyHouse3->transform->SetLocalPosition({10, 2, -20});
     lowPolyHouse3->transform->SetLocalRotation({0, -110, 0});
-    lowPolyHouse3->transform->SetLocalScale({1.5, 1.5, 2});
-    lowPolyHouse3->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+    lowPolyHouse3->transform->SetLocalScale({1, 1, 1});
+    lowPolyHouse3->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
     lowPolyHouse3->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-    lowPolyHouse3->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+    lowPolyHouse3->GetComponent<BoxCollider>()->SetSize({1, 1, 1});
 
     std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
-    lowPolyHouse->transform->SetLocalPosition({15, 0, -20});
+    lowPolyHouse->transform->SetLocalPosition({5, 2, -20});
     lowPolyHouse->transform->SetLocalRotation({0, -110, 0});
-    lowPolyHouse->transform->SetLocalScale({1.5, 1.5, 2});
-    lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+    lowPolyHouse->transform->SetLocalScale({1, 1, 1});
+    lowPolyHouse->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
     lowPolyHouse->GetComponent<Renderer>()->material.refraction = 1.0f;
     lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({1, 1, 1});
 
 //    std::shared_ptr<GameObject> pub = GameObject::Instantiate("Pub", activeScene);
 //    pub->transform->SetLocalPosition({-10, 0, -20});
