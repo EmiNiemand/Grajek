@@ -132,74 +132,18 @@ void main()
         }
     }
 
-    // phase 2: point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++){
-        if(pointLights[i].isActive){
-            lightSettings = CalculatePointLight(pointLights[i], N, FragPos, V);
-            result += lightSettings[0] + lightSettings[1] + lightSettings[2];
-            shadowResult += lightSettings[0] + (1 - shadow) * (lightSettings[1] + lightSettings[2]);
-        }
-    }
-
-    // phase 3: spot lights
-    for(int i = 0; i < NR_SPOT_LIGHTS; i++){
-        if(spotLights[i].isActive){
-            lightSettings = CalculateSpotLight(spotLights[i], N, FragPos, V);
-            result += lightSettings[0] + lightSettings[1] + lightSettings[2];
-            shadowResult += lightSettings[0] + (1 - shadow) * (lightSettings[1] + lightSettings[2]);
-        }
-    }
     result = result * material.color;
     shadowResult = shadowResult * material.color;
 
-    //cel shading
-    float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
 
-    if (intensity > 0.9) {
-        intensity = 0.8;
-    }
-    else if (intensity > 0.7) {
-        intensity = 0.65;
-    }
-    else if (intensity > 0.5) {
-        intensity = 0.50;
-    }
-    else if (intensity > 0.3) {
-        intensity = 0.35;
-    }
-    else if (intensity > 0.01) {
-        intensity = 0.20;
-    }
-    else {
-        intensity = 0.0;
-    }
-
-
-    vec3 celColor = vec3(intensity, intensity, intensity);
-
-    result = result + result * celColor;
-    shadowResult = shadowResult + shadowResult * celColor;
 
     //     rim light
-    float rimLight = pow(max(0, (1 - dot(normalize(viewPos), N))), 1.5);
+    float rimLight = pow(1 - dot(normalize(viewPos), N), 4.0);
 
     result = result + result * rimLight;
     shadowResult = shadowResult + shadowResult * rimLight;
 
-    if(material.reflection > 0.001) {
-        vec3 I = -V;
-        vec3 R = reflect(I, N);
-        result = mix(result, texture(skybox, R).rgb, material.reflection);
-        shadowResult = mix(shadowResult, texture(skybox, R).rgb, material.reflection);
-    }
-    if(material.refraction > 0.001) {
-        // How much light bends
-        float ratio = 1.00 / 1.52;
-        vec3 I = -V;
-        vec3 R = refract(I, N, ratio);
-        result = mix(result, texture(skybox, R).rgb, material.refraction);
-        shadowResult = mix(shadowResult, texture(skybox, R).rgb, material.refraction);
-    }
+    shadowResult = vec3(rimLight, rimLight, rimLight);
 
     textureColor = vec4(result, 1.0f);
     screenTexture = vec4(shadowResult, 1.0f);
@@ -221,58 +165,6 @@ vec3[3] CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 view
     vec3 ambient = light.ambient * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
     vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
     vec3 specular = light.specular * spec * vec3(texture(texture_specular[0], TexCoords)) * light.color;
-    vec3[3] lightSettings = {ambient, diffuse, specular};
-    return lightSettings;
-}
-
-// calculates the color when using a point light.
-vec3[3] CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-{
-    vec3 lightDir = normalize(light.position - fragPos);
-    // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
-    // specular shading
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    // attenuation
-    float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    // combine results
-    // TODO: will not work for multiple textures
-    vec3 ambient = light.ambient * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
-    vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
-    vec3 specular = light.specular * spec * vec3(texture(texture_specular[0], TexCoords)) * light.color;
-    ambient *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
-    vec3[3] lightSettings = {ambient, diffuse, specular};
-    return lightSettings;
-}
-
-// calculates the color when using a spot light.
-vec3[3] CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-{
-    vec3 lightDir = normalize(light.position - fragPos);
-    // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
-    // specular shading
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    // attenuation
-    float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    // spotlight intensity
-    float theta = dot(lightDir, normalize(-light.direction));
-    float epsilon = light.cutOff - light.outerCutOff;
-    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-    // combine results
-    // TODO: will not work for multiple textures
-    vec3 ambient = light.ambient * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
-    vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse[0], TexCoords)) * light.color;
-    vec3 specular = light.specular * spec * vec3(texture(texture_specular[0], TexCoords)) * light.color;
-    ambient *= attenuation * intensity;
-    diffuse *= attenuation * intensity;
-    specular *= attenuation * intensity;
     vec3[3] lightSettings = {ambient, diffuse, specular};
     return lightSettings;
 }
