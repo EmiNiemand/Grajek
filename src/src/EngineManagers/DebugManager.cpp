@@ -142,7 +142,16 @@ void DebugManager::DisplaySystemInfo() {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     {
         ImGui::Begin("Usage Info");
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::Text("Update: %.3f ms/frame (%.1f FPS)", 1000.0f * GloomEngine::GetInstance()->deltaTime, 1 /
+            GloomEngine::GetInstance()->deltaTime);
+        ImGui::Text("FixedUpdate: %.3f ms/frame (%.1f FPS)", 1000.0f * GloomEngine::GetInstance()->fixedDeltaTime, 1 /
+            GloomEngine::GetInstance()->fixedDeltaTime);
+        ImGui::Text("AIUpdate: %.3f ms/frame (%.1f FPS)", 1000.0f * GloomEngine::GetInstance()->AIDeltaTime, 1 /
+            GloomEngine::GetInstance()->AIDeltaTime);
+#ifdef DEBUG
+        ImGui::Text("MainLoop: %.3f ms/frame (%.1f FPS)", 1000.0f * GloomEngine::GetInstance()->engineDeltaTime, 1 /
+            GloomEngine::GetInstance()->engineDeltaTime);
+#endif
         MEMORYSTATUSEX memInfo;
         memInfo.dwLength = sizeof(MEMORYSTATUSEX);
         GlobalMemoryStatusEx(&memInfo);
@@ -160,4 +169,10 @@ void DebugManager::DisplaySystemInfo() {
         ImGui::Text("Physical Memory Usage: %s Mb", std::to_string(physMemUsedByMe / 100000).c_str());
         ImGui::End();
     }
+}
+
+void DebugManager::Free() const {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }

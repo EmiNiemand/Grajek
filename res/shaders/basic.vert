@@ -28,27 +28,26 @@ void main()
     {
         if(boneIds[i] == -1)
         continue;
-        if(boneIds[i] >=MAX_BONES)
+        if(boneIds[i] >= MAX_BONES)
         {
             totalPosition = vec4(aPos,1.0f);
             break;
         }
         vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos,1.0f);
         totalPosition += localPosition * weights[i];
-        vec3 localNormal = mat3(finalBonesMatrices[boneIds[i]]) * aNormal;
     }
-    if (totalPosition != vec4(0.0f)) {
-        FragPos = vec3(model * totalPosition);
-        TexCoords = aTexCoords;
-        Normal = mat3(transpose(inverse(model))) * aNormal;
-        FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
-        gl_Position =  projection * view * model * totalPosition;
-    }
-    else {
+    if (totalPosition == vec4(0.0f)) {
         FragPos = vec3(model * vec4(aPos, 1.0));
         TexCoords = aTexCoords;
         Normal = mat3(transpose(inverse(model))) * aNormal;
         FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
         gl_Position = projection * view * model * vec4(aPos, 1.0);
+    }
+    else {
+        FragPos = vec3(model * totalPosition);
+        TexCoords = aTexCoords;
+        Normal = mat3(transpose(inverse(model))) * aNormal;
+        FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
+        gl_Position =  projection * view * model * totalPosition;
     }
 }

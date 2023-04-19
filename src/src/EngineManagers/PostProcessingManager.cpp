@@ -109,6 +109,7 @@ void PostProcessingManager::DrawBuffer() {
 }
 
 void PostProcessingManager::Free() const {
+    postProcessingShader->Delete();
     glDeleteVertexArrays(1, &quadVAO);
     glDeleteBuffers(1, &quadVBO);
     glDeleteRenderbuffers(1, &rbo);

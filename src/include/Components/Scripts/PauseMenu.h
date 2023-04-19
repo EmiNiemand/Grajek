@@ -8,6 +8,8 @@ class Button;
 
 class PauseMenu : public Menu {
 public:
+    bool gameShouldExit = false;
+
     PauseMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~PauseMenu() override;
 

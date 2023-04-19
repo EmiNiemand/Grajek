@@ -7,6 +7,7 @@
 
 #include "AnimationModel.h"
 #include <vector>
+#include <unordered_map>
 
 class Bone;
 
@@ -14,7 +15,6 @@ struct AssimpNodeData
 {
     glm::mat4 transformation;
     std::string name;
-    int childrenCount;
     std::vector<AssimpNodeData> children;
 };
 
@@ -25,7 +25,7 @@ private:
     int ticksPerSecond;
     std::vector<Bone> bones;
     AssimpNodeData rootNode;
-    std::map<std::string, BoneInfo> boneInfoMap;
+    std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:
     Animation(const std::string& animationPath, AnimationModel* model);
@@ -34,10 +34,10 @@ public:
 	Bone* FindBone(const std::string& name);
 
 
-    int GetTicksPerSecond() const;
-    float GetDuration() const;
+    [[nodiscard]] int GetTicksPerSecond() const;
+    [[nodiscard]] float GetDuration() const;
     const AssimpNodeData& GetRootNode();
-    const std::map<std::string,BoneInfo>& GetBoneIDMap();
+    const std::unordered_map<std::string,BoneInfo>& GetBoneIDMap();
 
 private:
     void ReadMissingBones(const aiAnimation* animation, AnimationModel& model);

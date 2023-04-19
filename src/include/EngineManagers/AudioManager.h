@@ -15,16 +15,18 @@ class AudioSource;
 class AudioListener;
 
 class AudioManager {
+    ALCdevice* audioDevice;
+    ALCcontext* audioContext;
+
     inline static AudioManager* audioManager;
     explicit AudioManager();
 
 public:
     std::shared_ptr<AudioListener> audioListener;
     std::unordered_map<int, std::shared_ptr<AudioSource>> audioSources;
+
 //    Currently unused, maybe in future for audio streaming
 //    std::unordered_map<ALuint, std::shared_ptr<AudioSource>> audioBuffers;
-    std::unique_ptr<ALCdevice*> audioDevice;
-    std::unique_ptr<ALCcontext*> audioContext;
 
     AudioManager(AudioManager &other) = delete;
     void operator=(const AudioManager&) = delete;

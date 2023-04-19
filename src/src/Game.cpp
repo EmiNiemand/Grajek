@@ -95,7 +95,7 @@ void Game::InitializeGame() {
     pause->DisableSelfAndChildren();
 
     // Set up options menu
-    std::shared_ptr<GameObject> options = GameObject::Instantiate("Options", activeScene);
+    auto options = GameObject::Instantiate("Options", activeScene);
     options->AddComponent<OptionsMenu>();
     std::shared_ptr<GameObject> backToPauseMenu = options->GetComponent<OptionsMenu>()->Menu::AddButton("BackToPauseMenu", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Back", 32);
     std::shared_ptr<GameObject> decreaseVolume = options->GetComponent<OptionsMenu>()->Menu::AddButton("DecreaseVolume", 1000, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "-", 64);
@@ -154,7 +154,7 @@ void Game::InitializeGame() {
     lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
     auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
     portalRadioSound->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Sound);
-    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 2.5f});
+    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 4.5f});
     portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
     portalRadioSound->SetMaxDistance(20.0f);
     portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
@@ -186,5 +186,7 @@ void Game::InitializeGame() {
 }
 
 bool Game::GameLoop() {
-    return false;
+    shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+
+    return shouldQuit;
 }

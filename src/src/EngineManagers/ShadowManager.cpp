@@ -13,7 +13,7 @@ ShadowManager::ShadowManager() {
     // create depth texture
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowResolution, shadowResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -59,13 +59,18 @@ void ShadowManager::PrepareShadow() {
     RendererManager::GetInstance()->shader->Activate();
     RendererManager::GetInstance()->shader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-    glViewport(0, 0, shadowWidth, shadowHeight);
+    glViewport(0, 0, shadowResolution, shadowResolution);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     for (const auto& drawable : RendererManager::GetInstance()->drawBuffer) {
         drawable->Draw(shadowShader);
     }
-    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void ShadowManager::Free() const {
+    shadowShader->Delete();
 }

@@ -33,6 +33,9 @@ public:
     bool inputEnabled;
 	bool uiActive;
 
+//Equipment methods
+bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
+
 private:
     void Start() override;
     void Update() override;
@@ -43,8 +46,6 @@ private:
     void OnSessionToggle();
     void OnSoundPlay(int index);
 
-    //Equipment methods
-    bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     //Movement methods
     void OnMove(glm::vec2 moveVector);
     void OnInteract();

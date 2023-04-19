@@ -26,11 +26,12 @@ public:
     void Start() override;
     void Update() override;
     void OnCreate() override;
+    void Free();
 
     void SetGain(float val);
+    const float GetGain() const;
     void SetVelocity(glm::vec3 velocity);
 
-    float GetGain();
 };
 
 #endif //GLOOMENGINE_AUDIOLISTENER_H

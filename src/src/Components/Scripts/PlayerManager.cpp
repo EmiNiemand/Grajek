@@ -18,10 +18,12 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
 
 void PlayerManager::Start() {
-    Component::Start();
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
+    equipment->Setup(5, 10);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
+    playerUI->UpdateCash(equipment->GetCash());
+    playerUI->UpdateRep(equipment->GetRep());
 
     moveInput = glm::vec2(0);
     inputEnabled = true;
@@ -30,6 +32,7 @@ void PlayerManager::Start() {
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetComponent<ShopMenu>();
+    Component::Start();
 }
 
 void PlayerManager::Update() {
@@ -114,13 +117,14 @@ void PlayerManager::OnSessionToggle() {
         session = parent->AddComponent<MusicSession>();
 
         //TODO: Insert player's chosen instrument
-        std::shared_ptr<SessionStarter> sessionStarter = GameObject::Instantiate("SessionStarter", parent)->AddComponent<SessionStarter>();
-
-        session->Setup(Prefab::GetInstrument(InstrumentName::Clap));
+        session->Setup(equipment->instruments.empty() ?
+                        Prefab::GetInstrument(InstrumentName::Clap) :
+                        equipment->instruments.begin()->first);
         return;
     }
 
     session->Stop();
+    session.reset();
 }
 
 void PlayerManager::OnSoundPlay(int index) {

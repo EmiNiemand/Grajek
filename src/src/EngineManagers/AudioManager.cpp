@@ -15,21 +15,21 @@ AudioManager::AudioManager() = default;
 AudioManager::~AudioManager() = default;
 
 AudioManager* AudioManager::GetInstance() {
-    return (audioManager == nullptr) ? new AudioManager() : audioManager;
+    return (audioManager == nullptr) ? audioManager = new AudioManager() : audioManager;
 }
 
 void AudioManager::InitializeAudio() {
-    audioDevice = std::make_unique<ALCdevice*>(alcOpenDevice(nullptr));
+    audioDevice = alcOpenDevice(nullptr);
 
     if (audioDevice) {
-        audioContext = std::make_unique<ALCcontext*>(alcCreateContext(*audioDevice, nullptr));
-        alcMakeContextCurrent(*audioContext);
+        audioContext = alcCreateContext(audioDevice, nullptr);
+        alcMakeContextCurrent(audioContext);
     }
 
     alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
 
     spdlog::info("Successfully initialized OpenAL-Soft on " +
-                (std::string)alcGetString(*audioDevice, ALC_ALL_DEVICES_SPECIFIER));
+                (std::string)alcGetString(audioDevice, ALC_ALL_DEVICES_SPECIFIER));
 }
 
 void AudioManager::RemoveAudioSource(int componentId) {
@@ -38,11 +38,16 @@ void AudioManager::RemoveAudioSource(int componentId) {
 }
 
 void AudioManager::Free() {
-    alcMakeContextCurrent(nullptr);
-    alcDestroyContext(*audioContext);
-    alcCloseDevice(*audioDevice);
+    for (auto&& source: audioSources) {
+        source.second->Free();
+    }
+
     audioSources.clear();
-    audioListener = nullptr;
+
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(audioContext);
+    alcCloseDevice(audioDevice);
+
     audioDevice = nullptr;
     audioContext = nullptr;
 }

@@ -9,19 +9,19 @@
 
 class PlayerEquipment : public Component, public IDataPersistance {
 private:
-    std::unordered_map<std::shared_ptr<Instrument>, int> instruments;
-
 	inline static int maxCashReward = 5;
 	inline static int maxRepReward = 10;
 
 public:
+    std::unordered_map<std::shared_ptr<Instrument>, int> instruments;
+
     int cash = 0;
     int rep = 0;
 
     PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerEquipment() override;
 
-    void Setup();
+    void Setup(int startCash=0, int startRep=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
     void AddReward(float crowdSatisfaction);
