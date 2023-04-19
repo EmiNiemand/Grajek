@@ -85,7 +85,7 @@ void AudioSource::LoadAudioData(const char* path, AudioType type) {
     alSourcef(sourceId, AL_PITCH, 1);
     alSourcef(sourceId, AL_GAIN, gain);
 
-    if (type == AudioType::Sound) {
+    if (type == AudioType::Positional) {
         position = parent->transform->GetLocalPosition() + positionOffset;
 
         alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);

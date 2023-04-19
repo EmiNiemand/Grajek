@@ -22,7 +22,7 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     for (const auto& sample: samples)
     {
         sampleSources.push_back(GameObject::Instantiate("Sample", parent)->AddComponent<AudioSource>());
-        sampleSources.back()->LoadAudioData(sample->clipPath.c_str(), AudioType::Music);
+        sampleSources.back()->LoadAudioData(sample->clipPath.c_str(), AudioType::Direct);
     }
 }
 

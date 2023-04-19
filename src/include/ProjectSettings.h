@@ -34,8 +34,8 @@ enum class ForceMode{
 };
 
 enum class AudioType {
-    Sound,
-    Music,
+    Positional,
+    Direct,
 };
 
 enum class AudioDistanceMode {

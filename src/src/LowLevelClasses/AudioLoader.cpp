@@ -36,13 +36,13 @@ void AudioLoader::LoadAudioFile(const char* path, AudioType type, ALuint bufferI
         }
     }
 
-    if (type == AudioType::Sound && bitsPerSample == 8) {
+    if (type == AudioType::Positional && bitsPerSample == 8) {
         format = AL_FORMAT_MONO8;
-    } else if (type == AudioType::Sound && bitsPerSample == 16) {
+    } else if (type == AudioType::Positional && bitsPerSample == 16) {
         format = AL_FORMAT_MONO16;
-    } else if (type == AudioType::Music  && bitsPerSample == 8) {
+    } else if (type == AudioType::Direct && bitsPerSample == 8) {
         format = AL_FORMAT_STEREO8;
-    } else if (type == AudioType::Music  && bitsPerSample == 16) {
+    } else if (type == AudioType::Direct && bitsPerSample == 16) {
         format = AL_FORMAT_STEREO16;
     }
 
