@@ -148,8 +148,10 @@ void DebugManager::DisplaySystemInfo() {
             GloomEngine::GetInstance()->fixedDeltaTime);
         ImGui::Text("AIUpdate: %.3f ms/frame (%.1f FPS)", 1000.0f * GloomEngine::GetInstance()->AIDeltaTime, 1 /
             GloomEngine::GetInstance()->AIDeltaTime);
+#ifdef DEBUG
         ImGui::Text("MainLoop: %.3f ms/frame (%.1f FPS)", 1000.0f * GloomEngine::GetInstance()->engineDeltaTime, 1 /
             GloomEngine::GetInstance()->engineDeltaTime);
+#endif
         MEMORYSTATUSEX memInfo;
         memInfo.dwLength = sizeof(MEMORYSTATUSEX);
         GlobalMemoryStatusEx(&memInfo);
