@@ -205,6 +205,7 @@ void Game::InitializeGame() {
     lowPolyHouse->transform->SetLocalRotation({0, -110, 0});
     lowPolyHouse->transform->SetLocalScale({1.5, 1.5, 2});
     lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+    lowPolyHouse->GetComponent<Renderer>()->material.refraction = 1.0f;
     lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
     lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
 
