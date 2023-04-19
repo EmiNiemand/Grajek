@@ -120,6 +120,8 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 
 #pragma region Music Session Events
 void PlayerManager::OnSessionToggle() {
+    if (pauseActive) return;
+    if (uiActive && !session && !sessionStarter) return;
     if (session) {
         uiActive = false;
         session->Stop();
@@ -182,6 +184,9 @@ void PlayerManager::PollInput() {
     for (auto key : PlayerInput::Interact)
         if(hid->IsKeyDown(key.first)) OnInteract();
 
+    for (auto key: PlayerInput::StartSession)
+        if (hid->IsKeyDown(key.first)) OnSessionToggle();
+
 	if((uiActive || pauseActive) && !session) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
@@ -207,9 +212,6 @@ void PlayerManager::PollInput() {
 
     for (auto key: PlayerInput::PlaySound)
         if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
-
-    for (auto key: PlayerInput::StartSession)
-        if (hid->IsKeyDown(key.first)) OnSessionToggle();
 
 	if(readMoveVector != moveInput)
 		OnMove(readMoveVector);

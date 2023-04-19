@@ -11,12 +11,13 @@ void SessionStarter::Setup(std::unordered_map<std::shared_ptr<Instrument>, int> 
     int i = 0;
     for (const auto& instrument : instruments)
     {
-        std::shared_ptr<GameObject> button = Menu::AddButton("Instrument", i * 250 + 50, 450, "UI/buttonInactive.png", "UI/buttonActive.png", instrument.first->NameToString(), 32);
+        // 100 -- buttonWidth / 2
+        // 200 -- buttonWidth
+        std::shared_ptr<GameObject> button = Menu::AddButton("Instrument", 960 - instruments.size() * 100 + i * 200 + 100 * ((i + 1) - instruments.size()) + 50 * i + 25, 450, "UI/buttonInactive.png", "UI/buttonActive.png", instrument.first->NameToString(), 32);
         buttons.push_back(button->GetComponent<Button>());
         i++;
     }
     if (buttons.size() > 1) {
-        spdlog::info("No większe");
         i = 0;
         for (const auto &button: buttons) {
             if (i != 0) button->previousButton = buttons[i - 1];
