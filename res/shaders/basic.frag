@@ -181,7 +181,7 @@ void main()
     shadowResult = shadowResult + shadowResult * celColor;
 
     //     rim light
-    float rimLight = pow(max(0, (1 - dot(normalize(viewPos), N))), 1.5);
+    float rimLight = pow(max(0, (1 - dot(normalize(viewPos), N))), 1.5f);
 
     result = result + result * rimLight;
     shadowResult = shadowResult + shadowResult * rimLight;

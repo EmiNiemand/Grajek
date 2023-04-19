@@ -7,8 +7,10 @@
 
 #include <al.h>
 #include <alc.h>
+#include <alext.h>
 #include <memory>
 #include <unordered_map>
+#include <thread>
 
 class GloomEngine;
 class AudioSource;
@@ -17,9 +19,11 @@ class AudioListener;
 class AudioManager {
     ALCdevice* audioDevice;
     ALCcontext* audioContext;
+    std::jthread deviceChanger;
 
     inline static AudioManager* audioManager;
     explicit AudioManager();
+    static void CheckAudioDevice(const std::stop_token& token, ALCdevice** device);
 
 public:
     std::shared_ptr<AudioListener> audioListener;
