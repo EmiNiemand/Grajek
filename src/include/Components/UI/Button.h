@@ -15,8 +15,9 @@ private:
     std::shared_ptr<Mesh> textureMesh;
     std::shared_ptr<Mesh> textMesh;
     std::string text;
+    int x ,y, width, height;
     glm::vec3 color;
-    GLfloat x, y;
+    FT_UInt fontSize;
     std::map<GLchar, Character> Characters;
 
 public:
@@ -26,17 +27,18 @@ public:
 public:
     Button(const std::shared_ptr<GameObject> &parent, int id);
 
-    std::shared_ptr<Mesh> CreateMesh(float x, float y, float width, float height);
+    std::shared_ptr<Mesh> CreateMesh(int x, int y, int width, int height);
     /**
     * x from 0 to 1920\n
     * y from 0 to 1080
     */
-    void LoadTexture(float x, float y, const std::string& path, const std::string& pathIsActive);
+    void LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive);
     /**
     * x from 0 to 1920\n
     * y from 0 to 1080
     */
-    void LoadFont(std::string text, float x, float y, FT_UInt fontSize = 18, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), const std::string &path = "Kanit-Light.ttf");
+    void LoadFont(std::string text, FT_UInt fontSize = 18, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), const std::string &path = "Kanit-Light.ttf");
+    void ChangeText(std::string text);
 
     void Update() override;
 

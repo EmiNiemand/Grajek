@@ -5,37 +5,14 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/UI/Button.h"
 
-ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
 ShopMenu::~ShopMenu() {}
-
-void ShopMenu::Start() {
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>();
-    Component::Start();
-}
 
 void ShopMenu::ShowMenu() {
     parent->EnableSelfAndChildren();
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>();
     activeButton->isActive = true;
-}
-
-void ShopMenu::HideMenu() {
-    parent->DisableSelfAndChildren();
-    activeButton->isActive = false;
-}
-
-void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
-    if (moveVector.y == 1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
-        activeButton->isActive = true;
-    }
-    if (moveVector.y == -1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
-        activeButton->isActive = true;
-    }
 }
 
 void ShopMenu::OnClick() {

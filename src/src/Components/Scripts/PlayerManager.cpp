@@ -11,6 +11,7 @@
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
+#include "Components/Scripts/SessionStarter.h"
 #include "spdlog/spdlog.h"
 
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
@@ -114,6 +115,7 @@ void PlayerManager::OnSessionToggle() {
     if(!session)
     {
         session = parent->AddComponent<MusicSession>();
+
         //TODO: Insert player's chosen instrument
         session->Setup(equipment->instruments.empty() ?
                         Prefab::GetInstrument(InstrumentName::Clap) :
