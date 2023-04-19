@@ -144,6 +144,7 @@ void PlayerManager::OnApply() {
         sessionStarter->OnClick();
     }
 }
+
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
     if(!activeMenu) return;
 
@@ -151,6 +152,7 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 }
 
 #pragma endregion
+
 #pragma region Music Session Events
 
 void PlayerManager::OnSessionToggle() {
@@ -173,6 +175,7 @@ void PlayerManager::OnSessionToggle() {
     activeMenu = sessionStarter;
     sessionStarter->Setup(equipment->instruments);
 }
+
 void PlayerManager::OnSoundPlay(int index) {
     if(!session) return;
 
