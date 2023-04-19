@@ -10,8 +10,8 @@
 #include <memory>
 #include "Components/Audio/AudioSource.h"
 
-enum InstrumentName { Clap, Drums };
-enum MusicGenre { Jazz = 80, RnB = 110 };
+enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
+enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
 
 struct Sample
 {

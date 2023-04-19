@@ -17,6 +17,7 @@
 #include "Components/Scripts/PlayerManager.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
+#include "Components/Scripts/Instrument.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 

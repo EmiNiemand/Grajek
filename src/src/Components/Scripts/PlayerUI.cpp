@@ -4,6 +4,7 @@
 
 #include "Components/Scripts/PlayerUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/UI/Text.h"
 #include "Utilities.h"
 
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
@@ -17,10 +18,8 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
 
 void PlayerUI::UpdateCash(int newAmount) {
 	cashText->text = "$$$: " + std::to_string(newAmount);
-    //spdlog::info("[PUI] Updated cash!");
 }
 
 void PlayerUI::UpdateRep(int newAmount) {
 	repText->text = "Rep:  " + std::to_string(newAmount);
-    //spdlog::info("[PUI] Updated rep!");
 }

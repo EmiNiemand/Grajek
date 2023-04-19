@@ -7,11 +7,11 @@ SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, int id
 
 SessionStarter::~SessionStarter() {}
 
-void SessionStarter::Setup(std::unordered_map<std::shared_ptr<Instrument>, int> instruments) {
+void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instruments) {
     int i = 0;
     for (const auto& instrument : instruments)
     {
-        std::shared_ptr<GameObject> button = Menu::AddButton("Instrument", i * 250 + 50, 450, "UI/buttonInactive.png", "UI/buttonActive.png", instrument.first->NameToString(), 32);
+        std::shared_ptr<GameObject> button = Menu::AddButton(std::to_string((int)instrument->name), i * 250 + 50, 450, "UI/buttonInactive.png", "UI/buttonActive.png", instrument->NameToString(), 32);
         buttons.push_back(button->GetComponent<Button>());
         i++;
     }
@@ -31,11 +31,15 @@ void SessionStarter::Setup(std::unordered_map<std::shared_ptr<Instrument>, int> 
 }
 
 void SessionStarter::OnClick() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Instrument")->GetComponent<Button>()->isActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->CreateMusicSession(GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerEquipment>()->instruments.begin()->first);
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Instrument1")->GetComponent<Button>()->isActive) {
-//        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->CreateMusicSession(GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerEquipment>()->instruments.);
-    }
+    spdlog::info("AAAAAAAAAAAAAA");
+    auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    playerManager->CreateMusicSession((InstrumentName)std::stoi(activeButton->GetParent()->GetName()));
+
+//    if (GloomEngine::GetInstance()->FindGameObjectWithName("Instrument")->GetComponent<Button>()->isActive) {
+//        playerManager->CreateMusicSession(player->GetComponent<PlayerEquipment>()->instruments.begin());
+//    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Instrument1")->GetComponent<Button>()->isActive) {
+////        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->CreateMusicSession(GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerEquipment>()->instruments.);
+//    }
 }
 
 void SessionStarter::Stop() {

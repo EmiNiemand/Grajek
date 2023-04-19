@@ -4,8 +4,10 @@
 
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
-#include "Instrument.h"
-#include <unordered_map>
+#include "MusicPattern.h"
+#include <set>
+
+class Instrument;
 
 class PlayerEquipment : public Component, public IDataPersistance {
 private:
@@ -13,7 +15,7 @@ private:
 	inline static int maxRepReward = 10;
 
 public:
-    std::unordered_map<std::shared_ptr<Instrument>, int> instruments;
+    std::set<std::shared_ptr<Instrument>> instruments;
 
     int cash = 0;
     int rep = 0;
@@ -23,6 +25,7 @@ public:
 
     void Setup(int startCash=0, int startRep=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
+    std::shared_ptr<Instrument> GetInstrumentWithName(InstrumentName name);
 
     void AddReward(float crowdSatisfaction);
 

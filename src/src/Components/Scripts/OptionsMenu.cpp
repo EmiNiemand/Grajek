@@ -19,8 +19,7 @@ void OptionsMenu::ShowMenu() {
 
 void OptionsMenu::OnClick() {
     if(GloomEngine::GetInstance()->FindGameObjectWithName("BackToPauseMenu")->GetComponent<Button>()->isActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->pauseActive = true;
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->uiActive = false;
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("DecreaseVolume")->GetComponent<Button>()->isActive) {

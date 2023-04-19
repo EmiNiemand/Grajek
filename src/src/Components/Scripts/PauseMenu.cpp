@@ -16,14 +16,14 @@ void PauseMenu::ShowMenu() {
 }
 
 void PauseMenu::OnClick() {
+    //if(activeButton->GetParent()->GetName() == "OptionsButton") {
     if(GloomEngine::GetInstance()->FindGameObjectWithName("OptionsButton")->GetComponent<Button>()->isActive) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->pauseActive = false;
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->uiActive = true;
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
+    //} else if(activeButton->GetParent()->GetName() == "ExitToMainMenu") {
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("ExitToMainMenu")->GetComponent<Button>()->isActive) {
         // TODO load main menu scene
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->pauseActive = false;
         gameShouldExit = true;
     }
 }

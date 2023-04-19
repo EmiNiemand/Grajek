@@ -4,7 +4,7 @@
 #include "Components/UI/Menu.h"
 #include "Components/Scripts/Instrument.h"
 #include "glm/vec2.hpp"
-#include <vector>
+#include <set>
 
 class Button;
 
@@ -16,7 +16,7 @@ public:
     SessionStarter(const std::shared_ptr<GameObject> &parent, int id);
     ~SessionStarter() override;
 
-    void Setup(std::unordered_map<std::shared_ptr<Instrument>, int> instruments);
+    void Setup(const std::set<std::shared_ptr<Instrument>>& instruments);
     void OnClick();
     void Stop();
 };

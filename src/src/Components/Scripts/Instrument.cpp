@@ -33,7 +33,7 @@ void Instrument::AddSamples(const std::vector<std::string>& paths) {
     }
 }
 
-std::string Instrument::NameToString() {
+std::string Instrument::NameToString() const {
     switch (name) {
         case Clap: return "Clap";
         case Drums: return "Drums";
