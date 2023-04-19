@@ -127,9 +127,11 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
         }
     }
 
+    glm::mat3 absRMatrix;
+
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            rMatrix[i][j] = fabs(rMatrix[i][j]) + 0.001f;
+            absRMatrix[i][j] = fabs(rMatrix[i][j]) + 0.001f;
         }
     }
 
@@ -137,50 +139,51 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     glm::vec3 scaledSize = size * parent->transform->GetLocalScale();
 
     // 1
-    if (fabs(t.x) > scaledSize.x + (scaledOtherSize.x * fabs(rMatrix[0][0]) + scaledOtherSize.y * fabs(rMatrix[0][1]) +
-            scaledOtherSize.z * fabs(rMatrix[0][2]))) return false;
+    if (fabs(t.x) > scaledSize.x + (scaledOtherSize.x * absRMatrix[0][0] + scaledOtherSize.y * absRMatrix[0][1] +
+            scaledOtherSize.z * absRMatrix[0][2])) return false;
     // 2
-    if (fabs(t.y) > scaledSize.y + (scaledOtherSize.x * fabs(rMatrix[1][0]) + scaledOtherSize.y * fabs(rMatrix[1][1]) +
-            scaledOtherSize.z * fabs(rMatrix[1][2]))) return false;
+    if (fabs(t.y) > scaledSize.y + (scaledOtherSize.x * absRMatrix[1][0] + scaledOtherSize.y * absRMatrix[1][1] +
+            scaledOtherSize.z * absRMatrix[1][2])) return false;
     // 3
-    if (fabs(t.z) > scaledSize.z + (scaledOtherSize.x * fabs(rMatrix[2][0]) + scaledOtherSize.y * fabs(rMatrix[2][1]) +
-            scaledOtherSize.z * fabs(rMatrix[2][2]))) return false;
+    if (fabs(t.z) > scaledSize.z + (scaledOtherSize.x * absRMatrix[2][0] + scaledOtherSize.y * absRMatrix[2][1] +
+            scaledOtherSize.z * absRMatrix[2][2])) return false;
     // 4
-    if (fabs(t.x * rMatrix[0][0] + t.y * rMatrix[1][0] + t.z * rMatrix[2][0]) > (scaledSize.x * fabs(rMatrix[0][0]) + scaledSize.y * fabs(rMatrix[1][0]) +
-            scaledSize.z * fabs(rMatrix[2][0])) + scaledOtherSize.x) return false;
+    if (fabs(t.x * rMatrix[0][0] + t.y * rMatrix[1][0] + t.z * rMatrix[2][0]) > (scaledSize.x * absRMatrix[0][0] + scaledSize.y * absRMatrix[1][0] +
+            scaledSize.z * absRMatrix[2][0]) + scaledOtherSize.x) return false;
     // 5
-    if (fabs(t.x * rMatrix[0][1] + t.y * rMatrix[1][1] + t.z * rMatrix[2][1]) > (scaledSize.x * fabs(rMatrix[0][1]) + scaledSize.y * fabs(rMatrix[1][1]) +
-            scaledSize.z * fabs(rMatrix[2][1])) + scaledOtherSize.y) return false;
+    if (fabs(t.x * rMatrix[0][1] + t.y * rMatrix[1][1] + t.z * rMatrix[2][1]) > (scaledSize.x * absRMatrix[0][1] + scaledSize.y * absRMatrix[1][1] +
+            scaledSize.z * absRMatrix[2][1]) + scaledOtherSize.y) return false;
     // 6
-    if (fabs(t.x * rMatrix[0][2] + t.y * rMatrix[1][2] + t.z * rMatrix[2][2]) > (scaledSize.x * fabs(rMatrix[0][2]) + scaledSize.y * fabs(rMatrix[1][2]) +
-            scaledSize.z * fabs(rMatrix[2][2])) + scaledOtherSize.z) return false;
+    if (fabs(t.x * rMatrix[0][2] + t.y * rMatrix[1][2] + t.z * rMatrix[2][2]) > (scaledSize.x * absRMatrix[0][2] + scaledSize.y * absRMatrix[1][2] +
+            scaledSize.z * absRMatrix[2][2]) + scaledOtherSize.z) return false;
     // 7
-    if (fabs(t.z * rMatrix[1][0] - t.y * rMatrix[2][0]) > (scaledSize.y * fabs(rMatrix[2][0]) + scaledSize.z * fabs(rMatrix[1][0]) +
-            scaledOtherSize.y * fabs(rMatrix[0][2]) + scaledOtherSize.z * fabs(rMatrix[0][1]))) return false;
+    if (fabs(t.z * rMatrix[1][0] - t.y * rMatrix[2][0]) > (scaledSize.y * absRMatrix[2][0] + scaledSize.z * absRMatrix[1][0] +
+            scaledOtherSize.y * absRMatrix[0][2] + scaledOtherSize.z * absRMatrix[0][1])) return false;
     // 8
-    if (fabs(t.z * rMatrix[1][1] - t.y * rMatrix[2][1]) > (scaledSize.y * fabs(rMatrix[2][1]) + scaledSize.z * fabs(rMatrix[1][1]) +
-            scaledOtherSize.x * fabs(rMatrix[0][2]) + scaledOtherSize.z * fabs(rMatrix[0][0]))) return false;
+    if (fabs(t.z * rMatrix[1][1] - t.y * rMatrix[2][1]) > (scaledSize.y * absRMatrix[2][1] + scaledSize.z * absRMatrix[1][1] +
+            scaledOtherSize.x * absRMatrix[0][2] + scaledOtherSize.z * absRMatrix[0][0])) return false;
     // 9
-    if (fabs(t.z * rMatrix[1][2] - t.y * rMatrix[2][2]) > (scaledSize.y * fabs(rMatrix[2][2]) + scaledSize.z * fabs(rMatrix[1][2]) +
-            scaledOtherSize.x * fabs(rMatrix[0][1]) + scaledOtherSize.y * fabs(rMatrix[0][0]))) return false;
+    if (fabs(t.z * rMatrix[1][2] - t.y * rMatrix[2][2]) > (scaledSize.y * absRMatrix[2][2] + scaledSize.z * absRMatrix[1][2] +
+            scaledOtherSize.x * absRMatrix[0][1] + scaledOtherSize.y * absRMatrix[0][0])) return false;
     // 10
-    if (fabs(t.x * rMatrix[2][0] - t.z * rMatrix[0][0]) > (scaledSize.x * fabs(rMatrix[2][0]) + scaledSize.z * fabs(rMatrix[0][0]) +
-            scaledOtherSize.y * fabs(rMatrix[1][2]) + scaledOtherSize.z * fabs(rMatrix[1][1]))) return false;
+    if (fabs(t.x * rMatrix[2][0] - t.z * rMatrix[0][0]) > (scaledSize.x * absRMatrix[2][0] + scaledSize.z * absRMatrix[0][0] +
+            scaledOtherSize.y * absRMatrix[1][2] + scaledOtherSize.z * absRMatrix[1][1])) return false;
     // 11
-    if (fabs(t.x * rMatrix[2][1] - t.z * rMatrix[0][1]) > (scaledSize.x * fabs(rMatrix[2][1]) + scaledSize.z * fabs(rMatrix[0][1]) +
-            scaledOtherSize.x * fabs(rMatrix[1][2]) + scaledOtherSize.z * fabs(rMatrix[1][0]))) return false;
+    if (fabs(t.x * rMatrix[2][1] - t.z * rMatrix[0][1]) > (scaledSize.x * absRMatrix[2][1] + scaledSize.z * absRMatrix[0][1] +
+            scaledOtherSize.x * absRMatrix[1][2] + scaledOtherSize.z * absRMatrix[1][0])) return false;
     // 12
-    if (fabs(t.x * rMatrix[2][2] - t.z * rMatrix[0][2]) > (scaledSize.x * fabs(rMatrix[2][2]) + scaledSize.z * fabs(rMatrix[0][2]) +
-            scaledOtherSize.x * fabs(rMatrix[1][1]) + scaledOtherSize.y * fabs(rMatrix[1][0]))) return false;
+    if (fabs(t.x * rMatrix[2][2] - t.z * rMatrix[0][2]) > (scaledSize.x * absRMatrix[2][2] + scaledSize.z * absRMatrix[0][2] +
+            scaledOtherSize.x * absRMatrix[1][1] + scaledOtherSize.y * absRMatrix[1][0])) return false;
     // 13
-    if (fabs(t.y * rMatrix[0][0] - t.x * rMatrix[1][0]) > (scaledSize.x * fabs(rMatrix[1][0]) + scaledSize.y * fabs(rMatrix[0][0]) +
-            scaledOtherSize.y * fabs(rMatrix[2][2]) + scaledOtherSize.z * fabs(rMatrix[2][1]))) return false;
+    if (fabs(t.y * rMatrix[0][0] - t.x * rMatrix[1][0]) > (scaledSize.x * absRMatrix[1][0] + scaledSize.y * absRMatrix[0][0] +
+            scaledOtherSize.y * absRMatrix[2][2] + scaledOtherSize.z * absRMatrix[2][1])) return false;
     // 14
-    if (fabs(t.y * rMatrix[0][1] - t.x * rMatrix[1][1]) > (scaledSize.x * fabs(rMatrix[1][1]) + scaledSize.y * fabs(rMatrix[0][1]) +
-            scaledOtherSize.x * fabs(rMatrix[2][2]) + scaledOtherSize.z * fabs(rMatrix[2][0]))) return false;
+    if (fabs(t.y * rMatrix[0][1] - t.x * rMatrix[1][1]) > (scaledSize.x * absRMatrix[1][1] + scaledSize.y * absRMatrix[0][1] +
+            scaledOtherSize.x * absRMatrix[2][2] + scaledOtherSize.z * absRMatrix[2][0])) return false;
     // 15
-    if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * fabs(rMatrix[1][2]) + scaledSize.y * fabs(rMatrix[0][2]) +
-            scaledOtherSize.x * fabs(rMatrix[2][1]) + scaledOtherSize.y * fabs(rMatrix[2][0]))) return false;
+    if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * absRMatrix[1][2] + scaledSize.y * absRMatrix[0][2] +
+            scaledOtherSize.x * absRMatrix[2][1] + scaledOtherSize.y * absRMatrix[2][0])) return false;
+
     return true;
 }
 
@@ -213,27 +216,14 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
         }
             // Collision handling for rotated colliders
         else {
-            glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
-            glm::vec3 normalizedVelocity = glm::normalize(velocity);
-
-            glm::vec3 cross = glm::cross(normalizedVelocity, closestVector);
-            float rad = std::acos(glm::dot(normalizedVelocity, closestVector));
-
-            glm::mat4 tMatrix = glm::rotate(glm::mat4(1.0f), rad, cross);
-            glm::vec3 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
-
-            vel = glm::normalize(vel);
-
-            // Check if rotated vector is equal normal vector of the wall
-            if (!(vel.x <= closestVector.x + 0.001 && vel.y <= closestVector.y + 0.001 &&
-                  vel.z <= closestVector.z + 0.001 && vel.x >= closestVector.x - 0.001 &&
-                  vel.y >= closestVector.y - 0.001 && vel.z >= closestVector.z - 0.001)) {
-                tMatrix = glm::rotate(glm::mat4(1.0f), -rad, cross);
-                vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
+            glm::vec3 velocity = parent->GetComponent<Rigidbody>()->velocity;
+            float velocityLength = glm::length(velocity);
+            glm::vec3 vel = closestVector * 0.001f;
+            if(velocityLength < 0.01f) {
+                vel = closestVector * 0.01f;
             }
 
-            vel = glm::normalize(vel) * glm::length(velocity);
-
+            parent->GetComponent<Rigidbody>()->velocity = glm::vec3(0);
             parent->GetComponent<Rigidbody>()->AddForce(vel, ForceMode::Impulse);
         }
     }
