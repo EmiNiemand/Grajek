@@ -191,7 +191,9 @@ void GloomEngine::Free() const {
     RendererManager::GetInstance()->Free();
     PostProcessingManager::GetInstance()->Free();
     UIManager::GetInstance()->Free();
+#ifdef DEBUG
     DebugManager::GetInstance()->Free();
+#endif
     SceneManager::GetInstance()->Free();
     glfwDestroyWindow(window);
     glfwTerminate();
