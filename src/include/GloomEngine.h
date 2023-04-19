@@ -80,14 +80,17 @@ public:
 #endif
 
     // Timers for update
+    float idealDeltaTime = 1.0f / 60;
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;
 
     // Timers for fixedUpdate
+    float idealFixedDeltaTime = 1.0f / 120;
     float fixedDeltaTime = 0.0f;
     float lastFixedFrameTime = 0.0f;
 
     // Timers for AI update
+    float idealAIDeltaTime = 1.0f / 2;
     float AIDeltaTime = 0.0f;
     float lastAIFrameTime = 0.0f;
 

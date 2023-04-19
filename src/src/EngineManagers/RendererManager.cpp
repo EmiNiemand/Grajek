@@ -11,7 +11,6 @@
 
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
-    animatedShader = std::make_shared<Shader>("animated.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
     projection = glm::perspective(glm::radians(45.0f),
                                   (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,
@@ -29,7 +28,6 @@ RendererManager* RendererManager::GetInstance() {
 
 void RendererManager::Free() const {
     shader->Delete();
-    animatedShader->Delete();
     cubeMapShader->Delete();
 }
 
@@ -48,9 +46,6 @@ void RendererManager::UpdateProjection() const {
     shader->Activate();
     shader->SetMat4("projection", projection);
 
-    animatedShader->Activate();
-    animatedShader->SetMat4("projection", projection);
-
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("projection", projection);
 
@@ -61,10 +56,6 @@ void RendererManager::UpdateCamera() const {
     shader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
     shader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 
-    animatedShader->Activate();
-    animatedShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
-    animatedShader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
-
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("view", glm::mat4(glm::mat3(Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix())));
 }
@@ -73,19 +64,19 @@ void RendererManager::UpdateLight(int componentId) {
 
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-            for(const auto& uShader : {shader, animatedShader})UpdateSpotLight(i, uShader);
+            UpdateSpotLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < directionalLights.size(); i++) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-            for(const auto& uShader : {shader, animatedShader}) UpdateDirectionalLight(i, uShader);
+            UpdateDirectionalLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < pointLights.size(); i++) {
         if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-            for(const auto& uShader : {shader, animatedShader}) UpdatePointLight(i, uShader);
+            UpdatePointLight(i, shader);
             return;
         }
     }
@@ -94,19 +85,19 @@ void RendererManager::UpdateLight(int componentId) {
 void RendererManager::RemoveLight(int componentId) {
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-            for(const auto& uShader : {shader, animatedShader}) RemoveSpotLight(i, uShader);
+            RemoveSpotLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < directionalLights.size(); i++) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-            for(const auto& uShader : {shader, animatedShader}) RemoveDirectionalLight(i, uShader);
+            RemoveDirectionalLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < pointLights.size(); i++) {
         if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-            for(const auto& uShader : {shader, animatedShader}) RemovePointLight(i, uShader);
+            RemovePointLight(i, shader);
             return;
         }
     }
