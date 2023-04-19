@@ -46,6 +46,9 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
+    lastFrameTime = (float)glfwGetTime();
+    lastFixedFrameTime = (float)glfwGetTime();
+    lastAIFrameTime = (float)glfwGetTime();
 }
 
 void GloomEngine::Awake() {
@@ -62,10 +65,6 @@ void GloomEngine::Start() {
     // Load game
     std::filesystem::path path = std::filesystem::current_path();
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
-
-    lastFrameTime = (float)glfwGetTime();
-    lastFixedFrameTime = (float)glfwGetTime();
-    lastAIFrameTime = (float)glfwGetTime();
 }
 
 bool GloomEngine::MainLoop() {
@@ -82,6 +81,7 @@ bool GloomEngine::MainLoop() {
         Update();
 
         deltaTime = (currentTime - lastFrameTime) * timeScale;
+        if (deltaTime > idealDeltaTime + 0.01f) deltaTime = idealDeltaTime;
         lastFrameTime = currentTime;
 
         glfwMakeContextCurrent(window);
@@ -97,6 +97,7 @@ bool GloomEngine::MainLoop() {
         }
 
         fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
+        if (fixedDeltaTime > idealFixedDeltaTime + 0.01f) fixedDeltaTime = idealFixedDeltaTime;
         lastFixedFrameTime = currentTime;
     }
 
@@ -109,6 +110,7 @@ bool GloomEngine::MainLoop() {
         }
 
         AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
+        if (AIDeltaTime > idealAIDeltaTime + 0.01f) AIDeltaTime = idealAIDeltaTime;
         lastAIFrameTime = currentTime;
     }
 
@@ -154,7 +156,7 @@ void GloomEngine::Update() {
     PostProcessingManager::GetInstance()->DrawBuffer();
 
     glEnable(GL_DEPTH_TEST);
-    
+
 #ifdef DEBUG
     ColliderManager::GetInstance()->DrawColliders();
 #endif
@@ -184,9 +186,9 @@ void GloomEngine::AIUpdate() {
 
 void GloomEngine::Free() const {
     ColliderManager::GetInstance()->Free();
-    RendererManager::GetInstance()->Free();
     AudioManager::GetInstance()->Free();
     ShadowManager::GetInstance()->Free();
+    RendererManager::GetInstance()->Free();
     PostProcessingManager::GetInstance()->Free();
     UIManager::GetInstance()->Free();
     DebugManager::GetInstance()->Free();
