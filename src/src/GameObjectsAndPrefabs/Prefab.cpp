@@ -67,14 +67,14 @@ std::shared_ptr<Instrument> Prefab::GetInstrument(InstrumentName instrumentName)
     switch (instrumentName) {
         case Clap:
             instrument->AddSamples({
-                "res/sounds/clap/clapWeak.wav",
-                "res/sounds/clap/clapStrong.wav"});
+                "res/sounds/direct/clap/clapWeak.wav",
+                "res/sounds/direct/clap/clapStrong.wav"});
             break;
         case Drums:
             instrument->AddSamples({
-                "res/sounds/drums/hat.wav",
-                "res/sounds/drums/kick.wav",
-                "res/sounds/drums/snare.wav"});
+                "res/sounds/direct/drums/hat.wav",
+                "res/sounds/direct/drums/kick.wav",
+                "res/sounds/direct/drums/snare.wav"});
             break;
     }
 

@@ -153,7 +153,7 @@ void Game::InitializeGame() {
     lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
     lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
     auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
-    portalRadioSound->LoadAudioData("res/sounds/portal_radio.wav", AudioType::Positional);
+    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
     portalRadioSound->SetPositionOffset({0.0f, 0.0f, 4.5f});
     portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
     portalRadioSound->SetMaxDistance(20.0f);
