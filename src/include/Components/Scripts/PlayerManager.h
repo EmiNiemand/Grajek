@@ -32,6 +32,7 @@ private:
 public:
     bool inputEnabled;
 	bool uiActive;
+    bool pauseActive;
 
 //Equipment methods
 bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);

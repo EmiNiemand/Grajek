@@ -28,6 +28,7 @@ void PlayerManager::Start() {
     moveInput = glm::vec2(0);
     inputEnabled = true;
 	uiActive = false;
+    pauseActive = false;
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
@@ -59,7 +60,7 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 
 #pragma region Interaction Events
 void PlayerManager::OnInteract() {
-    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled() && !GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+    if (!pauseActive && !GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
         uiActive = !uiActive;
 
         if (uiActive) {
@@ -75,10 +76,10 @@ void PlayerManager::OnInteract() {
 
 #pragma region UI Events
 void PlayerManager::OnMenuToggle() {
-    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
-        uiActive = !uiActive;
+    if (!uiActive) {
+        pauseActive = !pauseActive;
 
-        if (uiActive) {
+        if (pauseActive) {
             GloomEngine::GetInstance()->timeScale = 0;
             pauseMenu->ShowMenu();
         } else {
@@ -89,7 +90,7 @@ void PlayerManager::OnMenuToggle() {
 }
 
 void PlayerManager::OnApply() {
-    if(!uiActive) return;
+    if(!uiActive && !pauseActive) return;
     if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
         pauseMenu->OnClick();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
@@ -161,7 +162,7 @@ void PlayerManager::PollInput() {
     for (auto key : PlayerInput::Interact)
         if(hid->IsKeyDown(key.first)) OnInteract();
 
-	if(uiActive) {
+	if(uiActive || pauseActive) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
 				readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;

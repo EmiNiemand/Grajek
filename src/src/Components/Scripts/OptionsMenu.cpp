@@ -5,6 +5,7 @@
 #include "Components/Scripts/PauseMenu.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "Components/Audio/AudioListener.h"
+#include "Components/Scripts/PlayerManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -18,6 +19,8 @@ void OptionsMenu::ShowMenu() {
 
 void OptionsMenu::OnClick() {
     if(GloomEngine::GetInstance()->FindGameObjectWithName("BackToPauseMenu")->GetComponent<Button>()->isActive) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->pauseActive = true;
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->uiActive = false;
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("DecreaseVolume")->GetComponent<Button>()->isActive) {
