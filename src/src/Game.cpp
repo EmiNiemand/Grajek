@@ -60,12 +60,28 @@ void Game::InitializeGame() {
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -20});
+    bench->transform->SetLocalPosition({0, 0, -10});
     bench->transform->SetLocalRotation({0, -90, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
     bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
     bench->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+    auto portalRadioSound = bench->AddComponent<AudioSource>();
+    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
+    portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
+    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
+    portalRadioSound->SetMaxDistance(20.0f);
+    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
+    portalRadioSound->IsLooping(true);
+    portalRadioSound->PlaySound();
+
+    std::shared_ptr<GameObject> bench2 = GameObject::Instantiate("Bench", activeScene);
+    bench2->transform->SetLocalPosition({10, 0, 0});
+    bench2->transform->SetLocalRotation({0, 180, 0});
+    bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
+    bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
+    bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
+    bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
 
 
 //    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
@@ -95,18 +111,17 @@ void Game::InitializeGame() {
     pause->DisableSelfAndChildren();
 
     // Set up options menu
-    auto options = GameObject::Instantiate("Options", activeScene);
-    options->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> backToPauseMenu = options->GetComponent<OptionsMenu>()->Menu::AddButton("BackToPauseMenu", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Back", 32);
-    std::shared_ptr<GameObject> decreaseVolume = options->GetComponent<OptionsMenu>()->Menu::AddButton("DecreaseVolume", 1000, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "-", 64);
-    std::shared_ptr<GameObject> increaseVolume = options->GetComponent<OptionsMenu>()->Menu::AddButton("IncreaseVolume", 1300, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "+", 64);
-    std::shared_ptr<GameObject> decreaseResolution = options->GetComponent<OptionsMenu>()->Menu::AddButton("DecreaseResolution", 1000, 700, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "<", 64);
-    std::shared_ptr<GameObject> increaseResolution = options->GetComponent<OptionsMenu>()->Menu::AddButton("IncreaseResolution", 1300, 700, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", ">", 64);
-    std::shared_ptr<GameObject> musicVolume = options->GetComponent<OptionsMenu>()->Menu::AddText("MusicVolume", "Music Volume", 500, 800, 42);
-    std::shared_ptr<GameObject> musicVolumeValue = options->GetComponent<OptionsMenu>()->Menu::AddText("MusicVolumeValue", "10", 1150, 800, 42);
-    std::shared_ptr<GameObject> windowResolution = options->GetComponent<OptionsMenu>()->Menu::AddText("WindowResolution", "Window Resolution", 500, 700, 42);
-    std::shared_ptr<GameObject> windowResolutionValue = options->GetComponent<OptionsMenu>()->Menu::AddText("WindowResolutionValue", "1440 x 810", 1075, 700, 42);
-    std::shared_ptr<GameObject> optionsBackground = options->GetComponent<OptionsMenu>()->Menu::AddImage("OptionsBackground", 0, 0, "UI/options.png");
+    auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
+    std::shared_ptr<GameObject> backToPauseMenu = options->Menu::AddButton("BackToPauseMenu", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Back", 32);
+    std::shared_ptr<GameObject> decreaseVolume = options->Menu::AddButton("DecreaseVolume", 1000, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "-", 64);
+    std::shared_ptr<GameObject> increaseVolume = options->Menu::AddButton("IncreaseVolume", 1300, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "+", 64);
+    std::shared_ptr<GameObject> decreaseResolution = options->Menu::AddButton("DecreaseResolution", 1000, 700, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "<", 64);
+    std::shared_ptr<GameObject> increaseResolution = options->Menu::AddButton("IncreaseResolution", 1300, 700, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", ">", 64);
+    std::shared_ptr<GameObject> musicVolume = options->Menu::AddText("MusicVolume", "Music Volume", 500, 800, 42);
+    std::shared_ptr<GameObject> musicVolumeValue = options->Menu::AddText("MusicVolumeValue", "10", 1150, 800, 42);
+    std::shared_ptr<GameObject> windowResolution = options->Menu::AddText("WindowResolution", "Window Resolution", 500, 700, 42);
+    std::shared_ptr<GameObject> windowResolutionValue = options->Menu::AddText("WindowResolutionValue", "1440 x 810", 1075, 700, 42);
+    std::shared_ptr<GameObject> optionsBackground = options->Menu::AddImage("OptionsBackground", 0, 0, "UI/options.png");
     decreaseVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
     decreaseVolume->GetComponent<Button>()->nextButton = increaseVolume->GetComponent<Button>();
     increaseVolume->GetComponent<Button>()->previousButton = decreaseVolume->GetComponent<Button>();
@@ -117,16 +132,15 @@ void Game::InitializeGame() {
     increaseResolution->GetComponent<Button>()->nextButton = backToPauseMenu->GetComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->previousButton = increaseResolution->GetComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->nextButton = decreaseVolume->GetComponent<Button>();
-    options->DisableSelfAndChildren();
+    options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    std::shared_ptr<GameObject> shop = GameObject::Instantiate("Shop", activeScene);
-    shop->AddComponent<ShopMenu>();
-    std::shared_ptr<GameObject> firstInstrument = shop->GetComponent<ShopMenu>()->Menu::AddButton("FirstInstrument", 10, 0, "UI/Sklep/Perkusja.png", "UI/Sklep/PerkusjaZRamka.png");
-    std::shared_ptr<GameObject> secondInstrument = shop->GetComponent<ShopMenu>()->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png", "UI/Sklep/TrabkaZRamka.png");
-    std::shared_ptr<GameObject> thirdInstrument = shop->GetComponent<ShopMenu>()->Menu::AddButton("ThirdInstrument", 1525, 250, "UI/Sklep/LaunbhPad.png", "UI/Sklep/LaunbhPadZRamka.png");
-    std::shared_ptr<GameObject> fourthInstrument = shop->GetComponent<ShopMenu>()->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png", "UI/Sklep/GitaraZRamka.png");
-    std::shared_ptr<GameObject> shopBackground = shop->GetComponent<ShopMenu>()->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
+    auto shop = GameObject::Instantiate("Shop", activeScene)->AddComponent<ShopMenu>();
+    std::shared_ptr<GameObject> firstInstrument = shop->Menu::AddButton("FirstInstrument", 10, 0, "UI/Sklep/Perkusja.png", "UI/Sklep/PerkusjaZRamka.png");
+    std::shared_ptr<GameObject> secondInstrument = shop->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png", "UI/Sklep/TrabkaZRamka.png");
+    std::shared_ptr<GameObject> thirdInstrument = shop->Menu::AddButton("ThirdInstrument", 1525, 250, "UI/Sklep/LaunbhPad.png", "UI/Sklep/LaunbhPadZRamka.png");
+    std::shared_ptr<GameObject> fourthInstrument = shop->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png", "UI/Sklep/GitaraZRamka.png");
+    std::shared_ptr<GameObject> shopBackground = shop->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
     firstInstrument->GetComponent<Button>()->previousButton = thirdInstrument->GetComponent<Button>();
     firstInstrument->GetComponent<Button>()->nextButton = fourthInstrument->GetComponent<Button>();
     secondInstrument->GetComponent<Button>()->previousButton = fourthInstrument->GetComponent<Button>();
@@ -135,40 +149,72 @@ void Game::InitializeGame() {
     thirdInstrument->GetComponent<Button>()->nextButton = firstInstrument->GetComponent<Button>();
     fourthInstrument->GetComponent<Button>()->previousButton = firstInstrument->GetComponent<Button>();
     fourthInstrument->GetComponent<Button>()->nextButton = secondInstrument->GetComponent<Button>();
-    shop->DisableSelfAndChildren();
+    shop->GetParent()->DisableSelfAndChildren();
 
 
-    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-    sphere->transform->SetLocalPosition({-5, 2, 0});
-    sphere->transform->SetLocalScale({2, 2, 2});
-    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-    rSphere->material.refraction = 1.0f;
+//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+//    sphere->transform->SetLocalPosition({-5, 2, 0});
+//    sphere->transform->SetLocalScale({2, 2, 2});
+//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+//    rSphere->material.refraction = 1.0f;
 
-    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
-    lowPolyHouse->transform->SetLocalPosition({15, 0, -20});
-    lowPolyHouse->transform->SetLocalRotation({0, -110, 0});
-    lowPolyHouse->transform->SetLocalScale({1.5, 1.5, 2});
-    lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-    lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
-    auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
-    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
-    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 4.5f});
-    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
-    portalRadioSound->SetMaxDistance(20.0f);
-    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
-    portalRadioSound->IsLooping(true);
-    portalRadioSound->PlaySound();
+//    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
+//    lowPolyHouse->transform->SetLocalPosition({15, 0, -20});
+//    lowPolyHouse->transform->SetLocalRotation({0, -110, 0});
+//    lowPolyHouse->transform->SetLocalScale({1.5, 1.5, 2});
+//    lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+//    lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
+//    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+//    auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
+//    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
+//    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 4.5f});
+//    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
+//    portalRadioSound->SetMaxDistance(20.0f);
+//    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
+//    portalRadioSound->IsLooping(true);
+//    portalRadioSound->PlaySound();
 
+    int maxHouses = 7;
+    int houseOffset = 7;
+    for (int i = 0; i < maxHouses; ++i) {
+        if(i == ceil(maxHouses/2.0f) - 1) continue;
 
-    std::shared_ptr<GameObject> pub = GameObject::Instantiate("Pub", activeScene);
-    pub->transform->SetLocalPosition({-10, 0, -20});
-    pub->transform->SetLocalRotation({0, -60, 0});
-    pub->transform->SetLocalScale({1.5, 1.5, 1.5});
-    pub->AddComponent<Renderer>()->LoadModel("texturedModels/pub.obj");
-    pub->AddComponent<BoxCollider>()->SetOffset({0, 1.5, 0});
-    pub->GetComponent<BoxCollider>()->SetSize({3, 1.5, 3.5});
+        float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
+        float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
+
+        std::shared_ptr<GameObject> serialHouse = GameObject::Instantiate("House", activeScene);
+        serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
+        serialHouse->transform->SetLocalRotation({0, -90, 0});
+        serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
+        serialHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+        serialHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
+        serialHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+
+        std::shared_ptr<GameObject> serialHouseLeft = GameObject::Instantiate("House", activeScene);
+        serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
+        serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
+        serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
+        serialHouseLeft->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+        serialHouseLeft->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
+        serialHouseLeft->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+
+        std::shared_ptr<GameObject> serialHouseRight = GameObject::Instantiate("House", activeScene);
+        serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
+        serialHouseRight->transform->SetLocalRotation({0, 180, 0});
+        serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
+        serialHouseRight->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+        serialHouseRight->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
+        serialHouseRight->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
+    }
+
+    std::shared_ptr<GameObject> stoisko = GameObject::Instantiate("Stoisko", activeScene);
+    stoisko->transform->SetLocalPosition({-10, 0, -5});
+    stoisko->transform->SetLocalRotation({0, -45, 0});
+    stoisko->transform->SetLocalScale({0.7, 0.7, 0.7});
+    stoisko->AddComponent<Renderer>()->LoadModel("texturedModels/stoisko.obj");
+    stoisko->AddComponent<BoxCollider>()->SetOffset({0, 2, -9});
+    stoisko->GetComponent<BoxCollider>()->SetSize({1, 3, 3});
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
     hydrant->transform->SetLocalPosition({15, 0, -15});
