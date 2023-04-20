@@ -1,4 +1,5 @@
 #include "Components/Scripts/PlayerEquipment.h"
+#include "Components/Scripts/Instrument.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/GameData.h"
 
@@ -16,9 +17,16 @@ bool PlayerEquipment::BuyInstrument(int price, const std::shared_ptr<Instrument>
         return false;
 
     cash -= price;
-    instruments.insert({instrument, 0});
+    instruments.insert(instrument);
 
     return true;
+}
+
+std::shared_ptr<Instrument> PlayerEquipment::GetInstrumentWithName(InstrumentName name) {
+    for (auto instrument: instruments) {
+        if(instrument->name == name) return instrument;
+    }
+    return nullptr;
 }
 
 void PlayerEquipment::AddReward(float crowdSatisfaction) {

@@ -2,8 +2,8 @@
 // Created by masterktos on 30.03.23.
 //
 
-#include "GloomEngine.h"
 #include "Components/Scripts/PlayerManager.h"
+#include "GloomEngine.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
@@ -11,8 +11,13 @@
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
+#include "Components/Scripts/SessionUI.h"
+#include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/SessionStarter.h"
-#include "spdlog/spdlog.h"
+#include "Components/Scripts/PauseMenu.h"
+#include "Components/Scripts/OptionsMenu.h"
+#include "Components/Scripts/ShopMenu.h"
+#include "Components/UI/Button.h"
 
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
@@ -24,14 +29,18 @@ void PlayerManager::Start() {
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
     playerUI->UpdateRep(equipment->GetRep());
+    sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
+    GameObject::Instantiate("SessionUI", parent);
 
     moveInput = glm::vec2(0);
     inputEnabled = true;
-	uiActive = false;
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetComponent<ShopMenu>();
+    activeMenu = nullptr;
+
+    BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
     Component::Start();
 }
 
@@ -58,73 +67,113 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 #pragma endregion
 
 #pragma region Interaction Events
+//TODO: implement interaction with IUsable
 void PlayerManager::OnInteract() {
-    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled() && !GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
-        uiActive = !uiActive;
+    if(session) return;
+    if(activeMenu && activeMenu != shopMenu) return;
 
-        if (uiActive) {
-            GloomEngine::GetInstance()->timeScale = 0;
-            shopMenu->ShowMenu();
-        } else {
-            GloomEngine::GetInstance()->timeScale = 1;
-            shopMenu->HideMenu();
-        }
+    if (!shopMenu->GetParent()->GetEnabled()) {
+        GloomEngine::GetInstance()->timeScale = 0;
+        shopMenu->ShowMenu();
+        activeMenu = shopMenu;
+    } else {
+        GloomEngine::GetInstance()->timeScale = 1;
+        shopMenu->HideMenu();
+        activeMenu.reset();
     }
 }
 #pragma endregion
 
 #pragma region UI Events
-void PlayerManager::OnMenuToggle() {
-    if (!GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
-        uiActive = !uiActive;
+void PlayerManager::ToggleOptionsMenu() {
+    if (activeMenu == pauseMenu) {
+        pauseMenu->HideMenu();
+        activeMenu = optionsMenu;
+        optionsMenu->ShowMenu();
+    }
+    else if(activeMenu == optionsMenu) {
+        optionsMenu->HideMenu();
+        activeMenu = pauseMenu;
+        pauseMenu->ShowMenu();
+    }
+}
 
-        if (uiActive) {
-            GloomEngine::GetInstance()->timeScale = 0;
-            pauseMenu->ShowMenu();
-        } else {
-            GloomEngine::GetInstance()->timeScale = 1;
-            pauseMenu->HideMenu();
-        }
+void PlayerManager::OnMenuToggle() {
+    if(session) return;
+    if(activeMenu &&
+        !(activeMenu == pauseMenu ||
+          activeMenu == optionsMenu ||
+          activeMenu == shopMenu)) return;
+
+    if (activeMenu != shopMenu && activeMenu != pauseMenu) {
+        GloomEngine::GetInstance()->timeScale = 0;
+        if(activeMenu == optionsMenu)
+            optionsMenu->HideMenu();
+        pauseMenu->ShowMenu();
+        activeMenu = pauseMenu;
+    }
+    else if(activeMenu == optionsMenu)
+    {
+        optionsMenu->HideMenu();
+        pauseMenu->ShowMenu();
+        activeMenu = pauseMenu;
+    }
+    else if(activeMenu == shopMenu) {
+        GloomEngine::GetInstance()->timeScale = 1;
+        shopMenu->HideMenu();
+        activeMenu.reset();
+    }
+    else {
+        GloomEngine::GetInstance()->timeScale = 1;
+        pauseMenu->HideMenu();
+        activeMenu.reset();
     }
 }
 
 void PlayerManager::OnApply() {
-    if(!uiActive) return;
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
+    if(!activeMenu) return;
+    //TODO: uncomment when gets implemented in menu
+    //activeMenu->OnClick();
+    if (pauseMenu->GetParent()->GetEnabled()) {
         pauseMenu->OnClick();
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
+    } else if (optionsMenu->GetParent()->GetEnabled()) {
         optionsMenu->OnClick();
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
+    } else if (shopMenu->GetParent()->GetEnabled()) {
         shopMenu->OnClick();
+    } else if (sessionStarter) {
+        sessionStarter->OnClick();
     }
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetEnabled()) {
-        pauseMenu->ChangeActiveButton(moveVector);
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetEnabled()) {
-        optionsMenu->ChangeActiveButton(moveVector);
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetEnabled()) {
-        shopMenu->ChangeActiveButton(moveVector);
-    }
+    if(!activeMenu) return;
+
+    activeMenu->ChangeActiveButton(moveVector);
 }
+
 #pragma endregion
 
 #pragma region Music Session Events
-void PlayerManager::OnSessionToggle() {
-    if(!session)
-    {
-        session = parent->AddComponent<MusicSession>();
 
-        //TODO: Insert player's chosen instrument
-        session->Setup(equipment->instruments.empty() ?
-                        Prefab::GetInstrument(InstrumentName::Clap) :
-                        equipment->instruments.begin()->first);
+void PlayerManager::OnSessionToggle() {
+    if(activeMenu && activeMenu != sessionStarter) return;
+    if (session) {
+        session->Stop();
+        session.reset();
+        return;
+    }
+    if (sessionStarter) {
+        sessionStarter->Stop();
+        sessionStarter.reset();
+        activeMenu.reset();
+        GloomEngine::GetInstance()->timeScale = 1;
         return;
     }
 
-    session->Stop();
-    session.reset();
+    GloomEngine::GetInstance()->timeScale = 0;
+    sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
+    activeMenu = sessionStarter;
+    sessionStarter->Setup(equipment->instruments);
 }
 
 void PlayerManager::OnSoundPlay(int index) {
@@ -132,6 +181,7 @@ void PlayerManager::OnSoundPlay(int index) {
 
     session->PlaySample(index);
 }
+
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     //TODO: uncomment when crowd manager gets implemented
 //        crowdManager.PlayedPattern(pat);
@@ -143,6 +193,15 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 
     playerUI->UpdateCash(equipment->cash);
     playerUI->UpdateRep(equipment->rep);
+}
+
+void PlayerManager::CreateMusicSession(InstrumentName instrument) {
+    GloomEngine::GetInstance()->timeScale = 1;
+    sessionStarter->Stop();
+    sessionStarter.reset();
+    activeMenu.reset();
+    session = parent->AddComponent<MusicSession>();
+    session->Setup(equipment->GetInstrumentWithName(instrument));
 }
 
 #pragma endregion
@@ -161,7 +220,10 @@ void PlayerManager::PollInput() {
     for (auto key : PlayerInput::Interact)
         if(hid->IsKeyDown(key.first)) OnInteract();
 
-	if(uiActive) {
+    for (auto key: PlayerInput::StartSession)
+        if (hid->IsKeyDown(key.first)) OnSessionToggle();
+
+	if(activeMenu) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
 				readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
@@ -186,9 +248,6 @@ void PlayerManager::PollInput() {
 
     for (auto key: PlayerInput::PlaySound)
         if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
-
-    for (auto key: PlayerInput::StartSession)
-        if (hid->IsKeyDown(key.first)) OnSessionToggle();
 
 	if(readMoveVector != moveInput)
 		OnMove(readMoveVector);

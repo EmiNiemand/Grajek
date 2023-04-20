@@ -6,15 +6,21 @@
 #define GLOOMENGINE_PLAYERMANAGER_H
 
 
-#include "PlayerMovement.h"
-#include "PlayerEquipment.h"
-#include "PlayerUI.h"
-#include "PauseMenu.h"
-#include "OptionsMenu.h"
-#include "ShopMenu.h"
 #include "glm/vec2.hpp"
-#include "SessionUI.h"
-#include "MusicSession.h"
+#include "Components/Component.h"
+#include "MusicPattern.h"
+
+class PlayerMovement;
+class PlayerUI;
+class PlayerEquipment;
+class Instrument;
+class MusicSession;
+class SessionStarter;
+class PauseMenu;
+class OptionsMenu;
+class ShopMenu;
+class Menu;
+
 
 class PlayerManager : public Component {
 private:
@@ -22,16 +28,18 @@ private:
 //    PlayerCamera camera;
     std::shared_ptr<PlayerUI> playerUI;
     std::shared_ptr<MusicSession> session;
+    std::shared_ptr<SessionStarter> sessionStarter;
+    std::shared_ptr<GameObject> sessionStarterUI;
 //    PlayerCollider collider;
     std::shared_ptr<PlayerEquipment> equipment;
     std::shared_ptr<PauseMenu> pauseMenu;
     std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<ShopMenu> shopMenu;
+    std::shared_ptr<Menu> activeMenu;
     glm::vec2 moveInput;
 
 public:
     bool inputEnabled;
-	bool uiActive;
 
 //Equipment methods
 bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
@@ -60,6 +68,8 @@ public:
     //Session methods
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
+    void CreateMusicSession(InstrumentName instrument);
+    void ToggleOptionsMenu();
 };
 
 

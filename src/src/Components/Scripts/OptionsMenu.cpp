@@ -5,6 +5,7 @@
 #include "Components/Scripts/PauseMenu.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "Components/Audio/AudioListener.h"
+#include "Components/Scripts/PlayerManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -18,6 +19,7 @@ void OptionsMenu::ShowMenu() {
 
 void OptionsMenu::OnClick() {
     if(GloomEngine::GetInstance()->FindGameObjectWithName("BackToPauseMenu")->GetComponent<Button>()->isActive) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("DecreaseVolume")->GetComponent<Button>()->isActive) {
@@ -29,6 +31,7 @@ void OptionsMenu::OnClick() {
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("IncreaseVolume")->GetComponent<Button>()->isActive) {
         float gain = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->GetGain();
         if (gain >= 1.0f) return;
+        if (gain >= 0.89f) gain = 0.9f;
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(gain + 0.1f);
         GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeValue")->GetComponent<Text>()->text = std::to_string((int)std::ceil((gain + 0.1f) * 10));
     } else if (GloomEngine::GetInstance()->FindGameObjectWithName("DecreaseResolution")->GetComponent<Button>()->isActive) {

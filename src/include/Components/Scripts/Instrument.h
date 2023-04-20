@@ -32,6 +32,7 @@ public:
      */
     void GeneratePattern(std::vector<RawSample> newPattern);
     void AddSamples(const std::vector<std::string>& paths);
+    std::string NameToString() const;
 };
 
 

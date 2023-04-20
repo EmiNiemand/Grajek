@@ -172,7 +172,9 @@ void DebugManager::DisplaySystemInfo() {
 }
 
 void DebugManager::Free() const {
+#ifdef DEBUG
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+#endif
 }

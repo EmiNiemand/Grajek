@@ -5,7 +5,9 @@
 #ifndef GLOOMENGINE_PLAYERUI_H
 #define GLOOMENGINE_PLAYERUI_H
 
-#include "Components/UI/Text.h"
+#include "Components/Component.h"
+
+class Text;
 
 class PlayerUI : public Component {
 private:
