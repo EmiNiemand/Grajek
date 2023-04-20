@@ -24,7 +24,6 @@ void ShopMenu::OnClick() {
             activeButton->previousButton->nextButton = activeButton->nextButton;
             activeButton->nextButton->previousButton = temp;
             GameObject::Destroy(activeButton->GetParent());
-            activeButton->GetParent();
 //            GameObject::Destroy(GloomEngine::GetInstance()->FindGameObjectWithName("ui"));
             activeButton = activeButton->nextButton;
             spdlog::info("[SM] Bought first instrument (percussion)!");
