@@ -13,6 +13,7 @@ std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::share
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
     gameObject->RemoveAllChildren();
     gameObject->RemoveAllComponents();
+    gameObject->parent->RemoveChild(gameObject->GetId());
     GloomEngine::GetInstance()->RemoveGameObject(gameObject);
 }
 
