@@ -34,18 +34,6 @@ void PlayerEquipment::AddReward(float crowdSatisfaction) {
     rep += (int)(crowdSatisfaction * maxRepReward);
 }
 
-void PlayerEquipment::LoadData(std::shared_ptr<GameData> data) {
-    cash = data->money;
-    rep = data->reputation;
-    parent->transform->SetLocalPosition(data->playerPosition);
-}
-
-void PlayerEquipment::SaveData(std::shared_ptr<GameData> &data) {
-    data->money = cash;
-    data->reputation = rep;
-    data->playerPosition = parent->transform->GetLocalPosition();
-}
-
 int PlayerEquipment::GetCash() const { return cash; }
 
 int PlayerEquipment::GetRep() const { return rep; }

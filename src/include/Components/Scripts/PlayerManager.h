@@ -9,6 +9,7 @@
 #include "glm/vec2.hpp"
 #include "Components/Component.h"
 #include "MusicPattern.h"
+#include "Interfaces/IDataPersistance.h"
 
 class PlayerMovement;
 class PlayerUI;
@@ -22,7 +23,7 @@ class ShopMenu;
 class Menu;
 
 
-class PlayerManager : public Component {
+class PlayerManager : public Component, public IDataPersistance {
 private:
     std::shared_ptr<PlayerMovement> movement;
 //    PlayerCamera camera;
@@ -46,6 +47,11 @@ bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
 private:
     void Start() override;
+
+public:
+    void Awake() override;
+
+private:
     void Update() override;
 
     void PollInput();
@@ -70,6 +76,10 @@ public:
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
     void CreateMusicSession(InstrumentName instrument);
     void ToggleOptionsMenu();
+
+    // IDataPersistance methods
+    void LoadData(std::shared_ptr<GameData> data) override;
+    void SaveData(std::shared_ptr<GameData> &data) override;
 };
 
 
