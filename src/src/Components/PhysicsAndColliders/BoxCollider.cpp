@@ -207,10 +207,9 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     closestVector = glm::normalize(closestVector);
 
     if (parent->GetComponent<Rigidbody>() != nullptr) {
-        float cos = glm::dot(glm::vec3(1, 0, 0), closestVector);
-        float absCos = std::abs(cos);
+        glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
         // Collision handling for not rotated collider
-        if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
+        if (otherRotation == glm::vec3(0.0f)) {
             float value = closestVector.x + closestVector.y + closestVector.z;
             glm::vec3 velocityOffset = closestVector * glm::vec3(0.001);
 
