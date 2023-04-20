@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 class Shader;
 class GloomEngine;
@@ -19,11 +19,16 @@ private:
     unsigned int vao, vbo, ebo;
     std::vector<glm::vec3> vertices;
     std::vector<unsigned int> indices;
-public:
-    glm::vec3 debugColor = {0.0, 1.0, 0.0};
 
-    std::map<int, std::shared_ptr<BoxCollider>> boxColliders;
+public:
+#ifdef DEBUG
+    glm::ivec2 playerPosition = glm::ivec2(0.0f);
+    glm::vec3 debugColor = {0.0, 1.0, 0.0};
     std::shared_ptr<Shader> colliderDebugShader;
+#endif
+
+    float gridSize = 10.0f;
+    std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, std::shared_ptr<BoxCollider>>>> grid;
 
 public:
     ColliderManager(ColliderManager &other) = delete;
@@ -33,10 +38,14 @@ public:
     static ColliderManager* GetInstance();
 
     void ManageCollision();
+#ifdef DEBUG
     void DrawColliders();
+#endif
     void Free();
 
+#ifdef DEBUG
     void OnBoxCollidersChange();
+#endif
     void RemoveBoxCollider(int componentId);
 
 private:

@@ -26,7 +26,8 @@ public:
     BoxCollider(const std::shared_ptr<GameObject> &parent, int id);
     ~BoxCollider() override;
 
-    void OnCreate() override;
+    void Start() override;
+    void FixedUpdate() override;
     void OnDestroy() override;
 
     void CheckCollision(const std::shared_ptr<BoxCollider>& other);
@@ -46,6 +47,8 @@ private:
     std::vector<std::pair<glm::vec3, glm::vec3>> CalculateShiftedPoints(const std::shared_ptr<BoxCollider>& other,
                                                                       glm::vec3 position, glm::vec3 otherPosition);
     glm::vec3 GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, glm::vec3>> points, glm::vec3 position);
+
+    void SetCollidersGridPoints();
 };
 
 #endif //OPENGLGP_BOXCOLLIDER_H

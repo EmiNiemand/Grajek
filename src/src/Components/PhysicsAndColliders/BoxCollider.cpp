@@ -12,15 +12,24 @@ BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
 
 BoxCollider::~BoxCollider() = default;
 
-void BoxCollider::OnCreate() {
-    ColliderManager::GetInstance()->boxColliders.insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
-    ColliderManager::GetInstance()->OnBoxCollidersChange();
-    Component::OnCreate();
+void BoxCollider::Start() {
+    SetCollidersGridPoints();
+    Component::Start();
 }
+
+void BoxCollider::FixedUpdate() {
+    if (!parent->GetComponent<Rigidbody>()) return;
+
+    SetCollidersGridPoints();
+    Component::FixedUpdate();
+}
+
 
 void BoxCollider::OnDestroy() {
     ColliderManager::GetInstance()->RemoveBoxCollider(id);
+#ifdef DEBUG
     ColliderManager::GetInstance()->OnBoxCollidersChange();
+#endif
     Component::OnDestroy();
 }
 
@@ -292,3 +301,70 @@ glm::vec3 BoxCollider::GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, g
     return closestVector;
 }
 
+void BoxCollider::SetCollidersGridPoints() {
+    glm::mat4 model = GetModelMatrix();
+
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // Y * X * Z
+    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+    glm::vec4 pos = model * glm::vec4(0,0,0,1);
+
+    glm::vec4 xVec = (rotationMatrix * glm::vec4(1,0,0,1)) * size.x * parent->transform->GetLocalScale().x;
+    glm::vec4 zVec = (rotationMatrix * glm::vec4(0,0,1,1)) * size.z * parent->transform->GetLocalScale().z;
+
+    auto xVector = glm::vec2(xVec.x, xVec.z);
+    auto zVector = glm::vec2(zVec.x, zVec.z);
+
+    float gridSize = ColliderManager::GetInstance()->gridSize;
+
+    glm::ivec2 points[4] = {
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / gridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / gridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / gridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / gridSize)
+    };
+
+    if (points[0] == points[1] &&
+        points[1] == points[2] &&
+        points[2] == points[3]) {
+        int x = points[0].x;
+        int y = points[0].y;
+        if (!ColliderManager::GetInstance()->grid.contains(x))
+            ColliderManager::GetInstance()->grid.insert({x, std::unordered_map<int,
+                    std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+        if (!ColliderManager::GetInstance()->grid.at(x).contains(y))
+            ColliderManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+
+        ColliderManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+        return;
+    }
+
+    int minX = points[0].x;
+    int minY = points[0].y;
+    int maxX = points[0].x;
+    int maxY = points[0].y;
+
+    for (int i = 1; i < 4; i++) {
+        if (minX > points[i].x) minX = points[i].x;
+        if (minY > points[i].y) minY = points[i].y;
+        if (maxX < points[i].x) maxX = points[i].x;
+        if (maxY < points[i].y) maxY = points[i].y;
+    }
+
+    for (int x = minX; x <= maxX; x++) {
+        for (int y = minY; y <= maxY; y++) {
+            if (!ColliderManager::GetInstance()->grid.contains(x))
+                    ColliderManager::GetInstance()->grid.insert({x, std::unordered_map<int,
+                            std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+
+            if (!ColliderManager::GetInstance()->grid.at(x).contains(y))
+                    ColliderManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+
+            ColliderManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+        }
+    }
+}

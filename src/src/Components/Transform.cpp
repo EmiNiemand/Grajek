@@ -29,18 +29,21 @@ void Transform::ComputeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
 void Transform::SetLocalPosition(const glm::vec3& newPosition)
 {
     mPos = newPosition;
+    if (!parent) return;
     parent->UpdateSelfAndChildren();
 }
 
 void Transform::SetLocalRotation(const glm::vec3& newRotation)
 {
     mEulerRot = newRotation;
+    if (!parent) return;
     parent->UpdateSelfAndChildren();
 }
 
 void Transform::SetLocalScale(const glm::vec3& newScale)
 {
     mScale = newScale;
+    if (!parent) return;
     parent->UpdateSelfAndChildren();
 }
 
