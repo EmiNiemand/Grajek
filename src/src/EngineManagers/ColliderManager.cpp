@@ -105,6 +105,15 @@ void ColliderManager::OnBoxCollidersChange() {
     vertices.clear();
     indices.clear();
     int i = 0;
+
+    if (!ColliderManager::GetInstance()->grid.contains(playerPosition.x))
+        ColliderManager::GetInstance()->grid.insert({playerPosition.x, std::unordered_map<int,
+                std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+
+    if (!ColliderManager::GetInstance()->grid.at(playerPosition.x).contains(playerPosition.y))
+        ColliderManager::GetInstance()->grid.at(playerPosition.x).insert({playerPosition.y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+
+
     for (auto&& col : grid.at(playerPosition.x).at(playerPosition.y)) {
         for (auto&& point : col.second->GetBoxPoints()) {
             vertices.push_back(point);
