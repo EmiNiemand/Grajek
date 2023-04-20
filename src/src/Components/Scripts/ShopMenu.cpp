@@ -17,7 +17,7 @@ void ShopMenu::ShowMenu() {
 
 void ShopMenu::OnClick() {
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>()->isActive) {
+    if (activeButton->GetParent()->GetName() == "FirstInstrument") {
         if(playerManager->BuyInstrument(10, Prefab::GetInstrument(InstrumentName::Drums)))
             spdlog::info("[SM] Bought first instrument (percussion)!");
         else

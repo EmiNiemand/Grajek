@@ -132,22 +132,11 @@ void PlayerManager::OnMenuToggle() {
 
 void PlayerManager::OnApply() {
     if(!activeMenu) return;
-    //TODO: uncomment when gets implemented in menu
-    //activeMenu->OnClick();
-    if (pauseMenu->GetParent()->GetEnabled()) {
-        pauseMenu->OnClick();
-    } else if (optionsMenu->GetParent()->GetEnabled()) {
-        optionsMenu->OnClick();
-    } else if (shopMenu->GetParent()->GetEnabled()) {
-        shopMenu->OnClick();
-    } else if (sessionStarter) {
-        sessionStarter->OnClick();
-    }
+    activeMenu->OnClick();
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
     if(!activeMenu) return;
-
     activeMenu->ChangeActiveButton(moveVector);
 }
 

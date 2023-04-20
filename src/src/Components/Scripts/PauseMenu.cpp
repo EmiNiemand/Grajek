@@ -16,13 +16,11 @@ void PauseMenu::ShowMenu() {
 }
 
 void PauseMenu::OnClick() {
-    //if(activeButton->GetParent()->GetName() == "OptionsButton") {
-    if(GloomEngine::GetInstance()->FindGameObjectWithName("OptionsButton")->GetComponent<Button>()->isActive) {
+    if(activeButton->GetParent()->GetName() == "OptionsButton") {
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
-    //} else if(activeButton->GetParent()->GetName() == "ExitToMainMenu") {
-    } else if (GloomEngine::GetInstance()->FindGameObjectWithName("ExitToMainMenu")->GetComponent<Button>()->isActive) {
+    } else if (activeButton->GetParent()->GetName() == "ExitToMainMenu") {
         // TODO load main menu scene
         gameShouldExit = true;
     }
