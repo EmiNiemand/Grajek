@@ -78,6 +78,7 @@ void Image::Update() {
 }
 
 void Image::Draw() {
+    if (!mesh) return;
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     glActiveTexture(GL_TEXTURE0);

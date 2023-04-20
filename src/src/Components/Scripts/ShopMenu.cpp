@@ -18,9 +18,17 @@ void ShopMenu::ShowMenu() {
 void ShopMenu::OnClick() {
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
-        if(playerManager->BuyInstrument(10, Prefab::GetInstrument(InstrumentName::Drums)))
+        if(playerManager->BuyInstrument(10, Prefab::GetInstrument(InstrumentName::Drums))) {
+            // TODO delete button with instrument
+            std::shared_ptr<Button> temp = activeButton->previousButton;
+            activeButton->previousButton->nextButton = activeButton->nextButton;
+            activeButton->nextButton->previousButton = temp;
+            GameObject::Destroy(activeButton->GetParent());
+//            GameObject::Destroy(GloomEngine::GetInstance()->FindGameObjectWithName("ui"));
+            activeButton = activeButton->nextButton;
             spdlog::info("[SM] Bought first instrument (percussion)!");
-        else
+        } else {
             spdlog::info("[SM] Not enough money for first instrument (percussion)");
+        }
     }
 }
