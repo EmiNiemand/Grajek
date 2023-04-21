@@ -11,7 +11,7 @@
 
 class Image;
 
-struct RawSample {int sample = 0; float delay = 0.5; };
+struct RawSample {int sample = 0; float delay = 0.5; float duration=0; };
 
 class Instrument {
 private:

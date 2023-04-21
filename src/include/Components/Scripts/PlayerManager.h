@@ -80,6 +80,8 @@ public:
     // IDataPersistance methods
     void LoadData(std::shared_ptr<GameData> data) override;
     void SaveData(std::shared_ptr<GameData> &data) override;
+
+    void OnSoundStop(int index);
 };
 
 

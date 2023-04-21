@@ -39,6 +39,7 @@ public:
     void Update() override;
 
     void PlaySample(int index);
+    void StopSample(int index);
     void ToggleCheatSheet();
 
 private:

@@ -177,6 +177,12 @@ void PlayerManager::OnSoundPlay(int index) {
     session->PlaySample(index);
 }
 
+void PlayerManager::OnSoundStop(int index) {
+    if(!session) return;
+
+    session->StopSample(index);
+}
+
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     //TODO: uncomment when crowd manager gets implemented
 //        crowdManager.PlayedPattern(pat);
@@ -235,8 +241,10 @@ void PlayerManager::PollInput() {
 	}
 
     if(session) {
-        for (auto key: PlayerInput::PlaySound)
+        for (auto key: PlayerInput::PlaySound) {
             if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
+            if (hid->IsKeyUp(key.first)) OnSoundStop(key.second);
+        }
         return;
     }
 

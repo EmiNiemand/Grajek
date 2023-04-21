@@ -17,18 +17,30 @@ void ShopMenu::ShowMenu() {
 
 void ShopMenu::OnClick() {
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
-        if(playerManager->BuyInstrument(10, Prefab::GetInstrument(InstrumentName::Drums))) {
-            // TODO delete button with instrument
-            std::shared_ptr<Button> temp = activeButton->previousButton;
-            activeButton->previousButton->nextButton = activeButton->nextButton;
-            activeButton->nextButton->previousButton = temp;
-            GameObject::Destroy(activeButton->GetParent());
+        boughtInstrument = playerManager->BuyInstrument(
+                100, Prefab::GetInstrument(InstrumentName::Drums));
+    } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
+        boughtInstrument = playerManager->BuyInstrument(
+                500, Prefab::GetInstrument(InstrumentName::Trumpet));
+    } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
+        boughtInstrument = playerManager->BuyInstrument(
+                1500, Prefab::GetInstrument(InstrumentName::Launchpad));
+    } else if (activeButton->GetParent()->GetName() == "FourthInstrument") {
+        boughtInstrument = playerManager->BuyInstrument(
+                5000, Prefab::GetInstrument(InstrumentName::Guitar));
+    }
+    if(boughtInstrument) {
+        // TODO delete button with instrument
+        std::shared_ptr<Button> temp = activeButton->previousButton;
+        activeButton->previousButton->nextButton = activeButton->nextButton;
+        activeButton->nextButton->previousButton = temp;
+        GameObject::Destroy(activeButton->GetParent());
 //            GameObject::Destroy(GloomEngine::GetInstance()->FindGameObjectWithName("ui"));
-            activeButton = activeButton->nextButton;
-            spdlog::info("[SM] Bought first instrument (percussion)!");
-        } else {
-            spdlog::info("[SM] Not enough money for first instrument (percussion)");
-        }
+        activeButton = activeButton->nextButton;
+        spdlog::info("[SM] Bought instrument!");
+    } else {
+        spdlog::info("[SM] Not enough money for instrument");
     }
 }
