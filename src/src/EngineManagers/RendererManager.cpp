@@ -12,7 +12,7 @@
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
-    projection = glm::perspective(glm::radians(45.0f),
+    projection = glm::perspective(glm::radians(fov),
                                   (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,
                                   0.1f, 100.0f);
 }

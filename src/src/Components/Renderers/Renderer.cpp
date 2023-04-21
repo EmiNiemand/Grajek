@@ -1,11 +1,11 @@
 #include <utility>
-
+#include <filesystem>
 #include "Components/Renderers/Renderer.h"
 #include "Utilities.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/StaticModel.h"
-#include <filesystem>
+#include "Other/FrustumCulling.h"
 
 /**
  * @attention Remember to call LoadModel if you want model to actually display
@@ -17,6 +17,12 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Update() {
+    if (!FrustumCulling::GetInstance()->IsOnFrustum(parent->bounds, parent->transform)) {
+#ifdef DEBUG
+        spdlog::info(parent->GetName() + ": " + "is not in frustum");
+#endif
+        return;
+    }
     Drawable::Update();
 }
 
@@ -62,5 +68,7 @@ void Renderer::LoadModel(std::string path) {
     }
 
     model = models.at(hash);
+
+    parent->bounds = FrustumCulling::GenerateAABB(model);
 }
 

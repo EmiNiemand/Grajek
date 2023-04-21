@@ -9,11 +9,46 @@
 
 StaticModel::StaticModel(const std::string &path, std::shared_ptr<Shader> &shader,
                          int type, bool gamma) : Model(path,shader, type, gamma) {
-    LoadModel(path);
+    StaticModel::LoadModel(path);
 }
 
 StaticModel::StaticModel(const Mesh &mesh, std::shared_ptr<Shader> &shader,
                          int type) : Model(mesh, shader, type) {}
+
+void StaticModel::LoadModel(std::string const &path)
+{
+    // read file via ASSIMP
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
+    // check for errors
+    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+    {
+        spdlog::error("ERROR::ASSIMP:: ", importer.GetErrorString());
+        return;
+    }
+    // retrieve the directory path of the filepath
+    directory = path.substr(0, path.find_last_of('/'));
+    // process ASSIMP's root node recursively
+    ProcessNode(scene->mRootNode, scene);
+}
+
+void StaticModel::ProcessNode(aiNode *node, const aiScene *scene)
+{
+    // process each mesh located at the current node
+    for(unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+        // the node object only contains indices to index the actual objects in the activeScene.
+        // the activeScene contains all the data, node is just to keep stuff organized (like relations between nodes).
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshes.push_back(ProcessMesh(mesh, scene));
+    }
+    // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
+    for(unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        ProcessNode(node->mChildren[i], scene);
+    }
+
+}
 
 Mesh StaticModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {

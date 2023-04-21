@@ -1,7 +1,3 @@
-//
-// Created by szymo on 31/10/2022.
-//
-
 #ifndef OPENGLGP_MODEL_H
 #define OPENGLGP_MODEL_H
 
@@ -31,12 +27,15 @@ public:
     AnimationModel(const std::string &path, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES, bool gamma = false);
     AnimationModel(const Mesh &mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
 
+    void LoadModel(std::string const &path) override;
+
     // Getters
     std::unordered_map<std::string, BoneInfo>& GetBoneInfoMap();
     uint16_t& GetBoneCount();
 
-private:
+protected:
     static void SetVertexBoneDataToDefault(Vertex& vertex);
+    void ProcessNode(aiNode *node, const aiScene *scene) override;
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene) override;
     static void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
     void ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);

@@ -18,10 +18,10 @@ void BoxCollider::Start() {
 }
 
 void BoxCollider::FixedUpdate() {
+    Component::FixedUpdate();
     if (!parent->GetComponent<Rigidbody>()) return;
 
     SetCollidersGridPoints();
-    Component::FixedUpdate();
 }
 
 

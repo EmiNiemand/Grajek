@@ -12,6 +12,7 @@
 #include <map>
 
 class GloomEngine;
+struct AABB;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
 private:
@@ -26,6 +27,7 @@ public:
 
 public:
     std::shared_ptr<GameObject> parent = nullptr;
+    std::shared_ptr<AABB> bounds = nullptr;
 
     // Create file with tag names as enums
     Tags tag;

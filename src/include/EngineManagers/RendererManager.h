@@ -19,6 +19,8 @@ private:
 
 public:
     float fov = 45.0f;
+    float zNear = 0.1f;
+    float zFar = 100.0f;
     glm::mat4 projection{};
 
     // pair of id and ptr to light

@@ -16,7 +16,10 @@ public:
     StaticModel(const std::string &path, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES, bool gamma = false);
     StaticModel(const Mesh &mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
 
-private:
+    void LoadModel(std::string const &path) override;
+
+protected:
+    void ProcessNode(aiNode *node, const aiScene *scene) override;
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene) override;
 };
 
