@@ -4,7 +4,7 @@
 #include "Utilities.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "LowLevelClasses/Model.h"
+#include "LowLevelClasses/StaticModel.h"
 #include <filesystem>
 
 /**
@@ -58,7 +58,7 @@ void Renderer::LoadModel(std::string path) {
     uint32_t hash = Utilities::Hash(newPath);
 
     if (!models.contains(hash)) {
-        models.insert({hash, std::make_shared<Model>( normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
+        models.insert({hash, std::make_shared<StaticModel>(normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
     }
 
     model = models.at(hash);

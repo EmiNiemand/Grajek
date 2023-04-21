@@ -1,34 +1,21 @@
-#include "LowLevelClasses/AnimationModel.h"
-#include "Other/GLMHelper.h"
+#include "LowLevelClasses/StaticModel.h"
+
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
+#include "glad/glad.h"
 #include "stb_image.h"
 #include "spdlog/spdlog.h"
 #include <filesystem>
 
-AnimationModel::AnimationModel(const std::string &path, std::shared_ptr<Shader> &shader,
-                               int type, bool gamma) : Model(path, shader, type, gamma) {
-    boneInfoMap.reserve(100);
+StaticModel::StaticModel(const std::string &path, std::shared_ptr<Shader> &shader,
+                         int type, bool gamma) : Model(path,shader, type, gamma) {
     LoadModel(path);
 }
 
+StaticModel::StaticModel(const Mesh &mesh, std::shared_ptr<Shader> &shader,
+                         int type) : Model(mesh, shader, type) {}
 
-AnimationModel::AnimationModel(const Mesh &mesh, std::shared_ptr<Shader> &shader,
-                               int type) : Model(mesh, shader, type) {
-    boneInfoMap.reserve(100);
-    meshes.push_back(mesh);
-}
-
-void AnimationModel::SetVertexBoneDataToDefault(Vertex& vertex)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        vertex.boneIDs[i] = -1;
-        vertex.weights[i] = 0.0f;
-    }
-}
-
-Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+Mesh StaticModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     // data to fill
     std::vector<Vertex> vertices;
@@ -38,11 +25,21 @@ Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     // walk through each of the mesh's vertices
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        Vertex vertex{};
-        SetVertexBoneDataToDefault(vertex);
-        vertex.position = GetGLMVec(mesh->mVertices[i]);
-        vertex.normal = GetGLMVec(mesh->mNormals[i]);
-
+        Vertex vertex;
+        glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        // positions
+        vector.x = mesh->mVertices[i].x;
+        vector.y = mesh->mVertices[i].y;
+        vector.z = mesh->mVertices[i].z;
+        vertex.position = vector;
+        // normals
+        if (mesh->HasNormals())
+        {
+            vector.x = mesh->mNormals[i].x;
+            vector.y = mesh->mNormals[i].y;
+            vector.z = mesh->mNormals[i].z;
+            vertex.normal = vector;
+        }
         // texture coordinates
         if(mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -52,6 +49,16 @@ Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.texCoords = vec;
+            // tangent
+            vector.x = mesh->mTangents[i].x;
+            vector.y = mesh->mTangents[i].y;
+            vector.z = mesh->mTangents[i].z;
+            vertex.tangent = vector;
+            // bitangent
+            vector.x = mesh->mBitangents[i].x;
+            vector.y = mesh->mBitangents[i].y;
+            vector.z = mesh->mBitangents[i].z;
+            vertex.biTangent = vector;
         }
         else
             vertex.texCoords = glm::vec2(0.0f, 0.0f);
@@ -88,61 +95,6 @@ Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	ExtractBoneWeightForVertices(vertices,mesh,scene);
-
     // return a mesh object created from the extracted mesh data
     return Mesh(vertices, indices, textures);
 }
-
-void AnimationModel::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
-{
-    for (int i = 0; i < 4; ++i)
-    {
-        if (vertex.boneIDs[i] < 0)
-        {
-            vertex.weights[i] = weight;
-            vertex.boneIDs[i] = boneID;
-            break;
-        }
-    }
-}
-
-void AnimationModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
-{
-    auto& bonerInfoMap = boneInfoMap;
-    uint16_t& boneCount = boneCounter;
-
-    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
-    {
-        int boneID = -1;
-        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-        if (bonerInfoMap.find(boneName) == bonerInfoMap.end())
-        {
-            BoneInfo newBoneInfo{};
-            newBoneInfo.id = boneCount;
-            newBoneInfo.offset = ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
-            bonerInfoMap[boneName] = newBoneInfo;
-            boneID = boneCount;
-            boneCount++;
-        }
-        else
-        {
-            boneID = bonerInfoMap[boneName].id;
-        }
-        assert(boneID != -1);
-        auto weights = mesh->mBones[boneIndex]->mWeights;
-        unsigned int numWeights = mesh->mBones[boneIndex]->mNumWeights;
-
-        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
-        {
-            int vertexId = (int)weights[weightIndex].mVertexId;
-            float weight = weights[weightIndex].mWeight;
-            assert(vertexId <= vertices.size());
-            SetVertexBoneData(vertices[vertexId], boneID, weight);
-        }
-    }
-}
-
-std::unordered_map<std::string, BoneInfo> &AnimationModel::GetBoneInfoMap() { return boneInfoMap; }
-
-uint16_t &AnimationModel::GetBoneCount() { return boneCounter; }

@@ -1,3 +1,7 @@
+//
+// Created by MasterKtos on 21.04.2023.
+//
+
 #include "LowLevelClasses/Model.h"
 
 #include "assimp/Importer.hpp"
@@ -7,9 +11,9 @@
 #include "spdlog/spdlog.h"
 #include <filesystem>
 
-unsigned int Model::TextureFromFile(const char *path, const std::string &directory, bool gamma) {
+unsigned int Model::TextureFromFile(const char *path, const std::string &textureDir, bool gamma) {
     std::string filename = std::string(path);
-    filename = directory + '/' + filename;
+    filename = textureDir + '/' + filename;
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
@@ -41,17 +45,13 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
     return textureID;
 }
 
-Model::Model(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma) : shader(shader),  type(type), gammaCorrection(gamma)
-{
-    LoadModel(path);
-}
+Model::Model(std::string const &path, std::shared_ptr<Shader> &shader,
+             int type, bool gamma) : shader(shader), type(type), gammaCorrection(gamma) {}
 
-Model::Model(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
-    meshes.push_back(mesh);
-}
+Model::Model(const Mesh& mesh, std::shared_ptr<Shader> &shader,
+             int type) : shader(shader), type(type), gammaCorrection(false) {}
 
-void Model::Draw()
-{
+void Model::Draw() {
     for(auto & mesh : meshes) mesh.Draw(shader, type);
 }
 
@@ -59,8 +59,7 @@ void Model::Draw(std::shared_ptr<Shader> useShader) {
     for(auto & mesh : meshes) mesh.Draw(useShader, type);
 }
 
-void Model::LoadModel(std::string const &path)
-{
+void Model::LoadModel(std::string const &path) {
     // read file via ASSIMP
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
@@ -76,8 +75,7 @@ void Model::LoadModel(std::string const &path)
     ProcessNode(scene->mRootNode, scene);
 }
 
-void Model::ProcessNode(aiNode *node, const aiScene *scene)
-{
+void Model::ProcessNode(aiNode *node, const aiScene *scene) {
     // process each mesh located at the current node
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -94,8 +92,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
 
 }
 
-Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
-{
+Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
     // data to fill
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -104,7 +101,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     // walk through each of the mesh's vertices
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        Vertex vertex;
+        Vertex vertex{};
         glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
         vector.x = mesh->mVertices[i].x;
@@ -178,22 +175,21 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
-{
+std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType textureType, std::string typeName) {
     std::vector<Texture> textures;
-    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    for(unsigned int i = 0; i < mat->GetTextureCount(textureType); i++)
     {
         aiString str;
-        mat->GetTexture(type, i, &str);
+        mat->GetTexture(textureType, i, &str);
         std::string path = std::filesystem::path(str.C_Str()).generic_string();
         path = path.substr(path.find_last_of('/') + 1);
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
         bool skip = false;
-        for(unsigned int j = 0; j < texturesLoaded.size(); j++)
+        for(auto & texture : texturesLoaded)
         {
-            if(std::strcmp(texturesLoaded[j].path.data(), path.c_str()) == 0)
+            if(std::strcmp(texture.path.data(), path.c_str()) == 0)
             {
-                textures.push_back(texturesLoaded[j]);
+                textures.push_back(texture);
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                 break;
             }
@@ -203,7 +199,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType 
             Texture texture;
             texture.id = TextureFromFile(path.c_str(), this->directory);
             texture.type = typeName;
-            texture.path = path.c_str();
+            texture.path = path;
             textures.push_back(texture);
             texturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
         }
