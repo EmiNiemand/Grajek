@@ -27,8 +27,10 @@ void ShopMenu::Start() {
 
 void ShopMenu::ShowMenu() {
     parent->EnableSelfAndChildren();
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>();
-    activeButton->isActive = true;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.size() > 1) {
+        activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.begin()->second->GetComponent<Button>();
+        activeButton->isActive = true;
+    }
 }
 
 void ShopMenu::OnClick() {
@@ -62,5 +64,4 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
     button->previousButton->nextButton = button->nextButton;
     button->nextButton->previousButton = temp;
     GameObject::Destroy(button->GetParent());
-//    GameObject::Destroy(GloomEngine::GetInstance()->FindGameObjectWithName("ui"));
 }
