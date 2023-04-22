@@ -267,10 +267,14 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     parent->transform->SetLocalPosition(data->playerPosition);
     Camera::activeCamera->transform->SetLocalPosition(
             parent->transform->GetGlobalPosition() + Camera::activeCamera->GetComponent<Camera>()->cameraOffset);
+    for(const auto& instrument : data->instruments)
+        equipment->BuyInstrument(0, Prefab::GetInstrument(instrument));
 }
 
 void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
     data->money = equipment->GetCash();
     data->reputation = equipment->GetRep();
     data->playerPosition = parent->transform->GetLocalPosition();
+    for(const auto& instrument : equipment->instruments)
+        data->instruments.insert(instrument->name);
 }

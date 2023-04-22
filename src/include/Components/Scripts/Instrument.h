@@ -28,11 +28,12 @@ public:
     void AddPatterns(std::vector<std::shared_ptr<MusicPattern>> newPatterns);
     /**
      * @brief Generates new pattern from given RawSamples. Each RawSample contains
-     * sample index (in instrument) and delay value.
+     * sample index (in instrument), delay value and sound duration.
      */
     void GeneratePattern(std::vector<RawSample> newPattern);
     void AddSamples(const std::vector<std::string>& paths);
     std::string NameToString() const;
+
 };
 
 
