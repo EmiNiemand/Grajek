@@ -14,8 +14,11 @@
 class Rigidbody : public Component {
 public:
     glm::vec3 velocity = {0, 0, 0};
+    glm::vec3 rotation = {0, 0, 0}; // in degrees
     float mass = 1;
-    float linearDrag = 10;
+    /// if drag > gravity bug that launches player into space can occur
+    float linearDrag = 5;
+    float turnSpeed = 7.5f;
     float gravityScale = 5;
 
 public:
@@ -25,6 +28,7 @@ public:
     void FixedUpdate() override;
 
     void AddForce(glm::vec3 vector, ForceMode forceMode);
+    void AddTorque(float angle, ForceMode forceMode);
 };
 
 

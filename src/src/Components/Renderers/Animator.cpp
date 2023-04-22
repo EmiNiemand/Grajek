@@ -19,19 +19,19 @@ Animator::~Animator() {
     currentAnimation.reset();
 }
 
-void Animator::LoadAnimationModel(std::string path) {
+void Animator::LoadAnimationModel(const std::string& path) {
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
     uint32_t hash = Utilities::Hash(newPath);
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
-                                                               RendererManager::GetInstance()->animatedShader)});
+                                                               RendererManager::GetInstance()->shader)});
     }
     model = animationModels.at(hash);
 }
 
-void Animator::LoadAnimation(std::string path)
+void Animator::LoadAnimation(const std::string& path)
 {
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
@@ -55,11 +55,11 @@ void Animator::Update() {
 void Animator::Draw() {
     if(model == nullptr) return;
 
-    auto shader = RendererManager::GetInstance()->animatedShader;
+    auto shader = RendererManager::GetInstance()->shader;
 
     shader->Activate();
     for (int i = 0; i < finalBoneMatrices.size(); ++i)
-        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices.at(i));
     shader->SetMat4("model", parent->transform->GetModelMatrix());
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
@@ -69,11 +69,27 @@ void Animator::Draw() {
     model->Draw();
 }
 
+void Animator::Draw(std::shared_ptr<Shader> shader) {
+    if(model == nullptr) return;
+
+    shader->Activate();
+    for (int i = 0; i < finalBoneMatrices.size(); ++i)
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices.at(i));
+    shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec3("material.color", material.color);
+    shader->SetFloat("material.shininess", material.shininess);
+    shader->SetFloat("material.reflection", material.reflection);
+    shader->SetFloat("material.refraction", material.refraction);
+
+    model->Draw(shader);
+}
+
+
 void Animator::UpdateAnimation(float deltaTime) {
 	//if(!isPlaying) return;
 	if (!currentAnimation) return;
 
-    currentTime += currentAnimation->GetTicksPerSecond() * deltaTime;
+    currentTime += (float)currentAnimation->GetTicksPerSecond() * deltaTime;
     currentTime = fmod(currentTime, currentAnimation->GetDuration());
     CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
 }
@@ -86,14 +102,14 @@ void Animator::PlayAnimation(std::shared_ptr<Animation> pAnimation) {
 
 void Animator::PauseAnimation() { isPlaying = false; }
 
-std::vector<glm::mat4> Animator::GetFinalBoneMatrices()
+std::vector<glm::mat4>& Animator::GetFinalBoneMatrices()
 {
     return finalBoneMatrices;
 }
 
-void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void Animator::CalculateBoneTransform(const AssimpNodeData* node, const glm::mat4& parentTransform)
 {
-    std::string nodeName = node->name;
+    const std::string& nodeName = node->name;
     glm::mat4 nodeTransform = node->transformation;
 
 	Bone* bone = currentAnimation->FindBone(nodeName);
@@ -111,9 +127,9 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
     {
         int index = boneInfoMap[nodeName].id;
         glm::mat4 offset = boneInfoMap[nodeName].offset;
-        finalBoneMatrices[index] = globalTransformation * offset;
+        finalBoneMatrices.at(index) = globalTransformation * offset;
     }
 
-    for (int i = 0; i < node->childrenCount; i++)
-		CalculateBoneTransform(&node->children[i], globalTransformation);
+    for (const auto & i : node->children)
+		CalculateBoneTransform(&i, globalTransformation);
 }

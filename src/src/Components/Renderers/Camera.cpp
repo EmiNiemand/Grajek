@@ -42,24 +42,26 @@ void Camera::Start() {
 }
 
 void Camera::Update() {
-	//TODO: move these to some outer class
-    // we change desired zoom on the camera when pressing Z.
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_Z)) {
-        if (!isZoomed) {
-            isZoomed = true;
-            SetZoomLevel(0.5f);
-        } else {
-            isZoomed = false;
-            SetZoomLevel(1.0f);
+    if (GloomEngine::GetInstance()->timeScale == 1) {
+        //TODO: move these to some outer class
+        // we change desired zoom on the camera when pressing Z.
+        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_Z)) {
+            if (!isZoomed) {
+                isZoomed = true;
+                SetZoomLevel(0.5f);
+            } else {
+                isZoomed = false;
+                SetZoomLevel(1.0f);
+            }
         }
+        glm::vec3 playerPosition = player->transform->GetLocalPosition();
+        glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
+        zoomLevel = Utilities::Lerp(zoomLevel, desiredZoomLevel, 0.02f);
+        parent->transform->SetLocalPosition(Utilities::Lerp(
+                parent->transform->GetGlobalPosition(),
+                playerPosition + cameraOffset * zoomLevel, 0.02f));
+        Component::Update();
     }
-    glm::vec3 playerPosition = player->transform->GetLocalPosition();
-    glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
-	zoomLevel = Utilities::Lerp(zoomLevel, desiredZoomLevel, 0.02f);
-	parent->transform->SetLocalPosition(Utilities::Lerp(
-			parent->transform->GetGlobalPosition(),
-			playerPosition + cameraOffset * zoomLevel, 0.02f));
-    Component::Update();
 }
 
 void Camera::OnUpdate() {

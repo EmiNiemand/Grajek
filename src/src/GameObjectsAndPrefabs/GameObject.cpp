@@ -63,8 +63,8 @@ void GameObject::RemoveAllChildren() {
 
 void GameObject::UpdateSelfAndChildren() {
     if (transform != nullptr) {
-        OnTransformUpdateComponents();
         ForceUpdateSelfAndChildren();
+        OnTransformUpdateComponents();
     }
 }
 
@@ -79,10 +79,40 @@ void GameObject::ForceUpdateSelfAndChildren() {
     }
 }
 
+void GameObject::EnableSelfAndChildren() {
+    if (enabled) return;
+
+    for (auto&& component : components){
+        component.second->enabled = true;
+    }
+    for (auto&& child : children)
+    {
+        child.second->EnableSelfAndChildren();
+    }
+    enabled = true;
+}
+
+void GameObject::DisableSelfAndChildren() {
+    if (!enabled) return;
+
+    for (auto&& child : children)
+    {
+        child.second->DisableSelfAndChildren();
+    }
+    for (auto&& component : components){
+        component.second->enabled = false;
+    }
+    enabled = false;
+}
+
 int GameObject::GetId() const {
     return id;
 }
 
 const std::string &GameObject::GetName() const {
     return name;
+}
+
+bool GameObject::GetEnabled() const {
+    return enabled;
 }

@@ -18,6 +18,7 @@ private:
     // Name and id are unique
     int id;
     std::string name;
+    bool enabled = true;
 
 public:
     std::map<int, std::shared_ptr<Component>> components;
@@ -71,8 +72,12 @@ public:
     void UpdateSelfAndChildren();
     void ForceUpdateSelfAndChildren();
 
+    void EnableSelfAndChildren();
+    void DisableSelfAndChildren();
+
     int GetId() const;
     const std::string &GetName() const;
+    bool GetEnabled() const;
 };
 
 

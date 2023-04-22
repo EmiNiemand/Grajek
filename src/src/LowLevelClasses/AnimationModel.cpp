@@ -34,7 +34,7 @@ unsigned int AnimationModel::TextureFromFile(const char *path, const std::string
 
         stbi_image_free(data);
     } else {
-        spdlog::info("Texture failed to load at path: ", path);
+        spdlog::info("Texture failed to load at path: " + (std::string)path);
         stbi_image_free(data);
     }
     return textureID;
@@ -42,17 +42,22 @@ unsigned int AnimationModel::TextureFromFile(const char *path, const std::string
 
 AnimationModel::AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma) : shader(shader),  type(type), gammaCorrection(gamma)
 {
+    boneInfoMap.reserve(100);
     LoadModel(path);
 }
 
-AnimationModel::AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
+AnimationModel::AnimationModel(const Mesh& mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
+    boneInfoMap.reserve(100);
     meshes.push_back(mesh);
 }
 
 void AnimationModel::Draw()
 {
-    for(auto & meshe : meshes)
-        meshe.Draw(shader, type);
+    for(auto & mesh : meshes) mesh.Draw(shader, type);
+}
+
+void AnimationModel::Draw(std::shared_ptr<Shader> useShader) {
+    for(auto & mesh : meshes) mesh.Draw(useShader, type);
 }
 
 void AnimationModel::LoadModel(std::string const &path)

@@ -26,20 +26,22 @@ public:
     Animator(const std::shared_ptr<GameObject> &parent, int id);
     ~Animator() override;
 
-    void LoadAnimationModel(std::string path);
-	void LoadAnimation(std::string path);
+    void LoadAnimationModel(const std::string& path);
+	void LoadAnimation(const std::string& path);
 
 	void Update() override;
     void Draw() override;
 
-	void UpdateAnimation(float deltaTime);
+    void Draw(std::shared_ptr<Shader> shader) override;
+
+    void UpdateAnimation(float deltaTime);
     void PlayAnimation(std::shared_ptr<Animation> pAnimation);
 	void PauseAnimation();
 
-    std::vector<glm::mat4> GetFinalBoneMatrices();
+    std::vector<glm::mat4>& GetFinalBoneMatrices();
 
 private:
-    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+    void CalculateBoneTransform(const AssimpNodeData* node, const glm::mat4& parentTransform);
 
 };
 

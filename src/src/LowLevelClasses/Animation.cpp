@@ -7,14 +7,14 @@
 
 Animation::Animation(const std::string& animationPath, AnimationModel* model)
 {
+    bones.reserve(100);
+    boneInfoMap.reserve(100);
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
     assert(scene && scene->mRootNode);
     auto animation = scene->mAnimations[0];
-    duration = animation->mDuration;
-    ticksPerSecond = animation->mTicksPerSecond;
-    aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
-    globalTransformation = globalTransformation.Inverse();
+    duration = (float)animation->mDuration;
+    ticksPerSecond = (int)animation->mTicksPerSecond;
     ReadHierarchyData(rootNode, scene->mRootNode);
     ReadMissingBones(animation, *model);
 }
@@ -23,12 +23,7 @@ Animation::~Animation() = default;
 
 Bone* Animation::FindBone(const std::string& name)
 {
-    auto iter = std::find_if(bones.begin(), bones.end(),
-                             [&](const Bone& Bone)
-                             {
-                                 return Bone.GetBoneName() == name;
-                             }
-    );
+    auto iter = std::find_if(bones.begin(), bones.end(), [&](const Bone& Bone) { return Bone.GetBoneName() == name; });
     if (iter == bones.end()) return nullptr;
     else return &(*iter);
 }
@@ -45,18 +40,18 @@ const AssimpNodeData& Animation::GetRootNode() {
     return rootNode;
 }
 
-const std::map<std::string,BoneInfo>& Animation::GetBoneIDMap() {
+const std::unordered_map<std::string,BoneInfo>& Animation::GetBoneIDMap() {
     return boneInfoMap;
 }
 
 void Animation::ReadMissingBones(const aiAnimation* animation, AnimationModel& model) {
-    int size = animation->mNumChannels;
+    unsigned int size = animation->mNumChannels;
 
     boneInfoMap = model.GetBoneInfoMap();//getting m_BoneInfoMap from Model class
     uint16_t& boneCount = model.GetBoneCount(); //getting the m_BoneCounter from Model class
 
     //reading channels(bones engaged in an animation and their keyframes)
-    for (int i = 0; i < size; i++)
+    for (unsigned int i = 0; i < size; i++)
     {
         auto channel = animation->mChannels[i];
         std::string boneName = channel->mNodeName.data;
@@ -76,7 +71,7 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src) {
 
     dest.name = src->mName.data;
     dest.transformation = ConvertMatrixToGLMFormat(src->mTransformation);
-    dest.childrenCount = src->mNumChildren;
+    dest.children.reserve(src->mNumChildren);
 
     for (int i = 0; i < src->mNumChildren; i++)
     {

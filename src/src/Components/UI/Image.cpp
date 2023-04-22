@@ -6,7 +6,7 @@
 
 #define BASE_PATH "res/textures/"
 
-Image::Image(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
 void Image::CreateMesh(float x, float y, float width, float height) {
     std::vector<Vertex> vertices;
@@ -36,7 +36,7 @@ void Image::CreateMesh(float x, float y, float width, float height) {
     mesh = std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Image::LoadTextures(float x, float y, const std::string &path) {
+void Image::LoadTexture(float x, float y, const std::string &path) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int width, height, nrChannels;
@@ -74,8 +74,7 @@ void Image::LoadTextures(float x, float y, const std::string &path) {
 }
 
 void Image::Update() {
-    Draw();
-    Component::Update();
+    UIComponent::Update();
 }
 
 void Image::Draw() {

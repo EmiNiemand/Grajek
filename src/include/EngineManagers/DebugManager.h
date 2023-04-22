@@ -35,8 +35,7 @@ public:
 
 	void Initialize(GLFWwindow* window, const char* glsl_version);
 	void Render();
-	void Free();
-
+    void Free() const;
 };
 
 

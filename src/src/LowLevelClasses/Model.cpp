@@ -35,7 +35,7 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
 
         stbi_image_free(data);
     } else {
-        spdlog::info("Texture failed to load at path: ", path);
+        spdlog::info("Texture failed to load at path: " + (std::string)path);
         stbi_image_free(data);
     }
     return textureID;
@@ -52,15 +52,18 @@ Model::Model(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shad
 
 void Model::Draw()
 {
-    for(auto & mesh : meshes)
-        mesh.Draw(shader, type);
+    for(auto & mesh : meshes) mesh.Draw(shader, type);
+}
+
+void Model::Draw(std::shared_ptr<Shader> useShader) {
+    for(auto & mesh : meshes) mesh.Draw(useShader, type);
 }
 
 void Model::LoadModel(std::string const &path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
     // check for errors
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {

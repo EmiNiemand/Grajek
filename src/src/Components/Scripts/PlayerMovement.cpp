@@ -2,6 +2,7 @@
 // Created by szymo on 16/03/2023.
 //
 
+#include <numbers>
 #include "Components/Scripts/PlayerMovement.h"
 #include "GloomEngine.h"
 #include "EngineManagers/HIDManager.h"
@@ -18,25 +19,34 @@ void PlayerMovement::Start() {
 }
 
 void PlayerMovement::FixedUpdate() {
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_W)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(0, 0, -1) * speed, ForceMode::Impulse);
-        }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_S)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(0, 0, 1) * speed, ForceMode::Impulse);
-        }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_A)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(-1, 0, 0) * speed, ForceMode::Impulse);
-        }
-    }
-    if (HIDManager::GetInstance()->IsKeyPressed(Key::KEY_D)) {
-        if (rb != nullptr) {
-            rb->AddForce(glm::vec3(1, 0, 0) * speed, ForceMode::Impulse);
-        }
-    }
     Component::FixedUpdate();
+    if (rb == nullptr)
+        return;
+
+    speed = std::lerp(speed, maxSpeed, smoothingParam);
+
+    if (moveVector.x != 0.0f || moveVector.y != 0.0f) {
+        rb->AddForce(glm::vec3(moveVector.x, 0.0f, moveVector.y) * speed, ForceMode::Force);
+        isMoving = true;
+    }
+
+    if (!isMoving) {
+        speed = 0.0f;
+    } else {
+        // Calculate rotation angles by using tangent function
+        rotationAngle = std::atan2f(-moveVector.x, -moveVector.y) * 180.0f/std::numbers::pi;
+
+        if (rotationAngle < 0.0f) {
+            rotationAngle += 360.0f;
+        }
+
+        rb->AddTorque(rotationAngle, ForceMode::Force);
+    }
+
+    isMoving = false;
+}
+
+void PlayerMovement::Move(glm::vec2 inputVector) {
+    // Need to invert horizontal/Z axis
+    moveVector = inputVector * glm::vec2(1, -1);
 }

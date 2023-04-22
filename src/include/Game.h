@@ -10,6 +10,7 @@ class Game {
 public:
     std::shared_ptr<GameObject> activeCamera;
     std::shared_ptr<GameObject> activeScene;
+    bool shouldQuit = false;
 
 public:
     explicit Game();

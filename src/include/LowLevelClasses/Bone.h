@@ -34,26 +34,26 @@ private:
     std::vector<KeyPosition> positions;
     std::vector<KeyRotation> rotations;
     std::vector<KeyScale> scales;
-    int numPositions;
-    int numRotations;
-    int numScales;
+    unsigned int numPositions;
+    unsigned int numRotations;
+    unsigned int numScales;
 
     glm::mat4 localTransform;
     std::string name;
     int ID;
 
 public:
-    Bone(const std::string& name, int ID, const aiNodeAnim* channel);
+    Bone(std::string  name, int ID, const aiNodeAnim* channel);
 
     void Update(float animationTime);
 
     glm::mat4 GetLocalTransform();
-    std::string GetBoneName() const;
-    int GetBoneID();
+    [[nodiscard]] const std::string& GetBoneName() const;
+    [[nodiscard]] int GetBoneID() const;
 
-    int GetPositionIndex(float animationTime);
-    int GetRotationIndex(float animationTime);
-    int GetScaleIndex(float animationTime);
+    [[nodiscard]] int GetPositionIndex(float animationTime) const;
+    [[nodiscard]] int GetRotationIndex(float animationTime) const;
+    [[nodiscard]] int GetScaleIndex(float animationTime) const;
 
 
 private:

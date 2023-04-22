@@ -17,6 +17,7 @@ public:
 
     void Update() override;
     void Draw() override;
+    void Draw(std::shared_ptr<Shader> shader) override;
 
     void LoadModel(std::string path);
 };

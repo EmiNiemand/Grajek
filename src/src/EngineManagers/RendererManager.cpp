@@ -12,13 +12,9 @@
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
-	animatedShader = std::make_shared<Shader>("animated.vert", "animated.frag");
     projection = glm::perspective(glm::radians(45.0f),
                                   (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,
                                   0.1f, 100.0f);
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    //TODO: does not work for some reason
-//    stbi_set_flip_vertically_on_load(true);
 }
 
 RendererManager::~RendererManager() = default;
@@ -33,7 +29,6 @@ RendererManager* RendererManager::GetInstance() {
 void RendererManager::Free() const {
     shader->Delete();
     cubeMapShader->Delete();
-    animatedShader->Delete();
 }
 
 void RendererManager::DrawObjects() {
@@ -54,8 +49,6 @@ void RendererManager::UpdateProjection() const {
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("projection", projection);
 
-	animatedShader->Activate();
-	animatedShader->SetMat4("projection", projection);
 }
 
 void RendererManager::UpdateCamera() const {
@@ -65,29 +58,25 @@ void RendererManager::UpdateCamera() const {
 
     cubeMapShader->Activate();
     cubeMapShader->SetMat4("view", glm::mat4(glm::mat3(Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix())));
-
-	animatedShader->Activate();
-	animatedShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
-	animatedShader->SetVec3("viewPos", Camera::activeCamera->transform->GetGlobalPosition());
 }
 
 void RendererManager::UpdateLight(int componentId) {
 
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-            for(const auto& lightShader : {shader, animatedShader}) UpdateSpotLight(i, lightShader);
+            UpdateSpotLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < directionalLights.size(); i++) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-            for(const auto& lightShader : {shader, animatedShader}) UpdateDirectionalLight(i, lightShader);
+            UpdateDirectionalLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < pointLights.size(); i++) {
         if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-            for(const auto& lightShader : {shader, animatedShader}) UpdatePointLight(i, lightShader);
+            UpdatePointLight(i, shader);
             return;
         }
     }
@@ -96,19 +85,19 @@ void RendererManager::UpdateLight(int componentId) {
 void RendererManager::RemoveLight(int componentId) {
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
-            for(const auto& lightShader : {shader, animatedShader}) RemoveSpotLight(i, lightShader);
+            RemoveSpotLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < directionalLights.size(); i++) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
-            for(const auto& lightShader : {shader, animatedShader}) RemoveDirectionalLight(i, lightShader);
+            RemoveDirectionalLight(i, shader);
             return;
         }
     }
     for (int i = 0; i < pointLights.size(); i++) {
         if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
-            for(const auto& lightShader : {shader, animatedShader}) RemovePointLight(i, lightShader);
+            RemovePointLight(i, shader);
             return;
         }
     }
