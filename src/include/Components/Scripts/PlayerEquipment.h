@@ -26,6 +26,7 @@ public:
     void Setup(int startCash=0, int startRep=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     std::shared_ptr<Instrument> GetInstrumentWithName(InstrumentName name);
+    std::set<InstrumentName> GetInstrumentNames();
 
     void AddReward(float crowdSatisfaction);
 

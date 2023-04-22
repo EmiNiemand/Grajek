@@ -6,10 +6,11 @@
 #define GLOOMENGINE_PLAYERMANAGER_H
 
 
-#include "glm/vec2.hpp"
 #include "Components/Component.h"
-#include "MusicPattern.h"
 #include "Interfaces/IDataPersistance.h"
+#include "MusicPattern.h"
+#include "glm/vec2.hpp"
+#include <set>
 
 class PlayerMovement;
 class PlayerUI;
@@ -47,11 +48,7 @@ bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
 private:
     void Start() override;
-
-public:
     void Awake() override;
-
-private:
     void Update() override;
 
     void PollInput();
@@ -71,11 +68,16 @@ private:
 public:
     PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
 
-    //Session methods
+    // Session methods
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
     void CreateMusicSession(InstrumentName instrument);
+
+    // UI methods
     void ToggleOptionsMenu();
+
+    // Equipment methods
+    std::set<InstrumentName> GetInstruments();
 
     // IDataPersistance methods
     void LoadData(std::shared_ptr<GameData> data) override;

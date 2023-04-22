@@ -29,6 +29,14 @@ std::shared_ptr<Instrument> PlayerEquipment::GetInstrumentWithName(InstrumentNam
     return nullptr;
 }
 
+std::set<InstrumentName> PlayerEquipment::GetInstrumentNames() {
+    std::set<InstrumentName> names;
+    for(const auto& instrument : instruments) {
+        names.insert(instrument->name);
+    }
+    return names;
+}
+
 void PlayerEquipment::AddReward(float crowdSatisfaction) {
     cash += (int)(crowdSatisfaction * maxCashReward);
     rep += (int)(crowdSatisfaction * maxRepReward);
