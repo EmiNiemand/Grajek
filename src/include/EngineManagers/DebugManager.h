@@ -15,7 +15,7 @@ private:
 
 	bool displaySelected;
 	//flag to check if position of the GameObject was already extracted. 
-	bool positionExtracted;
+	bool transformExtracted;
 	std::shared_ptr<GameObject> selected;
 
 

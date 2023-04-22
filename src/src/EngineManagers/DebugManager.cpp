@@ -13,7 +13,7 @@
 
 DebugManager::DebugManager() {
     displaySelected = false;
-    positionExtracted = false;
+    transformExtracted = false;
 }
 DebugManager::~DebugManager() = default;
 
@@ -66,7 +66,7 @@ void DebugManager::Render() {
             ImGui::SameLine();
             if (ImGui::SmallButton(label.c_str())) {
                 displaySelected = true;
-                positionExtracted = false;
+                transformExtracted = false;
                 selected = child.second;
             }
             ProcessChildren(child.second);
@@ -78,15 +78,25 @@ void DebugManager::Render() {
     if (displaySelected) {
         static bool inputBool;
         static float inputVector1[3] = {0.0f,0.0f,0.0f};
+        static float inputVector2[3] = { 0.0f,0.0f,0.0f };
+        static float inputVector3[3] = { 0.0f,0.0f,0.0f };
         glm::vec3 positionHolder;
-        static float inputVector2[3] = {0.0f,0.0f,0.0f};
+        glm::vec3 rotationHolder;
+        glm::vec3 scaleHolder;
+
 
         positionHolder = selected->transform.get()->GetLocalPosition();
-        if (!positionExtracted) {
+        rotationHolder = selected->transform.get()->GetLocalRotation();
+        scaleHolder = selected->transform.get()->GetLocalScale();
+        if (!transformExtracted) {
             ExtractVec3ToFloat3(positionHolder, inputVector1);
-            positionExtracted = true;
+            ExtractVec3ToFloat3(rotationHolder, inputVector2);
+            ExtractVec3ToFloat3(scaleHolder, inputVector3);
+            transformExtracted = true;
         }
         positionHolder = InjectFloat3IntoVec3(inputVector1);
+        rotationHolder = InjectFloat3IntoVec3(inputVector2);
+        scaleHolder = InjectFloat3IntoVec3(inputVector3);
 
         selected->transform.get()->SetLocalPosition(positionHolder);
         
@@ -94,12 +104,13 @@ void DebugManager::Render() {
         ImGui::Begin("Properties");
         ImGui::Text(selected->GetName().c_str());
         ImGui::InputFloat3("Position", inputVector1);
-        ImGui::InputFloat3("inputVector2", inputVector2);
+        ImGui::SliderFloat3("Rotation", inputVector2, 0.0f, 360.0f);
+        ImGui::SliderFloat3("Scale", inputVector3, 0.0f, 20.0f);
         ImGui::Checkbox("inputBool", &inputBool);
         if (ImGui::Button("Close"))
         {
             displaySelected = false;
-            positionExtracted = false;
+            transformExtracted = false;
         }
         ImGui::End();
     }
@@ -119,7 +130,7 @@ void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
         ImGui::SameLine();
         if (ImGui::SmallButton(label.c_str())) {
             displaySelected = true;
-            positionExtracted = false;
+            transformExtracted = false;
             selected = child.second;
         }
         ProcessChildren(child.second);
