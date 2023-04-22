@@ -9,6 +9,22 @@ ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(par
 
 ShopMenu::~ShopMenu() {}
 
+void ShopMenu::Start() {
+    Component::Start();
+    // Remove already bought instruments from shop
+    // TODO: improve
+    auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    auto playerInstruments = playerManager->GetInstruments();
+    if(playerInstruments.contains(InstrumentName::Drums))
+        DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>());
+    if(playerInstruments.contains(InstrumentName::Trumpet))
+        DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("SecondInstrument")->GetComponent<Button>());
+    if(playerInstruments.contains(InstrumentName::Launchpad))
+        DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("ThirdInstrument")->GetComponent<Button>());
+    if(playerInstruments.contains(InstrumentName::Guitar))
+        DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
+}
+
 void ShopMenu::ShowMenu() {
     parent->EnableSelfAndChildren();
     if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.size() > 1) {
@@ -18,40 +34,34 @@ void ShopMenu::ShowMenu() {
 }
 
 void ShopMenu::OnClick() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.size() < 2) return;
-    bool bought;
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
-        if (playerManager->BuyInstrument(10, Prefab::GetInstrument(InstrumentName::Drums)))
-            bought = true;
-        else
-            bought = false;
+        boughtInstrument = playerManager->BuyInstrument(
+                100, Prefab::GetInstrument(InstrumentName::Drums));
     } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
-        if (playerManager->BuyInstrument(15, Prefab::GetInstrument(InstrumentName::Trumpet)))
-            bought = true;
-        else
-            bought = false;
+        boughtInstrument = playerManager->BuyInstrument(
+                500, Prefab::GetInstrument(InstrumentName::Trumpet));
     } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
-        if (playerManager->BuyInstrument(20, Prefab::GetInstrument(InstrumentName::Launchpad)))
-            bought = true;
-        else
-            bought = false;
+        boughtInstrument = playerManager->BuyInstrument(
+                1500, Prefab::GetInstrument(InstrumentName::Launchpad));
     } else if (activeButton->GetParent()->GetName() == "FourthInstrument") {
-        if (playerManager->BuyInstrument(25, Prefab::GetInstrument(InstrumentName::Guitar)))
-            bought = true;
-        else
-            bought = false;
+        boughtInstrument = playerManager->BuyInstrument(
+                5000, Prefab::GetInstrument(InstrumentName::Guitar));
     }
-
-    if (bought) {
-        spdlog::info("[SM] Bought first instrument (percussion)!");
-        std::shared_ptr<Button> temp = activeButton->previousButton;
-        activeButton->previousButton->nextButton = activeButton->nextButton;
-        activeButton->nextButton->previousButton = temp;
-        GameObject::Destroy(activeButton->GetParent());
-        activeButton = temp;
-        activeButton->isActive = true;
+    if(boughtInstrument) {
+        DeleteButton(activeButton);
+        spdlog::info("[SM] Bought instrument!");
     } else {
-        spdlog::info("[SM] Not enough money for first instrument (percussion)");
+        spdlog::info("[SM] Not enough money for instrument");
     }
+}
+
+void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
+    if(button == activeButton)
+        ChangeActiveButton({0, -1});
+    std::shared_ptr<Button> temp = button->previousButton;
+    button->previousButton->nextButton = button->nextButton;
+    button->nextButton->previousButton = temp;
+    GameObject::Destroy(button->GetParent());
 }

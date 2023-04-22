@@ -19,6 +19,7 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
+#include "Other/FrustumCulling.h"
 
 #include <filesystem>
 
@@ -42,6 +43,7 @@ void GloomEngine::Initialize() {
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
+    FrustumCulling::GetInstance()->UpdateFrustum();
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -130,6 +132,8 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
+    FrustumCulling::GetInstance()->UpdateFrustum();
+
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart && component.second->enabled) component.second->Start();

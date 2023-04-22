@@ -42,8 +42,10 @@ void AudioManager::InitializeAudio() {
 }
 
 void AudioManager::RemoveAudioSource(int componentId) {
-    if (audioSources.contains(componentId))
+    if (audioSources.contains(componentId)) {
+        audioSources.at(componentId)->Free();
         audioSources.erase(componentId);
+    }
 }
 
 void AudioManager::Free() {

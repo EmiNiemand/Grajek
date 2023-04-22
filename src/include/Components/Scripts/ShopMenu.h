@@ -11,8 +11,12 @@ public:
     ShopMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~ShopMenu() override;
 
+    void Start() override;
+
     void ShowMenu();
     void OnClick();
+private:
+    void DeleteButton(std::shared_ptr<Button> button);
 };
 
 #endif //GLOOMENGINE_SHOPMENU_H
