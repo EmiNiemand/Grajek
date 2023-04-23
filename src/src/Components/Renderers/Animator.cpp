@@ -52,9 +52,9 @@ void Animator::LoadAnimation(const std::string& path)
 
 void Animator::Update() {
     if (!FrustumCulling::GetInstance()->IsOnFrustum(parent->bounds, parent->transform)) {
-#ifdef DEBUG
-        spdlog::info(parent->GetName() + ": " + "is not in frustum");
-#endif
+//#ifdef DEBUG
+//        spdlog::info(parent->GetName() + ": " + "is not in frustum");
+//#endif
         return;
     }
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);

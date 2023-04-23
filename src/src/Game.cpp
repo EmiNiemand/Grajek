@@ -22,6 +22,7 @@
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Scripts/ShopMenu.h"
+#include "Components/GameObjectAnimator.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
@@ -60,7 +61,7 @@ void Game::InitializeGame() {
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -10});
+    bench->transform->SetLocalPosition({0, 10, -10});
     bench->transform->SetLocalRotation({0, -90, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
@@ -93,10 +94,21 @@ void Game::InitializeGame() {
 
     // Set up UI
     // ---------
-    std::shared_ptr<GameObject> ui = GameObject::Instantiate("ui", activeScene);
-    ui->AddComponent<Menu>();
-    ui->GetComponent<Menu>()->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->GetComponent<Menu>()->AddImage("Mruczek", 1650, 0, "UI/kotek.png");
+    auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
+    ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
+    ui->AddImage("Mruczek", 1650, 0, "UI/kotek.png");
+
+    GameObject::Instantiate("UiAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+            bench->transform, {
+                    {AnimatedProperty::Position, bench->transform->GetLocalPosition() - glm::vec3(0, 10, 0)},
+                    {AnimatedProperty::Position, bench->transform->GetLocalPosition()},
+            }, true);
+
+    GameObject::Instantiate("UiAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+            bench2->transform, {
+                    {AnimatedProperty::Position, bench2->transform->GetLocalPosition() + glm::vec3(0, 10, 0)},
+                    {AnimatedProperty::Position, bench2->transform->GetLocalPosition()},
+            }, true);
 
     // Set up pause menu
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);

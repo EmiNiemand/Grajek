@@ -24,10 +24,6 @@
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
 
-void PlayerManager::Start() {
-    Component::Start();
-}
-
 void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
@@ -48,6 +44,10 @@ void PlayerManager::Awake() {
 
     BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
     Component::Awake();
+}
+
+void PlayerManager::Start() {
+    Component::Start();
 }
 
 void PlayerManager::Update() {
