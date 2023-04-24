@@ -1,7 +1,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "EngineManagers/ColliderManager.h"
+#include "EngineManagers/CollisionManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
 BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
@@ -26,9 +26,9 @@ void BoxCollider::FixedUpdate() {
 
 
 void BoxCollider::OnDestroy() {
-    ColliderManager::GetInstance()->RemoveBoxCollider(id);
+    CollisionManager::GetInstance()->RemoveBoxCollider(id);
 #ifdef DEBUG
-    ColliderManager::GetInstance()->OnBoxCollidersChange();
+    CollisionManager::GetInstance()->OnBoxCollidersChange();
 #endif
     Component::OnDestroy();
 }
@@ -318,7 +318,7 @@ void BoxCollider::SetCollidersGridPoints() {
     auto xVector = glm::vec2(xVec.x, xVec.z);
     auto zVector = glm::vec2(zVec.x, zVec.z);
 
-    float gridSize = ColliderManager::GetInstance()->gridSize;
+    float gridSize = CollisionManager::GetInstance()->gridSize;
 
     glm::ivec2 points[4] = {
             glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / gridSize),
@@ -332,13 +332,13 @@ void BoxCollider::SetCollidersGridPoints() {
         points[2] == points[3]) {
         int x = points[0].x;
         int y = points[0].y;
-        if (!ColliderManager::GetInstance()->grid.contains(x))
-            ColliderManager::GetInstance()->grid.insert({x, std::unordered_map<int,
+        if (!CollisionManager::GetInstance()->grid.contains(x))
+            CollisionManager::GetInstance()->grid.insert({x, std::unordered_map<int,
                     std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
-        if (!ColliderManager::GetInstance()->grid.at(x).contains(y))
-            ColliderManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+        if (!CollisionManager::GetInstance()->grid.at(x).contains(y))
+            CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
 
-        ColliderManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+        CollisionManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         return;
     }
 
@@ -356,14 +356,14 @@ void BoxCollider::SetCollidersGridPoints() {
 
     for (int x = minX; x <= maxX; x++) {
         for (int y = minY; y <= maxY; y++) {
-            if (!ColliderManager::GetInstance()->grid.contains(x))
-                    ColliderManager::GetInstance()->grid.insert({x, std::unordered_map<int,
+            if (!CollisionManager::GetInstance()->grid.contains(x))
+                    CollisionManager::GetInstance()->grid.insert({x, std::unordered_map<int,
                             std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
 
-            if (!ColliderManager::GetInstance()->grid.at(x).contains(y))
-                    ColliderManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+            if (!CollisionManager::GetInstance()->grid.at(x).contains(y))
+                    CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
 
-            ColliderManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+            CollisionManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         }
     }
 }
