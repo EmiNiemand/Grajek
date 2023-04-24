@@ -4,7 +4,7 @@
 #include "EngineManagers/RendererManager.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "EngineManagers/UIManager.h"
-#include "EngineManagers/ColliderManager.h"
+#include "EngineManagers/CollisionManager.h"
 #include "EngineManagers/ShadowManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
@@ -162,7 +162,7 @@ void GloomEngine::Update() {
     glEnable(GL_DEPTH_TEST);
 
 #ifdef DEBUG
-    ColliderManager::GetInstance()->DrawColliders();
+    CollisionManager::GetInstance()->DrawColliders();
 #endif
 
     UIManager::GetInstance()->DrawUI();
@@ -179,7 +179,7 @@ void GloomEngine::FixedUpdate() {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
-    ColliderManager::GetInstance()->ManageCollision();
+    CollisionManager::GetInstance()->ManageCollision();
 }
 
 void GloomEngine::AIUpdate() {
@@ -189,7 +189,7 @@ void GloomEngine::AIUpdate() {
 }
 
 void GloomEngine::Free() const {
-    ColliderManager::GetInstance()->Free();
+    CollisionManager::GetInstance()->Free();
     AudioManager::GetInstance()->Free();
     ShadowManager::GetInstance()->Free();
     RendererManager::GetInstance()->Free();

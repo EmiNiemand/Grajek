@@ -12,9 +12,9 @@ class Shader;
 class GloomEngine;
 class BoxCollider;
 
-class ColliderManager {
+class CollisionManager {
 private:
-    inline static ColliderManager* colliderManager;
+    inline static CollisionManager* colliderManager;
 
     unsigned int vao, vbo, ebo;
     std::vector<glm::vec3> vertices;
@@ -31,11 +31,11 @@ public:
     std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, std::shared_ptr<BoxCollider>>>> grid;
 
 public:
-    ColliderManager(ColliderManager &other) = delete;
-    void operator=(const ColliderManager&) = delete;
-    virtual ~ColliderManager();
+    CollisionManager(CollisionManager &other) = delete;
+    void operator=(const CollisionManager&) = delete;
+    virtual ~CollisionManager();
 
-    static ColliderManager* GetInstance();
+    static CollisionManager* GetInstance();
 
     void ManageCollision();
 #ifdef DEBUG
@@ -49,7 +49,7 @@ public:
     void RemoveBoxCollider(int componentId);
 
 private:
-    explicit ColliderManager();
+    explicit CollisionManager();
 };
 
 
