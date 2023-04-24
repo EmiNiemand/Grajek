@@ -41,7 +41,7 @@
 class GameObjectFactory;
 class ComponentFactory;
 class RendererManager;
-class ColliderManager;
+class CollisionManager;
 class HIDManager;
 class SceneManager;
 class DataPersistanceManager;
