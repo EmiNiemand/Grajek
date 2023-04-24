@@ -13,12 +13,33 @@ GameObjectAnimator::GameObjectAnimator(const std::shared_ptr<GameObject> &parent
 
 void GameObjectAnimator::Setup(std::shared_ptr<Transform> animatedTransform,
                                std::vector<AnimationCheckpoint> animation,
-                               bool looping) {
+                               bool looping, bool absoluteValues) {
     transform = std::move(animatedTransform);
     checkpoints = std::move(animation);
     checkpoint = checkpoints[0];
     loopingAnimation = looping;
+    useAbsoluteValues = absoluteValues;
     counter = 0;
+
+    switch(checkpoint.property) {
+        case Position:
+            valueDelta = (checkpoint.value
+                          - transform->GetLocalPosition()
+                            * (float)useAbsoluteValues)
+                                /checkpoint.duration;
+            break;
+        case Rotation:
+            valueDelta = (checkpoint.value
+                          - transform->GetLocalRotation()
+                            * (float)useAbsoluteValues)
+                                /checkpoint.duration;
+            break;
+        case Scale:
+            valueDelta = (checkpoint.value * transform->GetLocalScale()
+                        - transform->GetLocalScale())
+                                /checkpoint.duration;
+    }
+
 }
 
 void GameObjectAnimator::Update() {
@@ -41,26 +62,44 @@ void GameObjectAnimator::Update() {
             }
         }
         checkpoint = checkpoints[checkpointIndex];
+        switch(checkpoint.property) {
+            case Position:
+                valueDelta = (checkpoint.value
+                            - transform->GetLocalPosition()
+                            * (float)useAbsoluteValues)
+                                    /checkpoint.duration;
+                break;
+            case Rotation:
+                valueDelta = (checkpoint.value
+                            - transform->GetLocalRotation()
+                            * (float)useAbsoluteValues)
+                                    /checkpoint.duration;
+                break;
+            case Scale:
+                valueDelta = (checkpoint.value * transform->GetLocalScale()
+                              - transform->GetLocalScale())
+                                    /checkpoint.duration;
+                break;
+        }
     }
 
     switch (checkpoint.property) {
         case Position:
             transform->SetLocalPosition(
-                    Utilities::Lerp(transform->GetLocalPosition(),
-                            checkpoint.value, 0.3f));
+                    transform->GetLocalPosition()
+                    + valueDelta * GloomEngine::GetInstance()->deltaTime);
             break;
         case Rotation:
             transform->SetLocalRotation(
-                    Utilities::Lerp(transform->GetLocalRotation(),
-                                    checkpoint.value, 0.3f));
+                    transform->GetLocalRotation()
+                    + valueDelta * GloomEngine::GetInstance()->deltaTime);
             break;
         case Scale:
             transform->SetLocalScale(
-                    Utilities::Lerp(transform->GetLocalScale(),
-                                    checkpoint.value, 0.3f));
+                    transform->GetLocalScale()
+                    + valueDelta * GloomEngine::GetInstance()->deltaTime);
             break;
     }
 
     counter += GloomEngine::GetInstance()->deltaTime;
-    spdlog::info("Counter: " + std::to_string(counter) + ";\t transform.y: " + std::to_string(transform->GetLocalPosition().y));
 }

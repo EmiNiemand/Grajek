@@ -61,7 +61,7 @@ void Game::InitializeGame() {
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 10, -10});
+    bench->transform->SetLocalPosition({0, 0, -10});
     bench->transform->SetLocalRotation({0, -90, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
@@ -98,16 +98,22 @@ void Game::InitializeGame() {
     ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
     ui->AddImage("Mruczek", 1650, 0, "UI/kotek.png");
 
-    GameObject::Instantiate("UiAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
             bench->transform, {
-                    {AnimatedProperty::Position, bench->transform->GetLocalPosition() - glm::vec3(0, 10, 0)},
-                    {AnimatedProperty::Position, bench->transform->GetLocalPosition()},
+                    {AnimatedProperty::Position, glm::vec3(0, 10, 0), 0.5f},
+                    {AnimatedProperty::Position, glm::vec3(0, -10, 0), 0.5f},
             }, true);
 
-    GameObject::Instantiate("UiAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+            bench->transform, {
+                    {AnimatedProperty::Scale, glm::vec3(2)},
+                    {AnimatedProperty::Scale, glm::vec3(0.5f)},
+            }, true);
+
+    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
             bench2->transform, {
-                    {AnimatedProperty::Position, bench2->transform->GetLocalPosition() + glm::vec3(0, 10, 0)},
-                    {AnimatedProperty::Position, bench2->transform->GetLocalPosition()},
+                    {AnimatedProperty::Position, glm::vec3(0, 10, 0)},
+                    {AnimatedProperty::Position, glm::vec3(0, -10, 0)},
             }, true);
 
     // Set up pause menu

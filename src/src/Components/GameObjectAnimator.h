@@ -23,14 +23,16 @@ private:
     int checkpointIndex = 0;
     AnimationCheckpoint checkpoint;
     std::shared_ptr<Transform> transform;
+    glm::vec3 valueDelta;
     bool loopingAnimation;
+    bool useAbsoluteValues;
 
 public:
     GameObjectAnimator(const std::shared_ptr<GameObject> &parent, int id);
 
     void Setup(std::shared_ptr<Transform> animatedTransform,
                std::vector<AnimationCheckpoint> animation,
-               bool looping = false);
+               bool looping = false, bool absoluteValues = false);
     void Update() override;
 };
 
