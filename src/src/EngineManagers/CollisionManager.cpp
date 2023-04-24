@@ -35,7 +35,7 @@ void CollisionManager::ManageCollision() {
     for (const auto& x : grid) {
         for (const auto& y : grid.at(x.first)) {
             for (const auto& box : grid.at(x.first).at(y.first)) {
-                if (!box.second->GetParent()->GetComponent<Rigidbody>()) continue;
+                if (!box.second->GetParent()->GetComponent<Rigidbody>() && !box.second->isTrigger) continue;
 
                 for (const auto& box2 : grid.at(x.first).at(y.first)) {
                     if (box.second == box2.second) continue;
