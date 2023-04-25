@@ -244,10 +244,6 @@ void Game::InitializeGame() const {
 	animatedDood->transform->SetLocalPosition({-2, 0, -10});
 	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
 
-    std::shared_ptr<GameObject> animatedDood1 = Prefab::GetDancingDude();
-    animatedDood1->transform->SetLocalPosition({-4, 0, -10});
-    animatedDood1->transform->SetLocalScale({1.5, 1.5, 1.5});
-
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
 }
