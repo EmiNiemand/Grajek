@@ -26,7 +26,7 @@ public:
     */
     void LoadTexture(int x, int y, const std::string& path);
     void SetPosition(int newX, int newY);
-    void SetRotation(int angle);
+    void SetRotation(float angle);
     void SetScale(float scale);
 
     void Update() override;

@@ -82,6 +82,7 @@ void Image::LoadTexture(int x, int y, const std::string &path) {
         this->y = y;
         this->width = width;
         this->height = height;
+        parent->transform->SetLocalPosition(glm::vec3(x, y, 0.0f));
     }
     else
     {
@@ -98,7 +99,7 @@ void Image::SetPosition(int newX, int newY) {
     mesh = CreateMesh(newX, newY, width, height);
 }
 
-void Image::SetRotation(int angle) {
+void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
     float p = (float)x + (float)width / 2, q = (float)y + (float)height / 2;
     float radians = glm::radians((float)angle);
