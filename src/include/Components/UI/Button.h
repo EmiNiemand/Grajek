@@ -15,7 +15,8 @@ private:
     std::shared_ptr<Mesh> textureMesh;
     std::shared_ptr<Mesh> textMesh;
     std::string text;
-    int textX ,textY, width, height;
+    int width, height;
+    int textX ,textY;
     glm::vec3 color;
     FT_UInt fontSize;
     std::map<GLchar, Character> Characters;
