@@ -147,87 +147,94 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
-#ifdef DEBUG
+    //Frustum culling
     {
+#ifdef DEBUG
         ZoneScopedNC("Frustum Culling", 0xFFD733);
 #endif
-    FrustumCulling::GetInstance()->UpdateFrustum();
+        FrustumCulling::GetInstance()->UpdateFrustum();
 
-    for (auto &&gameObject: gameObjects) {
-        gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds,
-                                                                                    gameObject.second->transform);
+        for (auto &&gameObject: gameObjects) {
+            gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds,
+                                                                                        gameObject.second->transform);
+        }
     }
-#ifdef DEBUG
-    }
+    // Component update
     {
-    ZoneScopedNC("Component update", 0xFF69B4);
+#ifdef DEBUG
+        ZoneScopedNC("Component update", 0xFF69B4);
 #endif
-    for (auto&& component : components) {
-        if (component.second->callOnAwake) component.second->Awake();
-        if (component.second->callOnStart && component.second->enabled) component.second->Start();
-        if (component.second->enabled) component.second->Update();
+        for (auto &&component: components) {
+            if (component.second->callOnAwake) component.second->Awake();
+            if (component.second->callOnStart && component.second->enabled) component.second->Start();
+            if (component.second->enabled) component.second->Update();
+        }
     }
-#ifdef DEBUG
-    }
+    // Preparing shadow map
     {
+#ifdef DEBUG
         ZoneScopedNC("Prepare shadow", 0xFFD733);
 #endif
-    // Prepare shadow framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    ShadowManager::GetInstance()->PrepareShadow();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#ifdef DEBUG
+        // Prepare shadow framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        ShadowManager::GetInstance()->PrepareShadow();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    // Drawing objects to textures
     {
+#ifdef DEBUG
         ZoneScopedNC("Draw objects", 0xADD8E6);
 #endif
-    glViewport(0, 0, width, height);
+        glViewport(0, 0, width, height);
 
-    // Prepare texture framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Prepare texture framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindTexture(GL_TEXTURE_2D,  ShadowManager::GetInstance()->depthMap);
-    RendererManager::GetInstance()->DrawObjects();
+        glBindTexture(GL_TEXTURE_2D, ShadowManager::GetInstance()->depthMap);
+        RendererManager::GetInstance()->DrawObjects();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#ifdef DEBUG
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    // Applying post-processing
     {
+#ifdef DEBUG
         ZoneScopedNC("Post processing", 0xFFD733);
 #endif
-    PostProcessingManager::GetInstance()->DrawBuffer();
+        PostProcessingManager::GetInstance()->DrawBuffer();
 
-    glEnable(GL_DEPTH_TEST);
-
+        glEnable(GL_DEPTH_TEST);
+    }
+    // Drawing debug lines for colliders
+    {
 #ifdef DEBUG
-    }
-    {
         ZoneScopedNC("Draw colliders", 0x800000);
-    CollisionManager::GetInstance()->DrawColliders();
+        CollisionManager::GetInstance()->DrawColliders();
+#endif
     }
+    // Drawing UI elements
     {
+#ifdef DEBUG
         ZoneScopedNC("Draw UI", 0xFFD733);
 #endif
 
-    UIManager::GetInstance()->DrawUI();
-
-#ifdef DEBUG
+        UIManager::GetInstance()->DrawUI();
     }
+    // Rendering IMGUI debug windows
     {
+#ifdef DEBUG
         ZoneScopedNC("Debug windows", 0xC71585);
-    DebugManager::GetInstance()->Render();
-    }
+        DebugManager::GetInstance()->Render();
 #endif
-#ifdef DEBUG
+    }
+    // Managing input
     {
+#ifdef DEBUG
         ZoneScopedNC("Manage input", 0x800080);
 #endif
-    HIDManager::GetInstance()->ManageInput();
-#ifdef DEBUG
+        HIDManager::GetInstance()->ManageInput();
     }
-#endif
 }
 
 void GloomEngine::FixedUpdate() {
