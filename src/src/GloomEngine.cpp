@@ -22,6 +22,9 @@
 #include "Other/FrustumCulling.h"
 
 #include <filesystem>
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
 
 GloomEngine::GloomEngine() {
     width = 1440;
@@ -70,6 +73,9 @@ void GloomEngine::Start() {
 }
 
 bool GloomEngine::MainLoop() {
+#ifdef DEBUG
+    FrameMarkStart(mainLoop);
+#endif
     auto currentTime = (float)glfwGetTime();
 
     glfwPollEvents();
@@ -78,6 +84,9 @@ bool GloomEngine::MainLoop() {
     int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
+#ifdef DEBUG
+        ZoneScopedNC("Update", 0xDC143C);
+#endif
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
 
         Update();
@@ -93,7 +102,9 @@ bool GloomEngine::MainLoop() {
     int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
     int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
-
+#ifdef DEBUG
+        ZoneScopedNC("Fixed update", 0x00008B);
+#endif
         if (timeScale != 0) {
             FixedUpdate();
         }
@@ -106,7 +117,9 @@ bool GloomEngine::MainLoop() {
     int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
     int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
     if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
-
+#ifdef DEBUG
+        ZoneScopedNC("AI update", 0x00FF00);
+#endif
         if (timeScale != 0) {
             AIUpdate();
         }
@@ -119,6 +132,7 @@ bool GloomEngine::MainLoop() {
 #ifdef DEBUG
     engineDeltaTime = (currentTime - lastEngineDeltaTime);
     lastEngineDeltaTime = currentTime;
+    FrameMark;
 #endif
 
     bool endGame = game->GameLoop();
@@ -132,24 +146,41 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
+#ifdef DEBUG
+    {
+        ZoneScopedNC("Frustum Culling", 0xFFD733);
+#endif
     FrustumCulling::GetInstance()->UpdateFrustum();
 
-    for(auto&& gameObject : gameObjects) {
-        gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds, gameObject.second->transform);
+    for (auto &&gameObject: gameObjects) {
+        gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds,
+                                                                                    gameObject.second->transform);
     }
-
+#ifdef DEBUG
+    }
+    {
+    ZoneScopedNC("Component update", 0xFF69B4);
+#endif
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart && component.second->enabled) component.second->Start();
         if (component.second->enabled) component.second->Update();
     }
-
+#ifdef DEBUG
+    }
+    {
+        ZoneScopedNC("Prepare shadow", 0xFFD733);
+#endif
     // Prepare shadow framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
     ShadowManager::GetInstance()->PrepareShadow();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+#ifdef DEBUG
+    }
+    {
+        ZoneScopedNC("Draw objects", 0xADD8E6);
+#endif
     glViewport(0, 0, width, height);
 
     // Prepare texture framebuffer
@@ -160,22 +191,42 @@ void GloomEngine::Update() {
     RendererManager::GetInstance()->DrawObjects();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+#ifdef DEBUG
+    }
+    {
+        ZoneScopedNC("Post processing", 0xFFD733);
+#endif
     PostProcessingManager::GetInstance()->DrawBuffer();
 
     glEnable(GL_DEPTH_TEST);
 
 #ifdef DEBUG
+    }
+    {
+        ZoneScopedNC("Draw colliders", 0x800000);
     CollisionManager::GetInstance()->DrawColliders();
+    }
+    {
+        ZoneScopedNC("Draw UI", 0xFFD733);
 #endif
 
     UIManager::GetInstance()->DrawUI();
 
 #ifdef DEBUG
+    }
+    {
+        ZoneScopedNC("Debug windows", 0xC71585);
     DebugManager::GetInstance()->Render();
+    }
 #endif
-
+#ifdef DEBUG
+    {
+        ZoneScopedNC("Post processing", 0x800080);
+#endif
     HIDManager::GetInstance()->ManageInput();
+#ifdef DEBUG
+    }
+#endif
 }
 
 void GloomEngine::FixedUpdate() {

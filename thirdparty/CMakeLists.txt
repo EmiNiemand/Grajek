@@ -26,6 +26,7 @@ CPMAddPackage("gh:nlohmann/json@3.11.2")
 CPMAddPackage("gh:adamstark/AudioFile#1.1.1")
 CPMAddPackage("gh:kcat/openal-soft#1.23.1")
 CPMAddPackage("gh:aseprite/freetype2#VER-2-10-0")
+CPMAddPackage("gh:wolfpld/tracy#v0.9.1")
 
 set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "")
 add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp
@@ -44,7 +45,8 @@ set_target_properties(glad
 					  nlohmann_json
 					  AudioFile
 					  OpenAL
-					  freetype PROPERTIES FOLDER "thirdparty")
+					  freetype
+					  TracyClient PROPERTIES FOLDER "thirdparty")
 
 if (TARGET zlibstatic)
     set_target_properties(zlibstatic PROPERTIES FOLDER "thirdparty")
