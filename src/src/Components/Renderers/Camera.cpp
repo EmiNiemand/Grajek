@@ -42,6 +42,8 @@ void Camera::Start() {
 }
 
 void Camera::Update() {
+    Component::Update();
+
     if (GloomEngine::GetInstance()->timeScale == 1) {
         //TODO: move these to some outer class
         // we change desired zoom on the camera when pressing Z.
@@ -60,7 +62,6 @@ void Camera::Update() {
         parent->transform->SetLocalPosition(Utilities::Lerp(
                 parent->transform->GetGlobalPosition(),
                 playerPosition + cameraOffset * zoomLevel, 0.02f));
-        Component::Update();
     }
 }
 

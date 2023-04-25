@@ -4,6 +4,8 @@
 
 #include "Components/Renderers/Drawable.h"
 #include "EngineManagers/RendererManager.h"
+#include "Other/FrustumCulling.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 Drawable::Drawable(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 

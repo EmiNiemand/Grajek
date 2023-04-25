@@ -28,9 +28,9 @@ Game::Game() {
     activeScene = SceneManager::GetInstance()->activeScene;
 }
 
-Game::~Game() {}
+Game::~Game() = default;
 
-void Game::InitializeGame() {
+void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();

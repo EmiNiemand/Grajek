@@ -1,4 +1,4 @@
-#include "EngineManagers/ColliderManager.h"
+#include "EngineManagers/CollisionManager.h"
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 #include "LowLevelClasses/Shader.h"
@@ -7,34 +7,51 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
-ColliderManager::ColliderManager() {
+CollisionManager::CollisionManager() {
+#ifdef DEBUG
     colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");
-
+#endif
     // create buffers/arrays
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
 }
 
-ColliderManager::~ColliderManager() = default;
+CollisionManager::~CollisionManager() = default;
 
-ColliderManager* ColliderManager::GetInstance() {
+CollisionManager* CollisionManager::GetInstance() {
     if (colliderManager == nullptr) {
-        colliderManager = new ColliderManager();
+        colliderManager = new CollisionManager();
     }
+
     return colliderManager;
 }
 
 
-void ColliderManager::ManageCollision() {
-    if (boxColliders.empty()) return;
+void CollisionManager::ManageCollision() {
+    if (grid.empty()) return;
 
-    if (boxColliders.size() > 1) {
-        // Handle collision
-        for (auto&& box : boxColliders) {
-            if (box.second->GetParent()->GetComponent<Rigidbody>() != nullptr) {
-                for(auto&& box2 : boxColliders) {
-                    if (box2.second == box.second) continue;
+    // Handle collision
+    for (const auto& x : grid) {
+        for (const auto& y : grid.at(x.first)) {
+            for (const auto& box : grid.at(x.first).at(y.first)) {
+                if (!box.second->GetParent()->GetComponent<Rigidbody>() && !box.second->isTrigger) continue;
+
+                for (const auto& box2 : grid.at(x.first).at(y.first)) {
+                    if (box.second == box2.second) continue;
+
+                    glm::vec3 boxPosition = glm::vec3(box.second->GetModelMatrix() * glm::vec4(0,0,0,1));
+                    glm::vec3 box2Position = glm::vec3(box2.second->GetModelMatrix() * glm::vec4(0,0,0,1));
+                    float distance = glm::length(box2Position - boxPosition);
+
+                    glm::vec3 boxScale = box.second->GetSize() * box.second->GetParent()->transform->GetLocalScale();
+                    float boxSizeLength = glm::length(glm::vec3(boxScale.x, 0, boxScale.z));
+
+                    glm::vec3 box2Scale = box2.second->GetSize() * box2.second->GetParent()->transform->GetLocalScale();
+                    float box2SizeLength = glm::length(glm::vec3(box2Scale.x, 0, box2Scale.z));
+
+                    if (distance > boxSizeLength + box2SizeLength) continue;
+
                     box.second->CheckCollision(box2.second);
                 }
             }
@@ -42,35 +59,62 @@ void ColliderManager::ManageCollision() {
     }
 }
 
-void ColliderManager::DrawColliders() {
+#ifdef DEBUG
+void CollisionManager::DrawColliders() {
+    glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetGlobalPosition();
+    playerPosition = glm::ivec2((int)(playerPos.x / gridSize), (int)(playerPos.z / gridSize));
+
+    OnBoxCollidersChange();
+
     colliderDebugShader->Activate();
     colliderDebugShader->SetVec3("color", debugColor);
     colliderDebugShader->SetMat4("projection", RendererManager::GetInstance()->projection);
     colliderDebugShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
-    for (auto&& box : boxColliders) {
+
+    for (auto&& box : grid.at(playerPosition.x).at(playerPosition.y)) {
         colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());
         glBindVertexArray(vao);
         glDrawElements(GL_LINES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
 }
+#endif
 
-void ColliderManager::Free() {
+void CollisionManager::Free() {
+#ifdef DEBUG
     colliderDebugShader->Delete();
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
+#endif
+    grid.clear();
 }
 
-void ColliderManager::RemoveBoxCollider(int componentId) {
-    if (boxColliders.contains(componentId)) boxColliders.erase(componentId);
+void CollisionManager::RemoveBoxCollider(int componentId) {
+    for (const auto& gridX : grid) {
+        for (const auto& gridY : grid.at(gridX.first)) {
+            if (grid.at(gridX.first).at(gridY.first).contains(componentId))
+                grid.at(gridX.first).at(gridY.first).erase(componentId);
+        }
+    }
+
 }
 
-void ColliderManager::OnBoxCollidersChange() {
+#ifdef DEBUG
+void CollisionManager::OnBoxCollidersChange() {
     vertices.clear();
     indices.clear();
     int i = 0;
-    for (auto&& col : boxColliders) {
+
+    if (!CollisionManager::GetInstance()->grid.contains(playerPosition.x))
+        CollisionManager::GetInstance()->grid.insert({playerPosition.x, std::unordered_map<int,
+                std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+
+    if (!CollisionManager::GetInstance()->grid.at(playerPosition.x).contains(playerPosition.y))
+        CollisionManager::GetInstance()->grid.at(playerPosition.x).insert({playerPosition.y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+
+
+    for (auto&& col : grid.at(playerPosition.x).at(playerPosition.y)) {
         for (auto&& point : col.second->GetBoxPoints()) {
             vertices.push_back(point);
         }
@@ -155,3 +199,4 @@ void ColliderManager::OnBoxCollidersChange() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glBindVertexArray(0);
 }
+#endif

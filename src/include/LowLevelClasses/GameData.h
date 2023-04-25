@@ -7,13 +7,15 @@
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "Components/Scripts/MusicPattern.h"
+#include <set>
 
 class GameData {
 public:
     int money;
     int reputation;
     glm::vec3 playerPosition;
-    //TODO: add instrument and define its start value in the constructor
+    std::set<InstrumentName> instruments;
 
 public:
     GameData();

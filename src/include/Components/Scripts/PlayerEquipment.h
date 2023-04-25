@@ -9,7 +9,7 @@
 
 class Instrument;
 
-class PlayerEquipment : public Component, public IDataPersistance {
+class PlayerEquipment : public Component {
 private:
 	inline static int maxCashReward = 5;
 	inline static int maxRepReward = 10;
@@ -26,11 +26,9 @@ public:
     void Setup(int startCash=0, int startRep=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     std::shared_ptr<Instrument> GetInstrumentWithName(InstrumentName name);
+    std::set<InstrumentName> GetInstrumentNames();
 
     void AddReward(float crowdSatisfaction);
-
-    void LoadData(std::shared_ptr<GameData> data) override;
-    void SaveData(std::shared_ptr<GameData> &data) override;
 
     int GetCash() const;
     int GetRep() const;

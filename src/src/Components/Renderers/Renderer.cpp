@@ -1,11 +1,11 @@
 #include <utility>
-
+#include <filesystem>
 #include "Components/Renderers/Renderer.h"
 #include "Utilities.h"
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "LowLevelClasses/Model.h"
-#include <filesystem>
+#include "LowLevelClasses/StaticModel.h"
+#include "Other/FrustumCulling.h"
 
 /**
  * @attention Remember to call LoadModel if you want model to actually display
@@ -17,6 +17,9 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Update() {
+    if (!parent->isOnFrustum) {
+        return;
+    }
     Drawable::Update();
 }
 
@@ -58,9 +61,11 @@ void Renderer::LoadModel(std::string path) {
     uint32_t hash = Utilities::Hash(newPath);
 
     if (!models.contains(hash)) {
-        models.insert({hash, std::make_shared<Model>( normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
+        models.insert({hash, std::make_shared<StaticModel>(normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
     }
 
     model = models.at(hash);
+
+    parent->bounds = FrustumCulling::GenerateAABB(model);
 }
 

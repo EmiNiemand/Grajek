@@ -51,10 +51,23 @@ void MusicSession::PlaySample(int index) {
     float currentTime = glfwGetTime();
     float rhythmDiff = GetRhythmValue(currentTime - lastTime);
 
-    recordedSounds.emplace_back(instrument->samples[index], rhythmDiff);
+    recordedSounds.emplace_back(instrument->samples[index], rhythmDiff, currentTime);
     lastTime = currentTime;
 
     DetectPattern();
+}
+
+void MusicSession::StopSample(int index) {
+    if(instrument->samples.empty() || instrument->samples.size()-1 < index) return;
+    if(recordedSounds.empty()) return;
+
+    for (auto it = recordedSounds.rbegin(); it != recordedSounds.rend(); ++it) {
+        if(it->sample->id == index) {
+            it->duration = GetRhythmValue(glfwGetTime() - it->duration);
+        }
+    }
+
+    // TODO: implement hold-type sounds
 }
 
 void MusicSession::ToggleCheatSheet() { sessionUI->ToggleCheatSheet(); }

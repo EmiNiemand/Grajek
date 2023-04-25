@@ -4,6 +4,7 @@
 #include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Bone.h"
+#include "Other/FrustumCulling.h"
 #include <filesystem>
 #include <utility>
 
@@ -29,6 +30,8 @@ void Animator::LoadAnimationModel(const std::string& path) {
                                                                RendererManager::GetInstance()->shader)});
     }
     model = animationModels.at(hash);
+
+    parent->bounds = FrustumCulling::GenerateAABB(model);
 }
 
 void Animator::LoadAnimation(const std::string& path)
@@ -48,6 +51,9 @@ void Animator::LoadAnimation(const std::string& path)
 
 
 void Animator::Update() {
+    if (!parent->isOnFrustum) {
+        return;
+    }
 	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
     Drawable::Update();
 }
