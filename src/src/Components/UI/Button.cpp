@@ -7,9 +7,9 @@
 #define BASE_PATH_FONT "res/fonts/"
 #define BASE_PATH_TEXTURE "res/textures/"
 
-Button::Button(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Button::Button(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
-std::shared_ptr<Mesh> Button::CreateMesh(float x, float y, float width, float height) {
+std::shared_ptr<Mesh> Button::CreateMesh(int x, int y, int width, int height) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices = {0, 1, 3,
                                          0, 2, 3};
@@ -17,16 +17,16 @@ std::shared_ptr<Mesh> Button::CreateMesh(float x, float y, float width, float he
 
     Vertex vertex1, vertex2, vertex3, vertex4;
     // left bottom
-    vertex1.position = glm::vec3(x/960-1, y/540-1, 0.0f);
+    vertex1.position = glm::vec3((float)x/960-1, (float)y/540-1, 0.0f);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
-    vertex2.position = glm::vec3(x/960-1, y/540-1 + height/540, 0.0f);
+    vertex2.position = glm::vec3((float)x/960-1, (float)y/540-1 + (float)height/540, 0.0f);
     vertex2.texCoords = glm::vec2(0.0f, 1.0f);
     // right bottom
-    vertex3.position = glm::vec3(x/960-1 + width/960, y/540-1, 0.0f);
+    vertex3.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1, 0.0f);
     vertex3.texCoords = glm::vec2(1.0f, 0.0f);
     // right top
-    vertex4.position = glm::vec3(x/960-1 + width/960, y/540-1 + height/540, 0.0f);
+    vertex4.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1 + (float)height/540, 0.0f);
     vertex4.texCoords = glm::vec2(1.0f, 1.0f);
 
     vertices.push_back(vertex1);
@@ -37,7 +37,7 @@ std::shared_ptr<Mesh> Button::CreateMesh(float x, float y, float width, float he
     return std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Button::LoadTexture(float x, float y, const std::string& path, const std::string& pathIsActive) {
+void Button::LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive) {
     stbi_set_flip_vertically_on_load(true);
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -63,6 +63,10 @@ void Button::LoadTexture(float x, float y, const std::string& path, const std::s
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         this->textureMesh = CreateMesh(x, y, width, height);
+        this->width = width;
+        this->height = height;
+        this->x = x;
+        this->y = y;
     }
     else
     {
@@ -102,7 +106,7 @@ void Button::LoadTexture(float x, float y, const std::string& path, const std::s
     UIManager::GetInstance()->shader->SetInt("texture2", 1);
 }
 
-void Button::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::vec3 color, const std::string &path) {
+void Button::LoadFont(std::string text, FT_UInt fontSize, glm::vec3 color, const std::string &path) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
@@ -124,17 +128,7 @@ void Button::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm:
         GLuint texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-        );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
         // Set texture options
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -153,62 +147,88 @@ void Button::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm:
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    this->textMesh = CreateMesh(x, y, 0, 0);
+    this->textMesh = CreateMesh((int)(this->textureMesh->vertices[0].position.x*960.0f)+960, (int)(this->textureMesh->vertices[0].position.y*960.0f)+960, 0, 0);
     this->text = std::move(text);
-    this->x = x;
-    this->y = y;
     this->color = color;
+    this->fontSize = fontSize;
+    this->textX = (int)(this->textureMesh->vertices[0].position.x*960.0f)+960;
+    this->textY = (int)(this->textureMesh->vertices[0].position.y*540.0f)+540 + height / 2 - fontSize / 3;
+
+    int lengthX = 0;
+    for (std::string::const_iterator c = this->text.begin(); c != this->text.end(); c++) {
+        lengthX += (Characters[*c].Advance >> 6);
+    }
+    textX += (width - lengthX) / 2;
+}
+
+void Button::ChangeText(std::string newText) {
+    this->text = std::move(newText);
+    this->textX = (int)(this->textureMesh->vertices[0].position.x * 960.0f) + 960;
+    this->textY = (int)(this->textureMesh->vertices[0].position.y * 540.0f) + 540 + height / 2 - fontSize / 3;
+
+    int lengthX = 0;
+    for (std::string::const_iterator c = this->text.begin(); c != this->text.end(); c++) {
+        lengthX += (Characters[*c].Advance >> 6);
+    }
+    textX += (width - lengthX) / 2;
+}
+
+void Button::ChangePosition(int newX, int newY) {
+    textureMesh = CreateMesh(newX, newY, width, height);
+    ChangeText(text);
 }
 
 void Button::Update() {
-    Draw();
-    Component::Update();
+    UIComponent::Update();
 }
 
 void Button::Draw() {
     // Render text
-    UIManager::GetInstance()->shader->Activate();
-    UIManager::GetInstance()->shader->SetBool("isText", true);
-    UIManager::GetInstance()->shader->SetVec3("textColor", color);
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(textMesh->vao);
+    if (this->text != "") {
+        UIManager::GetInstance()->shader->Activate();
+        UIManager::GetInstance()->shader->SetBool("isText", true);
+        UIManager::GetInstance()->shader->SetVec3("textColor", color);
+        glActiveTexture(GL_TEXTURE0);
+        glBindVertexArray(textMesh->vao);
 
-    // Iterate through all characters
-    GLfloat x2 = this->x;
-    GLfloat y2 = this->y;
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++)
-    {
-        Character ch = Characters[*c];
+        // Iterate through all characters
+        GLfloat x2 = (float)textX;
+        GLfloat y2 = (float)textY;
 
-        GLfloat xpos = x2 + ch.Bearing.x;
-        GLfloat ypos = y2 - (ch.Size.y - ch.Bearing.y);
+        std::string::const_iterator c;
+        for (c = text.begin(); c != text.end(); c++) {
+            Character ch = Characters[*c];
 
-        GLfloat w = ch.Size.x;
-        GLfloat h = ch.Size.y;
-        // Update VBO for each character
-        this->textMesh->vertices[0].position.x = xpos/960-1;
-        this->textMesh->vertices[0].position.y = (ypos+h)/540-1;
-        this->textMesh->vertices[1].position.x = xpos/960-1;
-        this->textMesh->vertices[1].position.y = ypos/540-1;
-        this->textMesh->vertices[2].position.x = (xpos+w)/960-1;
-        this->textMesh->vertices[2].position.y = (ypos+h)/540-1;
-        this->textMesh->vertices[3].position.x = (xpos+w)/960-1;
-        this->textMesh->vertices[3].position.y = ypos/540-1;
+            GLfloat xpos = x2 + ch.Bearing.x;
+            GLfloat ypos = y2 - (ch.Size.y - ch.Bearing.y);
 
-        // Render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // Update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, this->textMesh->GetVBO());
-        glBufferSubData(GL_ARRAY_BUFFER, 0, this->textMesh->vertices.size() * sizeof(Vertex), &this->textMesh->vertices[0]); // Be sure to use glBufferSubData and not glBufferData
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // Render quad
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x2 += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            GLfloat w = ch.Size.x;
+            GLfloat h = ch.Size.y;
+            // Update VBO for each character
+            this->textMesh->vertices[0].position.x = xpos / 960 - 1;
+            this->textMesh->vertices[0].position.y = (ypos + h) / 540 - 1;
+            this->textMesh->vertices[1].position.x = xpos / 960 - 1;
+            this->textMesh->vertices[1].position.y = ypos / 540 - 1;
+            this->textMesh->vertices[2].position.x = (xpos + w) / 960 - 1;
+            this->textMesh->vertices[2].position.y = (ypos + h) / 540 - 1;
+            this->textMesh->vertices[3].position.x = (xpos + w) / 960 - 1;
+            this->textMesh->vertices[3].position.y = ypos / 540 - 1;
+
+            // Render glyph texture over quad
+            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+            // Update content of VBO memory
+            glBindBuffer(GL_ARRAY_BUFFER, this->textMesh->GetVBO());
+            glBufferSubData(GL_ARRAY_BUFFER, 0, this->textMesh->vertices.size() * sizeof(Vertex),
+                            &this->textMesh->vertices[0]); // Be sure to use glBufferSubData and not glBufferData
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // Render quad
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            x2 += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+        }
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
 
     // Render texture
     UIManager::GetInstance()->shader->Activate();

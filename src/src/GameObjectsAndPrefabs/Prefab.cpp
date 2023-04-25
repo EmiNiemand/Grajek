@@ -17,6 +17,9 @@
 #include "Components/Scripts/PlayerManager.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
+#include "Components/Scripts/Instrument.h"
+#include "Components/Audio/AudioListener.h"
+#include "Components/Audio/AudioSource.h"
 
 std::shared_ptr<GameObject> Prefab::GetPlayer(std::string name) {
     auto player = GameObject::Instantiate(std::move(name), SceneManager::GetInstance()->activeScene);
@@ -25,11 +28,8 @@ std::shared_ptr<GameObject> Prefab::GetPlayer(std::string name) {
     playerRenderer->LoadModel("domek/domek.obj");
     playerRenderer->material.reflection = 0.5f;
     auto cubeRigidbody = player->AddComponent<Rigidbody>();
+    auto listener = player->AddComponent<AudioListener>();
     //Adding scripts
-    player->AddComponent<PlayerMovement>();
-    player->AddComponent<PlayerEquipment>();
-    auto playerCanvas = GameObject::Instantiate("PlayerUI", player);
-    playerCanvas->AddComponent<PlayerUI>();
     player->AddComponent<PlayerManager>();
     // Setting values
     player->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
@@ -57,4 +57,92 @@ std::shared_ptr<GameObject> Prefab::GetDancingDude(std::string name) {
     animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
 
     return animatedDood;
+}
+
+std::shared_ptr<Instrument> Prefab::GetInstrument(InstrumentName instrumentName) {
+    auto instrument = std::make_shared<Instrument>();
+    instrument->Setup(instrumentName);
+
+    // Add samples
+    // -----------
+    switch (instrumentName) {
+        case Clap:
+            instrument->AddSamples({
+                "res/sounds/direct/clap/clapWeak.wav",
+                "res/sounds/direct/clap/clapStrong.wav"});
+            break;
+        case Drums:
+            instrument->AddSamples({
+                "res/sounds/direct/drums/hat.wav",
+                "res/sounds/direct/drums/kick.wav",
+                "res/sounds/direct/drums/snare.wav"});
+            break;
+        // TODO: actually implement these three
+        case Trumpet:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+        case Launchpad:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+        case Guitar:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+    }
+
+    // Add patterns
+    // ------------
+    switch (instrumentName) {
+        case Clap:
+            instrument->GeneratePattern({
+                // 1      *
+                // 0  * *
+                {0, 0}, {0, 0.5}, {1, 0.5}});
+            break;
+        case Drums:
+            // 2      *
+            // 1    *   *
+            // 0  *
+            instrument->GeneratePattern({
+                {0, 0}, {1, 0.5}, {2, 0.5},
+                {1, 0.5}});
+            break;
+        // TODO: actually implement these three
+        case Trumpet:
+            // 2       -
+            // 1     -   --
+            // 0  --
+            instrument->GeneratePattern({
+                {0, 0, 1.0}, {1, 0.5, 0.5},
+                {2, 0.5, 0.5}, {1, 0.5, 1.0}});
+            break;
+        case Launchpad:
+            // 2   * *
+            // 1 *     *
+            // 0 -------
+            instrument->GeneratePattern({
+                {0, 0, 2.0},
+                {1, 0}, {2, 0.5}, {2, 0.5},
+                {1, 0.5}});
+            break;
+        case Guitar:
+            // 2   *   *
+            // 1 *   *
+            // 0 -------
+            instrument->GeneratePattern({
+                {0, 0, 2.0},
+                {1, 0}, {2, 0.5},
+                {1, 0.5}, {2, 0.5}});
+            break;
+    }
+
+    return instrument;
 }

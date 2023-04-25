@@ -12,25 +12,28 @@
 #include <map>
 
 class GloomEngine;
+struct AABB;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
 private:
     // Name and id are unique
     int id;
     std::string name;
+    bool enabled = true;
 
 public:
     std::map<int, std::shared_ptr<Component>> components;
     std::map<int, std::shared_ptr<GameObject>> children;
 
-public:
     std::shared_ptr<GameObject> parent = nullptr;
+    std::shared_ptr<AABB> bounds = nullptr;
 
-    // Create file with tag names as enums
     Tags tag;
 
     std::shared_ptr<Transform> transform = nullptr;
+    bool isOnFrustum = false;
 
+public:
     GameObject(const std::string &name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
     virtual ~GameObject();
 
@@ -71,8 +74,12 @@ public:
     void UpdateSelfAndChildren();
     void ForceUpdateSelfAndChildren();
 
+    void EnableSelfAndChildren();
+    void DisableSelfAndChildren();
+
     int GetId() const;
     const std::string &GetName() const;
+    bool GetEnabled() const;
 };
 
 

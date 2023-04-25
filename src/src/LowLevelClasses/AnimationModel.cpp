@@ -6,53 +6,17 @@
 #include "spdlog/spdlog.h"
 #include <filesystem>
 
-unsigned int AnimationModel::TextureFromFile(const char *path, const std::string &directory, bool gamma) {
-    std::string filename = std::string(path);
-    filename = directory + '/' + filename;
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, nrComponents;
-    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-    if (data) {
-        GLenum format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    } else {
-        spdlog::info("Texture failed to load at path: ", path);
-        stbi_image_free(data);
-    }
-    return textureID;
+AnimationModel::AnimationModel(const std::string &path, std::shared_ptr<Shader> &shader,
+                               int type, bool gamma) : Model(path, shader, type, gamma) {
+    boneInfoMap.reserve(100);
+    AnimationModel::LoadModel(path);
 }
 
-AnimationModel::AnimationModel(std::string const &path, std::shared_ptr<Shader> &shader, int type, bool gamma) : shader(shader),  type(type), gammaCorrection(gamma)
-{
-    LoadModel(path);
-}
 
-AnimationModel::AnimationModel(Mesh mesh, std::shared_ptr<Shader> &shader, int type) : shader(shader), type(type) {
+AnimationModel::AnimationModel(const Mesh &mesh, std::shared_ptr<Shader> &shader,
+                               int type) : Model(mesh, shader, type) {
+    boneInfoMap.reserve(100);
     meshes.push_back(mesh);
-}
-
-void AnimationModel::Draw()
-{
-    for(auto & meshe : meshes)
-        meshe.Draw(shader, type);
 }
 
 void AnimationModel::LoadModel(std::string const &path)
@@ -70,6 +34,15 @@ void AnimationModel::LoadModel(std::string const &path)
     directory = path.substr(0, path.find_last_of('/'));
     // process ASSIMP's root node recursively
     ProcessNode(scene->mRootNode, scene);
+}
+
+void AnimationModel::SetVertexBoneDataToDefault(Vertex& vertex)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        vertex.boneIDs[i] = -1;
+        vertex.weights[i] = 0.0f;
+    }
 }
 
 void AnimationModel::ProcessNode(aiNode *node, const aiScene *scene)
@@ -90,16 +63,6 @@ void AnimationModel::ProcessNode(aiNode *node, const aiScene *scene)
 
 }
 
-void AnimationModel::SetVertexBoneDataToDefault(Vertex& vertex)
-{
-    for (int i = 0; i < 4; i++)
-    {
-        vertex.boneIDs[i] = -1;
-        vertex.weights[i] = 0.0f;
-    }
-}
-
-
 Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     // data to fill
@@ -110,7 +73,7 @@ Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     // walk through each of the mesh's vertices
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        Vertex vertex;
+        Vertex vertex{};
         SetVertexBoneDataToDefault(vertex);
         vertex.position = GetGLMVec(mesh->mVertices[i]);
         vertex.normal = GetGLMVec(mesh->mNormals[i]);
@@ -190,7 +153,7 @@ void AnimationModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices,
         std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
         if (bonerInfoMap.find(boneName) == bonerInfoMap.end())
         {
-            BoneInfo newBoneInfo;
+            BoneInfo newBoneInfo{};
             newBoneInfo.id = boneCount;
             newBoneInfo.offset = ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
             bonerInfoMap[boneName] = newBoneInfo;
@@ -203,11 +166,11 @@ void AnimationModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices,
         }
         assert(boneID != -1);
         auto weights = mesh->mBones[boneIndex]->mWeights;
-        int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+        unsigned int numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
         for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
         {
-            int vertexId = weights[weightIndex].mVertexId;
+            int vertexId = (int)weights[weightIndex].mVertexId;
             float weight = weights[weightIndex].mWeight;
             assert(vertexId <= vertices.size());
             SetVertexBoneData(vertices[vertexId], boneID, weight);
@@ -215,36 +178,6 @@ void AnimationModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices,
     }
 }
 
-std::vector<Texture> AnimationModel::LoadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
-{
-    std::vector<Texture> textures;
-    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-    {
-        aiString str;
-        mat->GetTexture(type, i, &str);
-        std::string path = std::filesystem::path(str.C_Str()).generic_string();
-        path = path.substr(path.find_last_of('/') + 1);
-        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-        bool skip = false;
-        for(unsigned int j = 0; j < texturesLoaded.size(); j++)
-        {
-            if(std::strcmp(texturesLoaded[j].path.data(), path.c_str()) == 0)
-            {
-                textures.push_back(texturesLoaded[j]);
-                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-                break;
-            }
-        }
-        if(!skip)
-        {   // if texture hasn't been loaded already, load it
-            Texture texture;
-            texture.id = TextureFromFile(path.c_str(), this->directory);
-            texture.type = typeName;
-            texture.path = path.c_str();
-            textures.push_back(texture);
-            texturesLoaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
-        }
-    }
-    return textures;
-}
+std::unordered_map<std::string, BoneInfo> &AnimationModel::GetBoneInfoMap() { return boneInfoMap; }
 
+uint16_t &AnimationModel::GetBoneCount() { return boneCounter; }

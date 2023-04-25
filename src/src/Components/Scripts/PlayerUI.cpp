@@ -4,6 +4,7 @@
 
 #include "Components/Scripts/PlayerUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/UI/Text.h"
 #include "Utilities.h"
 
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
@@ -11,18 +12,14 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     cashText = GameObject::Instantiate("CashText", parent)->AddComponent<Text>();
     repText = GameObject::Instantiate("RepText", parent)->AddComponent<Text>();
 
-    cashText->LoadFont("Cash: 5", 10, 330, 30, glm::vec3(0), GameFont::Eggnog);
-    repText->LoadFont("Rep:  5", 10, 300, 30, glm::vec3(0), GameFont::Eggnog);
+    cashText->LoadFont("$$$: -", 10, 330, 30);
+    repText->LoadFont("Rep:  -", 10, 300, 30);
 }
 
 void PlayerUI::UpdateCash(int newAmount) {
-    //TODO: update text
-    //cashText.UpdateText("Cash: " + std::to_string(newAmount));
-    spdlog::info("[PUI] Updated cash! [needs implementation]");
+	cashText->text = "$$$: " + std::to_string(newAmount);
 }
 
 void PlayerUI::UpdateRep(int newAmount) {
-    //TODO: update text
-    //repText.UpdateText("Rep:  " + std::to_string(newAmount));
-    spdlog::info("[PUI] Updated rep! [needs implementation]");
+	repText->text = "Rep:  " + std::to_string(newAmount);
 }

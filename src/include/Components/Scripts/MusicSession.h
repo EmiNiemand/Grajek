@@ -28,17 +28,18 @@ private:
     float lastTime = 0;
 
     float timeoutCounter = 0.0f;
-    float timeout = 1.0f;
+    float timeout = 3.0f;
 
 public:
     std::shared_ptr<Instrument> instrument;
 
     MusicSession(const std::shared_ptr<GameObject> &parent, int id);
-    void Setup(std::shared_ptr<PlayerManager> manager,
-               std::shared_ptr<Instrument> playerInstrument);
+    void Setup(std::shared_ptr<Instrument> playerInstrument);
+    void Stop();
     void Update() override;
 
     void PlaySample(int index);
+    void StopSample(int index);
     void ToggleCheatSheet();
 
 private:

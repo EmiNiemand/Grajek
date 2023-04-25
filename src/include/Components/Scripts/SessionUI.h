@@ -10,17 +10,18 @@
 #include <utility>
 #include <vector>
 #include "Components/Component.h"
+#include "Components/Scripts/MusicPattern.h"
+#include "Utilities.h"
 
 class Image;
 class Text;
-class MusicPattern;
 class GameObject;
-class Sample;
+class AudioSource;
 
 class SessionUI : public Component {
 private:
     std::shared_ptr<Text> accuracyFeedback;
-//    inline static Color[] accuracyColors = { Color.red, Color.cyan, Color.green, Color.yellow };
+    inline static glm::vec3 accuracyColors[]  { Color::Red, Color::Cyan, Color::Green, Color::Yellow };
     inline static std::string accuracyTexts[] { "Poor", "Nice", "Great!", "PERFECT" };
     inline static float accuracyThresholds[] { 0.5f, 0.8f, 0.95f };
 
@@ -29,12 +30,12 @@ private:
     std::shared_ptr<Image> metronomeImage;
 
     std::shared_ptr<Image> cheatSheet;
-//    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::vector<std::shared_ptr<AudioSource>> sampleSources;
 
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
-    void Setup(int bpm, std::vector<std::shared_ptr<Sample>> samples, std::shared_ptr<Image> metronomeImage);
+    void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::shared_ptr<Image> metronome);
     void SetCheatSheet(std::shared_ptr<Image> newCheatSheet);
 
     void PlaySound(int index);

@@ -7,14 +7,19 @@
 
 #include <memory>
 #include <string>
+#include "Components/Scripts/MusicPattern.h"
 
 class GameObject;
+class Instrument;
 
 class Prefab {
 public:
+    // GameObjects
     static std::shared_ptr<GameObject> GetPlayer(std::string name="Player");
     static std::shared_ptr<GameObject> GetCube(std::string name="Cube");
     static std::shared_ptr<GameObject> GetDancingDude(std::string name="dood");
+    // Instruments
+    static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);
 };
 
 

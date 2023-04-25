@@ -1,7 +1,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "EngineManagers/ColliderManager.h"
+#include "EngineManagers/CollisionManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
 BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
@@ -12,15 +12,24 @@ BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
 
 BoxCollider::~BoxCollider() = default;
 
-void BoxCollider::OnCreate() {
-    ColliderManager::GetInstance()->boxColliders.insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
-    ColliderManager::GetInstance()->OnBoxCollidersChange();
-    Component::OnCreate();
+void BoxCollider::Start() {
+    SetCollidersGridPoints();
+    Component::Start();
 }
 
+void BoxCollider::FixedUpdate() {
+    Component::FixedUpdate();
+    if (!parent->GetComponent<Rigidbody>()) return;
+
+    SetCollidersGridPoints();
+}
+
+
 void BoxCollider::OnDestroy() {
-    ColliderManager::GetInstance()->RemoveBoxCollider(id);
-    ColliderManager::GetInstance()->OnBoxCollidersChange();
+    CollisionManager::GetInstance()->RemoveBoxCollider(id);
+#ifdef DEBUG
+    CollisionManager::GetInstance()->OnBoxCollidersChange();
+#endif
     Component::OnDestroy();
 }
 
@@ -101,80 +110,95 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
     const glm::mat4 otherTransformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
     const glm::mat4 otherTransformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
     // Y * X * Z
-    const glm::mat4 otherRotationMatrix = otherTransformX * otherTransformY * otherTransformZ;
+    const glm::mat4 otherRotationMatrix = otherTransformY * otherTransformX * otherTransformZ;
 
-    glm::vec3 otherPos = other->parent->transform->GetLocalPosition();
-    otherPos += other->offset * other->parent->transform->GetLocalScale();
+    glm::vec3 otherPos = other->GetModelMatrix() * glm::vec4(0,0,0,1);
+    glm::vec3 pos = GetModelMatrix() * glm::vec4(0,0,0,1);
 
-    glm::vec3 pos = parent->transform->GetLocalPosition();
-    pos += offset * parent->transform->GetLocalScale();
+    glm::vec3 vectors[3];
+    vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
+    vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
+    vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,1,1));
+
+    glm::vec3 otherVectors[3];
+    otherVectors[0] = glm::vec3(otherRotationMatrix * glm::vec4(1,0,0,1));
+    otherVectors[1] = glm::vec3(otherRotationMatrix * glm::vec4(0,1,0,1));
+    otherVectors[2] = glm::vec3(otherRotationMatrix * glm::vec4(0,0,1,1));
 
     glm::vec3 t = otherPos - pos;
-    t = glm::vec3(glm::dot(t, glm::vec3(rotationMatrix[0])), glm::dot(t, glm::vec3(rotationMatrix[1])), glm::dot(t, glm::vec3(rotationMatrix[2])));
+    t = glm::vec3(glm::dot(t, vectors[0]), glm::dot(t, vectors[1]), glm::dot(t, vectors[2]));
 
-    glm::mat4 rMatrix = otherRotationMatrix * glm::inverse(rotationMatrix);
+    auto rMatrix = glm::mat3(1.0f);
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            rMatrix[i][j] = fabs(rMatrix[i][j]) + 0.001f;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            rMatrix[i][j] = glm::dot(vectors[i], otherVectors[j]);
+        }
+    }
+
+    glm::mat3 absRMatrix;
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            absRMatrix[i][j] = fabs(rMatrix[i][j]) + 0.001f;
         }
     }
 
     glm::vec3 scaledOtherSize = other->size * other->parent->transform->GetLocalScale();
-
     glm::vec3 scaledSize = size * parent->transform->GetLocalScale();
 
     // 1
-    if (fabs(t.x) > scaledSize.x + (scaledOtherSize.x * fabs(rMatrix[0][0]) + scaledOtherSize.y * fabs(rMatrix[0][1]) +
-            scaledOtherSize.z * fabs(rMatrix[0][2]))) return false;
+    if (fabs(t.x) > scaledSize.x + (scaledOtherSize.x * absRMatrix[0][0] + scaledOtherSize.y * absRMatrix[0][1] +
+            scaledOtherSize.z * absRMatrix[0][2])) return false;
     // 2
-    if (fabs(t.y) > scaledSize.y + (scaledOtherSize.x * fabs(rMatrix[1][0]) + scaledOtherSize.y * fabs(rMatrix[1][1]) +
-            scaledOtherSize.z * fabs(rMatrix[1][2]))) return false;
+    if (fabs(t.y) > scaledSize.y + (scaledOtherSize.x * absRMatrix[1][0] + scaledOtherSize.y * absRMatrix[1][1] +
+            scaledOtherSize.z * absRMatrix[1][2])) return false;
     // 3
-    if (fabs(t.z) > scaledSize.z + (scaledOtherSize.x * fabs(rMatrix[2][0]) + scaledOtherSize.y * fabs(rMatrix[2][1]) +
-            scaledOtherSize.z * fabs(rMatrix[2][2]))) return false;
+    if (fabs(t.z) > scaledSize.z + (scaledOtherSize.x * absRMatrix[2][0] + scaledOtherSize.y * absRMatrix[2][1] +
+            scaledOtherSize.z * absRMatrix[2][2])) return false;
     // 4
-    if (fabs(t.x * rMatrix[0][0] + t.y * rMatrix[1][0] + t.z * rMatrix[2][0]) > (scaledSize.x * fabs(rMatrix[0][0]) + scaledSize.y * fabs(rMatrix[1][0]) +
-            scaledSize.z * fabs(rMatrix[2][0])) + scaledOtherSize.x) return false;
+    if (fabs(t.x * rMatrix[0][0] + t.y * rMatrix[1][0] + t.z * rMatrix[2][0]) > (scaledSize.x * absRMatrix[0][0] + scaledSize.y * absRMatrix[1][0] +
+            scaledSize.z * absRMatrix[2][0]) + scaledOtherSize.x) return false;
     // 5
-    if (fabs(t.x * rMatrix[0][1] + t.y * rMatrix[1][1] + t.z * rMatrix[2][1]) > (scaledSize.x * fabs(rMatrix[0][1]) + scaledSize.y * fabs(rMatrix[1][1]) +
-            scaledSize.z * fabs(rMatrix[2][1])) + scaledOtherSize.x) return false;
+    if (fabs(t.x * rMatrix[0][1] + t.y * rMatrix[1][1] + t.z * rMatrix[2][1]) > (scaledSize.x * absRMatrix[0][1] + scaledSize.y * absRMatrix[1][1] +
+            scaledSize.z * absRMatrix[2][1]) + scaledOtherSize.y) return false;
     // 6
-    if (fabs(t.x * rMatrix[0][2] + t.y * rMatrix[1][2] + t.z * rMatrix[2][2]) > (scaledSize.x * fabs(rMatrix[0][2]) + scaledSize.y * fabs(rMatrix[1][2]) +
-            scaledSize.z * fabs(rMatrix[2][2])) + scaledOtherSize.x) return false;
+    if (fabs(t.x * rMatrix[0][2] + t.y * rMatrix[1][2] + t.z * rMatrix[2][2]) > (scaledSize.x * absRMatrix[0][2] + scaledSize.y * absRMatrix[1][2] +
+            scaledSize.z * absRMatrix[2][2]) + scaledOtherSize.z) return false;
     // 7
-    if (fabs(t.z * rMatrix[1][0] - t.y * rMatrix[2][0]) > (scaledSize.y * fabs(rMatrix[2][0]) + scaledSize.z * fabs(rMatrix[1][0]) +
-            scaledOtherSize.y * fabs(rMatrix[0][2]) + scaledOtherSize.z * fabs(rMatrix[0][1]))) return false;
+    if (fabs(t.z * rMatrix[1][0] - t.y * rMatrix[2][0]) > (scaledSize.y * absRMatrix[2][0] + scaledSize.z * absRMatrix[1][0] +
+            scaledOtherSize.y * absRMatrix[0][2] + scaledOtherSize.z * absRMatrix[0][1])) return false;
     // 8
-    if (fabs(t.z * rMatrix[1][1] - t.y * rMatrix[2][1]) > (scaledSize.y * fabs(rMatrix[2][1]) + scaledSize.z * fabs(rMatrix[1][1]) +
-            scaledOtherSize.x * fabs(rMatrix[0][2]) + scaledOtherSize.z * fabs(rMatrix[0][0]))) return false;
+    if (fabs(t.z * rMatrix[1][1] - t.y * rMatrix[2][1]) > (scaledSize.y * absRMatrix[2][1] + scaledSize.z * absRMatrix[1][1] +
+            scaledOtherSize.x * absRMatrix[0][2] + scaledOtherSize.z * absRMatrix[0][0])) return false;
     // 9
-    if (fabs(t.z * rMatrix[1][2] - t.y * rMatrix[2][2]) > (scaledSize.y * fabs(rMatrix[2][2]) + scaledSize.z * fabs(rMatrix[1][2]) +
-            scaledOtherSize.x * fabs(rMatrix[0][1]) + scaledOtherSize.y * fabs(rMatrix[0][0]))) return false;
+    if (fabs(t.z * rMatrix[1][2] - t.y * rMatrix[2][2]) > (scaledSize.y * absRMatrix[2][2] + scaledSize.z * absRMatrix[1][2] +
+            scaledOtherSize.x * absRMatrix[0][1] + scaledOtherSize.y * absRMatrix[0][0])) return false;
     // 10
-    if (fabs(t.x * rMatrix[2][0] - t.z * rMatrix[0][0]) > (scaledSize.x * fabs(rMatrix[2][0]) + scaledSize.z * fabs(rMatrix[0][0]) +
-            scaledOtherSize.y * fabs(rMatrix[1][2]) + scaledOtherSize.z * fabs(rMatrix[1][1]))) return false;
+    if (fabs(t.x * rMatrix[2][0] - t.z * rMatrix[0][0]) > (scaledSize.x * absRMatrix[2][0] + scaledSize.z * absRMatrix[0][0] +
+            scaledOtherSize.y * absRMatrix[1][2] + scaledOtherSize.z * absRMatrix[1][1])) return false;
     // 11
-    if (fabs(t.x * rMatrix[2][1] - t.z * rMatrix[0][1]) > (scaledSize.x * fabs(rMatrix[2][1]) + scaledSize.z * fabs(rMatrix[0][1]) +
-            scaledOtherSize.x * fabs(rMatrix[1][2]) + scaledOtherSize.z * fabs(rMatrix[1][0]))) return false;
+    if (fabs(t.x * rMatrix[2][1] - t.z * rMatrix[0][1]) > (scaledSize.x * absRMatrix[2][1] + scaledSize.z * absRMatrix[0][1] +
+            scaledOtherSize.x * absRMatrix[1][2] + scaledOtherSize.z * absRMatrix[1][0])) return false;
     // 12
-    if (fabs(t.x * rMatrix[2][2] - t.z * rMatrix[0][2]) > (scaledSize.x * fabs(rMatrix[2][2]) + scaledSize.z * fabs(rMatrix[0][2]) +
-            scaledOtherSize.x * fabs(rMatrix[1][1]) + scaledOtherSize.y * fabs(rMatrix[1][0]))) return false;
+    if (fabs(t.x * rMatrix[2][2] - t.z * rMatrix[0][2]) > (scaledSize.x * absRMatrix[2][2] + scaledSize.z * absRMatrix[0][2] +
+            scaledOtherSize.x * absRMatrix[1][1] + scaledOtherSize.y * absRMatrix[1][0])) return false;
     // 13
-    if (fabs(t.y * rMatrix[0][0] - t.x * rMatrix[1][0]) > (scaledSize.x * fabs(rMatrix[1][0]) + scaledSize.y * fabs(rMatrix[0][0]) +
-            scaledOtherSize.y * fabs(rMatrix[2][2]) + scaledOtherSize.z * fabs(rMatrix[2][1]))) return false;
+    if (fabs(t.y * rMatrix[0][0] - t.x * rMatrix[1][0]) > (scaledSize.x * absRMatrix[1][0] + scaledSize.y * absRMatrix[0][0] +
+            scaledOtherSize.y * absRMatrix[2][2] + scaledOtherSize.z * absRMatrix[2][1])) return false;
     // 14
-    if (fabs(t.y * rMatrix[0][1] - t.x * rMatrix[1][1]) > (scaledSize.x * fabs(rMatrix[1][1]) + scaledSize.y * fabs(rMatrix[0][1]) +
-            scaledOtherSize.x * fabs(rMatrix[2][2]) + scaledOtherSize.z * fabs(rMatrix[2][0]))) return false;
+    if (fabs(t.y * rMatrix[0][1] - t.x * rMatrix[1][1]) > (scaledSize.x * absRMatrix[1][1] + scaledSize.y * absRMatrix[0][1] +
+            scaledOtherSize.x * absRMatrix[2][2] + scaledOtherSize.z * absRMatrix[2][0])) return false;
     // 15
-    if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * fabs(rMatrix[1][1]) + scaledSize.y * fabs(rMatrix[0][2]) +
-            scaledOtherSize.x * fabs(rMatrix[2][1]) + scaledOtherSize.y * fabs(rMatrix[2][0]))) return false;
+    if (fabs(t.y * rMatrix[0][2] - t.x * rMatrix[1][2]) > (scaledSize.x * absRMatrix[1][2] + scaledSize.y * absRMatrix[0][2] +
+            scaledOtherSize.x * absRMatrix[2][1] + scaledOtherSize.y * absRMatrix[2][0])) return false;
+
     return true;
 }
 
 void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
-    glm::vec3 position = parent->transform->GetLocalPosition() + offset * parent->transform->GetLocalScale();
-    glm::vec3 otherPosition = other->parent->transform->GetLocalPosition()+ other->offset * other->parent->transform->GetLocalScale();
+    glm::vec3 otherPosition = other->GetModelMatrix() * glm::vec4(0,0,0,1);
+    glm::vec3 position = GetModelMatrix() * glm::vec4(0,0,0,1);
 
     std::vector<std::pair<glm::vec3, glm::vec3>> points = CalculateShiftedPoints(other, position, otherPosition);
 
@@ -183,10 +207,9 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     closestVector = glm::normalize(closestVector);
 
     if (parent->GetComponent<Rigidbody>() != nullptr) {
-        float cos = glm::dot(glm::vec3(1, 0, 0), closestVector);
-        float absCos = std::abs(cos);
+        glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
         // Collision handling for not rotated collider
-        if (absCos >= -0.0001 && absCos <= 0.0001 || absCos >= 1 - 0.0001 && absCos <= 1 + 0.0001) {
+        if (otherRotation == glm::vec3(0.0f)) {
             float value = closestVector.x + closestVector.y + closestVector.z;
             glm::vec3 velocityOffset = closestVector * glm::vec3(0.001);
 
@@ -201,26 +224,14 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
         }
             // Collision handling for rotated colliders
         else {
-            glm::vec3 velocity = -parent->GetComponent<Rigidbody>()->velocity;
-            glm::vec3 normalizedVelocity = glm::normalize(velocity);
-
-            glm::vec3 cross = glm::cross(normalizedVelocity, closestVector);
-            float rad = std::acos(glm::dot(normalizedVelocity, closestVector));
-
-            glm::mat4 tMatrix = glm::rotate(glm::mat4(1.0f), rad, cross);
-            glm::vec3 vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
-
-            vel = glm::normalize(vel);
-
-            // Check if rotated vector is equal normal vector of the wall
-            if (!(vel.x <= closestVector.x + 0.001 && vel.y <= closestVector.y + 0.001 &&
-                  vel.z <= closestVector.z + 0.001 && vel.x >= closestVector.x - 0.001 &&
-                  vel.y >= closestVector.y - 0.001 && vel.z >= closestVector.z - 0.001)) {
-                tMatrix = glm::rotate(glm::mat4(1.0f), -rad, cross);
-                vel = glm::vec3(tMatrix * glm::vec4(velocity, 1));
+            glm::vec3 velocity = parent->GetComponent<Rigidbody>()->velocity;
+            float velocityLength = glm::length(velocity);
+            glm::vec3 vel = closestVector * 0.001f;
+            if(velocityLength < 0.01f) {
+                vel = closestVector * 0.01f;
             }
 
-            vel = vel * glm::length(velocity);
+            parent->GetComponent<Rigidbody>()->velocity = glm::vec3(0);
             parent->GetComponent<Rigidbody>()->AddForce(vel, ForceMode::Impulse);
         }
     }
@@ -289,3 +300,70 @@ glm::vec3 BoxCollider::GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, g
     return closestVector;
 }
 
+void BoxCollider::SetCollidersGridPoints() {
+    glm::mat4 model = GetModelMatrix();
+
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // Y * X * Z
+    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+    glm::vec4 pos = model * glm::vec4(0,0,0,1);
+
+    glm::vec4 xVec = (rotationMatrix * glm::vec4(1,0,0,1)) * size.x * parent->transform->GetLocalScale().x;
+    glm::vec4 zVec = (rotationMatrix * glm::vec4(0,0,1,1)) * size.z * parent->transform->GetLocalScale().z;
+
+    auto xVector = glm::vec2(xVec.x, xVec.z);
+    auto zVector = glm::vec2(zVec.x, zVec.z);
+
+    float gridSize = CollisionManager::GetInstance()->gridSize;
+
+    glm::ivec2 points[4] = {
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / gridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / gridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / gridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / gridSize)
+    };
+
+    if (points[0] == points[1] &&
+        points[1] == points[2] &&
+        points[2] == points[3]) {
+        int x = points[0].x;
+        int y = points[0].y;
+        if (!CollisionManager::GetInstance()->grid.contains(x))
+            CollisionManager::GetInstance()->grid.insert({x, std::unordered_map<int,
+                    std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+        if (!CollisionManager::GetInstance()->grid.at(x).contains(y))
+            CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+
+        CollisionManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+        return;
+    }
+
+    int minX = points[0].x;
+    int minY = points[0].y;
+    int maxX = points[0].x;
+    int maxY = points[0].y;
+
+    for (int i = 1; i < 4; i++) {
+        if (minX > points[i].x) minX = points[i].x;
+        if (minY > points[i].y) minY = points[i].y;
+        if (maxX < points[i].x) maxX = points[i].x;
+        if (maxY < points[i].y) maxY = points[i].y;
+    }
+
+    for (int x = minX; x <= maxX; x++) {
+        for (int y = minY; y <= maxY; y++) {
+            if (!CollisionManager::GetInstance()->grid.contains(x))
+                    CollisionManager::GetInstance()->grid.insert({x, std::unordered_map<int,
+                            std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+
+            if (!CollisionManager::GetInstance()->grid.at(x).contains(y))
+                    CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+
+            CollisionManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+        }
+    }
+}

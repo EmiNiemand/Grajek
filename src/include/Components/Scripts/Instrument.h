@@ -11,6 +11,8 @@
 
 class Image;
 
+struct RawSample {int sample = 0; float delay = 0.5; float duration=0; };
+
 class Instrument {
 private:
 
@@ -24,6 +26,14 @@ public:
 
     void Setup(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
     void AddPatterns(std::vector<std::shared_ptr<MusicPattern>> newPatterns);
+    /**
+     * @brief Generates new pattern from given RawSamples. Each RawSample contains
+     * sample index (in instrument), delay value and sound duration.
+     */
+    void GeneratePattern(std::vector<RawSample> newPattern);
+    void AddSamples(const std::vector<std::string>& paths);
+    std::string NameToString() const;
+
 };
 
 

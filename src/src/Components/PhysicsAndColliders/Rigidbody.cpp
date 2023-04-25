@@ -11,12 +11,13 @@ Rigidbody::~Rigidbody() = default;
 
 
 void Rigidbody::FixedUpdate() {
+    Component::FixedUpdate();
+
     parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() + velocity);
+    parent->transform->SetLocalRotation(rotation);
+
     this->AddForce(glm::vec3(0, -1, 0) * gravityScale, ForceMode::Force);
     this->AddForce(-velocity * linearDrag, ForceMode::Force);
-
-    parent->transform->SetLocalRotation(rotation);
-    Component::FixedUpdate();
 }
 
 void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
@@ -28,22 +29,28 @@ void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
     }
 }
 
-void Rigidbody::AddTorque(float angle, ForceMode forceMode) {
-    // TODO: improve rotation based on the distance (angle needed to rotate)
+void Rigidbody::AddTorque(float targetRotation, ForceMode forceMode) {
+    if (targetRotation == 0.0f && rotation.y > 180.0f) {
+        targetRotation = 360.0f;
+    }
 
-    if (rotation.y == 360.0f) {
-        rotation.y = 0.0f;
+    if (rotation.y > 360.0f) {
+        rotation.y -= 360.0f;
+        targetRotation -= 360.f;
+    }
+
+    if ((targetRotation + 360.0f - rotation.y) <= (rotation.y - targetRotation)) {
+        targetRotation += 360.0f;
+    } else if ((rotation.y + 360.0f - targetRotation) < (targetRotation - rotation.y)) {
+        rotation.y  += 360.0f;
     }
 
     if (forceMode == ForceMode::Force) {
-        if (angle == 0.0f && rotation.y > 180.0f) {
-            rotation.y = std::lerp(rotation.y, angle + 360.0f, GloomEngine::GetInstance()->fixedDeltaTime * turnSpeed);
-        } else {
-            rotation.y = std::lerp(rotation.y, angle, GloomEngine::GetInstance()->fixedDeltaTime * turnSpeed);
-        }
+        rotation.y = std::lerp(rotation.y, targetRotation,
+                               GloomEngine::GetInstance()->fixedDeltaTime * turnSpeed);
     }
     else {
-        rotation.y = angle / mass;
+        rotation.y = std::lerp(rotation.y, targetRotation, turnSpeed);
     }
 }
 

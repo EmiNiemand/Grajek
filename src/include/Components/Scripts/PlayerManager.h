@@ -6,40 +6,60 @@
 #define GLOOMENGINE_PLAYERMANAGER_H
 
 
-#include "PlayerMovement.h"
-#include "PlayerEquipment.h"
-#include "PlayerUI.h"
+#include "Components/Component.h"
+#include "Interfaces/IDataPersistance.h"
+#include "MusicPattern.h"
 #include "glm/vec2.hpp"
+#include <set>
 
-class PlayerManager : public Component {
+class PlayerMovement;
+class PlayerUI;
+class PlayerEquipment;
+class Instrument;
+class MusicSession;
+class SessionStarter;
+class PauseMenu;
+class OptionsMenu;
+class ShopMenu;
+class Menu;
+
+
+class PlayerManager : public Component, public IDataPersistance {
 private:
     std::shared_ptr<PlayerMovement> movement;
 //    PlayerCamera camera;
-    std::shared_ptr<PlayerUI> ui;
+    std::shared_ptr<PlayerUI> playerUI;
+    std::shared_ptr<MusicSession> session;
+    std::shared_ptr<SessionStarter> sessionStarter;
+    std::shared_ptr<GameObject> sessionStarterUI;
 //    PlayerCollider collider;
     std::shared_ptr<PlayerEquipment> equipment;
+    std::shared_ptr<PauseMenu> pauseMenu;
+    std::shared_ptr<OptionsMenu> optionsMenu;
+    std::shared_ptr<ShopMenu> shopMenu;
+    std::shared_ptr<Menu> activeMenu;
     glm::vec2 moveInput;
 
 public:
     bool inputEnabled;
-	bool uiActive;
+
+//Equipment methods
+bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
 private:
     void Start() override;
+    void Awake() override;
     void Update() override;
 
     void PollInput();
 
     //Session methods
+    void OnSessionToggle();
     void OnSoundPlay(int index);
 
-    //Equipment methods
-    bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     //Movement methods
     void OnMove(glm::vec2 moveVector);
     void OnInteract();
-    //Data methods
-	void OnSaveLoad(bool save);
     //UI methods
     void OnUIMove(glm::vec2 moveVector);
 	void OnMenuToggle();
@@ -48,21 +68,22 @@ private:
 public:
     PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
 
-    //Session methods
+    // Session methods
     // Argument pat is null when player failed playing pattern
-    void PlayedPattern(const std::shared_ptr<MusicPattern>& pat)
-    {
-        //TODO: uncomment when crowd manager gets implemented
-//        crowdManager.PlayedPattern(pat);
+    void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
+    void CreateMusicSession(InstrumentName instrument);
 
-        if (!pat) return;
+    // UI methods
+    void ToggleOptionsMenu();
 
-        //TODO: uncomment when crowd manager gets implemented
-        equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
+    // Equipment methods
+    std::set<InstrumentName> GetInstruments();
 
-        ui->UpdateCash(equipment->cash);
-        ui->UpdateRep(equipment->rep);
-    }
+    // IDataPersistance methods
+    void LoadData(std::shared_ptr<GameData> data) override;
+    void SaveData(std::shared_ptr<GameData> &data) override;
+
+    void OnSoundStop(int index);
 };
 
 

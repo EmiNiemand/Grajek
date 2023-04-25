@@ -41,7 +41,7 @@
 class GameObjectFactory;
 class ComponentFactory;
 class RendererManager;
-class ColliderManager;
+class CollisionManager;
 class HIDManager;
 class SceneManager;
 class DataPersistanceManager;
@@ -67,19 +67,30 @@ public:
     int32_t width;
     int32_t height;
 
-    glm::vec4 screenColor = glm::vec4(0.10f, 0.10f, 0.10f, 1.00f);
+    glm::vec4 screenColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.00f);
 
     std::shared_ptr<Game> game;
+    /// set to 0 to pause, 1 to resume
+    float timeScale = 1;
+
+#ifdef DEBUG
+    // Timers for Engine
+    float engineDeltaTime = 0.0f;
+    float lastEngineDeltaTime = 0.0f;
+#endif
 
     // Timers for update
+    float idealDeltaTime = 1.0f / 60;
     float deltaTime = 0.0f;
     float lastFrameTime = 0.0f;
 
     // Timers for fixedUpdate
+    float idealFixedDeltaTime = 1.0f / 120;
     float fixedDeltaTime = 0.0f;
     float lastFixedFrameTime = 0.0f;
 
     // Timers for AI update
+    float idealAIDeltaTime = 1.0f / 2;
     float AIDeltaTime = 0.0f;
     float lastAIFrameTime = 0.0f;
 

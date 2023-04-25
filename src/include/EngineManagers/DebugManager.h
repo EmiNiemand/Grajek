@@ -14,12 +14,18 @@ private:
 	explicit DebugManager();
 
 	bool displaySelected;
+	//flag to check if position of the GameObject was already extracted. 
+	bool transformExtracted;
 	std::shared_ptr<GameObject> selected;
 
 
-	void processChildren(std::shared_ptr<GameObject> gameObject);
-	void DisplaySystemInfo();
+	void ProcessChildren(std::shared_ptr<GameObject> gameObject);
+	//Conversion from vec3 to float[3] for use in imgui.
+	void ExtractVec3ToFloat3(glm::vec3 input,float* output);
+	//Conversion from float[3] to vec3 to set it in the object.
+	glm::vec3 InjectFloat3IntoVec3(float * input);
 	//Function to display RAM and CPU usage.
+	void DisplaySystemInfo();
 public:
 	DebugManager(DebugManager& other) = delete;
 	void operator=(const DebugManager&) = delete;
@@ -29,8 +35,7 @@ public:
 
 	void Initialize(GLFWwindow* window, const char* glsl_version);
 	void Render();
-	void Free();
-
+    void Free() const;
 };
 
 

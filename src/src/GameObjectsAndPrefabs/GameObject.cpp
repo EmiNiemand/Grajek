@@ -1,8 +1,11 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
+#include "Other/FrustumCulling.h"
 
 GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
-                                                                        name(name), id(id), parent(parent), tag(tag) {}
+                                                                        name(name), id(id), parent(parent), tag(tag) {
+    bounds = FrustumCulling::GenerateAABB(nullptr);
+}
 
 GameObject::~GameObject() = default;
 
@@ -13,6 +16,7 @@ std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::share
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
     gameObject->RemoveAllChildren();
     gameObject->RemoveAllComponents();
+    gameObject->parent->RemoveChild(gameObject->GetId());
     GloomEngine::GetInstance()->RemoveGameObject(gameObject);
 }
 
@@ -63,8 +67,8 @@ void GameObject::RemoveAllChildren() {
 
 void GameObject::UpdateSelfAndChildren() {
     if (transform != nullptr) {
-        OnTransformUpdateComponents();
         ForceUpdateSelfAndChildren();
+        OnTransformUpdateComponents();
     }
 }
 
@@ -79,10 +83,40 @@ void GameObject::ForceUpdateSelfAndChildren() {
     }
 }
 
+void GameObject::EnableSelfAndChildren() {
+    if (enabled) return;
+
+    for (auto&& component : components){
+        component.second->enabled = true;
+    }
+    for (auto&& child : children)
+    {
+        child.second->EnableSelfAndChildren();
+    }
+    enabled = true;
+}
+
+void GameObject::DisableSelfAndChildren() {
+    if (!enabled) return;
+
+    for (auto&& child : children)
+    {
+        child.second->DisableSelfAndChildren();
+    }
+    for (auto&& component : components){
+        component.second->enabled = false;
+    }
+    enabled = false;
+}
+
 int GameObject::GetId() const {
     return id;
 }
 
 const std::string &GameObject::GetName() const {
     return name;
+}
+
+bool GameObject::GetEnabled() const {
+    return enabled;
 }
