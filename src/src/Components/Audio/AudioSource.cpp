@@ -7,6 +7,10 @@
 #include "EngineManagers/AudioManager.h"
 #include "LowLevelClasses/AudioLoader.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 AudioSource::~AudioSource() = default;
@@ -17,6 +21,9 @@ void AudioSource::Start() {
 }
 
 void AudioSource::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Audio source", 0x800080);
+#endif
     alGetSourcei(sourceId, AL_SOURCE_STATE, &currentState);
 
     if (maxDistance > 0.0f) {
@@ -34,7 +41,6 @@ void AudioSource::Update() {
             }
         }
     }
-
     Component::Update();
 }
 

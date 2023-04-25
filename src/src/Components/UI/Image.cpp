@@ -4,6 +4,10 @@
 #include "stb_image.h"
 #include "EngineManagers/UIManager.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 #define BASE_PATH "res/textures/"
 
 Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
@@ -74,6 +78,9 @@ void Image::LoadTexture(float x, float y, const std::string &path) {
 }
 
 void Image::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Image", 0x800080);
+#endif
     UIComponent::Update();
 }
 

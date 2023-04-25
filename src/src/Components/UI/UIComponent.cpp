@@ -10,6 +10,7 @@ UIComponent::UIComponent(const std::shared_ptr<GameObject> &parent, int id) : Co
 UIComponent::~UIComponent() = default;
 
 void UIComponent::Update() {
+
     AddToDraw();
     Component::Update();
 }

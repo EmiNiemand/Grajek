@@ -10,6 +10,10 @@
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
@@ -35,6 +39,9 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
 }
 
 void MusicSession::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Music session", 0x800080);
+#endif
     timeoutCounter += GloomEngine::GetInstance()->deltaTime;
 
     if (!recordedSounds.empty() && timeoutCounter > timeout)

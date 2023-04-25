@@ -4,6 +4,10 @@
 #include "EngineManagers/UIManager.h"
 #include "stb_image.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 #define BASE_PATH_FONT "res/fonts/"
 #define BASE_PATH_TEXTURE "res/textures/"
 
@@ -179,6 +183,9 @@ void Button::ChangePosition(int newX, int newY) {
 }
 
 void Button::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Button", 0x800080);
+#endif
     UIComponent::Update();
 }
 

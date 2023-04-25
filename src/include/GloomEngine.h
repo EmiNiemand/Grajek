@@ -79,9 +79,6 @@ public:
     float lastEngineDeltaTime = 0.0f;
 
     const char* const mainLoop = "MainLoop";
-    const char* const updateLoop = "UpdateLoop";
-    const char* const fixedUpdateLoop = "FixedUpdateLoop";
-    const char* const aiUpdateLoop = "AiUpdateLoop";
 #endif
 
     // Timers for update

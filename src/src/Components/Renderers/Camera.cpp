@@ -4,6 +4,10 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Utilities.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 Camera::Camera(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Camera::~Camera() = default;
@@ -42,8 +46,9 @@ void Camera::Start() {
 }
 
 void Camera::Update() {
-    Component::Update();
-
+#ifdef DEBUG
+    ZoneScopedNC("Camera", 0x800080);
+#endif
     if (GloomEngine::GetInstance()->timeScale == 1) {
         //TODO: move these to some outer class
         // we change desired zoom on the camera when pressing Z.
@@ -63,6 +68,8 @@ void Camera::Update() {
                 parent->transform->GetGlobalPosition(),
                 playerPosition + cameraOffset * zoomLevel, 0.02f));
     }
+
+    Component::Update();
 }
 
 void Camera::OnUpdate() {

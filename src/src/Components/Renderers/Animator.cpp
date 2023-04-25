@@ -8,6 +8,10 @@
 #include <filesystem>
 #include <utility>
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
     currentTime = 0.0;
     finalBoneMatrices.reserve(100);
@@ -51,10 +55,13 @@ void Animator::LoadAnimation(const std::string& path)
 
 
 void Animator::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Animator", 0x800080);
+#endif
     if (!parent->isOnFrustum) {
         return;
     }
-	UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
+    UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
     Drawable::Update();
 }
 
