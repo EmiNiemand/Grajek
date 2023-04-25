@@ -45,8 +45,6 @@ std::shared_ptr<GameObject> Menu::AddButton(std::string name, int x, int y, cons
     std::shared_ptr<GameObject> button = GameObject::Instantiate(name, parent);
     button->AddComponent<Button>();
     button->GetComponent<Button>()->LoadTexture(x, y, pathInactive, pathActive);
-    if (text != "") {
-        button->GetComponent<Button>()->LoadFont(text, fontSize, color, fontPath);
-    }
+    button->GetComponent<Button>()->LoadFont(text, fontSize, color, fontPath);
     return button;
 }

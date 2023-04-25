@@ -15,12 +15,13 @@ private:
     std::shared_ptr<Mesh> textureMesh;
     std::shared_ptr<Mesh> textMesh;
     std::string text;
-    int x ,y, width, height;
+    int textX ,textY, width, height;
     glm::vec3 color;
     FT_UInt fontSize;
     std::map<GLchar, Character> Characters;
 
 public:
+    int x, y;
     bool isActive = false;
     std::shared_ptr<Button> previousButton, nextButton;
 
@@ -38,7 +39,8 @@ public:
     * y from 0 to 1080
     */
     void LoadFont(std::string text, FT_UInt fontSize = 18, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), const std::string &path = "Kanit-Light.ttf");
-    void ChangeText(std::string text);
+    void ChangeText(std::string newText);
+    void ChangePosition(int newX, int newY);
 
     void Update() override;
 
