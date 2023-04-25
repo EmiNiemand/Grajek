@@ -34,6 +34,7 @@ void ShopMenu::ShowMenu() {
 }
 
 void ShopMenu::OnClick() {
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.size() < 2) return;
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {

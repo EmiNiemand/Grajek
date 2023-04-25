@@ -17,7 +17,7 @@ public:
     virtual ~Game();
 
     /// Should be used to load main menu scene
-    void InitializeGame();
+    void InitializeGame() const;
     bool GameLoop();
 };
 

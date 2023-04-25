@@ -65,6 +65,8 @@ void Button::LoadTexture(int x, int y, const std::string& path, const std::strin
         this->textureMesh = CreateMesh(x, y, width, height);
         this->width = width;
         this->height = height;
+        this->x = x;
+        this->y = y;
     }
     else
     {
@@ -149,26 +151,31 @@ void Button::LoadFont(std::string text, FT_UInt fontSize, glm::vec3 color, const
     this->text = std::move(text);
     this->color = color;
     this->fontSize = fontSize;
-    this->x = (int)(this->textureMesh->vertices[0].position.x*960.0f)+960;
-    this->y = (int)(this->textureMesh->vertices[0].position.y*540.0f)+540 + height / 2 - fontSize / 3;
+    this->textX = (int)(this->textureMesh->vertices[0].position.x*960.0f)+960;
+    this->textY = (int)(this->textureMesh->vertices[0].position.y*540.0f)+540 + height / 2 - fontSize / 3;
 
     int lengthX = 0;
     for (std::string::const_iterator c = this->text.begin(); c != this->text.end(); c++) {
         lengthX += (Characters[*c].Advance >> 6);
     }
-    x += (width - lengthX) / 2;
+    textX += (width - lengthX) / 2;
 }
 
-void Button::ChangeText(std::string text) {
-    this->text = std::move(text);
-    this->x = (int)(this->textureMesh->vertices[0].position.x*960.0f)+960;
-    this->y = (int)(this->textureMesh->vertices[0].position.y*540.0f)+540 + height / 2 - fontSize / 3;
+void Button::ChangeText(std::string newText) {
+    this->text = std::move(newText);
+    this->textX = (int)(this->textureMesh->vertices[0].position.x * 960.0f) + 960;
+    this->textY = (int)(this->textureMesh->vertices[0].position.y * 540.0f) + 540 + height / 2 - fontSize / 3;
 
     int lengthX = 0;
     for (std::string::const_iterator c = this->text.begin(); c != this->text.end(); c++) {
         lengthX += (Characters[*c].Advance >> 6);
     }
-    x += (width - lengthX) / 2;
+    textX += (width - lengthX) / 2;
+}
+
+void Button::ChangePosition(int newX, int newY) {
+    textureMesh = CreateMesh(newX, newY, width, height);
+    ChangeText(text);
 }
 
 void Button::Update() {
@@ -185,8 +192,8 @@ void Button::Draw() {
         glBindVertexArray(textMesh->vao);
 
         // Iterate through all characters
-        GLfloat x2 = (float)x;
-        GLfloat y2 = (float)y;
+        GLfloat x2 = (float)textX;
+        GLfloat y2 = (float)textY;
 
         std::string::const_iterator c;
         for (c = text.begin(); c != text.end(); c++) {

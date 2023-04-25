@@ -17,10 +17,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Update() {
-    if (!FrustumCulling::GetInstance()->IsOnFrustum(parent->bounds, parent->transform)) {
-//#ifdef DEBUG
-//        spdlog::info(parent->GetName() + ": " + "is not in frustum");
-//#endif
+    if (!parent->isOnFrustum) {
         return;
     }
     Drawable::Update();

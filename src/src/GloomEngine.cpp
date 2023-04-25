@@ -134,6 +134,10 @@ bool GloomEngine::MainLoop() {
 void GloomEngine::Update() {
     FrustumCulling::GetInstance()->UpdateFrustum();
 
+    for(auto&& gameObject : gameObjects) {
+        gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds, gameObject.second->transform);
+    }
+
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart && component.second->enabled) component.second->Start();

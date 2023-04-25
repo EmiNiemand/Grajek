@@ -29,9 +29,9 @@ Game::Game() {
     activeScene = SceneManager::GetInstance()->activeScene;
 }
 
-Game::~Game() {}
+Game::~Game() = default;
 
-void Game::InitializeGame() {
+void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
@@ -130,34 +130,25 @@ void Game::InitializeGame() {
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> backToPauseMenu = options->Menu::AddButton("BackToPauseMenu", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Back", 32);
-    std::shared_ptr<GameObject> decreaseVolume = options->Menu::AddButton("DecreaseVolume", 1000, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "-", 64);
-    std::shared_ptr<GameObject> increaseVolume = options->Menu::AddButton("IncreaseVolume", 1300, 800, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "+", 64);
-    std::shared_ptr<GameObject> decreaseWindowResolution = options->Menu::AddButton("DecreaseWindowResolution", 1000, 700, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "<", 64);
-    std::shared_ptr<GameObject> increaseWindowResolution = options->Menu::AddButton("IncreaseWindowResolution", 1300, 700, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", ">", 64);
-    std::shared_ptr<GameObject> decreaseShadowResolution = options->Menu::AddButton("DecreaseShadowResolution", 1000, 600, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", "<", 64);
-    std::shared_ptr<GameObject> increaseShadowResolution = options->Menu::AddButton("IncreaseShadowResolution", 1300, 600, "UI/buttonSmallInactive.png", "UI/buttonSmallActive.png", ">", 64);
-    std::shared_ptr<GameObject> musicVolume = options->Menu::AddText("MusicVolume", "Music Volume", 500, 800, 42);
-    std::shared_ptr<GameObject> musicVolumeValue = options->Menu::AddText("MusicVolumeValue", "10", 1150, 800, 42);
-    std::shared_ptr<GameObject> windowResolution = options->Menu::AddText("WindowResolution", "Window Resolution", 500, 700, 42);
-    std::shared_ptr<GameObject> windowResolutionValue = options->Menu::AddText("WindowResolutionValue", "1440 x 810", 1075, 700, 42);
-    std::shared_ptr<GameObject> shadowResolution = options->Menu::AddText("ShadowResolution", "Shadow Resolution", 500, 600, 42);
-    std::shared_ptr<GameObject> shadowResolutionValue = options->Menu::AddText("ShadowResolutionValue", "High", 1125, 600, 42);
-    std::shared_ptr<GameObject> optionsBackground = options->Menu::AddImage("OptionsBackground", 0, 0, "UI/options.png");
-    decreaseVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
-    decreaseVolume->GetComponent<Button>()->nextButton = increaseVolume->GetComponent<Button>();
-    increaseVolume->GetComponent<Button>()->previousButton = decreaseVolume->GetComponent<Button>();
-    increaseVolume->GetComponent<Button>()->nextButton = decreaseWindowResolution->GetComponent<Button>();
-    decreaseWindowResolution->GetComponent<Button>()->previousButton = increaseVolume->GetComponent<Button>();
-    decreaseWindowResolution->GetComponent<Button>()->nextButton = increaseWindowResolution->GetComponent<Button>();
-    increaseWindowResolution->GetComponent<Button>()->previousButton = decreaseWindowResolution->GetComponent<Button>();
-    increaseWindowResolution->GetComponent<Button>()->nextButton = decreaseShadowResolution->GetComponent<Button>();
-    decreaseShadowResolution->GetComponent<Button>()->previousButton = increaseWindowResolution->GetComponent<Button>();
-    decreaseShadowResolution->GetComponent<Button>()->nextButton = increaseShadowResolution->GetComponent<Button>();
-    increaseShadowResolution->GetComponent<Button>()->previousButton = decreaseShadowResolution->GetComponent<Button>();
-    increaseShadowResolution->GetComponent<Button>()->nextButton = backToPauseMenu->GetComponent<Button>();
-    backToPauseMenu->GetComponent<Button>()->previousButton = increaseShadowResolution->GetComponent<Button>();
-    backToPauseMenu->GetComponent<Button>()->nextButton = decreaseVolume->GetComponent<Button>();
+    std::shared_ptr<GameObject> backToPauseMenu = options->Menu::AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
+    std::shared_ptr<GameObject> musicVolume = options->Menu::AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowResolution = options->Menu::AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowFullScreen = options->Menu::AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> shadowResolution = options->Menu::AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> previousValue = options->Menu::AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> currentValue = options->Menu::AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
+    std::shared_ptr<GameObject> nextValue = options->Menu::AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> optionsBackground = options->Menu::AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
+    backToPauseMenu->GetComponent<Button>()->previousButton = shadowResolution->GetComponent<Button>();
+    backToPauseMenu->GetComponent<Button>()->nextButton = musicVolume->GetComponent<Button>();
+    musicVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
+    musicVolume->GetComponent<Button>()->nextButton = windowResolution->GetComponent<Button>();
+    windowResolution->GetComponent<Button>()->previousButton = musicVolume->GetComponent<Button>();
+    windowResolution->GetComponent<Button>()->nextButton = windowFullScreen->GetComponent<Button>();
+    windowFullScreen->GetComponent<Button>()->previousButton = windowResolution->GetComponent<Button>();
+    windowFullScreen->GetComponent<Button>()->nextButton = shadowResolution->GetComponent<Button>();
+    shadowResolution->GetComponent<Button>()->previousButton = windowFullScreen->GetComponent<Button>();
+    shadowResolution->GetComponent<Button>()->nextButton = backToPauseMenu->GetComponent<Button>();
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
