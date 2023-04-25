@@ -22,6 +22,10 @@
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
 
@@ -52,8 +56,11 @@ void PlayerManager::Start() {
 }
 
 void PlayerManager::Update() {
-    Component::Update();
+#ifdef DEBUG
+    ZoneScopedNC("Player manager", 0x800080);
+#endif
     PollInput();
+    Component::Update();
 }
 
 #pragma region Equipment events

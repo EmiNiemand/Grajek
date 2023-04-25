@@ -77,6 +77,8 @@ public:
     // Timers for Engine
     float engineDeltaTime = 0.0f;
     float lastEngineDeltaTime = 0.0f;
+
+    const char* const mainLoop = "MainLoop";
 #endif
 
     // Timers for update

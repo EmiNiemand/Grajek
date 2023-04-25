@@ -5,6 +5,10 @@
 #include "EngineManagers/UIManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 #define BASE_PATH "res/textures/"
 
 Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
@@ -115,6 +119,9 @@ void Image::SetScale(float scale) {
 }
 
 void Image::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Image", 0x800080);
+#endif
     UIComponent::Update();
 }
 

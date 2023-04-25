@@ -9,6 +9,10 @@
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 #define BASE_PATH "res/textures/"
 
 
@@ -71,6 +75,9 @@ void CubeMap::LoadTextures(const std::string& basePath) {
 }
 
 void CubeMap::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("CubeMap", 0x800080);
+#endif
     Drawable::Update();
 }
 

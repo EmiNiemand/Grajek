@@ -3,6 +3,10 @@
 #include "Components/UI/Text.h"
 #include "EngineManagers/UIManager.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 #define BASE_PATH "res/fonts/"
 
 Text::Text(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
@@ -94,6 +98,9 @@ void Text::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::v
 }
 
 void Text::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Text", 0x800080);
+#endif
     UIComponent::Update();
 }
 

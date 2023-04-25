@@ -8,6 +8,10 @@
 #include "EngineManagers/AudioManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 AudioListener::AudioListener(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 AudioListener::~AudioListener() = default;
@@ -27,6 +31,9 @@ void AudioListener::Start() {
 }
 
 void AudioListener::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Audio listener", 0x800080);
+#endif
     position = parent->transform->GetLocalPosition();
     alListener3f(AL_POSITION, position.x, position.y, position.z);
     Component::Update();

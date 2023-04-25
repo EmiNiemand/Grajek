@@ -7,6 +7,10 @@
 #include "LowLevelClasses/StaticModel.h"
 #include "Other/FrustumCulling.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 /**
  * @attention Remember to call LoadModel if you want model to actually display
  */
@@ -17,6 +21,9 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Update() {
+#ifdef DEBUG
+    ZoneScopedNC("Renderer", 0x800080);
+#endif
     if (!parent->isOnFrustum) {
         return;
     }

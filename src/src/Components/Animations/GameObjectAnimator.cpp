@@ -9,6 +9,10 @@
 #include "GloomEngine.h"
 #include "Utilities.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 GameObjectAnimator::GameObjectAnimator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 void GameObjectAnimator::Setup(std::shared_ptr<Transform> animatedTransform,
@@ -43,8 +47,9 @@ void GameObjectAnimator::Setup(std::shared_ptr<Transform> animatedTransform,
 }
 
 void GameObjectAnimator::Update() {
-    Component::Update();
-
+#ifdef DEBUG
+    ZoneScopedNC("Game Object Animator", 0x800080);
+#endif
     // Switch checkpoints if current one finished
     // ------------------------------------------
     if(counter > checkpoint.duration) {
@@ -65,20 +70,20 @@ void GameObjectAnimator::Update() {
         switch(checkpoint.property) {
             case Position:
                 valueDelta = (checkpoint.value
-                            - transform->GetLocalPosition()
-                            * (float)useAbsoluteValues)
-                                    /checkpoint.duration;
+                              - transform->GetLocalPosition()
+                                * (float)useAbsoluteValues)
+                             /checkpoint.duration;
                 break;
             case Rotation:
                 valueDelta = (checkpoint.value
-                            - transform->GetLocalRotation()
-                            * (float)useAbsoluteValues)
-                                    /checkpoint.duration;
+                              - transform->GetLocalRotation()
+                                * (float)useAbsoluteValues)
+                             /checkpoint.duration;
                 break;
             case Scale:
                 valueDelta = (checkpoint.value * transform->GetLocalScale()
                               - transform->GetLocalScale())
-                                    /checkpoint.duration;
+                             /checkpoint.duration;
                 break;
         }
     }
@@ -102,4 +107,5 @@ void GameObjectAnimator::Update() {
     }
 
     counter += GloomEngine::GetInstance()->deltaTime;
+    Component::Update();
 }

@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} AudioFile)
 target_link_libraries(${PROJECT_NAME} OpenAL::OpenAL)
 target_link_libraries(${PROJECT_NAME} freetype)
+target_link_libraries(${PROJECT_NAME} TracyClient)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DRELEASE")
