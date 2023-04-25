@@ -222,7 +222,7 @@ void GloomEngine::Update() {
 #endif
 #ifdef DEBUG
     {
-        ZoneScopedNC("Post processing", 0x800080);
+        ZoneScopedNC("Manage input", 0x800080);
 #endif
     HIDManager::GetInstance()->ManageInput();
 #ifdef DEBUG
