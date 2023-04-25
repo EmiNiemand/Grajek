@@ -2,7 +2,7 @@
 // Created by MasterKtos on 23.04.2023.
 //
 
-#include "GameObjectAnimator.h"
+#include "Components/Animations/GameObjectAnimator.h"
 
 #include <utility>
 #include "GameObjectsAndPrefabs/GameObject.h"

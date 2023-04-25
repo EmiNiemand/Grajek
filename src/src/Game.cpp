@@ -22,7 +22,7 @@
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Scripts/ShopMenu.h"
-#include "Components/GameObjectAnimator.h"
+#include "Components/Animations/GameObjectAnimator.h"
 
 Game::Game() {
     activeCamera = Camera::activeCamera;
