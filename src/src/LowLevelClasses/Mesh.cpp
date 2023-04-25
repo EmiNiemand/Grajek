@@ -47,7 +47,7 @@ void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {
     glBindVertexArray(vao);
     glDrawElements(type, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-
+    glBindTexture(GL_TEXTURE_2D, 0);
     // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);
 }
