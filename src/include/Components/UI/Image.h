@@ -14,6 +14,7 @@ private:
     unsigned int textureID;
     std::shared_ptr<Mesh> mesh;
     int x, y, width, height;
+    glm::vec2 leftBottom, leftTop, rightBottom, rightTop;
 
 public:
     Image(const std::shared_ptr<GameObject> &parent, int id);
@@ -25,7 +26,7 @@ public:
     * y from 0 to 1080
     */
     void LoadTexture(int x, int y, const std::string& path);
-    void SetPosition(int newX, int newY);
+    void SetPosition(int x2, int y2);
     void SetRotation(float angle);
     void SetScale(float scale);
 

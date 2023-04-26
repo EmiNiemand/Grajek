@@ -13,6 +13,8 @@
 
 #define MAX_BONE_INFLUENCE 4
 
+class Image;
+
 struct Vertex {
     // position
     glm::vec3 position;
@@ -56,6 +58,7 @@ public:
     unsigned int GetVBO();
 
 private:
+    friend class Image;
     // render data
     unsigned int vbo, ebo;
 

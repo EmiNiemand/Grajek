@@ -4,6 +4,10 @@
 #include "GloomEngine.h"
 #include "Components/UI/Image.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 UIAnimator::UIAnimator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 void UIAnimator::Setup(std::shared_ptr<Image> animatedImage,
@@ -34,8 +38,9 @@ void UIAnimator::Setup(std::shared_ptr<Image> animatedImage,
 }
 
 void UIAnimator::Update() {
-    Component::Update();
-
+#ifdef DEBUG
+    ZoneScopedNC("UI Animator", 0x800080);
+#endif
     // Switch checkpoints if current one finished
     // ------------------------------------------
     if(counter > checkpoint.duration) {
@@ -74,9 +79,9 @@ void UIAnimator::Update() {
     switch (checkpoint.property) {
         case Position:
             image->SetPosition((int)(image->GetParent()->transform->GetLocalPosition().x
-                                     + valueDelta.x * GloomEngine::GetInstance()->deltaTime),
+                                        + valueDelta.x * GloomEngine::GetInstance()->deltaTime),
                                (int)(image->GetParent()->transform->GetLocalPosition().y
-                                     + valueDelta.y * GloomEngine::GetInstance()->deltaTime));
+                                        + valueDelta.y * GloomEngine::GetInstance()->deltaTime));
             break;
         case Rotation:
             image->SetRotation(image->GetParent()->transform->GetLocalRotation().z
@@ -89,4 +94,5 @@ void UIAnimator::Update() {
     }
 
     counter += GloomEngine::GetInstance()->deltaTime;
+    Component::Update();
 }

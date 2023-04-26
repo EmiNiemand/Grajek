@@ -224,12 +224,12 @@ void PlayerManager::OnCheatSheetToggle() {
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator")->AddComponent<UIAnimator>()->Setup(
                 GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheet")->GetComponent<Image>(), {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f)}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
                 }, false);
     } else {
         GameObject::Instantiate("CheatSheetAnimator")->AddComponent<UIAnimator>()->Setup(
                 GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheet")->GetComponent<Image>(), {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f)}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
                 }, false);
     }
 }

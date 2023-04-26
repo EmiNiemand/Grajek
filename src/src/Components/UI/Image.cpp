@@ -82,6 +82,14 @@ void Image::LoadTexture(int x, int y, const std::string &path) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         this->mesh = CreateMesh(x, y, width, height);
+        leftBottom.x = x;
+        leftBottom.y = y;
+        leftTop.x = x;
+        leftTop.y = y + height;
+        rightBottom.x = x + width;
+        rightBottom.y = y;
+        rightTop.x = x + width;
+        rightTop.y = y + height;
         this->x = x;
         this->y = y;
         this->width = width;
@@ -98,24 +106,49 @@ void Image::LoadTexture(int x, int y, const std::string &path) {
     UIManager::GetInstance()->shader->SetInt("texture1", 0);
 }
 
-void Image::SetPosition(int newX, int newY) {
-    parent->transform->SetLocalPosition(glm::vec3(newX, newY, 0.0f));
-    mesh = CreateMesh(newX, newY, width, height);
+void Image::SetPosition(int x2, int y2) {
+    parent->transform->SetLocalPosition(glm::vec3(x2, y2, 0.0f));
+    float width2 = rightBottom.x - leftBottom.x, height2 = leftTop.y - leftBottom.y;
+    leftBottom.x = x2; leftBottom.y = y2;
+    leftTop.x = x2; leftTop.y = y2 + height2;
+    rightBottom.x = x2 + width2; rightBottom.y = y2;
+    rightTop.x = x2 + width2; rightTop.y = y2 + height2;
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, 0.0f);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, 0.0f);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, 0.0f);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, 0.0f);
+    mesh->setupMesh();
 }
 
 void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
-    float p = (float)x + (float)width / 2, q = (float)y + (float)height / 2;
-    float radians = glm::radians((float)angle);
-    mesh = CreateMeshFromPoints((int)(((float)x - p) * cosf(radians) - ((float)y - q) * sinf(radians) + p), (int)(((float)x - p) * sinf(radians) + ((float)y - q) * cosf(radians) + q),
-                                (int)(((float)x - p) * cosf(radians) - ((float)(y + height) - q) * sinf(radians) + p), (int)(((float)x - p) * sinf(radians) + ((float)(y + height) - q) * cosf(radians) + q),
-                                (int)(((float)(x + width) - p) * cosf(radians) - ((float)y - q) * sinf(radians) + p), (int)(((float)(x + width) - p) * sinf(radians) + ((float)y - q) * cosf(radians) + q),
-                                (int)(((float)(x + width) - p) * cosf(radians) - ((float)(y + height) - q) * sinf(radians) + p), (int)(((float)(x + width) - p) * sinf(radians) + ((float)(y + height) - q) * cosf(radians) + q));
+    float x2 = leftBottom.x, y2 = leftBottom.y;
+    float width2 = rightBottom.x - x2, height2 = leftTop.y - y2;
+    float p = x2 + width2 / 2, q = y2 + height2 / 2;
+    float radians = glm::radians(angle);
+    float cos = cosf(radians), sin = sinf(radians);
+    mesh->vertices[0].position = glm::vec3(((x2 - p) * cos - (y2 - q) * sin + p)/960-1, ((x2 - p) * sin + (y2 - q) * cos + q)/540-1, 0.0f);
+    mesh->vertices[1].position = glm::vec3(((x2 - p) * cos - (y2 + height2 - q) * sin + p)/960-1, ((x2 - p) * sin + (y2 + height2 - q) * cos + q)/540-1, 0.0f);
+    mesh->vertices[2].position = glm::vec3(((x2 + width2 - p) * cos - (y2 - q) * sin + p)/960-1, ((x2 + width2 - p) * sin + (y2 - q) * cos + q)/540-1, 0.0f);
+    mesh->vertices[3].position = glm::vec3(((x2 + width2 - p) * cos - (y2 + height2 - q) * sin + p)/960-1, ((x2 + width2 - p) * sin + (y2 + height2 - q) * cos + q)/540-1, 0.0f);
+    mesh->setupMesh();
 }
 
 void Image::SetScale(float scale) {
-    parent->transform->SetLocalScale(glm::vec3(scale, scale, scale));
-    mesh = CreateMesh((int)((float)x + (float)width / 2 - (float)width * scale / 2), (int)((float)y + (float)height / 2 - (float)height * scale / 2), (int)((float)width * scale), (int)((float)height * scale));
+    parent->transform->SetLocalScale(glm::vec3(scale));
+    leftBottom.x = x + (float)width / 2 - (float)width * scale / 2;
+    leftBottom.y = y + (float)height / 2 - (float)height * scale / 2;
+    leftTop.x = leftBottom.x;
+    leftTop.y = leftBottom.y + (float)height * scale;
+    rightBottom.x = leftBottom.x + (float)width * scale;
+    rightBottom.y = leftBottom.y;
+    rightTop.x = rightBottom.x;
+    rightTop.y = leftTop.y;
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, 0.0f);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, 0.0f);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, 0.0f);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, 0.0f);
+    mesh->setupMesh();
 }
 
 void Image::Update() {
