@@ -22,8 +22,6 @@ private:
     bool enabled = true;
 
 public:
-    bool destroy = false;
-
     std::map<int, std::shared_ptr<Component>> components;
     std::map<int, std::shared_ptr<GameObject>> children;
 

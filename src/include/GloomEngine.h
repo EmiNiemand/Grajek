@@ -69,6 +69,7 @@ public:
 
     glm::vec4 screenColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.00f);
 
+    std::vector<std::shared_ptr<GameObject>> destroyBuffer = {};
     std::shared_ptr<Game> game;
     /// set to 0 to pause, 1 to resume
     float timeScale = 1;

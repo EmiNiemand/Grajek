@@ -14,7 +14,7 @@ std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::share
 }
 
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
-    gameObject->destroy = true;
+    GloomEngine::GetInstance()->destroyBuffer.push_back(gameObject);
 }
 
 void GameObject::OnTransformUpdateComponents() {

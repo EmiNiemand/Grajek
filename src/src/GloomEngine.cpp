@@ -160,14 +160,11 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Destroy objects", 0xFFD733);
 #endif
-        std::map<int, std::shared_ptr<GameObject>> objects = gameObjects;
-
-        for (auto &&gameObject: objects) {
-            if (gameObject.second->destroy) {
-                gameObject.second->parent->RemoveChild(gameObject.second->GetId());
-            }
+        for (auto &&gameObject: destroyBuffer) {
+            gameObject->parent->RemoveChild(gameObject->GetId());
         }
     }
+    destroyBuffer.clear();
     //Frustum culling
     {
 #ifdef DEBUG
