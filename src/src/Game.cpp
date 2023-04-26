@@ -59,6 +59,7 @@ void Game::InitializeGame() const {
     std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
     ground->transform->SetLocalScale({40, 2, 40});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(40, 40);
 
     // Set up lights
     // -------------
@@ -133,13 +134,6 @@ void Game::InitializeGame() const {
     fourthInstrument->GetComponent<Button>()->nextButton = secondInstrument->GetComponent<Button>();
     shop->GetParent()->DisableSelfAndChildren();
 
-
-//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-//    sphere->transform->SetLocalPosition({-5, 2, 0});
-//    sphere->transform->SetLocalScale({2, 2, 2});
-//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-//    rSphere->material.refraction = 1.0f;
 
 //    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
 //    lowPolyHouse->transform->SetLocalPosition({15, 0, -20});
@@ -250,6 +244,17 @@ void Game::InitializeGame() const {
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
 	animatedDood->transform->SetLocalPosition({-2, 0, -10});
 	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
+
+    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+    sphere->transform->SetLocalPosition({-5, 2, 0});
+    sphere->transform->SetLocalScale({2, 2, 2});
+    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+    rSphere->material.refraction = 1.0f;
+
+    std::shared_ptr<GameObject> animatedDood2 = Prefab::GetDancingDude();
+    animatedDood2->transform->SetLocalPosition({5, 0, -10});
+    animatedDood2->transform->SetLocalScale({1.5, 1.5, 1.5});
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

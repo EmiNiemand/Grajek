@@ -37,6 +37,7 @@ void Renderer::Draw() {
 
     shader->Activate();
     shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec2("texStrech", textScale);
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
@@ -50,6 +51,7 @@ void Renderer::Draw(std::shared_ptr<Shader> shader) {
 
     shader->Activate();
     shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec2("texStrech", textScale);
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
