@@ -78,10 +78,10 @@ void UIAnimator::Update() {
 
     switch (checkpoint.property) {
         case Position:
-            image->SetPosition((int)(image->GetParent()->transform->GetLocalPosition().x
-                                        + valueDelta.x * GloomEngine::GetInstance()->deltaTime),
-                               (int)(image->GetParent()->transform->GetLocalPosition().y
-                                        + valueDelta.y * GloomEngine::GetInstance()->deltaTime));
+            image->SetPosition(image->GetParent()->transform->GetLocalPosition().x
+                                        + valueDelta.x * GloomEngine::GetInstance()->deltaTime,
+                               image->GetParent()->transform->GetLocalPosition().y
+                                        + valueDelta.y * GloomEngine::GetInstance()->deltaTime);
             break;
         case Rotation:
             image->SetRotation(image->GetParent()->transform->GetLocalRotation().z

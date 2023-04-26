@@ -105,17 +105,17 @@ void Image::LoadTexture(int x, int y, const std::string &path) {
     UIManager::GetInstance()->shader->SetInt("texture1", 0);
 }
 
-void Image::SetPosition(int x2, int y2) {
+void Image::SetPosition(float x2, float y2) {
     parent->transform->SetLocalPosition(glm::vec3(x2, y2, 0.0f));
     float width2 = rightBottom.x - leftBottom.x, height2 = leftTop.y - leftBottom.y;
     leftBottom.x = x2; leftBottom.y = y2;
     leftTop.x = x2; leftTop.y = y2 + height2;
     rightBottom.x = x2 + width2; rightBottom.y = y2;
     rightTop.x = x2 + width2; rightTop.y = y2 + height2;
-    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, 0.0f);
-    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, 0.0f);
-    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, 0.0f);
-    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, 0.0f);
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960.0f-1.0f, leftBottom.y/540.0f-1.0f, 0.0f);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960.0f-1.0f, leftTop.y/540.0f-1.0f, 0.0f);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960.0f-1.0f, rightBottom.y/540.0f-1.0f, 0.0f);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960.0f-1.0f, rightTop.y/540.0f-1.0f, 0.0f);
     mesh->setupMesh();
 }
 

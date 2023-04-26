@@ -34,7 +34,25 @@ void SessionUI::SetCheatSheet(std::shared_ptr<Image> newCheatSheet) { cheatSheet
 
 void SessionUI::PlaySound(int index) {
     //TODO: play some kind of visual confirmation of playing sound
-    //animator.SetTrigger("Sound"+index);
+    auto animator = GameObject::Instantiate("NutaAnimator", parent->parent);
+    auto nuta = GameObject::Instantiate("Nuta", animator)->AddComponent<Image>();
+    if (index == 0) {
+        nuta->LoadTexture(670, 700, "UI/Sesja/Nuta1.png");
+        animator->AddComponent<UIAnimator>()->Setup(nuta, {
+                        {AnimatedProperty::Position, glm::vec3(670.0f, 775.0f, 0.0f)}
+                }, false);
+    } else if (index == 1) {
+        nuta->LoadTexture(700, 300, "UI/Sesja/Nuta2.png");
+        animator->AddComponent<UIAnimator>()->Setup(nuta, {
+                        {AnimatedProperty::Position, glm::vec3(775.0f, 300.0f, 0.0f)}
+                }, false);
+    } else if (index == 2) {
+        nuta->LoadTexture(400, 530, "UI/Sesja/Nuta3.png");
+        animator->AddComponent<UIAnimator>()->Setup(nuta, {
+                        {AnimatedProperty::Position, glm::vec3(400.0f, 605.0f, 0.0f)}
+                }, false);
+    }
+//    animator.SetTrigger("Sound"+index);
     sampleSources[index]->ForcePlaySound();
     spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
 }
