@@ -20,6 +20,7 @@
 #include "Components/Scripts/OptionsMenu.h"
 #include "Components/Scripts/ShopMenu.h"
 #include "Components/UI/Button.h"
+#include "Components/Animations/UIAnimator.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -216,6 +217,23 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     session->Setup(equipment->GetInstrumentWithName(instrument));
 }
 
+void PlayerManager::OnCheatSheetToggle() {
+    if (!session) return;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
+    cheatSheetActive = !cheatSheetActive;
+    if (cheatSheetActive) {
+        GameObject::Instantiate("CheatSheetAnimator")->AddComponent<UIAnimator>()->Setup(
+                GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheet")->GetComponent<Image>(), {
+                        {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f)}
+                }, false);
+    } else {
+        GameObject::Instantiate("CheatSheetAnimator")->AddComponent<UIAnimator>()->Setup(
+                GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheet")->GetComponent<Image>(), {
+                        {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f)}
+                }, false);
+    }
+}
+
 #pragma endregion
 
 void PlayerManager::PollInput() {
@@ -252,6 +270,9 @@ void PlayerManager::PollInput() {
 	}
 
     if(session) {
+        for (auto key: PlayerInput::CheatSheet)
+            if (hid->IsKeyDown(key.first)) OnCheatSheetToggle();
+
         for (auto key: PlayerInput::PlaySound) {
             if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
             if (hid->IsKeyUp(key.first)) OnSoundStop(key.second);

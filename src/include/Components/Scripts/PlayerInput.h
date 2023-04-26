@@ -44,6 +44,9 @@ public:
             {Key::KEY_U, 1},
             {Key::KEY_P, 2}
     };
+    inline static std::unordered_map<Key, int> CheatSheet = {
+            {Key::KEY_TAB, 0}
+    };
 };
 
 #endif //GLOOMENGINE_PLAYERINPUT_H

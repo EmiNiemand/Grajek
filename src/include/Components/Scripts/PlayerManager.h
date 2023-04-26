@@ -39,6 +39,7 @@ private:
     std::shared_ptr<ShopMenu> shopMenu;
     std::shared_ptr<Menu> activeMenu;
     glm::vec2 moveInput;
+    bool cheatSheetActive = false;
 
 public:
     bool inputEnabled;
@@ -56,6 +57,7 @@ private:
     //Session methods
     void OnSessionToggle();
     void OnSoundPlay(int index);
+    void OnCheatSheetToggle();
 
     //Movement methods
     void OnMove(glm::vec2 moveVector);

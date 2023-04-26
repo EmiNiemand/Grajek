@@ -36,6 +36,9 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
     } else if (instrument->NameToString() == "Guitar") {
         theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokGitara.png");
     }
+
+    cheatSheet = GameObject::Instantiate("CheatSheet", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"));
+    cheatSheet->AddComponent<Image>()->LoadTexture(451, -1100, "UI/Sesja/drumPatterns.png");
 }
 
 void MusicSession::Update() {
