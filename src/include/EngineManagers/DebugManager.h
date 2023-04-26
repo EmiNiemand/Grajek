@@ -26,6 +26,7 @@ private:
 	glm::vec3 InjectFloat3IntoVec3(float * input);
 	//Function to display RAM and CPU usage.
 	void DisplaySystemInfo();
+	void SaveMenu();
 public:
 	DebugManager(DebugManager& other) = delete;
 	void operator=(const DebugManager&) = delete;

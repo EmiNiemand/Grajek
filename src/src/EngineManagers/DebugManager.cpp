@@ -99,13 +99,15 @@ void DebugManager::Render() {
         scaleHolder = InjectFloat3IntoVec3(inputVector3);
 
         selected->transform.get()->SetLocalPosition(positionHolder);
+        selected->transform.get()->SetLocalRotation(rotationHolder);
+        selected->transform.get()->SetLocalScale(scaleHolder);
 
 
         ImGui::Begin("Properties");
         ImGui::Text(selected->GetName().c_str());
-        ImGui::InputFloat3("Position", inputVector1);
-        ImGui::SliderFloat3("Rotation", inputVector2, 0.0f, 360.0f);
-        ImGui::SliderFloat3("Scale", inputVector3, 0.0f, 20.0f);
+        ImGui::DragFloat3("Position", inputVector1, 1.0f);
+        ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
+        ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f,10.0f);
         ImGui::Checkbox("inputBool", &inputBool);
         if (ImGui::Button("Close"))
         {
@@ -180,6 +182,18 @@ void DebugManager::DisplaySystemInfo() {
         ImGui::Text("Physical Memory Usage: %s Mb", std::to_string(physMemUsedByMe / 100000).c_str());
         ImGui::End();
     }
+}
+
+void DebugManager::SaveMenu()
+{
+    ImGui::Begin("Save Menu");
+    if (ImGui::SmallButton("Save")) {
+
+    }
+    if (ImGui::SmallButton("Load")) {
+
+    }
+    ImGui::End;
 }
 
 void DebugManager::Free() const {
