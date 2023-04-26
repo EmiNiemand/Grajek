@@ -70,6 +70,7 @@ void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {
                 shader->GetShader(),
                 name.c_str()), 15);
     }
+    if (!textures.empty()) glBindTexture(GL_TEXTURE_2D, 0);
 
     // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);
