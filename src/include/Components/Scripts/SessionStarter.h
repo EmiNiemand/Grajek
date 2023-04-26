@@ -17,6 +17,7 @@ public:
     ~SessionStarter() override;
 
     void Setup(const std::set<std::shared_ptr<Instrument>>& instruments);
+    void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick();
     void Stop();
 };

@@ -156,6 +156,18 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
+    {
+#ifdef DEBUG
+        ZoneScopedNC("Destroy objects", 0xFFD733);
+#endif
+        std::map<int, std::shared_ptr<GameObject>> objects = gameObjects;
+
+        for (auto &&gameObject: objects) {
+            if (gameObject.second->destroy) {
+                gameObject.second->parent->RemoveChild(gameObject.second->GetId());
+            }
+        }
+    }
     //Frustum culling
     {
 #ifdef DEBUG
@@ -164,6 +176,7 @@ void GloomEngine::Update() {
         FrustumCulling::GetInstance()->UpdateFrustum();
 
         for (auto &&gameObject: gameObjects) {
+
             gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds,
                                                                                         gameObject.second->transform);
         }

@@ -31,6 +31,19 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
     buttons[0]->isActive = true;
 }
 
+void SessionStarter::ChangeActiveButton(glm::vec2 moveVector) {
+    if (moveVector.x == 1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->nextButton;
+        activeButton->isActive = true;
+    }
+    if (moveVector.x == -1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->previousButton;
+        activeButton->isActive = true;
+    }
+}
+
 void SessionStarter::OnClick() {
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     playerManager->CreateMusicSession((InstrumentName)std::stoi(activeButton->GetParent()->GetName()));
