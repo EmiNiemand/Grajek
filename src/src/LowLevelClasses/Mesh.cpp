@@ -68,7 +68,7 @@ void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {
         // now set the sampler to the correct texture unit
         glUniform1i(glGetUniformLocation(
                 shader->GetShader(),
-                name.c_str()), GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+                name.c_str()), INT_MAX);
     }
     if (!textures.empty()) glBindTexture(GL_TEXTURE_2D, 0);
 
