@@ -30,6 +30,7 @@ private:
     std::shared_ptr<Image> metronomeImage;
 
     std::shared_ptr<Image> cheatSheet;
+    bool cheatSheetActive = false;
     std::vector<std::shared_ptr<AudioSource>> sampleSources;
 
 public:
