@@ -8,6 +8,7 @@
 #include "Components/Scripts/SessionUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Scripts/Instrument.h"
+#include "Components/UI/Image.h"
 
 MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -20,6 +21,17 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
 
     sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<SessionUI>();
     sessionUI->Setup(bpm, instrument->samples, nullptr);
+
+    std::shared_ptr<GameObject> theme = GameObject::Instantiate("Theme", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"));
+    if (instrument->NameToString() == "Drums") {
+        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokPerkusja.png");
+    } else if (instrument->NameToString() == "Trumpet") {
+        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokTrabka.png");
+    } else if (instrument->NameToString() == "Launchpad") {
+        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokLaunchpad.png");
+    } else if (instrument->NameToString() == "Guitar") {
+        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokGitara.png");
+    }
 }
 
 void MusicSession::Update() {
@@ -39,10 +51,23 @@ void MusicSession::PlaySample(int index) {
     float currentTime = glfwGetTime();
     float rhythmDiff = GetRhythmValue(currentTime - lastTime);
 
-    recordedSounds.emplace_back(instrument->samples[index], rhythmDiff);
+    recordedSounds.emplace_back(instrument->samples[index], rhythmDiff, currentTime);
     lastTime = currentTime;
 
     DetectPattern();
+}
+
+void MusicSession::StopSample(int index) {
+    if(instrument->samples.empty() || instrument->samples.size()-1 < index) return;
+    if(recordedSounds.empty()) return;
+
+    for (auto it = recordedSounds.rbegin(); it != recordedSounds.rend(); ++it) {
+        if(it->sample->id == index) {
+            it->duration = GetRhythmValue(glfwGetTime() - it->duration);
+        }
+    }
+
+    // TODO: implement hold-type sounds
 }
 
 void MusicSession::ToggleCheatSheet() { sessionUI->ToggleCheatSheet(); }

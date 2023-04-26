@@ -11,12 +11,13 @@ Rigidbody::~Rigidbody() = default;
 
 
 void Rigidbody::FixedUpdate() {
+    Component::FixedUpdate();
+
     parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() + velocity);
     parent->transform->SetLocalRotation(rotation);
 
     this->AddForce(glm::vec3(0, -1, 0) * gravityScale, ForceMode::Force);
     this->AddForce(-velocity * linearDrag, ForceMode::Force);
-    Component::FixedUpdate();
 }
 
 void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {

@@ -4,6 +4,8 @@
 
 #include "Components/Scripts/PlayerManager.h"
 #include "GloomEngine.h"
+#include "Components/Renderers/Camera.h"
+#include "LowLevelClasses/GameData.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
@@ -23,6 +25,10 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
 
 void PlayerManager::Start() {
+    Component::Start();
+}
+
+void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
     equipment->Setup(5, 10);
@@ -41,7 +47,7 @@ void PlayerManager::Start() {
     activeMenu = nullptr;
 
     BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
-    Component::Start();
+    Component::Awake();
 }
 
 void PlayerManager::Update() {
@@ -55,6 +61,10 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 
     playerUI->UpdateCash(equipment->GetCash());
     return true;
+}
+
+std::set<InstrumentName> PlayerManager::GetInstruments() {
+    return equipment->GetInstrumentNames();
 }
 #pragma endregion
 
@@ -171,6 +181,12 @@ void PlayerManager::OnSoundPlay(int index) {
     session->PlaySample(index);
 }
 
+void PlayerManager::OnSoundStop(int index) {
+    if(!session) return;
+
+    session->StopSample(index);
+}
+
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     //TODO: uncomment when crowd manager gets implemented
 //        crowdManager.PlayedPattern(pat);
@@ -228,6 +244,14 @@ void PlayerManager::PollInput() {
 		return;
 	}
 
+    if(session) {
+        for (auto key: PlayerInput::PlaySound) {
+            if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
+            if (hid->IsKeyUp(key.first)) OnSoundStop(key.second);
+        }
+        return;
+    }
+
 	for (auto key: PlayerInput::Move) {
 		if (hid->IsKeyPressed(key.first)) {
 			readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
@@ -235,10 +259,26 @@ void PlayerManager::PollInput() {
 		}
 	}
 
-    for (auto key: PlayerInput::PlaySound)
-        if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
-
 	if(readMoveVector != moveInput)
 		OnMove(readMoveVector);
 	moveInput = readMoveVector;
+}
+
+void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
+    equipment->Setup(data->money, data->reputation);
+    playerUI->UpdateCash(data->money);
+    playerUI->UpdateRep(data->reputation);
+    parent->transform->SetLocalPosition(data->playerPosition);
+    Camera::activeCamera->transform->SetLocalPosition(
+            parent->transform->GetGlobalPosition() + Camera::activeCamera->GetComponent<Camera>()->cameraOffset);
+    for(const auto& instrument : data->instruments)
+        equipment->BuyInstrument(0, Prefab::GetInstrument(instrument));
+}
+
+void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
+    data->money = equipment->GetCash();
+    data->reputation = equipment->GetRep();
+    data->playerPosition = parent->transform->GetLocalPosition();
+    for(const auto& instrument : equipment->instruments)
+        data->instruments.insert(instrument->name);
 }

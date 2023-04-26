@@ -1,8 +1,11 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
+#include "Other/FrustumCulling.h"
 
 GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
-                                                                        name(name), id(id), parent(parent), tag(tag) {}
+                                                                        name(name), id(id), parent(parent), tag(tag) {
+    bounds = FrustumCulling::GenerateAABB(nullptr);
+}
 
 GameObject::~GameObject() = default;
 
@@ -13,6 +16,7 @@ std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::share
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
     gameObject->RemoveAllChildren();
     gameObject->RemoveAllComponents();
+    gameObject->parent->RemoveChild(gameObject->GetId());
     GloomEngine::GetInstance()->RemoveGameObject(gameObject);
 }
 

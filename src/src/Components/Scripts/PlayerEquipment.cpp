@@ -29,21 +29,17 @@ std::shared_ptr<Instrument> PlayerEquipment::GetInstrumentWithName(InstrumentNam
     return nullptr;
 }
 
+std::set<InstrumentName> PlayerEquipment::GetInstrumentNames() {
+    std::set<InstrumentName> names;
+    for(const auto& instrument : instruments) {
+        names.insert(instrument->name);
+    }
+    return names;
+}
+
 void PlayerEquipment::AddReward(float crowdSatisfaction) {
     cash += (int)(crowdSatisfaction * maxCashReward);
     rep += (int)(crowdSatisfaction * maxRepReward);
-}
-
-void PlayerEquipment::LoadData(std::shared_ptr<GameData> data) {
-    cash = data->money;
-    rep = data->reputation;
-    parent->transform->SetLocalPosition(data->playerPosition);
-}
-
-void PlayerEquipment::SaveData(std::shared_ptr<GameData> &data) {
-    data->money = cash;
-    data->reputation = rep;
-    data->playerPosition = parent->transform->GetLocalPosition();
 }
 
 int PlayerEquipment::GetCash() const { return cash; }

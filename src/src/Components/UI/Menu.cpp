@@ -29,8 +29,7 @@ void Menu::ChangeActiveButton(glm::vec2 moveVector) {
 
 std::shared_ptr<GameObject> Menu::AddImage(std::string name, int x, int y, const std::string &path) {
     std::shared_ptr<GameObject> image = GameObject::Instantiate(name, parent);
-    image->AddComponent<Image>();
-    image->GetComponent<Image>()->LoadTexture(x, y, path);
+    image->AddComponent<Image>()->LoadTexture(x, y, path);
     return image;
 }
 

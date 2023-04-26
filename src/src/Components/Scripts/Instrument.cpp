@@ -22,14 +22,14 @@ void Instrument::GeneratePattern(std::vector<RawSample> newPattern) {
     // Make sure that first sample has zero delay, otherwise pattern recognition won't work
     newPattern.begin()->delay = 0;
     for (auto soundRaw : newPattern) {
-        pattern->sounds.push_back(std::make_shared<Sound>(samples[soundRaw.sample], soundRaw.delay));
+        pattern->sounds.push_back(std::make_shared<Sound>(samples[soundRaw.sample], soundRaw.delay, soundRaw.duration));
     }
     patterns.push_back(pattern);
 }
 
 void Instrument::AddSamples(const std::vector<std::string>& paths) {
     for (const auto& path : paths) {
-        samples.push_back(std::make_shared<Sample>(samples.size()-1, path));
+        samples.push_back(std::make_shared<Sample>(samples.size(), path));
     }
 }
 
@@ -37,6 +37,9 @@ std::string Instrument::NameToString() const {
     switch (name) {
         case Clap: return "Clap";
         case Drums: return "Drums";
+        case Trumpet: return "Trumpet";
+        case Launchpad: return "Launchpad";
+        case Guitar: return "Guitar";
         default: return "";
     }
 }

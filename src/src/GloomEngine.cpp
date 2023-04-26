@@ -4,7 +4,7 @@
 #include "EngineManagers/RendererManager.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "EngineManagers/UIManager.h"
-#include "EngineManagers/ColliderManager.h"
+#include "EngineManagers/CollisionManager.h"
 #include "EngineManagers/ShadowManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
@@ -19,6 +19,7 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
+#include "Other/FrustumCulling.h"
 
 #include <filesystem>
 
@@ -42,6 +43,7 @@ void GloomEngine::Initialize() {
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
+    FrustumCulling::GetInstance()->UpdateFrustum();
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -130,6 +132,8 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
+    FrustumCulling::GetInstance()->UpdateFrustum();
+
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
         if (component.second->callOnStart && component.second->enabled) component.second->Start();
@@ -158,7 +162,7 @@ void GloomEngine::Update() {
     glEnable(GL_DEPTH_TEST);
 
 #ifdef DEBUG
-    ColliderManager::GetInstance()->DrawColliders();
+    CollisionManager::GetInstance()->DrawColliders();
 #endif
 
     UIManager::GetInstance()->DrawUI();
@@ -175,7 +179,7 @@ void GloomEngine::FixedUpdate() {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
-    ColliderManager::GetInstance()->ManageCollision();
+    CollisionManager::GetInstance()->ManageCollision();
 }
 
 void GloomEngine::AIUpdate() {
@@ -185,7 +189,7 @@ void GloomEngine::AIUpdate() {
 }
 
 void GloomEngine::Free() const {
-    ColliderManager::GetInstance()->Free();
+    CollisionManager::GetInstance()->Free();
     AudioManager::GetInstance()->Free();
     ShadowManager::GetInstance()->Free();
     RendererManager::GetInstance()->Free();
