@@ -24,6 +24,10 @@
 #include "Components/Scripts/ShopMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 Game::Game() {
     activeCamera = Camera::activeCamera;
     activeScene = SceneManager::GetInstance()->activeScene;
@@ -32,6 +36,9 @@ Game::Game() {
 Game::~Game() = default;
 
 void Game::InitializeGame() const {
+#ifdef DEBUG
+    ZoneScopedNC("Game Init", 0xDC143C);
+#endif
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
@@ -52,6 +59,7 @@ void Game::InitializeGame() const {
     std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
     ground->transform->SetLocalScale({40, 2, 40});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(40, 40);
 
     // Set up lights
     // -------------
@@ -59,31 +67,6 @@ void Game::InitializeGame() const {
     sun->AddComponent<DirectionalLight>();
     sun->transform->SetLocalPosition({10, 20, 10});
     sun->transform->SetLocalRotation({-50, 70, 0});
-
-    std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -10});
-    bench->transform->SetLocalRotation({0, -90, 0});
-    bench->transform->SetLocalScale({0.5, 0.5, 0.5});
-    bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
-    auto portalRadioSound = bench->AddComponent<AudioSource>();
-    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
-    portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
-    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
-    portalRadioSound->SetMaxDistance(20.0f);
-    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
-    portalRadioSound->IsLooping(true);
-    portalRadioSound->PlaySound();
-
-    std::shared_ptr<GameObject> bench2 = GameObject::Instantiate("Bench", activeScene);
-    bench2->transform->SetLocalPosition({10, 0, 0});
-    bench2->transform->SetLocalRotation({0, 180, 0});
-    bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
-    bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
-
 
 //    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
 //    pointLight->AddComponent<PointLight>();
@@ -98,23 +81,6 @@ void Game::InitializeGame() const {
     ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
     ui->AddImage("Mruczek", 1650, 0, "UI/kotek.png");
 
-    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
-            bench->transform, {
-                    {AnimatedProperty::Position, glm::vec3(0, 10, 0), 0.5f},
-                    {AnimatedProperty::Position, glm::vec3(0, -10, 0), 0.5f},
-            }, true);
-
-    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
-            bench->transform, {
-                    {AnimatedProperty::Scale, glm::vec3(2)},
-                    {AnimatedProperty::Scale, glm::vec3(0.5f)},
-            }, true);
-
-    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
-            bench2->transform, {
-                    {AnimatedProperty::Position, glm::vec3(0, 10, 0)},
-                    {AnimatedProperty::Position, glm::vec3(0, -10, 0)},
-            }, true);
 
     // Set up pause menu
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
@@ -169,13 +135,6 @@ void Game::InitializeGame() const {
     shop->GetParent()->DisableSelfAndChildren();
 
 
-//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-//    sphere->transform->SetLocalPosition({-5, 2, 0});
-//    sphere->transform->SetLocalScale({2, 2, 2});
-//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-//    rSphere->material.refraction = 1.0f;
-
 //    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
 //    lowPolyHouse->transform->SetLocalPosition({15, 0, -20});
 //    lowPolyHouse->transform->SetLocalRotation({0, -110, 0});
@@ -191,6 +150,48 @@ void Game::InitializeGame() const {
 //    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
 //    portalRadioSound->IsLooping(true);
 //    portalRadioSound->PlaySound();
+
+    std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
+    bench->transform->SetLocalPosition({0, 0, -10});
+    bench->transform->SetLocalRotation({0, -90, 0});
+    bench->transform->SetLocalScale({0.5, 0.5, 0.5});
+    bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
+    bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
+    bench->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+    auto portalRadioSound = bench->AddComponent<AudioSource>();
+    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
+    portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
+    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
+    portalRadioSound->SetMaxDistance(20.0f);
+    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
+    portalRadioSound->IsLooping(true);
+    portalRadioSound->PlaySound();
+
+    std::shared_ptr<GameObject> bench2 = GameObject::Instantiate("Bench", activeScene);
+    bench2->transform->SetLocalPosition({10, 0, 0});
+    bench2->transform->SetLocalRotation({0, 180, 0});
+    bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
+    bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
+    bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
+    bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+
+//    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+//            bench->transform, {
+//                    {AnimatedProperty::Position, glm::vec3(0, 10, 0), 0.5f},
+//                    {AnimatedProperty::Position, glm::vec3(0, -10, 0), 0.5f},
+//            }, true);
+//
+//    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+//            bench->transform, {
+//                    {AnimatedProperty::Scale, glm::vec3(2)},
+//                    {AnimatedProperty::Scale, glm::vec3(0.5f)},
+//            }, true);
+//
+//    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
+//            bench2->transform, {
+//                    {AnimatedProperty::Position, glm::vec3(0, 10, 0)},
+//                    {AnimatedProperty::Position, glm::vec3(0, -10, 0)},
+//            }, true);
 
     int maxHouses = 7;
     int houseOffset = 7;
@@ -243,6 +244,13 @@ void Game::InitializeGame() const {
 	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
 	animatedDood->transform->SetLocalPosition({-2, 0, -10});
 	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
+
+//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+//    sphere->transform->SetLocalPosition({-5, 2, 0});
+//    sphere->transform->SetLocalScale({2, 2, 2});
+//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+//    rSphere->material.refraction = 1.0f;
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

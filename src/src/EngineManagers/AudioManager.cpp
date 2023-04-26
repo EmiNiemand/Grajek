@@ -10,6 +10,10 @@
 #include <alext.h>
 #include <string>
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 // Macro copied from cmake-build-release/_deps/openal-soft-src/alc/inprogext.h
 #define AL_STOP_SOURCES_ON_DISCONNECT_SOFT 0x19AB
 
@@ -25,6 +29,9 @@ AudioManager* AudioManager::GetInstance() {
 }
 
 void AudioManager::InitializeAudio() {
+#ifdef DEBUG
+    ZoneScopedNC("Audio manager", 0xDC143C);
+#endif
     audioDevice = alcOpenDevice(nullptr);
 
     if (audioDevice) {

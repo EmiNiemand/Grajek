@@ -74,6 +74,7 @@ void Animator::Draw() {
     for (int i = 0; i < finalBoneMatrices.size(); ++i)
         shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices.at(i));
     shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec2("texStrech", textScale);
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
@@ -89,6 +90,7 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
     for (int i = 0; i < finalBoneMatrices.size(); ++i)
         shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices.at(i));
     shader->SetMat4("model", parent->transform->GetModelMatrix());
+    shader->SetVec2("texStrech", textScale);
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);

@@ -9,6 +9,10 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "stb_image.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
@@ -43,6 +47,9 @@ void RendererManager::AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableC
 }
 
 void RendererManager::UpdateProjection() const {
+#ifdef DEBUG
+    ZoneScopedNC("Projection update", 0xDC143C);
+#endif
     shader->Activate();
     shader->SetMat4("projection", projection);
 

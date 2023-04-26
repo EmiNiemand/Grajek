@@ -3,6 +3,10 @@
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 SceneManager::SceneManager() = default;
 
 SceneManager::~SceneManager() = default;
@@ -15,6 +19,9 @@ SceneManager* SceneManager::GetInstance() {
 }
 
 void SceneManager::InitializeScene() {
+#ifdef DEBUG
+    ZoneScopedNC("Scene Init", 0xDC143C);
+#endif
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
 }

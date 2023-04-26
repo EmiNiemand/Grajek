@@ -35,6 +35,7 @@ CubeMap::~CubeMap() = default;
  */
 
 void CubeMap::LoadTextures(const std::string& basePath) {
+    stbi_set_flip_vertically_on_load(false);
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
@@ -72,6 +73,7 @@ void CubeMap::LoadTextures(const std::string& basePath) {
     shader = RendererManager::GetInstance()->shader;
     shader->Activate();
     shader->SetInt("skybox", 5);
+    stbi_set_flip_vertically_on_load(true);
 }
 
 void CubeMap::Update() {

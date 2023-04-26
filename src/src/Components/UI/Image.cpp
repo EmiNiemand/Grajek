@@ -60,7 +60,6 @@ void Image::LoadTexture(int x, int y, const std::string &path) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
     std::string file = BASE_PATH + path;
     unsigned char* data = stbi_load(file.c_str(), &width, &height, &nrChannels, 0);
     if (data)
