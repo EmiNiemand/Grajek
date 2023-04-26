@@ -14,7 +14,7 @@ std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::share
 }
 
 void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
-    GloomEngine::GetInstance()->destroyBuffer.push_back(gameObject);
+    GloomEngine::GetInstance()->destroyGameObjectBuffer.push_back(gameObject);
 }
 
 void GameObject::OnTransformUpdateComponents() {
@@ -25,13 +25,13 @@ void GameObject::OnTransformUpdateComponents() {
 
 void GameObject::RemoveComponent(int componentId) {
     if (!components.contains(componentId)) return;
-    components.find(componentId)->second->OnDestroy();
+    Component::Destroy(components.find(componentId)->second);
     components.erase(componentId);
 }
 
 void GameObject::RemoveAllComponents() {
-    for (auto&& component : components){
-        component.second->OnDestroy();
+    for (auto&& component : components) {
+        Component::Destroy(component.second);
     }
     components.clear();
 }
@@ -49,7 +49,7 @@ void GameObject::RemoveChild(int childId) {
     if (!children.contains(childId)) return;
     children.find(childId)->second->RemoveAllChildren();
     children.find(childId)->second->RemoveAllComponents();
-    GloomEngine::GetInstance()->RemoveGameObject(children.find(childId)->second);
+    Destroy(children.find(childId)->second);
     children.erase(childId);
 }
 
@@ -57,7 +57,7 @@ void GameObject::RemoveAllChildren() {
     for (auto&& child : children) {
         child.second->RemoveAllComponents();
         child.second->RemoveAllChildren();
-        GloomEngine::GetInstance()->RemoveGameObject(child.second);
+        Destroy(child.second);
     }
     children.clear();
 }

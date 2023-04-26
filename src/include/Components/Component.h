@@ -21,10 +21,12 @@ public:
     Component(const std::shared_ptr<GameObject> &parent, int id);
     virtual ~Component() = 0;
 
+    static void Destroy(const std::shared_ptr<Component>& component);
+
     /// Called one when Component is created by GameObject class
-    virtual void OnCreate();
+    inline virtual void OnCreate(){};
     /// Called one when Component is removed by GameObject class
-    virtual void OnDestroy();
+    inline virtual void OnDestroy(){};
 
     /// Called once on creation even if disabled
     inline virtual void Awake(){callOnAwake = false;};
@@ -46,9 +48,6 @@ public:
     // Getters
     [[nodiscard]] int GetId() const;
     [[nodiscard]] const std::shared_ptr<GameObject> &GetParent() const;
-
-    //Setters
-    void SetParent(const std::shared_ptr<GameObject> &parent);
 };
 
 

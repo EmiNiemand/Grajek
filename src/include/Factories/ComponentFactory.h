@@ -44,7 +44,8 @@ public:
     std::shared_ptr<T> CreateComponent(const std::shared_ptr<GameObject> &parent) {
         id++;
         std::shared_ptr<T> component = std::make_shared<T>(parent, id);
-        std::shared_ptr<T> parentComponent = std::dynamic_pointer_cast<T>(component);
+        GloomEngine::GetInstance()->AddComponent(component);
+        component->OnCreate();
         return component;
     };
 

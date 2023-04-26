@@ -45,7 +45,6 @@ public:
         std::shared_ptr<T> component = parent->GetComponent<T>();
         if (component != nullptr) return component;
         component = ComponentFactory::GetInstance()->CreateComponent<T>(shared_from_this());
-        component->OnCreate();
         components.insert({component->GetId(), component});
         return component;
     };

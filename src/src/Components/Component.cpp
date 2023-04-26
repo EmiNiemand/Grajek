@@ -6,12 +6,8 @@ Component::Component(const std::shared_ptr<GameObject> &parent,
 
 Component::~Component() = default;
 
-void Component::OnCreate() {
-    GloomEngine::GetInstance()->AddComponent(shared_from_this());
-}
-
-void Component::OnDestroy() {
-    GloomEngine::GetInstance()->RemoveComponent(shared_from_this());
+void Component::Destroy(const std::shared_ptr<Component>& component) {
+    GloomEngine::GetInstance()->destroyComponentBuffer.push_back(component);
 }
 
 int Component::GetId() const {
@@ -20,9 +16,5 @@ int Component::GetId() const {
 
 const std::shared_ptr<GameObject> &Component::GetParent() const {
     return parent;
-}
-
-void Component::SetParent(const std::shared_ptr<GameObject> &parent) {
-    Component::parent = parent;
 }
 

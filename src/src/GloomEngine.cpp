@@ -158,13 +158,21 @@ bool GloomEngine::MainLoop() {
 void GloomEngine::Update() {
     {
 #ifdef DEBUG
-        ZoneScopedNC("Destroy objects", 0xFFD733);
+        ZoneScopedNC("Destroy objects and components", 0xFFD733);
 #endif
-        for (auto &&gameObject: destroyBuffer) {
-            gameObject->parent->RemoveChild(gameObject->GetId());
+        for (auto &&component: destroyComponentBuffer) {
+            component->OnDestroy();
+            component->GetParent()->RemoveComponent(component->GetId());
+            RemoveComponent(component);
         }
+        destroyComponentBuffer.clear();
+
+        for (auto &&gameObject: destroyGameObjectBuffer) {
+            gameObject->parent->RemoveChild(gameObject->GetId());
+            RemoveGameObject(gameObject);
+        }
+        destroyGameObjectBuffer.clear();
     }
-    destroyBuffer.clear();
     //Frustum culling
     {
 #ifdef DEBUG
