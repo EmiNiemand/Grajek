@@ -245,16 +245,12 @@ void Game::InitializeGame() const {
 	animatedDood->transform->SetLocalPosition({-2, 0, -10});
 	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
 
-    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-    sphere->transform->SetLocalPosition({-5, 2, 0});
-    sphere->transform->SetLocalScale({2, 2, 2});
-    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-    rSphere->material.refraction = 1.0f;
-
-    std::shared_ptr<GameObject> animatedDood2 = Prefab::GetDancingDude();
-    animatedDood2->transform->SetLocalPosition({5, 0, -10});
-    animatedDood2->transform->SetLocalScale({1.5, 1.5, 1.5});
+//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
+//    sphere->transform->SetLocalPosition({-5, 2, 0});
+//    sphere->transform->SetLocalScale({2, 2, 2});
+//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
+//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
+//    rSphere->material.refraction = 1.0f;
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
