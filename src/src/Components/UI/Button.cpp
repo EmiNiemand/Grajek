@@ -42,7 +42,6 @@ std::shared_ptr<Mesh> Button::CreateMesh(int x, int y, int width, int height) {
 }
 
 void Button::LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive) {
-    stbi_set_flip_vertically_on_load(true);
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int width, height, nrChannels;

@@ -22,6 +22,7 @@
 #include "Other/FrustumCulling.h"
 
 #include <filesystem>
+#include <stb_image.h>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -42,12 +43,14 @@ GloomEngine* GloomEngine::GetInstance() {
 }
 
 void GloomEngine::Initialize() {
+#ifdef DEBUG
+    ZoneScopedNC("Init", 0xDC143C);
+#endif
     InitializeWindow();
 
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
-    FrustumCulling::GetInstance()->UpdateFrustum();
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -58,12 +61,18 @@ void GloomEngine::Initialize() {
 }
 
 void GloomEngine::Awake() {
+#ifdef DEBUG
+    ZoneScopedNC("Awake", 0xDC143C);
+#endif
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
     }
 }
 
 void GloomEngine::Start() {
+#ifdef DEBUG
+    ZoneScopedNC("Start", 0xDC143C);
+#endif
     for (auto&& component : components){
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
@@ -282,6 +291,9 @@ std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithName(const std::strin
 
 // PRIVATE FUNCTIONS
 void GloomEngine::InitializeWindow() {
+#ifdef DEBUG
+    ZoneScopedNC("Window Init", 0xDC143C);
+#endif
     // Setup window
     glfwSetErrorCallback(glfwErrorCallback);
     if (!glfwInit())
@@ -334,6 +346,7 @@ void GloomEngine::InitializeWindow() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    stbi_set_flip_vertically_on_load(true);
 }
 
 void GloomEngine::AddGameObject(const std::shared_ptr<GameObject>& gameObject) {
