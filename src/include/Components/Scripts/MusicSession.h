@@ -25,7 +25,6 @@ private:
 
     std::vector<Sound> recordedSounds;
     std::vector<std::shared_ptr<MusicPattern>> potentialPatterns;
-    std::shared_ptr<GameObject> cheatSheet;
     float lastTime = 0;
 
     float timeoutCounter = 0.0f;

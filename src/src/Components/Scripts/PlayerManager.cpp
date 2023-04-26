@@ -219,19 +219,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
 
 void PlayerManager::OnCheatSheetToggle() {
     if (!session) return;
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
-    cheatSheetActive = !cheatSheetActive;
-    if (cheatSheetActive) {
-        GameObject::Instantiate("CheatSheetAnimator")->AddComponent<UIAnimator>()->Setup(
-                GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheet")->GetComponent<Image>(), {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
-                }, false);
-    } else {
-        GameObject::Instantiate("CheatSheetAnimator")->AddComponent<UIAnimator>()->Setup(
-                GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheet")->GetComponent<Image>(), {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
-                }, false);
-    }
+    session->ToggleCheatSheet();
 }
 
 #pragma endregion
