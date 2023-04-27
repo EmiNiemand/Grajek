@@ -165,6 +165,7 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 void PlayerManager::OnSessionToggle() {
     if(activeMenu && activeMenu != sessionStarter) return;
     if (session) {
+        Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
         return;
@@ -209,6 +210,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 }
 
 void PlayerManager::CreateMusicSession(InstrumentName instrument) {
+    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(0.5f);
     GloomEngine::GetInstance()->timeScale = 1;
     sessionStarter->Stop();
     sessionStarter.reset();
