@@ -7,7 +7,7 @@ Component::Component(const std::shared_ptr<GameObject> &parent,
 Component::~Component() = default;
 
 void Component::Destroy(const std::shared_ptr<Component>& component) {
-    GloomEngine::GetInstance()->destroyComponentBuffer.push_back(component);
+    GloomEngine::GetInstance()->destroyComponentBuffer.emplace_back(component);
 }
 
 int Component::GetId() const {

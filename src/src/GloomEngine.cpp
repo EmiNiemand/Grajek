@@ -166,14 +166,14 @@ void GloomEngine::Update() {
             component->GetParent()->RemoveComponent(component->GetId());
             RemoveComponent(component);
         }
-        destroyComponentBuffer.clear();
+        destroyComponentBuffer.erase(destroyComponentBuffer.begin(), destroyComponentBuffer.begin() + (int)componentBuffer.size());
 
         std::vector<std::shared_ptr<GameObject>> gameObjectBuffer = destroyGameObjectBuffer;
         for (auto &&gameObject: gameObjectBuffer) {
             gameObject->parent->RemoveChild(gameObject->GetId());
             RemoveGameObject(gameObject);
         }
-        destroyGameObjectBuffer.clear();
+        destroyGameObjectBuffer.erase(destroyGameObjectBuffer.begin(), destroyGameObjectBuffer.begin() + (int)gameObjectBuffer.size());
     }
     //Frustum culling
     {
