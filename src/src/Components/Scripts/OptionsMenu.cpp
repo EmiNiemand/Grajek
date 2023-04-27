@@ -136,6 +136,7 @@ void OptionsMenu::ChangeValue(float y) {
             auto gloomEngine = GloomEngine::GetInstance();
             glfwSetWindowMonitor(gloomEngine->window, NULL, (1920 - OptionsManager::GetInstance()->width) / 2, (1080 - OptionsManager::GetInstance()->height) / 2, OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, 0);
             windowFullScreenIterator--;
+            OptionsManager::GetInstance()->fullScreen = false;
             auto button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreen")->GetComponent<Button>();
             button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
         }
