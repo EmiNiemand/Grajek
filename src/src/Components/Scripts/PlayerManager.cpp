@@ -126,14 +126,15 @@ void PlayerManager::OnMenuToggle() {
 
     if (activeMenu != shopMenu && activeMenu != pauseMenu) {
         GloomEngine::GetInstance()->timeScale = 0;
-        if(activeMenu == optionsMenu)
+        if(activeMenu == optionsMenu) {
+            OptionsManager::GetInstance()->Save();
             optionsMenu->HideMenu();
+        }
         pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
     }
     else if(activeMenu == optionsMenu)
     {
-        OptionsManager::GetInstance()->Save();
         optionsMenu->HideMenu();
         pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
