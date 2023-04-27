@@ -160,14 +160,16 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Destroy objects and components", 0xFFD733);
 #endif
-        for (auto &&component: destroyComponentBuffer) {
+        std::vector<std::shared_ptr<Component>> componentBuffer = destroyComponentBuffer;
+        for (auto &&component: componentBuffer) {
             component->OnDestroy();
             component->GetParent()->RemoveComponent(component->GetId());
             RemoveComponent(component);
         }
         destroyComponentBuffer.clear();
 
-        for (auto &&gameObject: destroyGameObjectBuffer) {
+        std::vector<std::shared_ptr<GameObject>> gameObjectBuffer = destroyGameObjectBuffer;
+        for (auto &&gameObject: gameObjectBuffer) {
             gameObject->parent->RemoveChild(gameObject->GetId());
             RemoveGameObject(gameObject);
         }
