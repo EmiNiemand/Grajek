@@ -8,6 +8,7 @@
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "stb_image.h"
+#include "EngineManagers/OptionsManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -17,7 +18,7 @@ RendererManager::RendererManager() {
     shader = std::make_shared<Shader>("basic.vert", "basic.frag");
     cubeMapShader = std::make_shared<Shader>("cubeMap.vert", "cubeMap.frag");
     projection = glm::perspective(glm::radians(fov),
-                                  (float)GloomEngine::GetInstance()->width/(float)GloomEngine::GetInstance()->height,
+                                  (float)OptionsManager::GetInstance()->width/(float)OptionsManager::GetInstance()->height,
                                   0.1f, 100.0f);
 }
 

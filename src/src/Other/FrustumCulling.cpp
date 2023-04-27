@@ -3,6 +3,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Camera.h"
 #include "LowLevelClasses/Model.h"
+#include "EngineManagers/OptionsManager.h"
 
 FrustumCulling::FrustumCulling() = default;
 
@@ -22,7 +23,7 @@ void FrustumCulling::UpdateFrustum() {
     glm::vec3 camUp = activeCamera->transform->GetUp();
     glm::vec3 camRight = activeCamera->transform->GetRight();
 
-    float aspect = (float)GloomEngine::GetInstance()->width / (float)GloomEngine::GetInstance()->height;
+    float aspect = (float)OptionsManager::GetInstance()->width / (float)OptionsManager::GetInstance()->height;
 
     float fov = RendererManager::GetInstance()->fov;
     float zNear = RendererManager::GetInstance()->zNear;

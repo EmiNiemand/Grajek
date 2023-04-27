@@ -21,6 +21,7 @@
 #include "Components/Scripts/ShopMenu.h"
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
+#include "EngineManagers/OptionsManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -132,6 +133,7 @@ void PlayerManager::OnMenuToggle() {
     }
     else if(activeMenu == optionsMenu)
     {
+        OptionsManager::GetInstance()->Save();
         optionsMenu->HideMenu();
         pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
