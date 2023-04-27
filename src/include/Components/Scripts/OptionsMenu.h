@@ -28,10 +28,12 @@ public:
     OptionsMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~OptionsMenu() override;
 
+    void Start() override;
     void ShowMenu();
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void ChangeValue(float y);
     void OnClick() override;
+    static void ChangeShadowResolution();
 };
 
 #endif //GLOOMENGINE_OPTIONSMENU_H

@@ -26,9 +26,6 @@ OptionsManager::OptionsManager() {
 void OptionsManager::Load() {
     std::filesystem::path path(std::filesystem::current_path());
     path /= "config.json";
-#ifdef DEBUG
-    spdlog::info("Load path: " + path.string());
-#endif
 
     try {
         std::ifstream input(path);
@@ -49,9 +46,6 @@ void OptionsManager::Load() {
 void OptionsManager::Save() {
     std::filesystem::path path(std::filesystem::current_path());
     path /= "config.json";
-#ifdef DEBUG
-    spdlog::info("Save path: " + path.string());
-#endif
 
     try {
         std::ofstream output(path);

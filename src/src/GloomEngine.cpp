@@ -44,12 +44,12 @@ void GloomEngine::Initialize() {
 #ifdef DEBUG
     ZoneScopedNC("Init", 0xDC143C);
 #endif
+    OptionsManager::GetInstance()->Load();
     InitializeWindow();
 
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
-    OptionsManager::GetInstance()->Load();
 
     game = std::make_shared<Game>();
     game->InitializeGame();

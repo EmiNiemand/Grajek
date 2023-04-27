@@ -11,13 +11,35 @@
 #include "EngineManagers/OptionsManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {
-    musicVolumeIterator = (short)(OptionsManager::GetInstance()->musicVolume / 0.125f) + 1;
-    windowResolutionIterator = OptionsManager::GetInstance()->width / 480 - 1;
-    windowFullScreenIterator = (short)(OptionsManager::GetInstance()->fullScreen) + 1;
-    shadowResolutionIterator = OptionsManager::GetInstance()->shadowResolution / 2048 + 1;
+    musicVolumeIterator = (short)(OptionsManager::GetInstance()->musicVolume / 0.125f + 1);
+    windowResolutionIterator = (short)(OptionsManager::GetInstance()->width / 480 - 1);
+    windowFullScreenIterator = (short)(OptionsManager::GetInstance()->fullScreen + 1);
+    shadowResolutionIterator = (short)(OptionsManager::GetInstance()->shadowResolution / 2048 + 1);
+    GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(OptionsManager::GetInstance()->musicVolume);
+    if (OptionsManager::GetInstance()->fullScreen) {
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(GloomEngine::GetInstance()->window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    } else {
+        glfwSetWindowMonitor(GloomEngine::GetInstance()->window, NULL, (1920 - OptionsManager::GetInstance()->width) / 2, (1080 - OptionsManager::GetInstance()->height) / 2, OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, 0);
+    }
+    ShadowManager::GetInstance()->shadowResolution = OptionsManager::GetInstance()->shadowResolution;
+    ChangeShadowResolution();
 }
 
-OptionsMenu::~OptionsMenu() {}
+OptionsMenu::~OptionsMenu() = default;
+
+void OptionsMenu::Start() {
+    auto button = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolume")->GetComponent<Button>();
+    button->ChangePosition(button->x, musicVolumeButtonY[musicVolumeIterator]);
+    button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolution")->GetComponent<Button>();
+    button->ChangePosition(button->x, windowResolutionButtonY[windowResolutionIterator]);
+    button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreen")->GetComponent<Button>();
+    button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
+    button = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolution")->GetComponent<Button>();
+    button->ChangePosition(button->x, shadowResolutionButtonY[shadowResolutionIterator]);
+    Component::Start();
+}
 
 void OptionsMenu::ShowMenu() {
     parent->EnableSelfAndChildren();
@@ -89,15 +111,11 @@ void OptionsMenu::ChangeValue(float y) {
                 OptionsManager::GetInstance()->width = 1440;
                 OptionsManager::GetInstance()->height = 810;
                 PostProcessingManager::GetInstance()->WindowResize();
-                OptionsManager::GetInstance()->width = 1440;
-                OptionsManager::GetInstance()->height = 810;
             } else if (OptionsManager::GetInstance()->width == 1440) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 480, 270);
                 OptionsManager::GetInstance()->width = 960;
                 OptionsManager::GetInstance()->height = 540;
                 PostProcessingManager::GetInstance()->WindowResize();
-                OptionsManager::GetInstance()->width = 960;
-                OptionsManager::GetInstance()->height = 540;
             } else return;
             windowResolutionIterator--;
         } else {
@@ -106,15 +124,11 @@ void OptionsMenu::ChangeValue(float y) {
                 OptionsManager::GetInstance()->width = 1440;
                 OptionsManager::GetInstance()->height = 810;
                 PostProcessingManager::GetInstance()->WindowResize();
-                OptionsManager::GetInstance()->width = 1440;
-                OptionsManager::GetInstance()->height = 810;
             } else if (OptionsManager::GetInstance()->width == 1440) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 0, 0);
                 OptionsManager::GetInstance()->width = 1920;
                 OptionsManager::GetInstance()->height = 1080;
                 PostProcessingManager::GetInstance()->WindowResize();
-                OptionsManager::GetInstance()->width = 1920;
-                OptionsManager::GetInstance()->height = 1080;
             } else return;
             windowResolutionIterator++;
         }
@@ -168,23 +182,7 @@ void OptionsMenu::ChangeValue(float y) {
             shadowResolutionIterator++;
             OptionsManager::GetInstance()->shadowResolution *= 2;
         }
-        glGenFramebuffers(1, &shadowManager->depthMapFBO);
-        glGenTextures(1, &shadowManager->depthMap);
-        glBindTexture(GL_TEXTURE_2D, shadowManager->depthMap);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowManager->shadowResolution, shadowManager->shadowResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-        glBindFramebuffer(GL_FRAMEBUFFER, shadowManager->depthMapFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowManager->depthMap, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        RendererManager::GetInstance()->shader->Activate();
-        RendererManager::GetInstance()->shader->SetInt("shadowMap", shadowManager->depthMap);
+        ChangeShadowResolution();
         GloomEngine::GetInstance()->FindGameObjectWithName("PreviousValue")->GetComponent<Button>()->ChangeText(shadowResolutionValues[shadowResolutionIterator + 1]);
         GloomEngine::GetInstance()->FindGameObjectWithName("CurrentValue")->GetComponent<Button>()->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
         GloomEngine::GetInstance()->FindGameObjectWithName("NextValue")->GetComponent<Button>()->ChangeText(shadowResolutionValues[shadowResolutionIterator - 1]);
@@ -200,4 +198,25 @@ void OptionsMenu::OnClick() {
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
     }
+}
+
+void OptionsMenu::ChangeShadowResolution() {
+    auto shadowManager = ShadowManager::GetInstance();
+    glGenFramebuffers(1, &shadowManager->depthMapFBO);
+    glGenTextures(1, &shadowManager->depthMap);
+    glBindTexture(GL_TEXTURE_2D, shadowManager->depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowManager->shadowResolution, shadowManager->shadowResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowManager->depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowManager->depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    RendererManager::GetInstance()->shader->Activate();
+    RendererManager::GetInstance()->shader->SetInt("shadowMap", shadowManager->depthMap);
 }
