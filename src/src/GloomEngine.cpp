@@ -54,6 +54,9 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
+    // TODO: call after initializing game objects and before their awake method
+    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
+
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
     lastAIFrameTime = (float)glfwGetTime();
@@ -269,6 +272,8 @@ void GloomEngine::FixedUpdate() {
     for (auto&& component : components) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
+
+    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 
     CollisionManager::GetInstance()->ManageCollision();
 }

@@ -63,9 +63,14 @@ void GameObject::RemoveAllChildren() {
 }
 
 void GameObject::UpdateSelfAndChildren() {
-    if (transform != nullptr) {
+    if (transform != nullptr && dirtyFlag) {
         ForceUpdateSelfAndChildren();
         OnTransformUpdateComponents();
+        return;
+    }
+
+    for (auto&& child : children) {
+        child.second->UpdateSelfAndChildren();
     }
 }
 
@@ -116,4 +121,12 @@ const std::string &GameObject::GetName() const {
 
 bool GameObject::GetEnabled() const {
     return enabled;
+}
+
+void GameObject::RecalculateGlobalRotation() {
+    globalRotation = parent->globalRotation + transform->GetLocalRotation();
+
+    for (auto&& child : children) {
+        child.second->RecalculateGlobalRotation();
+    }
 }

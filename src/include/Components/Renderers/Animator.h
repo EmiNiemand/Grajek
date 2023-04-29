@@ -5,7 +5,6 @@
 #ifndef GLOOMENGINE_ANIMATOR_H
 #define GLOOMENGINE_ANIMATOR_H
 
-
 #include <vector>
 
 #include "Drawable.h"
@@ -27,7 +26,8 @@ public:
     ~Animator() override;
 
     void LoadAnimationModel(const std::string& path);
-	void LoadAnimation(const std::string& path);
+	void LoadAnimations(const std::string& path);
+    void SetAnimation(const std::string& name);
 
 	void Update() override;
     void Draw() override;

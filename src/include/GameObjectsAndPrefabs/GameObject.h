@@ -30,7 +30,9 @@ public:
 
     Tags tag;
 
+    glm::vec3 globalRotation = {0, 0, 0};
     std::shared_ptr<Transform> transform = nullptr;
+    bool dirtyFlag = true;
     bool isOnFrustum = false;
 
 public:
@@ -79,6 +81,8 @@ public:
     int GetId() const;
     const std::string &GetName() const;
     bool GetEnabled() const;
+
+    void RecalculateGlobalRotation();
 };
 
 
