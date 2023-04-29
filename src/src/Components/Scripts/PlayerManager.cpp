@@ -45,7 +45,7 @@ void PlayerManager::Awake() {
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
-    shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->GetComponent<ShopMenu>();
+    shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     activeMenu = nullptr;
 
     BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
@@ -92,9 +92,10 @@ void PlayerManager::OnInteract() {
     if(activeMenu && activeMenu != shopMenu) return;
 
     if (!shopMenu->GetParent()->GetEnabled()) {
-        GloomEngine::GetInstance()->timeScale = 0;
-        shopMenu->ShowMenu();
-        activeMenu = shopMenu;
+        if (shopMenu->ShowMenu()) {
+            GloomEngine::GetInstance()->timeScale = 0;
+            activeMenu = shopMenu;
+        }
     } else {
         GloomEngine::GetInstance()->timeScale = 1;
         shopMenu->HideMenu();
@@ -133,6 +134,7 @@ void PlayerManager::OnMenuToggle() {
         pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
     }
+    // TODO/INFO: this code isn't reached
     else if(activeMenu == optionsMenu)
     {
         optionsMenu->HideMenu();

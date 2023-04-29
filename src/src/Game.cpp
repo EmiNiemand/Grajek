@@ -79,19 +79,25 @@ void Game::InitializeGame() const {
     // ---------
     auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
     ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1650, 0, "UI/kotek.png");
+    ui->AddImage("Mruczek", 1450, 0, "UI/kotek.png");
 
 
     // Set up pause menu
     std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
     pause->AddComponent<PauseMenu>();
+    std::shared_ptr<GameObject> resumeButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
     std::shared_ptr<GameObject> optionsButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenu", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
+    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit to main menu", 32);
+    std::shared_ptr<GameObject> exitButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
     std::shared_ptr<GameObject> pauseBackground = pause->GetComponent<PauseMenu>()->Menu::AddImage("Background", 0, 0, "UI/pause.png");
-    optionsButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
+    resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
+    resumeButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
+    optionsButton->GetComponent<Button>()->previousButton = resumeButton->GetComponent<Button>();
     optionsButton->GetComponent<Button>()->nextButton = exitToMainMenuButton->GetComponent<Button>();
     exitToMainMenuButton->GetComponent<Button>()->previousButton = optionsButton->GetComponent<Button>();
-    exitToMainMenuButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
+    exitToMainMenuButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
+    exitButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
+    exitButton->GetComponent<Button>()->nextButton = resumeButton->GetComponent<Button>();
     pause->DisableSelfAndChildren();
 
     // Set up options menu
@@ -118,21 +124,7 @@ void Game::InitializeGame() const {
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    auto shop = GameObject::Instantiate("Shop", activeScene)->AddComponent<ShopMenu>();
-    std::shared_ptr<GameObject> firstInstrument = shop->Menu::AddButton("FirstInstrument", 10, 0, "UI/Sklep/Perkusja.png", "UI/Sklep/PerkusjaZRamka.png");
-    std::shared_ptr<GameObject> secondInstrument = shop->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png", "UI/Sklep/TrabkaZRamka.png");
-    std::shared_ptr<GameObject> thirdInstrument = shop->Menu::AddButton("ThirdInstrument", 1525, 250, "UI/Sklep/LaunbhPad.png", "UI/Sklep/LaunbhPadZRamka.png");
-    std::shared_ptr<GameObject> fourthInstrument = shop->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png", "UI/Sklep/GitaraZRamka.png");
-    std::shared_ptr<GameObject> shopBackground = shop->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
-    firstInstrument->GetComponent<Button>()->previousButton = thirdInstrument->GetComponent<Button>();
-    firstInstrument->GetComponent<Button>()->nextButton = fourthInstrument->GetComponent<Button>();
-    secondInstrument->GetComponent<Button>()->previousButton = fourthInstrument->GetComponent<Button>();
-    secondInstrument->GetComponent<Button>()->nextButton = thirdInstrument->GetComponent<Button>();
-    thirdInstrument->GetComponent<Button>()->previousButton = secondInstrument->GetComponent<Button>();
-    thirdInstrument->GetComponent<Button>()->nextButton = firstInstrument->GetComponent<Button>();
-    fourthInstrument->GetComponent<Button>()->previousButton = firstInstrument->GetComponent<Button>();
-    fourthInstrument->GetComponent<Button>()->nextButton = secondInstrument->GetComponent<Button>();
-    shop->GetParent()->DisableSelfAndChildren();
+    std::shared_ptr<GameObject> shop = Prefab::GetShop();
 
 
 //    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
@@ -225,14 +217,6 @@ void Game::InitializeGame() const {
         serialHouseRight->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
         serialHouseRight->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
     }
-
-    std::shared_ptr<GameObject> stoisko = GameObject::Instantiate("Stoisko", activeScene);
-    stoisko->transform->SetLocalPosition({-10, 0, -5});
-    stoisko->transform->SetLocalRotation({0, -45, 0});
-    stoisko->transform->SetLocalScale({0.7, 0.7, 0.7});
-    stoisko->AddComponent<Renderer>()->LoadModel("texturedModels/stoisko.obj");
-    stoisko->AddComponent<BoxCollider>()->SetOffset({0, 2, -9});
-    stoisko->GetComponent<BoxCollider>()->SetSize({1, 3, 3});
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
     hydrant->transform->SetLocalPosition({15, 0, -15});

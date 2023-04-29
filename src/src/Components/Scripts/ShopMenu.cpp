@@ -4,6 +4,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/UI/Button.h"
+#include "Components/Scripts/ShopTrigger.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -25,16 +26,18 @@ void ShopMenu::Start() {
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
 }
 
-void ShopMenu::ShowMenu() {
+bool ShopMenu::ShowMenu() {
+    if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
     parent->EnableSelfAndChildren();
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.size() > 1) {
-        activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.begin()->second->GetComponent<Button>();
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.size() > 1) {
+        activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.begin()->second->GetComponent<Button>();
         activeButton->isActive = true;
     }
+    return true;
 }
 
 void ShopMenu::OnClick() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Shop")->children.size() < 2) return;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.size() < 2) return;
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {

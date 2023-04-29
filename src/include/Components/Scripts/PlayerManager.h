@@ -37,11 +37,11 @@ private:
     std::shared_ptr<PauseMenu> pauseMenu;
     std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<ShopMenu> shopMenu;
-    std::shared_ptr<Menu> activeMenu;
     glm::vec2 moveInput;
 
 public:
     bool inputEnabled;
+    std::shared_ptr<Menu> activeMenu;
 
 //Equipment methods
 bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
