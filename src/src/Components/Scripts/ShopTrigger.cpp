@@ -6,7 +6,7 @@ ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Co
 ShopTrigger::~ShopTrigger() {}
 
 void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
-    spdlog::info("aaaaaaaaaaaaaaa ShopTrigger::OnTriggerEnter");
+    if (gameObject->GetName() != "Player") return;
     active = true;
     parent->children.begin()->second->EnableSelfAndChildren();
     Component::OnTriggerEnter(gameObject);
