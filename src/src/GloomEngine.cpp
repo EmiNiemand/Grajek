@@ -69,6 +69,8 @@ void GloomEngine::Awake() {
     for (auto&& component : components) {
         if (component.second->callOnAwake) component.second->Awake();
     }
+
+    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 }
 
 void GloomEngine::Start() {
@@ -82,6 +84,8 @@ void GloomEngine::Start() {
     // Load game
     std::filesystem::path path = std::filesystem::current_path();
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
+
+    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 }
 
 bool GloomEngine::MainLoop() {
@@ -196,8 +200,14 @@ void GloomEngine::Update() {
         ZoneScopedNC("Component update", 0xFF69B4);
 #endif
         for (auto &&component: components) {
-            if (component.second->callOnAwake) component.second->Awake();
-            if (component.second->callOnStart && component.second->enabled) component.second->Start();
+            if (component.second->callOnAwake) {
+                component.second->Awake();
+                component.second->GetParent()->UpdateSelfAndChildren();
+            }
+            if (component.second->callOnStart && component.second->enabled) {
+                component.second->Start();
+                component.second->GetParent()->UpdateSelfAndChildren();
+            }
             if (component.second->enabled) component.second->Update();
         }
     }

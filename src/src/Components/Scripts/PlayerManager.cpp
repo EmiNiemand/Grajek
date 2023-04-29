@@ -292,6 +292,7 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     playerUI->UpdateCash(data->money);
     playerUI->UpdateRep(data->reputation);
     parent->transform->SetLocalPosition(data->playerPosition);
+    parent->UpdateSelfAndChildren();
     Camera::activeCamera->transform->SetLocalPosition(
             parent->transform->GetGlobalPosition() + Camera::activeCamera->GetComponent<Camera>()->cameraOffset);
     for(const auto& instrument : data->instruments)
