@@ -58,6 +58,8 @@ void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
             return;
         }
 
+        if (other->isTrigger) return;
+
         HandleCollision(other);
     }
 }
@@ -100,15 +102,15 @@ glm::mat4 BoxCollider::GetModelMatrix() {
 }
 
 bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
-    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
     // Y * X * Z
     const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
 
-    const glm::mat4 otherTransformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 otherTransformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 otherTransformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+    const glm::mat4 otherTransformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 otherTransformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 otherTransformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
     // Y * X * Z
     const glm::mat4 otherRotationMatrix = otherTransformY * otherTransformX * otherTransformZ;
 
@@ -144,8 +146,8 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
         }
     }
 
-    glm::vec3 scaledOtherSize = other->size * other->parent->transform->GetLocalScale();
-    glm::vec3 scaledSize = size * parent->transform->GetLocalScale();
+    glm::vec3 scaledOtherSize = other->size * other->parent->transform->GetGlobalScale();
+    glm::vec3 scaledSize = size * parent->transform->GetGlobalScale();
 
     // 1
     if (fabs(t.x) > scaledSize.x + (scaledOtherSize.x * absRMatrix[0][0] + scaledOtherSize.y * absRMatrix[0][1] +
@@ -207,7 +209,7 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     closestVector = glm::normalize(closestVector);
 
     if (parent->GetComponent<Rigidbody>() != nullptr) {
-        glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
+        glm::vec3 otherRotation = other->parent->globalRotation;
         // Collision handling for not rotated collider
         if (otherRotation == glm::vec3(0.0f)) {
             float value = closestVector.x + closestVector.y + closestVector.z;
@@ -239,18 +241,15 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
 
 std::vector<std::pair<glm::vec3, glm::vec3>>
 BoxCollider::CalculateShiftedPoints(const std::shared_ptr<BoxCollider> &other, glm::vec3 position, glm::vec3 otherPosition) {
-    glm::vec3 rotation = parent->transform->GetLocalRotation();
-    glm::vec3 otherRotation = other->parent->transform->GetLocalRotation();
-
     glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
     glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
 
     glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
     glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
 
-    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(otherRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
     // Y * X * Z
     const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
@@ -303,17 +302,17 @@ glm::vec3 BoxCollider::GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, g
 void BoxCollider::SetCollidersGridPoints() {
     glm::mat4 model = GetModelMatrix();
 
-    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->transform->GetLocalRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
     // Y * X * Z
     const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
 
     glm::vec4 pos = model * glm::vec4(0,0,0,1);
 
-    glm::vec4 xVec = (rotationMatrix * glm::vec4(1,0,0,1)) * size.x * parent->transform->GetLocalScale().x;
-    glm::vec4 zVec = (rotationMatrix * glm::vec4(0,0,1,1)) * size.z * parent->transform->GetLocalScale().z;
+    glm::vec4 xVec = (rotationMatrix * glm::vec4(1,0,0,1)) * size.x * parent->transform->GetGlobalScale().x;
+    glm::vec4 zVec = (rotationMatrix * glm::vec4(0,0,1,1)) * size.z * parent->transform->GetGlobalScale().z;
 
     auto xVector = glm::vec2(xVec.x, xVec.z);
     auto zVector = glm::vec2(zVec.x, zVec.z);
@@ -367,3 +366,4 @@ void BoxCollider::SetCollidersGridPoints() {
         }
     }
 }
+

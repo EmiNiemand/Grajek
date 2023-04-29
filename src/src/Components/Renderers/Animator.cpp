@@ -5,8 +5,13 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Bone.h"
 #include "Other/FrustumCulling.h"
+
+#include "assimp/scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
 #include <filesystem>
 #include <utility>
+
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -33,24 +38,42 @@ void Animator::LoadAnimationModel(const std::string& path) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
                                                                RendererManager::GetInstance()->shader)});
     }
+
     model = animationModels.at(hash);
 
     parent->bounds = FrustumCulling::GenerateAABB(model);
 }
 
-void Animator::LoadAnimation(const std::string& path)
+void Animator::LoadAnimations(const std::string& path)
 {
-    std::string newPath = "res/models/" + path;
-    std::filesystem::path normalizedPath(newPath);
-    uint32_t hash = Utilities::Hash(newPath);
-
     if (model == nullptr) LoadAnimationModel(path);
 
-    if (!animations.contains(hash)) {
-        animations.insert({hash, std::make_shared<Animation>(normalizedPath.string(), model.get())});
+    std::string newPath = "res/models/" + path;
+    std::filesystem::path normalizedPath(newPath);
+
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(newPath, aiProcess_Triangulate);
+    assert(scene && scene->mRootNode);
+    for (int i = 0; i < scene->mNumAnimations; i++){
+        aiAnimation* animation = scene->mAnimations[i];
+
+        std::string animationName = animation->mName.C_Str();
+
+        uint32_t hash = Utilities::Hash(animationName);
+
+        if (!animations.contains(hash)) {
+            animations.insert({hash, std::make_shared<Animation>(animation->mDuration, animation->mTicksPerSecond)});
+        }
+
+        animations.at(hash)->ReadHierarchyData(animations.at(hash)->rootNode, scene->mRootNode);
+        animations.at(hash)->ReadMissingBones(animation, model);
     }
 
-	currentAnimation = animations.at(hash);
+	currentAnimation = animations.at(Utilities::Hash(scene->mAnimations[0]->mName.C_Str()));
+}
+
+void Animator::SetAnimation(const std::string &name) {
+    currentAnimation = animations.at(Utilities::Hash(name));
 }
 
 

@@ -18,7 +18,7 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
     if(tag == Tags::SCENE) {
         parent = nullptr;
         std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(name, id, parent, tag);
-        gameObject->transform = std::make_shared<Transform>(parent);
+        gameObject->transform = std::make_shared<Transform>(gameObject);
         id++;
         return gameObject;
     }

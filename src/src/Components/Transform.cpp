@@ -1,7 +1,11 @@
 #include "Components/Transform.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
-Transform::Transform(const std::shared_ptr<GameObject> &parent) : parent(parent) {}
+Transform::Transform(const std::shared_ptr<GameObject> &parent) : parent(parent) {
+    if (parent != nullptr) {
+        parent->globalRotation = parent->globalRotation + GetLocalRotation();
+    }
+}
 
 glm::mat4 Transform::GetLocalModelMatrix()
 {
@@ -24,27 +28,29 @@ void Transform::ComputeModelMatrix()
 void Transform::ComputeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
 {
     mModelMatrix = parentGlobalModelMatrix * GetLocalModelMatrix();
+    parent->dirtyFlag = false;
 }
 
 void Transform::SetLocalPosition(const glm::vec3& newPosition)
 {
     mPos = newPosition;
     if (!parent) return;
-    parent->UpdateSelfAndChildren();
+    parent->dirtyFlag = true;
 }
 
 void Transform::SetLocalRotation(const glm::vec3& newRotation)
 {
     mEulerRot = newRotation;
     if (!parent) return;
-    parent->UpdateSelfAndChildren();
+    parent->RecalculateGlobalRotation();
+    parent->dirtyFlag = true;
 }
 
 void Transform::SetLocalScale(const glm::vec3& newScale)
 {
     mScale = newScale;
     if (!parent) return;
-    parent->UpdateSelfAndChildren();
+    parent->dirtyFlag = true;
 }
 
 glm::vec3 Transform::GetGlobalPosition() const

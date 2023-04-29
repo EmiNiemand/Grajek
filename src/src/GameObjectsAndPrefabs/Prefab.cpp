@@ -54,7 +54,8 @@ std::shared_ptr<GameObject> Prefab::GetCube(std::string name) {
 std::shared_ptr<GameObject> Prefab::GetDancingDude(std::string name) {
     auto animatedDood = GameObject::Instantiate(std::move(name), SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
     auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-    animatedDoodAnimator->LoadAnimation("hiphopnigdystop/HipHopDancing.dae");
+    animatedDoodAnimator->LoadAnimationModel("hiphopnigdystop/HipHopDancing.dae");
+    animatedDoodAnimator->LoadAnimations("hiphopnigdystop/HipHopDancing.dae");
 
     return animatedDood;
 }

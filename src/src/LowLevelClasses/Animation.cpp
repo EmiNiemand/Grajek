@@ -5,18 +5,12 @@
 #include "stb_image.h"
 #include "spdlog/spdlog.h"
 
-Animation::Animation(const std::string& animationPath, AnimationModel* model)
+Animation::Animation(float mDuration, int mTicksPerSecond)
 {
     bones.reserve(100);
     boneInfoMap.reserve(100);
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-    assert(scene && scene->mRootNode);
-    auto animation = scene->mAnimations[0];
-    duration = (float)animation->mDuration;
-    ticksPerSecond = (int)animation->mTicksPerSecond;
-    ReadHierarchyData(rootNode, scene->mRootNode);
-    ReadMissingBones(animation, *model);
+    duration = mDuration;
+    ticksPerSecond = mTicksPerSecond;
 }
 
 Animation::~Animation() = default;
@@ -44,11 +38,11 @@ const std::unordered_map<std::string,BoneInfo>& Animation::GetBoneIDMap() {
     return boneInfoMap;
 }
 
-void Animation::ReadMissingBones(const aiAnimation* animation, AnimationModel& model) {
+void Animation::ReadMissingBones(const aiAnimation* animation, const std::shared_ptr<AnimationModel>& model) {
     unsigned int size = animation->mNumChannels;
 
-    boneInfoMap = model.GetBoneInfoMap();//getting m_BoneInfoMap from Model class
-    uint16_t& boneCount = model.GetBoneCount(); //getting the m_BoneCounter from Model class
+    boneInfoMap = model->GetBoneInfoMap();//getting m_BoneInfoMap from Model class
+    uint16_t& boneCount = model->GetBoneCount(); //getting the m_BoneCounter from Model class
 
     //reading channels(bones engaged in an animation and their keyframes)
     for (unsigned int i = 0; i < size; i++)

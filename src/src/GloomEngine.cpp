@@ -20,6 +20,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Other/FrustumCulling.h"
+#include "EngineManagers/OptionsManager.h"
 
 #include <filesystem>
 #include <stb_image.h>
@@ -28,10 +29,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-GloomEngine::GloomEngine() {
-    width = 1440;
-    height = 810;
-}
+GloomEngine::GloomEngine() {}
 
 GloomEngine::~GloomEngine() = default;
 
@@ -46,6 +44,7 @@ void GloomEngine::Initialize() {
 #ifdef DEBUG
     ZoneScopedNC("Init", 0xDC143C);
 #endif
+    OptionsManager::GetInstance()->Load();
     InitializeWindow();
 
     SceneManager::GetInstance()->InitializeScene();
@@ -54,6 +53,9 @@ void GloomEngine::Initialize() {
 
     game = std::make_shared<Game>();
     game->InitializeGame();
+
+    // TODO: call after initializing game objects and before their awake method
+    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
@@ -89,7 +91,7 @@ bool GloomEngine::MainLoop() {
     auto currentTime = (float)glfwGetTime();
 
     glfwPollEvents();
-    glfwSetWindowSize(window, width, height);
+    glfwSetWindowSize(window, OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height);
 
     int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
@@ -215,7 +217,7 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Draw objects", 0xADD8E6);
 #endif
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height);
 
         // Prepare texture framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, PostProcessingManager::GetInstance()->framebuffer);
@@ -270,6 +272,8 @@ void GloomEngine::FixedUpdate() {
     for (auto&& component : components) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
+
+    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 
     CollisionManager::GetInstance()->ManageCollision();
 }
@@ -328,7 +332,7 @@ void GloomEngine::InitializeWindow() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
     glfwWindowHint(GLFW_SAMPLES, 4);
     // Create window with graphics context
-    window = glfwCreateWindow(width, height, "Gloomies", NULL, NULL);
+    window = glfwCreateWindow(OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, "Gloomies", NULL, NULL);
     if (window == nullptr)
         throw;
     glfwMakeContextCurrent(window);
@@ -339,7 +343,7 @@ void GloomEngine::InitializeWindow() {
     const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     int monitorWidth = mode->width;
     int monitorHeight = mode->height;
-    glfwSetWindowPos(window, monitorWidth / 2 - width / 2, monitorHeight / 2 - height / 2);
+    glfwSetWindowPos(window, monitorWidth / 2 - OptionsManager::GetInstance()->width / 2, monitorHeight / 2 - OptionsManager::GetInstance()->height / 2);
 
     // Enable cursor - change last parameter to disable it
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

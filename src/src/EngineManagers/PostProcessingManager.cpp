@@ -5,12 +5,13 @@
 #include "EngineManagers/PostProcessingManager.h"
 #include "GloomEngine.h"
 #include "LowLevelClasses/Shader.h"
+#include "EngineManagers/OptionsManager.h"
 
 PostProcessingManager::PostProcessingManager() {
     postProcessingShader = std::make_shared<Shader>("postProcess.vert", "postProcess.frag");
 
-    int width = GloomEngine::GetInstance()->width;
-    int height = GloomEngine::GetInstance()->height;
+    int width = OptionsManager::GetInstance()->width;
+    int height = OptionsManager::GetInstance()->height;
 
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -117,8 +118,8 @@ void PostProcessingManager::Free() const {
 }
 
 void PostProcessingManager::WindowResize() {
-    int width = GloomEngine::GetInstance()->width;
-    int height = GloomEngine::GetInstance()->height;
+    int width = OptionsManager::GetInstance()->width;
+    int height = OptionsManager::GetInstance()->height;
 
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
