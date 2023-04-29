@@ -44,7 +44,7 @@ public:
 
     template<class T>
     std::shared_ptr<T> AddComponent() {
-        std::shared_ptr<T> component = parent->GetComponent<T>();
+        std::shared_ptr<T> component = GetComponent<T>();
         if (component != nullptr) return component;
         component = ComponentFactory::GetInstance()->CreateComponent<T>(shared_from_this());
         components.insert({component->GetId(), component});

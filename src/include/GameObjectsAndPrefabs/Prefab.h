@@ -18,6 +18,7 @@ public:
     static std::shared_ptr<GameObject> GetPlayer(std::string name="Player");
     static std::shared_ptr<GameObject> GetCube(std::string name="Cube");
     static std::shared_ptr<GameObject> GetDancingDude(std::string name="dood");
+    static std::shared_ptr<GameObject> GetShop(std::string name="Shop");
     // Instruments
     static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);
 };

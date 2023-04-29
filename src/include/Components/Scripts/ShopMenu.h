@@ -13,8 +13,8 @@ public:
 
     void Start() override;
 
-    void ShowMenu();
-    void OnClick();
+    bool ShowMenu();
+    void OnClick() override;
 private:
     void DeleteButton(std::shared_ptr<Button> button);
 };
