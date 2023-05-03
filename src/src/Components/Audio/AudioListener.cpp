@@ -3,7 +3,6 @@
 //
 
 #include <al.h>
-#include <alc.h>
 #include "Components/Audio/AudioListener.h"
 #include "EngineManagers/AudioManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -12,7 +11,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-AudioListener::AudioListener(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+AudioListener::AudioListener(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
 
 AudioListener::~AudioListener() = default;
 

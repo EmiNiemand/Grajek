@@ -28,6 +28,8 @@ class PlayerUI;
 class PlayerEquipment;
 class SessionUI;
 class MusicSession;
+class CharacterLogic;
+class CharacterMovement;
 
 class ComponentFactory {
 private:

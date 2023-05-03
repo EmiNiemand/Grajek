@@ -10,6 +10,9 @@
 #include "EngineManagers/SceneManager.h"
 #include "EngineManagers/DebugManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
+#include "EngineManagers/OptionsManager.h"
+#include "EngineManagers/RandomnessManager.h"
+#include "EngineManagers/AIManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/Camera.h"
@@ -20,7 +23,6 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Other/FrustumCulling.h"
-#include "EngineManagers/OptionsManager.h"
 
 #include <filesystem>
 #include <stb_image.h>
@@ -50,6 +52,8 @@ void GloomEngine::Initialize() {
     SceneManager::GetInstance()->InitializeScene();
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
+    RandomnessManager::GetInstance()->InitializeRandomEngine();
+    AIManager::GetInstance()->InitializeSpawner(30, 1, 1, 2000);
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -301,6 +305,8 @@ void GloomEngine::Free() const {
     RendererManager::GetInstance()->Free();
     PostProcessingManager::GetInstance()->Free();
     UIManager::GetInstance()->Free();
+    RandomnessManager::GetInstance()->Free();
+    AIManager::GetInstance()->Free();
 #ifdef DEBUG
     DebugManager::GetInstance()->Free();
 #endif

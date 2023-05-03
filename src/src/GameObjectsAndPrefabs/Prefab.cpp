@@ -2,13 +2,10 @@
 // Created by masterktos on 01.04.23.
 //
 
-#include "GameObjectsAndPrefabs/Prefab.h"
-
 #include <utility>
+#include "GameObjectsAndPrefabs/Prefab.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-
 #include "EngineManagers/SceneManager.h"
-
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
@@ -24,6 +21,8 @@
 #include "Components/UI/Image.h"
 #include "Components/UI/Button.h"
 #include "Components/Scripts/ShopTrigger.h"
+#include "Components/AI/CharacterLogic.h"
+#include "Components/AI/CharacterMovement.h"
 
 std::shared_ptr<GameObject> Prefab::GetPlayer(std::string name) {
     auto player = GameObject::Instantiate(std::move(name), SceneManager::GetInstance()->activeScene);

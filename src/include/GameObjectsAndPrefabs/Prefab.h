@@ -21,6 +21,9 @@ public:
     static std::shared_ptr<GameObject> GetShop(std::string name="Shop");
     // Instruments
     static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);
+
+    static std::vector<std::shared_ptr<GameObject> (*)(std::string)>& GetCharacters();
+    static std::shared_ptr<GameObject> GetDefaultCharacter(std::string name);
 };
 
 
