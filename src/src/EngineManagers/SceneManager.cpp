@@ -28,8 +28,6 @@ void SceneManager::InitializeScene() {
 
 void SceneManager::ClearScene() {
     activeScene->RemoveAllChildren();
-    GloomEngine::GetInstance()->components.clear();
-    GloomEngine::GetInstance()->gameObjects.clear();
 }
 
 void SceneManager::Free() {

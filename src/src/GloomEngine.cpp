@@ -212,6 +212,7 @@ void GloomEngine::Update() {
         }
     }
     // Preparing shadow map
+    if (!FindGameObjectWithName("MainMenu"))
     {
 #ifdef DEBUG
         ZoneScopedNC("Prepare shadow", 0xFFD733);
@@ -248,6 +249,7 @@ void GloomEngine::Update() {
         glEnable(GL_DEPTH_TEST);
     }
     // Drawing debug lines for colliders
+    if (!FindGameObjectWithName("MainMenu"))
     {
 #ifdef DEBUG
         ZoneScopedNC("Draw colliders", 0x800000);

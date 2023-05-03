@@ -24,6 +24,7 @@
 #include "Components/UI/Image.h"
 #include "Components/UI/Button.h"
 #include "Components/Scripts/ShopTrigger.h"
+#include "Components/Scripts/MainMenuManager.h"
 
 std::shared_ptr<GameObject> Prefab::GetPlayer(std::string name) {
     auto player = GameObject::Instantiate(std::move(name), SceneManager::GetInstance()->activeScene);
@@ -99,6 +100,32 @@ std::shared_ptr<GameObject> Prefab::GetShop(std::string name) {
     shopMenu->DisableSelfAndChildren();
 
     return shop;
+}
+
+std::shared_ptr<GameObject> Prefab::GetMainMenuScene(std::string name) {
+    auto mainMenuScene = GameObject::Instantiate(std::move(name), SceneManager::GetInstance()->activeScene);
+
+    GameObject::Instantiate("MainMenuManager", mainMenuScene)->AddComponent<MainMenuManager>();
+    std::shared_ptr<GameObject> mainMenu = GameObject::Instantiate("MainMenu", mainMenuScene);
+    mainMenu->AddComponent<MainMenu>();
+    std::shared_ptr<GameObject> newGameButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("NewGameButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "New Game", 32);
+    std::shared_ptr<GameObject> loadGameButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("LoadGameButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Load Game", 32);
+    std::shared_ptr<GameObject> optionsButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("OptionsButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
+    std::shared_ptr<GameObject> creditsButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("CreditsButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Credits", 32);
+    std::shared_ptr<GameObject> exitButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("ExitButton", 900, 200, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
+    std::shared_ptr<GameObject> pauseBackground = mainMenu->GetComponent<MainMenu>()->Menu::AddImage("Background", 0, 0, "UI/MainMenu.png");
+    newGameButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
+    newGameButton->GetComponent<Button>()->nextButton = loadGameButton->GetComponent<Button>();
+    loadGameButton->GetComponent<Button>()->previousButton = newGameButton->GetComponent<Button>();
+    loadGameButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
+    optionsButton->GetComponent<Button>()->previousButton = loadGameButton->GetComponent<Button>();
+    optionsButton->GetComponent<Button>()->nextButton = creditsButton->GetComponent<Button>();
+    creditsButton->GetComponent<Button>()->previousButton = optionsButton->GetComponent<Button>();
+    creditsButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
+    exitButton->GetComponent<Button>()->previousButton = creditsButton->GetComponent<Button>();
+    exitButton->GetComponent<Button>()->nextButton = newGameButton->GetComponent<Button>();
+
+    return mainMenuScene;
 }
 
 std::shared_ptr<Instrument> Prefab::GetInstrument(InstrumentName instrumentName) {

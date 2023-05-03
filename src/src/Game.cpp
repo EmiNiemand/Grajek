@@ -23,6 +23,7 @@
 #include "Components/Audio/AudioSource.h"
 #include "Components/Scripts/ShopMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
+#include "Components/Scripts/MainMenu.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -79,7 +80,7 @@ void Game::InitializeGame() const {
     // ---------
     auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
     ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1450, 0, "UI/kotek.png");
+    ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
 
 
     // Set up pause menu
@@ -87,7 +88,7 @@ void Game::InitializeGame() const {
     pause->AddComponent<PauseMenu>();
     std::shared_ptr<GameObject> resumeButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
     std::shared_ptr<GameObject> optionsButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit to main menu", 32);
+    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
     std::shared_ptr<GameObject> exitButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
     std::shared_ptr<GameObject> pauseBackground = pause->GetComponent<PauseMenu>()->Menu::AddImage("Background", 0, 0, "UI/pause.png");
     resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
@@ -241,7 +242,11 @@ void Game::InitializeGame() const {
 }
 
 bool Game::GameLoop() {
-    shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
+        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
+        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
 
     return shouldQuit;
 }
