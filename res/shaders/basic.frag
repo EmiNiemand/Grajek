@@ -74,7 +74,7 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec4 FragPosLightSpace;
 
-// UNIFORMS
+// SAMPLERS
 // --------
 uniform sampler2D shadowMap;
 uniform samplerCube skybox;
@@ -92,6 +92,7 @@ uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLights[NR_SPOT_LIGHTS];
 
 uniform Material material = Material(vec3(1, 1, 1), 32.0f, 0.0f, 0.0f);
+uniform float gamma;
 
 // FORWARD DECLARATIONS
 // --------------------
@@ -180,7 +181,7 @@ void main()
     result = result + result * celColor;
     shadowResult = shadowResult + shadowResult * celColor;
 
-    //     rim light
+    // Rim light
     float rimLight = pow(max(0, (1 - dot(normalize(-directionalLights[0].direction), N))), 1.5);
 
     result = result + result * rimLight;

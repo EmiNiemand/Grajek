@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "GloomEngine.h"
 #include "EngineManagers/SceneManager.h"
+#include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Renderers/CubeMap.h"
@@ -46,9 +47,12 @@ void Game::InitializeGame() const {
 
     // Set up cubemap
     // --------------
-    auto sky = GameObject::Instantiate("CubeMap", activeScene);
-    auto skyCubeMap = sky->AddComponent<CubeMap>();
+    auto skyCubeMap = GameObject::Instantiate("CubeMap", activeScene)->AddComponent<CubeMap>();
     skyCubeMap->LoadTextures("skybox/");
+
+	// Set gamma
+	// ---------
+	RendererManager::GetInstance()->SetGamma(10.0f);
 
     // Set up player
     // -------------
@@ -225,9 +229,9 @@ void Game::InitializeGame() const {
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
-	animatedDood->transform->SetLocalPosition({-2, 0, -10});
-	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
+//	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
+//	animatedDood->transform->SetLocalPosition({-2, 0, -10});
+//	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
 
 //    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
 //    sphere->transform->SetLocalPosition({-5, 2, 0});

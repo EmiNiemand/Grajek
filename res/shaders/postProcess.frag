@@ -81,5 +81,7 @@ void main()
     vec4 color = vec4(mix(diffuse, edgeColor, g), 1.0);
 
     FragColor.rgb = mix(color.rgb, lineColor, clamp(diff, 0.0, 1.0));
+
+    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/2.2));
     FragColor.a = 1.0f;
 }
