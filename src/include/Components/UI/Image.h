@@ -21,7 +21,6 @@ public:
     Image(const std::shared_ptr<GameObject> &parent, int id);
 
     static std::shared_ptr<Mesh> CreateMesh(int x, int y, int width, int height);
-    static std::shared_ptr<Mesh> CreateMeshFromPoints(int leftBottomX, int leftBottomY, int leftTopX, int leftTopY, int rightBottomX, int rightBottomY, int rightTopX, int rightTopY);
     /**
     * x from 0 to 1920\n
     * y from 0 to 1080

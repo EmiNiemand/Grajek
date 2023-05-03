@@ -38,24 +38,6 @@ std::shared_ptr<Mesh> Image::CreateMesh(int x, int y, int width, int height) {
     return std::make_shared<Mesh>(vertices, std::vector<unsigned int>{0, 1, 3, 0, 2, 3}, std::vector<Texture>{});
 }
 
-std::shared_ptr<Mesh> Image::CreateMeshFromPoints(int leftBottomX, int leftBottomY, int leftTopX, int leftTopY, int rightBottomX, int rightBottomY, int rightTopX, int rightTopY) {
-    std::vector<Vertex> vertices;
-    Vertex vertex1, vertex2, vertex3, vertex4;
-    vertex1.position = glm::vec3((float)leftBottomX/960-1, (float)leftBottomY/540-1, 0.0f);
-    vertex1.texCoords = glm::vec2(0.0f, 0.0f);
-    vertex2.position = glm::vec3((float)leftTopX/960-1, (float)leftTopY/540-1, 0.0f);
-    vertex2.texCoords = glm::vec2(0.0f, 1.0f);
-    vertex3.position = glm::vec3((float)rightBottomX/960-1, (float)rightBottomY/540-1, 0.0f);
-    vertex3.texCoords = glm::vec2(1.0f, 0.0f);
-    vertex4.position = glm::vec3((float)rightTopX/960-1, (float)rightTopY/540-1, 0.0f);
-    vertex4.texCoords = glm::vec2(1.0f, 1.0f);
-    vertices.push_back(vertex1);
-    vertices.push_back(vertex2);
-    vertices.push_back(vertex3);
-    vertices.push_back(vertex4);
-    return std::make_shared<Mesh>(vertices, std::vector<unsigned int>{0, 1, 3, 0, 2, 3}, std::vector<Texture>{});
-}
-
 void Image::LoadTexture(int x, int y, const std::string &path) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -156,6 +138,12 @@ glm::vec3 Image::GetColor() {
 
 void Image::SetColor(glm::vec3 newColor) {
     color = newColor;
+    if (color.x < 0.0f) color.x = 0.0f;
+    if (color.y < 0.0f) color.y = 0.0f;
+    if (color.z < 0.0f) color.z = 0.0f;
+    if (color.x > 1.0f) color.x = 1.0f;
+    if (color.y > 1.0f) color.y = 1.0f;
+    if (color.z > 1.0f) color.z = 1.0f;
 }
 
 void Image::Update() {
