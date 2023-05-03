@@ -36,21 +36,53 @@ void SessionUI::PlaySound(int index) {
     //TODO: play some kind of visual confirmation of playing sound
     auto animator = GameObject::Instantiate("NutaAnimator", parent->parent);
     auto nuta = GameObject::Instantiate("Nuta", animator)->AddComponent<Image>();
+    auto circle1 = GloomEngine::GetInstance()->FindGameObjectWithName("Circle1")->GetComponent<Image>();
+    auto circle2 = GloomEngine::GetInstance()->FindGameObjectWithName("Circle2")->GetComponent<Image>();
+    std::shared_ptr<Image> circle3;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Circle3")) {
+        circle3 = GloomEngine::GetInstance()->FindGameObjectWithName("Circle3")->GetComponent<Image>();
+    }
+    auto circleAnimator = GameObject::Instantiate("CircleAnimator", parent->parent);
+    auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", parent->parent);
     if (index == 0) {
         nuta->LoadTexture(670, 700, "UI/Sesja/Nuta1.png");
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
                         {AnimatedProperty::Position, glm::vec3(670.0f, 775.0f, 0.0f)}
                 }, false);
+        circleAnimator->AddComponent<UIAnimator>()->Setup(circle1, {
+                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+        }, false);
+        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle1, {
+                {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
+                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+        }, false);
     } else if (index == 1) {
         nuta->LoadTexture(700, 300, "UI/Sesja/Nuta2.png");
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
                         {AnimatedProperty::Position, glm::vec3(775.0f, 300.0f, 0.0f)}
                 }, false);
+        circleAnimator->AddComponent<UIAnimator>()->Setup(circle2, {
+                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+        }, false);
+        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle2, {
+                {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
+                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+        }, false);
     } else if (index == 2) {
         nuta->LoadTexture(400, 530, "UI/Sesja/Nuta3.png");
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
                         {AnimatedProperty::Position, glm::vec3(400.0f, 605.0f, 0.0f)}
                 }, false);
+        circleAnimator->AddComponent<UIAnimator>()->Setup(circle3, {
+                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+        }, false);
+        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle3, {
+                {AnimatedProperty::Color, glm::vec3(0.0f, 1.0f, 0.0f), 0.125f},
+                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+        }, false);
     }
 //    animator.SetTrigger("Sound"+index);
     sampleSources[index]->ForcePlaySound();

@@ -15,6 +15,7 @@ private:
     std::shared_ptr<Mesh> mesh;
     int x, y, width, height;
     glm::vec2 leftBottom, leftTop, rightBottom, rightTop;
+    glm::vec3 color = glm::vec3(1.0f);
 
 public:
     Image(const std::shared_ptr<GameObject> &parent, int id);
@@ -26,9 +27,11 @@ public:
     * y from 0 to 1080
     */
     void LoadTexture(int x, int y, const std::string& path);
+    glm::vec3 GetColor();
     void SetPosition(float x2, float y2);
     void SetRotation(float angle);
     void SetScale(float scale);
+    void SetColor(glm::vec3 newColor);
 
     void Update() override;
 

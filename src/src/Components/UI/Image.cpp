@@ -150,6 +150,14 @@ void Image::SetScale(float scale) {
     mesh->setupMesh();
 }
 
+glm::vec3 Image::GetColor() {
+    return color;
+}
+
+void Image::SetColor(glm::vec3 newColor) {
+    color = newColor;
+}
+
 void Image::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Image", 0x800080);
@@ -161,6 +169,7 @@ void Image::Draw() {
     if (!mesh) return;
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
+    UIManager::GetInstance()->shader->SetVec3("color", color);
     glActiveTexture(GL_TEXTURE0);
     UIManager::GetInstance()->shader->SetInt("texture1", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);

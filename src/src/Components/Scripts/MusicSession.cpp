@@ -36,6 +36,20 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
     } else if (instrument->NameToString() == "Guitar") {
         theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokGitara.png");
     }
+
+    if (instrument->NameToString() == "Clap") {
+        GameObject::Instantiate("Circle1", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+        ->AddComponent<Image>()->LoadTexture(650, 600, "UI/Sesja/circle.png");
+        GameObject::Instantiate("Circle2", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+        ->AddComponent<Image>()->LoadTexture(1150, 600, "UI/Sesja/circle.png");
+    } else if (instrument->NameToString() == "Drums") {
+        GameObject::Instantiate("Circle1", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+                ->AddComponent<Image>()->LoadTexture(950, 800, "UI/Sesja/circle.png");
+        GameObject::Instantiate("Circle2", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+                ->AddComponent<Image>()->LoadTexture(1250, 800, "UI/Sesja/circle.png");
+        GameObject::Instantiate("Circle3", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+                ->AddComponent<Image>()->LoadTexture(1550, 800, "UI/Sesja/circle.png");
+    }
 }
 
 void MusicSession::Update() {

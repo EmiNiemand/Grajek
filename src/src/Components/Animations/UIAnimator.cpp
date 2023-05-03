@@ -34,6 +34,12 @@ void UIAnimator::Setup(std::shared_ptr<Image> animatedImage,
             valueDelta = (checkpoint.value
                           - image->GetParent()->transform->GetLocalScale())
                           / checkpoint.duration;
+            break;
+        case Color:
+            valueDelta = (checkpoint.value
+                          - image->GetColor())
+                         / checkpoint.duration;
+            break;
     }
 }
 
@@ -73,6 +79,12 @@ void UIAnimator::Update() {
                 valueDelta = (checkpoint.value
                               - image->GetParent()->transform->GetLocalScale())
                               / checkpoint.duration;
+                break;
+            case Color:
+                valueDelta = (checkpoint.value
+                              - image->GetColor())
+                             / checkpoint.duration;
+                break;
         }
     }
 
@@ -90,6 +102,9 @@ void UIAnimator::Update() {
         case Scale:
             image->SetScale(image->GetParent()->transform->GetLocalScale().x
                             + valueDelta.x * GloomEngine::GetInstance()->deltaTime);
+            break;
+        case Color:
+            image->SetColor(image->GetColor() + valueDelta * GloomEngine::GetInstance()->deltaTime);
             break;
     }
 
