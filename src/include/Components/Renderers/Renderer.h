@@ -7,7 +7,7 @@ class StaticModel;
 
 class Renderer : public Drawable {
 private:
-    inline static std::unordered_map<uint64_t, std::shared_ptr<StaticModel>> models;
+    inline static std::unordered_map<uint32_t, std::shared_ptr<StaticModel>> models;
     std::shared_ptr<StaticModel> model;
 
 public:

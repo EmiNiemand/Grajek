@@ -34,7 +34,7 @@ public:
 
     static glm::vec3 Lerp(glm::vec3 firstPoint, glm::vec3 secondPoint, float parameter);
 	static float Lerp(float firstValue, float secondValue, float parameter);
-    static uint64_t Hash(const std::string& text);
+    static uint32_t Hash(const std::string& text);
 
 private:
     Utilities();
