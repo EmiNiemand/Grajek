@@ -4,6 +4,7 @@
 
 #include "LowLevelClasses/FileDataHandler.h"
 #include "LowLevelClasses/GameData.h"
+#include "LowLevelClasses/StaticObjData.h"
 #include <spdlog/spdlog.h>
 #include <filesystem>
 #include <iostream>
@@ -81,5 +82,13 @@ void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_pt
     if(json.contains("instrument.Trumpet")) gameData->instruments.insert(InstrumentName::Trumpet);
     if(json.contains("instrument.Launchpad")) gameData->instruments.insert(InstrumentName::Launchpad);
     if(json.contains("instrument.Guitar")) gameData->instruments.insert(InstrumentName::Guitar);
+}
+
+std::vector<std::shared_ptr<StaticObjData>> FileDataHandler::LoadMap() {
+    return std::vector<std::shared_ptr<StaticObjData>>();
+}
+
+void FileDataHandler::SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData) {
+
 }
 

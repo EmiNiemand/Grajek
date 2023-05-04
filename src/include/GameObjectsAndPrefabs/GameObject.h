@@ -6,6 +6,7 @@
 #include "Factories/GameObjectFactory.h"
 #include "Factories/ComponentFactory.h"
 #include "Components/Component.h"
+#include "LowLevelClasses/StaticObjData.h"
 
 #include <memory>
 #include <string>
@@ -83,6 +84,8 @@ public:
     bool GetEnabled() const;
 
     void RecalculateGlobalRotation();
+
+    StaticObjData SaveStatic();
 };
 
 

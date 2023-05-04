@@ -2,10 +2,12 @@
 #define OPENGLGP_SCENEMANAGER_H
 
 #include <memory>
-
+#include <vector>
+#include <string>
 
 class GloomEngine;
 class GameObject;
+class IStaticSaveable;
 
 class SceneManager {
 private:
@@ -27,7 +29,11 @@ public:
     void ClearScene();
     void Free();
 
+    void SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    void LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
+
 private:
+    std::vector<std::shared_ptr<IStaticSaveable>> FindAllStaticSaveableObjects();
     explicit SceneManager();
 };
 

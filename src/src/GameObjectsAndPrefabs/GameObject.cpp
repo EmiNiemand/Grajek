@@ -130,3 +130,7 @@ void GameObject::RecalculateGlobalRotation() {
         child.second->RecalculateGlobalRotation();
     }
 }
+
+StaticObjData GameObject::SaveStatic() {
+    return StaticObjData();
+}

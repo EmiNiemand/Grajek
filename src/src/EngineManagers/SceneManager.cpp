@@ -2,6 +2,8 @@
 #include "GloomEngine.h"
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "LowLevelClasses/StaticObjData.h"
+#include "LowLevelClasses/FileDataHandler.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -38,3 +40,30 @@ void SceneManager::Free() {
     activeScene = nullptr;
 }
 
+void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
+    std::vector<std::shared_ptr<StaticObjData>> staticObjectsData;
+    for (const auto& object : activeScene->children) {
+        object.second->SaveStatic();
+    }
+
+    FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
+    fileDataHandler.SaveMap(staticObjectsData);
+}
+//#ifdef DEBUG
+//    spdlog::info("Saving game: " + std::to_string(gameData->money) + ", " + std::to_string(gameData->reputation)
+//                 + ", [" + std::to_string(gameData->playerPosition.x) + ", " + std::to_string(gameData->playerPosition.y)
+//                 + ", " + std::to_string(gameData->playerPosition.z) + "]");
+//#endif
+
+void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
+    std::vector<std::shared_ptr<StaticObjData>> staticObjectsData;
+    FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
+    staticObjectsData = fileDataHandler.LoadMap();
+
+    std::vector<std::shared_ptr<IStaticSaveable>> dataPersistanceObjects = FindAllStaticSaveableObjects();
+
+    for (const auto &object: dataPersistanceObjects) {
+        //GameObject newchild = GameObject(object);
+        //activeScene->AddChild();
+    }
+}
