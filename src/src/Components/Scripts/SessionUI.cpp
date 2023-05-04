@@ -27,7 +27,7 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     }
 
     SetCheatSheet(GameObject::Instantiate("CheatSheet", parent->parent)->AddComponent<Image>());
-    cheatSheet->LoadTexture(451, -1100, "UI/Sesja/drumPatterns.png");
+    cheatSheet->LoadTexture(451, -1100, "UI/Sesja/drumPatterns.png", -0.2);
 }
 
 void SessionUI::SetCheatSheet(std::shared_ptr<Image> newCheatSheet) { cheatSheet = std::move(newCheatSheet); }
@@ -45,7 +45,7 @@ void SessionUI::PlaySound(int index) {
     auto circleAnimator = GameObject::Instantiate("CircleAnimator", parent->parent);
     auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", parent->parent);
     if (index == 0) {
-        nuta->LoadTexture(670, 700, "UI/Sesja/Nuta1.png");
+        nuta->LoadTexture(670, 700, "UI/Sesja/Nuta1.png", -0.1f);
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
                         {AnimatedProperty::Position, glm::vec3(670.0f, 775.0f, 0.0f)}
                 }, false);
@@ -58,7 +58,7 @@ void SessionUI::PlaySound(int index) {
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
         }, false);
     } else if (index == 1) {
-        nuta->LoadTexture(700, 300, "UI/Sesja/Nuta2.png");
+        nuta->LoadTexture(700, 300, "UI/Sesja/Nuta2.png", -0.1f);
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
                         {AnimatedProperty::Position, glm::vec3(775.0f, 300.0f, 0.0f)}
                 }, false);
@@ -71,7 +71,7 @@ void SessionUI::PlaySound(int index) {
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
         }, false);
     } else if (index == 2) {
-        nuta->LoadTexture(400, 530, "UI/Sesja/Nuta3.png");
+        nuta->LoadTexture(400, 530, "UI/Sesja/Nuta3.png", -0.1f);
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
                         {AnimatedProperty::Position, glm::vec3(400.0f, 605.0f, 0.0f)}
                 }, false);
