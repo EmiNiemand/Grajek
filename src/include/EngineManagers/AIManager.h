@@ -8,21 +8,23 @@
 #include <memory>
 #include <unordered_map>
 #include <thread>
+#include <mutex>
 #include "GameObjectsAndPrefabs/Prefab.h"
 
 class GloomEngine;
 class GameObject;
 
 class AIManager {
-    float spawnDistance;
+    bool playerIsPlaying = false;
     int maxCharacters;
     int spawnDelay;
     std::jthread characterSpawner;
+    std::mutex mutex;
 
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, const float& spawnDistance, const int& maxCharacters,
+    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& maxCharacters,
                                 const int& spawnDelay, const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
                                 std::unordered_map<int, std::shared_ptr<GameObject>>* currentCharacters);
 
@@ -39,7 +41,9 @@ public:
     static AIManager* GetInstance();
     void Free();
 
-    void InitializeSpawner(const float& dist, const int& min, const int& max, const int& delay);
+    void InitializeSpawner(const int& min, const int& max, const int& delay);
+    void NotifyPlayerStartsPlaying();
+    void NotifyPlayerStopsPlaying();
 
 };
 

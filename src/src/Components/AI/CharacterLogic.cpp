@@ -19,29 +19,12 @@ CharacterLogic::~CharacterLogic() = default;
 void CharacterLogic::Start() {
     player = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     characterMovement = parent->GetComponent<CharacterMovement>();
-
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
 
-    //TODO: Get session status!
-//    if (Player.GetComponent<PlayerManager>().GetSessionStatus())
-//    {
-//        playerIsPlaying = true;
-//
-//        // Niesamowicie nie podoba mi się odwołanie wstecz do
-//        // menadżera ale jest 02:04 i lepiej pójść na skróty
-//        CrowdManager crowdMg = FindObjectOfType<CrowdManager>();
-//
-//        playerInstrumentName = crowdMg.GetCurrentPlayerInstrument();
-//        playerGenre = crowdMg.GetCurrentPlayerGenre();
-//    }
-
-    CalculateSatisfaction();
     Component::Start();
 }
 
 void CharacterLogic::AIUpdate() {
-    //Check here if the player is playing?
-    // Or keep using SetPlayerStatus
     Component::AIUpdate();
 }
 
@@ -64,7 +47,9 @@ void CharacterLogic::Free() {
     favInstrumentsNames.clear();
 }
 
-void CharacterLogic::SetPathToPlayer() const {
+void CharacterLogic::SetPathToPlayer() {
+    currentState = WalkingToPlayer;
+
     glm::vec3 newPosition = player->GetLocalPosition();
     newPosition.x - RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
     newPosition.z - RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
@@ -72,7 +57,9 @@ void CharacterLogic::SetPathToPlayer() const {
     characterMovement->SetNewPathToPlayer(newPosition);
 }
 
-void CharacterLogic::ReturnToPreviousPath() const {
+void CharacterLogic::ReturnToPreviousPath() {
+    currentState = TraversingOnPath;
+
     characterMovement->ReturnToPreviousPath();
 }
 
@@ -108,35 +95,34 @@ void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, cons
 //    SetSatisfactionIndicator();
 //}
 
-void CharacterLogic::SetPlayerStatus() {
-    playerIsPlaying = !playerIsPlaying;
-
-    CalculateSatisfaction();
+void CharacterLogic::SetPlayerPlayingStatus(bool state) {
+    if (state) {
+        currentState = AlertedByPlayer;
+        CalculateSatisfaction();
+    } else {
+        currentState = TraversingOnPath;
+    }
 }
 
-float CharacterLogic::GetCurrentSatisfaction() const {
+const float CharacterLogic::GetCurrentSatisfaction() const {
     return currentSatisfaction;
 }
 
 void CharacterLogic::CalculateSatisfaction() {
     currentSatisfaction = 0;
 
-    if (playerIsPlaying)
+    if (currentState == AlertedByPlayer)
     {
         if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
             currentSatisfaction += 30;
 
-
         if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName) != favInstrumentsNames.end())
             currentSatisfaction += 20;
 
-
         if (currentSatisfaction > minSatisfaction) {
-            onPathToPlayer = true;
             SetPathToPlayer();
         }
     } else {
-        onPathToPlayer = false;
         ReturnToPreviousPath();
     }
 

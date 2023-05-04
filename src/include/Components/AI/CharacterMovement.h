@@ -16,6 +16,7 @@ class GameObject;
 class Rigidbody;
 
 class CharacterMovement : public Component {
+    std::shared_ptr<Transform> player;
     std::shared_ptr<Rigidbody> rigidbody;
     std::vector<glm::vec3> path;
     glm::vec3 endTarget {};
@@ -32,7 +33,6 @@ class CharacterMovement : public Component {
     bool isAlarmed = false;
 
 public:
-
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
@@ -45,7 +45,7 @@ public:
     void SetNewRandomPoint();
     void SetNewPathToPlayer(glm::vec3 playerPosition);
     void ReturnToPreviousPath();
-    void SetNewPathWithPathFinding();
+    void CalculateNewPath();
 };
 
 #endif //GLOOMENGINE_CHARACTERMOVEMENT_H

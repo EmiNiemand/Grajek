@@ -10,6 +10,7 @@
 
 #include "Components/Component.h"
 #include "Components/Scripts/MusicPattern.h"
+#include "Components/AI/CharacterStates.h"
 #include <vector>
 #include <unordered_map>
 
@@ -21,9 +22,7 @@ class CharacterLogic : public Component {
     std::shared_ptr<CharacterMovement> characterMovement;
     float minSatisfaction = 0;
     float currentSatisfaction = 0;
-    bool playerIsPlaying = false;
-    bool onPathToPlayer = false;
-    float playerSkill;
+    AI_STATE currentState = Idle;
 
     InstrumentName playerInstrumentName;
     MusicGenre playerGenre;
@@ -44,11 +43,11 @@ public:
     void Free();
 
     void CalculateSatisfaction();
-    void SetPathToPlayer() const;
-    void ReturnToPreviousPath() const;
+    void SetPathToPlayer();
+    void ReturnToPreviousPath();
     void SetPlayerInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
-    void SetPlayerStatus();
-    float GetCurrentSatisfaction() const;
+    void SetPlayerPlayingStatus(bool state);
+    const float GetCurrentSatisfaction() const;
 
 };
 

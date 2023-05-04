@@ -3,9 +3,11 @@
 //
 
 #include "EngineManagers/AIManager.h"
-#include "GameObjectsAndPrefabs/Prefab.h"
-#include "spdlog/spdlog.h"
 #include "EngineManagers/RandomnessManager.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/AI/CharacterLogic.h"
+#include "spdlog/spdlog.h"
 #include <string>
 
 #ifdef DEBUG
@@ -20,11 +22,10 @@ AIManager* AIManager::GetInstance() {
     return (aiManager == nullptr) ? aiManager = new AIManager() : aiManager;
 }
 
-void AIManager::InitializeSpawner(const float& dist, const int& min, const int& max, const int& delay) {
+void AIManager::InitializeSpawner(const int& min, const int& max, const int& delay) {
 #ifdef DEBUG
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
-    spawnDistance = dist;
     maxCharacters = max;
     spawnDelay = delay;
 
@@ -42,8 +43,8 @@ void AIManager::InitializeSpawner(const float& dist, const int& min, const int& 
         currentCharacters.insert({i, func(name)});
     }
 
-    characterSpawner = std::jthread(SpawnCharacters, spawnDistance, maxCharacters, spawnDelay,
-                                    charactersPrefabs, &currentCharacters);
+    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, maxCharacters, spawnDelay, charactersPrefabs,
+                                    &currentCharacters);
 }
 
 void AIManager::Free() {
@@ -53,8 +54,33 @@ void AIManager::Free() {
     currentCharacters.clear();
 }
 
-void AIManager::SpawnCharacters(const std::stop_token& token, const float& spawnDistance, const int& maxCharacters,
-                                const int& spawnDelay, const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
+void AIManager::NotifyPlayerStartsPlaying() {
+    mutex.lock();
+
+    playerIsPlaying = true;
+
+    for (auto&& ch : currentCharacters) {
+        ch.second->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
+    }
+
+    mutex.unlock();
+}
+
+void AIManager::NotifyPlayerStopsPlaying() {
+    mutex.lock();
+
+    playerIsPlaying = false;
+
+    for (auto&& ch : currentCharacters) {
+        ch.second->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(false);
+    }
+
+    mutex.unlock();
+}
+
+void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& maxCharacters,
+                                const int& spawnDelay,
+                                const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
                                 std::unordered_map<int, std::shared_ptr<GameObject>>* currentCharacters) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
@@ -68,7 +94,12 @@ void AIManager::SpawnCharacters(const std::stop_token& token, const float& spawn
             auto func = charactersPrefabs[random];
             name = "Character " + std::to_string(charactersAmount);
 
-            currentCharacters->insert({charactersAmount, func(name)});
+            auto ch = func(name);
+
+            if (playerIsPlaying)
+                ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
+
+            currentCharacters->insert({charactersAmount, ch});
             ++charactersAmount;
         }
 

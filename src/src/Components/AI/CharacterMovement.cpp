@@ -2,12 +2,14 @@
 // Created by Adrian on 01.05.2023.
 //
 
-#include <numbers>
-#include "GameObjectsAndPrefabs/GameObject.h"
+
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/AI/CharacterStates.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include <numbers>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -18,9 +20,10 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 CharacterMovement::~CharacterMovement() = default;
 
 void CharacterMovement::Start() {
+
     rigidbody = parent->GetComponent<Rigidbody>();
     SetNewRandomPoint();
-    SetNewPathWithPathFinding();
+    CalculateNewPath();
     Component::Start();
 }
 
@@ -31,8 +34,7 @@ void CharacterMovement::Update() {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
         glm::vec3 newPos = {path.begin()->x - currentPosition.x, 0, path.begin()->z - currentPosition.z};
-        newPos = glm::normalize(newPos);
-        newPos *= (speed * speedMultiplier);
+        newPos = glm::normalize(newPos) * (speed * speedMultiplier);
 
         rigidbody->AddForce(newPos, ForceMode::Force);
 
@@ -54,7 +56,7 @@ void CharacterMovement::Update() {
 void CharacterMovement::AIUpdate() {
     if (path.empty() && !isAlarmed) {
         SetNewRandomPoint();
-        SetNewPathWithPathFinding();
+        CalculateNewPath();
     }
 
     Component::AIUpdate();
@@ -81,17 +83,32 @@ void CharacterMovement::SetNewPathToPlayer(glm::vec3 playerPosition) {
     endTarget = playerPosition;
     isAlarmed = true;
     speedMultiplier = 2.0f;
-    SetNewPathWithPathFinding();
+    CalculateNewPath();
 }
 
 void CharacterMovement::ReturnToPreviousPath() {
     endTarget = previousTarget;
     isAlarmed = false;
     speedMultiplier = 1.0f;
-    SetNewPathWithPathFinding();
+    CalculateNewPath();
 }
 
-void CharacterMovement::SetNewPathWithPathFinding() {
+void CharacterMovement::SetNewPath(AI_STATE state) {
+    if (state == WalkingToPlayer) {
+        previousTarget = endTarget;
+        endTarget = playerPosition;
+        isAlarmed = true;
+        speedMultiplier = 2.0f;
+    } else if (state == TraversingOnPath) {
+        endTarget = previousTarget;
+        isAlarmed = false;
+        speedMultiplier = 1.0f;
+    }
+
+    CalculateNewPath();
+}
+
+void CharacterMovement::CalculateNewPath() {
     path.clear();
     path.push_back(endTarget);
 //    foreach (var obj in GameObject.FindGameObjectsWithTag("Obstacles"))
