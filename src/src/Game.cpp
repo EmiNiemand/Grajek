@@ -24,6 +24,9 @@
 #include "Components/Scripts/ShopMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
 #include "Components/Scripts/MainMenu.h"
+#include "GameObjectsAndPrefabs/Prefabs/Player.h"
+#include "GameObjectsAndPrefabs/Prefabs/Die.h"
+#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -53,11 +56,11 @@ void Game::InitializeGame() const {
 
     // Set up player
     // -------------
-    std::shared_ptr<GameObject> player = Prefab::GetPlayer();
+    std::shared_ptr<GameObject> player = Prefab::Instantiate<Player>();
 
     // Set up ground
     // -------------
-    std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
+    std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
     ground->transform->SetLocalScale({40, 2, 40});
     ground->GetComponent<Renderer>()->textScale = glm::vec2(40, 40);
@@ -125,7 +128,7 @@ void Game::InitializeGame() const {
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    std::shared_ptr<GameObject> shop = Prefab::GetShop();
+    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
 
 
 //    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
@@ -226,7 +229,10 @@ void Game::InitializeGame() const {
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
+	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+    auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+    animatedDoodAnimator->LoadAnimationModel("hiphopnigdystop/HipHopDancing.dae");
+    animatedDoodAnimator->LoadAnimations("hiphopnigdystop/HipHopDancing.dae");
 	animatedDood->transform->SetLocalPosition({-2, 0, -10});
 	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
 

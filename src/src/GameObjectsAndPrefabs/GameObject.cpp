@@ -1,19 +1,21 @@
+#include <utility>
+
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
 #include "Other/FrustumCulling.h"
 
-GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
-                                                                        name(name), id(id), parent(parent), tag(tag) {
+GameObject::GameObject(std::string name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+                                                                        name(std::move(name)), id(id), parent(parent), tag(tag) {
     bounds = FrustumCulling::GenerateAABB(nullptr);
 }
 
 GameObject::~GameObject() = default;
 
 std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
-    return GameObjectFactory::GetInstance()->CreateGameObject(name, parent, tag);
+    return GameObjectFactory::GetInstance()->CreateGameObject(std::move(name), parent, tag);
 }
 
-void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
+void GameObject::Destroy(const std::shared_ptr<GameObject>& gameObject) {
     GloomEngine::GetInstance()->destroyGameObjectBuffer.emplace_back(gameObject);
 }
 
@@ -23,7 +25,7 @@ void GameObject::OnTransformUpdateComponents() {
     }
 }
 
-void GameObject::RemoveComponent(int componentId) {
+void GameObject::RemoveComponent(uint32_t componentId) {
     if (!components.contains(componentId)) return;
     Component::Destroy(components.find(componentId)->second);
     components.erase(componentId);
@@ -45,7 +47,7 @@ void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
     children.insert({child->GetId(), child});
 }
 
-void GameObject::RemoveChild(int childId) {
+void GameObject::RemoveChild(uint32_t childId) {
     if (!children.contains(childId)) return;
     children.find(childId)->second->RemoveAllChildren();
     children.find(childId)->second->RemoveAllComponents();

@@ -68,7 +68,7 @@ void RendererManager::UpdateCamera() const {
     cubeMapShader->SetMat4("view", glm::mat4(glm::mat3(Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix())));
 }
 
-void RendererManager::UpdateLight(int componentId) {
+void RendererManager::UpdateLight(uint32_t componentId) {
 
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
@@ -90,7 +90,7 @@ void RendererManager::UpdateLight(int componentId) {
     }
 }
 
-void RendererManager::RemoveLight(int componentId) {
+void RendererManager::RemoveLight(uint32_t componentId) {
     for (int i = 0; i < spotLights.size(); i++) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
             RemoveSpotLight(i, shader);

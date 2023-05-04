@@ -12,7 +12,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
+CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) { }
 
 CharacterLogic::~CharacterLogic() = default;
 
@@ -66,8 +66,8 @@ void CharacterLogic::Free() {
 
 void CharacterLogic::SetPathToPlayer() const {
     glm::vec3 newPosition = player->GetLocalPosition();
-    newPosition.x - RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
-    newPosition.z - RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
+    newPosition.x -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
+    newPosition.z -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
 
     characterMovement->SetNewPathToPlayer(newPosition);
 }

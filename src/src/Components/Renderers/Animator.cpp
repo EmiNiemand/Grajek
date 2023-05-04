@@ -17,7 +17,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
+Animator::Animator(const std::shared_ptr<GameObject> &parent, uint32_t id) : Drawable(parent, id) {
     currentTime = 0.0;
     finalBoneMatrices.reserve(100);
 

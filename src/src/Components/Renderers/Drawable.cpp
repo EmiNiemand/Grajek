@@ -7,7 +7,7 @@
 #include "Other/FrustumCulling.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
-Drawable::Drawable(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Drawable::Drawable(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
 
 Drawable::~Drawable() = default;
 

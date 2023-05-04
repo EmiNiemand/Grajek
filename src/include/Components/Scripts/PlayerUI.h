@@ -14,7 +14,7 @@ private:
     std::shared_ptr<Text> cashText;
     std::shared_ptr<Text> repText;
 public:
-    PlayerUI(const std::shared_ptr<GameObject> &parent, int id);
+    PlayerUI(const std::shared_ptr<GameObject> &parent, uint32_t id);
 
     void UpdateCash(int newAmount);
     void UpdateRep(int newAmount);

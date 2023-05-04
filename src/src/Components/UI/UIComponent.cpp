@@ -5,7 +5,7 @@
 #include "Components/UI/UIComponent.h"
 #include "EngineManagers/UIManager.h"
 
-UIComponent::UIComponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+UIComponent::UIComponent(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
 
 UIComponent::~UIComponent() = default;
 

@@ -27,7 +27,7 @@ public:
     std::shared_ptr<Button> previousButton, nextButton;
 
 public:
-    Button(const std::shared_ptr<GameObject> &parent, int id);
+    Button(const std::shared_ptr<GameObject> &parent, uint32_t id);
 
     std::shared_ptr<Mesh> CreateMesh(int x, int y, int width, int height);
     /**

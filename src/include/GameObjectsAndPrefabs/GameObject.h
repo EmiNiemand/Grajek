@@ -15,15 +15,15 @@ class GloomEngine;
 struct AABB;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
-private:
+protected:
     // Name and id are unique
-    int id;
+    uint32_t id;
     std::string name;
     bool enabled = true;
 
 public:
-    std::map<int, std::shared_ptr<Component>> components;
-    std::map<int, std::shared_ptr<GameObject>> children;
+    std::map<uint32_t, std::shared_ptr<Component>> components;
+    std::map<uint32_t, std::shared_ptr<GameObject>> children;
 
     std::shared_ptr<GameObject> parent = nullptr;
     std::shared_ptr<AABB> bounds = nullptr;
@@ -36,11 +36,11 @@ public:
     bool isOnFrustum = false;
 
 public:
-    GameObject(const std::string &name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
+    GameObject(std::string name, uint32_t id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
     virtual ~GameObject();
 
     static std::shared_ptr<GameObject> Instantiate(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);
-    static void Destroy(std::shared_ptr<GameObject> gameObject);
+    static void Destroy(const std::shared_ptr<GameObject>& gameObject);
 
     template<class T>
     std::shared_ptr<T> AddComponent() {
@@ -62,13 +62,13 @@ public:
     };
 
     void OnTransformUpdateComponents();
-    void RemoveComponent(int componentId);
+    void RemoveComponent(uint32_t componentId);
     void RemoveAllComponents();
 
 
     void SetParent(const std::shared_ptr<GameObject> &newParent);
     void AddChild(const std::shared_ptr<GameObject> &child);
-    void RemoveChild(int childId);
+    void RemoveChild(uint32_t childId);
     void RemoveAllChildren();
 
 
@@ -83,6 +83,9 @@ public:
     bool GetEnabled() const;
 
     void RecalculateGlobalRotation();
+
+private:
+    inline void SetId(int newId) {id = newId;}
 };
 
 

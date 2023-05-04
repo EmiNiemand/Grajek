@@ -2,13 +2,13 @@
 #include "Components/Scripts/PlayerManager.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "GameObjectsAndPrefabs/Prefab.h"
+#include "Components/Scripts/Instrument.h"
 #include "Components/UI/Button.h"
 #include "Components/Scripts/ShopTrigger.h"
 
-ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
+ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, uint32_t id) : Menu(parent, id) {}
 
-ShopMenu::~ShopMenu() {}
+ShopMenu::~ShopMenu() = default;
 
 void ShopMenu::Start() {
     Component::Start();
@@ -30,6 +30,7 @@ bool ShopMenu::ShowMenu() {
     if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
     parent->EnableSelfAndChildren();
     if (GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.size() > 1) {
+        auto menu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.begin()->second;
         activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.begin()->second->GetComponent<Button>();
         activeButton->isActive = true;
     }
@@ -42,16 +43,16 @@ void ShopMenu::OnClick() {
     bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                100, Prefab::GetInstrument(InstrumentName::Drums));
+                100, Instrument::GetInstrument(InstrumentName::Drums));
     } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                500, Prefab::GetInstrument(InstrumentName::Trumpet));
+                500, Instrument::GetInstrument(InstrumentName::Trumpet));
     } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                1500, Prefab::GetInstrument(InstrumentName::Launchpad));
+                1500, Instrument::GetInstrument(InstrumentName::Launchpad));
     } else if (activeButton->GetParent()->GetName() == "FourthInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                5000, Prefab::GetInstrument(InstrumentName::Guitar));
+                5000, Instrument::GetInstrument(InstrumentName::Guitar));
     }
     if(boughtInstrument) {
         DeleteButton(activeButton);

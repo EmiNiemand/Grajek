@@ -9,7 +9,7 @@
 #include "Components/Audio/AudioSource.h"
 #include "Components/Animations/UIAnimator.h"
 
-SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
 
 void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::shared_ptr<Image> metronome) {
     metronomeSoundEnabled = true;

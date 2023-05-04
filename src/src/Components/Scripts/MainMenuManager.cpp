@@ -10,7 +10,7 @@
     #include <tracy/Tracy.hpp>
 #endif
 
-MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
 
 void MainMenuManager::Start() {
     mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>();

@@ -28,7 +28,7 @@ public:
     Material material = {{1.0f, 1.0f, 1.0f},32.0f,0,0};
     glm::vec2 textScale = glm::vec2(1.0f, 1.0f);
 public:
-    Drawable(const std::shared_ptr<GameObject> &parent, int id);
+    Drawable(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~Drawable() override;
 
     void Update() override;

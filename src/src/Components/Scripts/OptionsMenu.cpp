@@ -10,7 +10,7 @@
 #include "EngineManagers/RendererManager.h"
 #include "EngineManagers/OptionsManager.h"
 
-OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {
+OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, uint32_t id) : Menu(parent, id) {
     musicVolumeIterator = (short)(OptionsManager::GetInstance()->musicVolume / 0.125f + 1);
     windowResolutionIterator = (short)(OptionsManager::GetInstance()->width / 480 - 1);
     windowFullScreenIterator = (short)(OptionsManager::GetInstance()->fullScreen + 1);

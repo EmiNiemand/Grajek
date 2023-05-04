@@ -2,7 +2,7 @@
 #include "GloomEngine.h"
 
 Component::Component(const std::shared_ptr<GameObject> &parent,
-                     int id) : parent(parent), id(id) {}
+                     uint32_t id) : parent(parent), id(id) {}
 
 Component::~Component() = default;
 
@@ -10,7 +10,7 @@ void Component::Destroy(const std::shared_ptr<Component>& component) {
     GloomEngine::GetInstance()->destroyComponentBuffer.emplace_back(component);
 }
 
-int Component::GetId() const {
+uint32_t Component::GetId() const {
     return id;
 }
 

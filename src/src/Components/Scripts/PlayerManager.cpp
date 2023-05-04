@@ -1,7 +1,3 @@
-//
-// Created by masterktos on 30.03.23.
-//
-
 #include "Components/Scripts/PlayerManager.h"
 #include "GloomEngine.h"
 #include "Components/Renderers/Camera.h"
@@ -27,7 +23,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
+PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, uint32_t id)
                             : Component(parent, id) {}
 
 void PlayerManager::Awake() {
@@ -48,7 +44,7 @@ void PlayerManager::Awake() {
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     activeMenu = nullptr;
 
-    BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
+    BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
     Component::Awake();
 }
 
@@ -296,7 +292,7 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     Camera::activeCamera->transform->SetLocalPosition(
             parent->transform->GetGlobalPosition() + Camera::activeCamera->GetComponent<Camera>()->cameraOffset);
     for(const auto& instrument : data->instruments)
-        equipment->BuyInstrument(0, Prefab::GetInstrument(instrument));
+        equipment->BuyInstrument(0, Instrument::GetInstrument(instrument));
 }
 
 void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {

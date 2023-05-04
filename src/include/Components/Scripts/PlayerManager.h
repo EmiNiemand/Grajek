@@ -67,7 +67,7 @@ private:
 	void OnApply();
 
 public:
-    PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
+    PlayerManager(const std::shared_ptr<GameObject> &parent, uint32_t id);
 
     // Session methods
     // Argument pat is null when player failed playing pattern

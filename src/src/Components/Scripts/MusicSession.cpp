@@ -14,7 +14,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
 
 void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
     instrument = std::move(playerInstrument);

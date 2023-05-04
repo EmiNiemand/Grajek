@@ -14,7 +14,7 @@
 /**
  * @attention Remember to call LoadModel if you want model to actually display
  */
-Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {}
+Renderer::Renderer(const std::shared_ptr<GameObject> &parent, uint32_t id) : Drawable(parent, id) {}
 
 Renderer::~Renderer() {
     model.reset();

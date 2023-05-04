@@ -22,7 +22,7 @@ private:
 	bool isPlaying = false;
 
 public:
-    Animator(const std::shared_ptr<GameObject> &parent, int id);
+    Animator(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~Animator() override;
 
     void LoadAnimationModel(const std::string& path);

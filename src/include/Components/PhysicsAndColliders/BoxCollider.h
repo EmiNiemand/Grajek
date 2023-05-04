@@ -17,13 +17,13 @@ private:
     glm::vec3 size{};
     glm::vec3 offset{};
 
-    std::unordered_map<int, std::shared_ptr<GameObject>> collisionsBuffer;
+    std::unordered_map<uint32_t, std::shared_ptr<GameObject>> collisionsBuffer;
 
 public:
     bool isTrigger = false;
 
 public:
-    BoxCollider(const std::shared_ptr<GameObject> &parent, int id);
+    BoxCollider(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~BoxCollider() override;
 
     void Start() override;

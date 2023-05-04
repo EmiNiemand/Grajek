@@ -26,7 +26,7 @@ public:
     glm::vec3 color;
 
 public:
-    Text(const std::shared_ptr<GameObject> &parent, int id);
+    Text(const std::shared_ptr<GameObject> &parent, uint32_t id);
 
     void CreateMesh(float x, float y);
     /**

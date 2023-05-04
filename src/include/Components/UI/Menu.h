@@ -14,7 +14,7 @@ public:
     std::shared_ptr<Button> activeButton;
 
 public:
-    Menu(const std::shared_ptr<GameObject> &parent, int id);
+    Menu(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~Menu() override;
 
     void HideMenu();

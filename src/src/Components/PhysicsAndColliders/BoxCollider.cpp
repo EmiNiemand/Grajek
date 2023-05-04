@@ -4,7 +4,7 @@
 #include "EngineManagers/CollisionManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
-BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
+BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, uint32_t id)
         : Component(parent, id) {
     size = {1.0f, 1.0f, 1.0f};
     offset = {0.0f, 0.0f, 0.0f};
@@ -333,9 +333,9 @@ void BoxCollider::SetCollidersGridPoints() {
         int y = points[0].y;
         if (!CollisionManager::GetInstance()->grid.contains(x))
             CollisionManager::GetInstance()->grid.insert({x, std::unordered_map<int,
-                    std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+                    std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>>()});
         if (!CollisionManager::GetInstance()->grid.at(x).contains(y))
-            CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+            CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>()});
 
         CollisionManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         return;
@@ -357,10 +357,10 @@ void BoxCollider::SetCollidersGridPoints() {
         for (int y = minY; y <= maxY; y++) {
             if (!CollisionManager::GetInstance()->grid.contains(x))
                     CollisionManager::GetInstance()->grid.insert({x, std::unordered_map<int,
-                            std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
+                            std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>>()});
 
             if (!CollisionManager::GetInstance()->grid.at(x).contains(y))
-                    CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
+                    CollisionManager::GetInstance()->grid.at(x).insert({y, std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>()});
 
             CollisionManager::GetInstance()->grid.at(x).at(y).insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         }

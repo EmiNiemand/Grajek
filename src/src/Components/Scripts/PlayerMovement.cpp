@@ -9,7 +9,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
-PlayerMovement::PlayerMovement(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+PlayerMovement::PlayerMovement(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
 
 PlayerMovement::~PlayerMovement() {}
 

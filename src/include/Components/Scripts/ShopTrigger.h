@@ -8,7 +8,7 @@ public:
     bool active = false;
 
 public:
-    ShopTrigger(const std::shared_ptr<GameObject> &parent, int id);
+    ShopTrigger(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~ShopTrigger() override;
 
     void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;

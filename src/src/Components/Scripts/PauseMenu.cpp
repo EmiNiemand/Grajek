@@ -5,7 +5,7 @@
 #include "Components/Scripts/OptionsMenu.h"
 #include "Components/Scripts/PlayerManager.h"
 
-PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
+PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, uint32_t id) : Menu(parent, id) {}
 
 PauseMenu::~PauseMenu() {}
 

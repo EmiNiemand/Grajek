@@ -13,7 +13,7 @@ private:
     std::vector<std::shared_ptr<Button>> buttons;
 
 public:
-    SessionStarter(const std::shared_ptr<GameObject> &parent, int id);
+    SessionStarter(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~SessionStarter() override;
 
     void Setup(const std::set<std::shared_ptr<Instrument>>& instruments);

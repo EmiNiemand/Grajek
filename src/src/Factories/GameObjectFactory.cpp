@@ -2,10 +2,9 @@
 #include "GloomEngine.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Utilities.h"
 
-GameObjectFactory* GameObjectFactory::gameObjectFactory = nullptr;
-
-GameObjectFactory::GameObjectFactory() {}
+GameObjectFactory::GameObjectFactory() = default;
 
 GameObjectFactory* GameObjectFactory::GetInstance() {
     if (gameObjectFactory == nullptr) {
@@ -16,6 +15,15 @@ GameObjectFactory* GameObjectFactory::GetInstance() {
 
 std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
     if(tag == Tags::SCENE) {
+        uint32_t id = Utilities::Hash(name);
+
+        if (GloomEngine::GetInstance()->FindGameObjectWithId(id) != nullptr) {
+            while(true) {
+                id++;
+                if (GloomEngine::GetInstance()->FindGameObjectWithId(id) == nullptr) break;
+            }
+        }
+
         parent = nullptr;
         std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(name, id, parent, tag);
         gameObject->transform = std::make_shared<Transform>(gameObject);
@@ -33,10 +41,18 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
             i++;
         }
     }
+    uint32_t id = Utilities::Hash(name);
+
+    if (GloomEngine::GetInstance()->FindGameObjectWithId(id) != nullptr) {
+        while(true) {
+            id++;
+            if (GloomEngine::GetInstance()->FindGameObjectWithId(id) == nullptr) break;
+        }
+    }
+
     std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(name, id, parent, tag);
     parent->AddChild(gameObject);
     gameObject->transform = std::make_shared<Transform>(gameObject);
     GloomEngine::GetInstance()->AddGameObject(gameObject);
-    id++;
     return gameObject;
 }

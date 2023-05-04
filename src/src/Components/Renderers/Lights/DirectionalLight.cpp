@@ -2,7 +2,7 @@
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 
-DirectionalLight::DirectionalLight(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
+DirectionalLight::DirectionalLight(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {
     ambient = {0.4f, 0.4f, 0.4f};
     diffuse = {0.69f, 0.69f, 0.69f};
     specular = {0.9f, 0.9f, 0.9f};

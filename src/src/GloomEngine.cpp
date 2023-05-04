@@ -317,7 +317,7 @@ void GloomEngine::Free() const {
     glfwTerminate();
 }
 
-std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(int id) {
+std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(uint32_t id) {
     if(!gameObjects.contains(id)) return nullptr;
     return gameObjects.find(id)->second;
 }
@@ -363,8 +363,15 @@ void GloomEngine::InitializeWindow() {
     int monitorHeight = mode->height;
     glfwSetWindowPos(window, monitorWidth / 2 - OptionsManager::GetInstance()->width / 2, monitorHeight / 2 - OptionsManager::GetInstance()->height / 2);
 
+#ifdef RELEASE
     // Enable cursor - change last parameter to disable it
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
+
+#ifdef DEBUG
+    // Enable cursor - change last parameter to disable it
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+#endif
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)

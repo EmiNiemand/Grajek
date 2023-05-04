@@ -11,7 +11,7 @@
 #define BASE_PATH_FONT "res/fonts/"
 #define BASE_PATH_TEXTURE "res/textures/"
 
-Button::Button(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
+Button::Button(const std::shared_ptr<GameObject> &parent, uint32_t id) : UIComponent(parent, id) {}
 
 std::shared_ptr<Mesh> Button::CreateMesh(int x, int y, int width, int height) {
     std::vector<Vertex> vertices;

@@ -21,7 +21,7 @@ private:
     glm::vec3 color;
 
 public:
-    SpotLight(const std::shared_ptr<GameObject> &parent, int id);
+    SpotLight(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~SpotLight() override;
 
     void OnCreate() override;

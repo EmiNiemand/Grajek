@@ -34,7 +34,7 @@ private:
     std::vector<std::shared_ptr<AudioSource>> sampleSources;
 
 public:
-    SessionUI(const std::shared_ptr<GameObject> &parent, int id);
+    SessionUI(const std::shared_ptr<GameObject> &parent, uint32_t id);
 
     void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::shared_ptr<Image> metronome);
     void SetCheatSheet(std::shared_ptr<Image> newCheatSheet);

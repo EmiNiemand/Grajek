@@ -7,7 +7,7 @@
 #include "Components/UI/Text.h"
 #include "Utilities.h"
 
-PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
+PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, uint32_t id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("CashText", parent)->AddComponent<Text>();
     repText = GameObject::Instantiate("RepText", parent)->AddComponent<Text>();

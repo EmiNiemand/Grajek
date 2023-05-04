@@ -33,11 +33,11 @@ class CharacterMovement : public Component {
 
 public:
 
-    CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
+    CharacterMovement(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~CharacterMovement() override;
 
     void Start() override;
-    void Update() override;
+    void FixedUpdate() override;
     void AIUpdate() override;
     void OnDestroy() override;
     void Free();

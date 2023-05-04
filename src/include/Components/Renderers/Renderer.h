@@ -7,11 +7,11 @@ class StaticModel;
 
 class Renderer : public Drawable {
 private:
-    inline static std::unordered_map<uint32_t, std::shared_ptr<StaticModel>> models;
+    inline static std::unordered_map<uint64_t, std::shared_ptr<StaticModel>> models;
     std::shared_ptr<StaticModel> model;
 
 public:
-    Renderer(const std::shared_ptr<GameObject> &parent, int id);
+    Renderer(const std::shared_ptr<GameObject> &parent, uint32_t id);
     ~Renderer() override;
 
 

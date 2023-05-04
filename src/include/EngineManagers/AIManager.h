@@ -30,7 +30,7 @@ public:
     //TODO: Implement!
     //std::vector<std::shared_ptr<GameObject>> buildings;
     std::vector<std::shared_ptr<GameObject> (*)(std::string)> charactersPrefabs;
-    std::unordered_map<int, std::shared_ptr<GameObject>> currentCharacters;
+    std::unordered_map<uint32_t, std::shared_ptr<GameObject>> currentCharacters;
 
     AIManager(AIManager &other) = delete;
     void operator=(const AIManager&) = delete;

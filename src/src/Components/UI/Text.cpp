@@ -9,7 +9,7 @@
 
 #define BASE_PATH "res/fonts/"
 
-Text::Text(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
+Text::Text(const std::shared_ptr<GameObject> &parent, uint32_t id) : UIComponent(parent, id) {}
 
 void Text::CreateMesh(float x, float y) {
     std::vector<Vertex> vertices;

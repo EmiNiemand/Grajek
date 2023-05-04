@@ -11,7 +11,7 @@
 
 #define BASE_PATH "res/textures/"
 
-Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
+Image::Image(const std::shared_ptr<GameObject> &parent, uint32_t id) : UIComponent(parent, id) {}
 
 std::shared_ptr<Mesh> Image::CreateMesh(int x, int y, int width, int height, float z) {
     std::vector<Vertex> vertices;

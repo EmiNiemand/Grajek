@@ -13,7 +13,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
+CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) { }
 
 CharacterMovement::~CharacterMovement() = default;
 
@@ -24,7 +24,7 @@ void CharacterMovement::Start() {
     Component::Start();
 }
 
-void CharacterMovement::Update() {
+void CharacterMovement::FixedUpdate() {
     currentPosition = parent->transform->GetLocalPosition();
 
     if (!path.empty()) {
@@ -48,7 +48,7 @@ void CharacterMovement::Update() {
             path.erase(path.begin());
     }
 
-    Component::Update();
+    Component::FixedUpdate();
 }
 
 void CharacterMovement::AIUpdate() {
