@@ -20,7 +20,7 @@ private:
     float alpha = 1.0f;
 
 public:
-    Image(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    Image(const std::shared_ptr<GameObject> &parent, int id);
 
     static std::shared_ptr<Mesh> CreateMesh(int x, int y, int width, int height, float z = 0);
     /**

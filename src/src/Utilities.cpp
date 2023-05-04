@@ -21,7 +21,7 @@ Utilities *Utilities::GetInstance() {
     return utilities;
 }
 
-uint64_t Utilities::Hash(const std::string& text) {
+int Utilities::Hash(const std::string& text) {
     std::hash<std::string> hash;
-    return hash(text);
+    return (int)hash(text);
 }

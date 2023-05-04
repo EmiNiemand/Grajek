@@ -20,7 +20,7 @@ public:
     int cash = 0;
     int rep = 0;
 
-    PlayerEquipment(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerEquipment() override;
 
     void Setup(int startCash=0, int startRep=0);

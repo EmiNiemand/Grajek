@@ -10,7 +10,7 @@ class GameObject;
 
 class Component : public std::enable_shared_from_this<Component> {
 protected:
-    uint32_t id;
+    int id;
     std::shared_ptr<GameObject> parent;
 
 public:
@@ -18,7 +18,7 @@ public:
     bool callOnStart = true;
     bool enabled = true;
 
-    Component(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    Component(const std::shared_ptr<GameObject> &parent, int id);
     virtual ~Component() = 0;
 
     static void Destroy(const std::shared_ptr<Component>& component);

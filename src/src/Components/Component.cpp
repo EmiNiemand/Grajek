@@ -2,7 +2,7 @@
 #include "GloomEngine.h"
 
 Component::Component(const std::shared_ptr<GameObject> &parent,
-                     uint32_t id) : parent(parent), id(id) {}
+                     int id) : parent(parent), id(id) {}
 
 Component::~Component() = default;
 

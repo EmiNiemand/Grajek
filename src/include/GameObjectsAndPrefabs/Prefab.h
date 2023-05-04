@@ -13,7 +13,7 @@ protected:
     std::string prefabName;
 
 public:
-    Prefab(const std::string &name, uint32_t id, const std::shared_ptr<GameObject>& parent, Tags tag);
+    Prefab(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
 
     template<class T>
     static std::shared_ptr<GameObject> Instantiate(std::string objectName = typeid(T).name()) {

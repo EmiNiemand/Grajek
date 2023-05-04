@@ -35,7 +35,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "ProjectSettings.h"
-#include <unordered_map>
+#include <map>
 #include <string>
 
 class GameObjectFactory;
@@ -59,8 +59,8 @@ private:
     /// Do not touch this variable
     inline static GloomEngine* gloomEngine;
 
-    std::unordered_map<uint32_t, std::shared_ptr<GameObject>> gameObjects = {};
-    std::unordered_map<uint32_t, std::shared_ptr<Component>> components = {};
+    std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
+    std::map<int, std::shared_ptr<Component>> components = {};
 
 public:
     GLFWwindow* window;
@@ -121,7 +121,7 @@ public:
     /// Free memory
     void Free() const;
 
-    std::shared_ptr<GameObject> FindGameObjectWithId(uint32_t id);
+    std::shared_ptr<GameObject> FindGameObjectWithId(int id);
     std::shared_ptr<GameObject> FindGameObjectWithName(const std::string& name);
 
     void AddGameObject(const std::shared_ptr<GameObject>& gameObject);

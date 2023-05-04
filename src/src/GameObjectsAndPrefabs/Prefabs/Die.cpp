@@ -2,7 +2,7 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 
-Die::Die(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+Die::Die(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
              Prefab(name, id, parent, tag) {
     prefabName = "Die";
 }

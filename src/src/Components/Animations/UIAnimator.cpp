@@ -8,7 +8,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-UIAnimator::UIAnimator(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
+UIAnimator::UIAnimator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 void UIAnimator::Setup(std::shared_ptr<Image> animatedImage,
                        std::vector<AnimationCheckpoint> animation,

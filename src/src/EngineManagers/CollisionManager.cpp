@@ -90,7 +90,7 @@ void CollisionManager::Free() {
     grid.clear();
 }
 
-void CollisionManager::RemoveBoxCollider(uint32_t componentId) {
+void CollisionManager::RemoveBoxCollider(int componentId) {
     for (const auto& gridX : grid) {
         for (const auto& gridY : grid.at(gridX.first)) {
             if (grid.at(gridX.first).at(gridY.first).contains(componentId))
@@ -108,11 +108,11 @@ void CollisionManager::OnBoxCollidersChange() {
 
     if (!CollisionManager::GetInstance()->grid.contains(playerPosition.x))
         CollisionManager::GetInstance()->grid.insert({playerPosition.x, std::unordered_map<int,
-            std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>>()});
+            std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
 
     if (!CollisionManager::GetInstance()->grid.at(playerPosition.x).contains(playerPosition.y))
         CollisionManager::GetInstance()->grid.at(playerPosition.x).insert({playerPosition.y,
-            std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>()});
+            std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
 
 
     for (auto&& col : grid.at(playerPosition.x).at(playerPosition.y)) {

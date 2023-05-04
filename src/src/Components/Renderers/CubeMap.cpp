@@ -16,7 +16,7 @@
 #define BASE_PATH "res/textures/"
 
 
-CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, uint32_t id) : Drawable(parent, id) {
+CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
     skyboxMesh = Shape::Cube::GetWithNormals(std::vector<Texture>());
 }
 

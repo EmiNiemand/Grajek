@@ -8,7 +8,7 @@ public:
     bool gameShouldExit = false;
 
 public:
-    MainMenu(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    MainMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~MainMenu() override;
 
     void Start() override;

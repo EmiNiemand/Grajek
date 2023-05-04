@@ -20,7 +20,7 @@ private:
     bool loopingAnimation;
 
 public:
-    UIAnimator(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    UIAnimator(const std::shared_ptr<GameObject> &parent, int id);
 
     void Setup(std::shared_ptr<Image> animatedImage,
                std::vector<AnimationCheckpoint> animation,

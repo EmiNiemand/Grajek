@@ -1,7 +1,7 @@
 #include "Components/Scripts/ShopTrigger.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
-ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
+ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 ShopTrigger::~ShopTrigger() = default;
 

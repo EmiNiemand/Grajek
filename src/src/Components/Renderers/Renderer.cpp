@@ -14,7 +14,7 @@
 /**
  * @attention Remember to call LoadModel if you want model to actually display
  */
-Renderer::Renderer(const std::shared_ptr<GameObject> &parent, uint32_t id) : Drawable(parent, id) {}
+Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {}
 
 Renderer::~Renderer() {
     model.reset();
@@ -67,7 +67,7 @@ void Renderer::Draw(std::shared_ptr<Shader> shader) {
 void Renderer::LoadModel(std::string path) {
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
-    uint32_t hash = Utilities::Hash(newPath);
+    int hash = Utilities::Hash(newPath);
 
     if (!models.contains(hash)) {
         models.insert({hash, std::make_shared<StaticModel>(normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});

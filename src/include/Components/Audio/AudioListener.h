@@ -20,7 +20,7 @@ class AudioListener : public Component {
     float gain = 1.0f;
 
 public:
-    AudioListener(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    AudioListener(const std::shared_ptr<GameObject> &parent, int id);
     ~AudioListener() override;
 
     void Start() override;

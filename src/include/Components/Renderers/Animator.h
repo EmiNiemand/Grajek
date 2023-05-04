@@ -12,8 +12,8 @@
 
 class Animator : public Drawable {
 private:
-    inline static std::unordered_map<uint32_t, std::shared_ptr<AnimationModel>> animationModels;
-    inline static std::unordered_map<uint32_t, std::shared_ptr<Animation>> animations;
+    inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
+    inline static std::unordered_map<int, std::shared_ptr<Animation>> animations;
 
     std::vector<glm::mat4> finalBoneMatrices;
     std::shared_ptr<Animation> currentAnimation;
@@ -22,7 +22,7 @@ private:
 	bool isPlaying = false;
 
 public:
-    Animator(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    Animator(const std::shared_ptr<GameObject> &parent, int id);
     ~Animator() override;
 
     void LoadAnimationModel(const std::string& path);

@@ -33,7 +33,7 @@ private:
 public:
     std::shared_ptr<Instrument> instrument;
 
-    MusicSession(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    MusicSession(const std::shared_ptr<GameObject> &parent, int id);
     void Setup(std::shared_ptr<Instrument> playerInstrument);
     void Stop();
     void Update() override;

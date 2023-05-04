@@ -27,7 +27,7 @@ class AudioManager {
 
 public:
     std::shared_ptr<AudioListener> audioListener;
-    std::unordered_map<uint32_t, std::shared_ptr<AudioSource>> audioSources;
+    std::unordered_map<int, std::shared_ptr<AudioSource>> audioSources;
 
 //    Currently unused, maybe in future for audio streaming
 //    std::unordered_map<ALuint, std::shared_ptr<AudioSource>> audioBuffers;
@@ -40,7 +40,7 @@ public:
     void Free();
 
     void InitializeAudio();
-    void RemoveAudioSource(uint32_t componentId);
+    void RemoveAudioSource(int componentId);
 
 };
 

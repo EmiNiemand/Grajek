@@ -8,7 +8,7 @@ class Button;
 
 class ShopMenu : public Menu {
 public:
-    ShopMenu(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    ShopMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~ShopMenu() override;
 
     void Start() override;

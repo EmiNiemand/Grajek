@@ -17,7 +17,7 @@ private:
     glm::vec3 color;
 
 public:
-    PointLight(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    PointLight(const std::shared_ptr<GameObject> &parent, int id);
     ~PointLight() override;
 
     void OnCreate() override;

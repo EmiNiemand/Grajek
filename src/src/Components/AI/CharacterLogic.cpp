@@ -12,7 +12,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) { }
+CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
 
 CharacterLogic::~CharacterLogic() = default;
 

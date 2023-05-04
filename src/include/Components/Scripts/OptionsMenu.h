@@ -25,7 +25,7 @@ private:
     int shadowResolutionButtonY[4] = {0, 175, 395, 600};
 
 public:
-    OptionsMenu(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    OptionsMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~OptionsMenu() override;
 
     void Start() override;

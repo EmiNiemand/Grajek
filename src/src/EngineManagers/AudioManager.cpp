@@ -48,7 +48,7 @@ void AudioManager::InitializeAudio() {
     deviceChanger = std::jthread(CheckAudioDevice, &audioDevice);
 }
 
-void AudioManager::RemoveAudioSource(uint32_t componentId) {
+void AudioManager::RemoveAudioSource(int componentId) {
     if (audioSources.contains(componentId)) {
         audioSources.at(componentId)->Free();
         audioSources.erase(componentId);

@@ -13,7 +13,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-GameObjectAnimator::GameObjectAnimator(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
+GameObjectAnimator::GameObjectAnimator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 void GameObjectAnimator::Setup(std::shared_ptr<Transform> animatedTransform,
                                std::vector<AnimationCheckpoint> animation,

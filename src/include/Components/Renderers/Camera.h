@@ -21,7 +21,7 @@ public:
     bool isZoomed = false;
 
 public:
-    Camera(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    Camera(const std::shared_ptr<GameObject> &parent, int id);
     ~Camera() override;
 
     void Start() override;

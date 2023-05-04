@@ -6,7 +6,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerManager.h"
 
-Player::Player(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+Player::Player(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
                                                                                 Prefab(name, id, parent, tag) {
     prefabName = "PlayerPrefab";
 }

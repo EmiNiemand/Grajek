@@ -33,7 +33,7 @@ class CharacterMovement;
 
 class ComponentFactory {
 private:
-    uint32_t id = 0;
+    int id = 0;
     inline static ComponentFactory* componentFactory;
 
 public:

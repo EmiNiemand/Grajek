@@ -11,7 +11,7 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
+AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 AudioSource::~AudioSource() = default;
 

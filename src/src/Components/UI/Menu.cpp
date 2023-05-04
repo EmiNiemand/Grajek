@@ -5,7 +5,7 @@
 #include "Components/UI/Text.h"
 #include "Components/UI/Button.h"
 
-Menu::Menu(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
+Menu::Menu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Menu::~Menu() = default;
 
