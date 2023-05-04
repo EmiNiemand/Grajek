@@ -20,6 +20,7 @@ class CharacterMovement : public Component {
     std::shared_ptr<Transform> playerTransform;
     std::shared_ptr<Rigidbody> rigidbody;
     std::vector<glm::vec3> path;
+    glm::vec3 newPosition {};
     glm::vec3 endTarget {};
     glm::vec3 previousTarget {};
     glm::vec3 currentPosition {};
@@ -34,7 +35,7 @@ public:
     ~CharacterMovement() override;
 
     void Start() override;
-    void Update() override;
+    void FixedUpdate() override;
     void AIUpdate() override;
     void OnDestroy() override;
     void Free();

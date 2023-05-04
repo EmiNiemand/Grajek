@@ -23,13 +23,13 @@ void CharacterLogic::Start() {
     Component::Start();
 }
 
-void CharacterLogic::AIUpdate() {
-    Component::AIUpdate();
-}
-
-void CharacterLogic::OnCreate() {
-    Component::OnCreate();
-}
+//void CharacterLogic::AIUpdate() {
+//    Component::AIUpdate();
+//}
+//
+//void CharacterLogic::OnCreate() {
+//    Component::OnCreate();
+//}
 
 void CharacterLogic::OnDestroy() {
     characterMovement = nullptr;

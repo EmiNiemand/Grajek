@@ -26,18 +26,18 @@ void CharacterMovement::Start() {
     Component::Start();
 }
 
-void CharacterMovement::Update() {
+void CharacterMovement::FixedUpdate() {
     currentPosition = parent->transform->GetLocalPosition();
 
     if (!path.empty()) {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
-        glm::vec3 newPos = {path.begin()->x - currentPosition.x, 0, path.begin()->z - currentPosition.z};
-        newPos = glm::normalize(newPos) * (speed * speedMultiplier);
+        newPosition = {path.begin()->x - currentPosition.x, 0, path.begin()->z - currentPosition.z};
+        newPosition = glm::normalize(newPosition) * speed * speedMultiplier;
 
-        rigidbody->AddForce(newPos, ForceMode::Force);
+        rigidbody->AddForce(newPosition, ForceMode::Force);
 
-        rotationAngle = std::atan2f(-newPos.x, -newPos.z) * 180.0f/std::numbers::pi;
+        rotationAngle = std::atan2f(-newPosition.x, -newPosition.z) * 180.0f/std::numbers::pi;
 
         if (rotationAngle < 0.0f) {
             rotationAngle += 360.0f;
@@ -49,7 +49,7 @@ void CharacterMovement::Update() {
             path.erase(path.begin());
     }
 
-    Component::Update();
+    Component::FixedUpdate();
 }
 
 void CharacterMovement::AIUpdate() {
