@@ -23,6 +23,9 @@ public:
     static std::shared_ptr<GameObject> GetMainMenuScene(std::string name="MainMenuScene");
     // Instruments
     static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);
+
+    static std::vector<std::shared_ptr<GameObject> (*)(std::string)>& GetCharacters();
+    static std::shared_ptr<GameObject> GetDefaultCharacter(std::string name);
 };
 
 
