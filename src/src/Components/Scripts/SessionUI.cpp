@@ -17,6 +17,14 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     metronomeVisualEnabled = true;
 
     metronomeImage = std::move(metronome);
+    GameObject::Instantiate("MetronomeAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(metronomeImage, {
+            {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
+    }, true);
+
+    tickSound = parent->AddComponent<AudioSource>();
+    tickSound->LoadAudioData("res/sounds/direct/tick.wav", AudioType::Direct);
+    tickSound->IsLooping(false);
 
     accuracyFeedback = GameObject::Instantiate("AccuracyFeedback", parent)->AddComponent<Text>();
     accuracyFeedback->LoadFont("Good", 960, 540, 60, Color::White, GameFont::KanitLight);
@@ -139,4 +147,11 @@ void SessionUI::UpdateAccuracy(float fraction) {
     accuracyFeedback->text = accuracyTexts[index];
     accuracyFeedback->color = accuracyColors[index];
     spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
+}
+
+void SessionUI::Update() {
+    if (metronomeImage->GetAlpha() == 1.0f) {
+        tickSound->PlaySound();
+    }
+    Component::Update();
 }
