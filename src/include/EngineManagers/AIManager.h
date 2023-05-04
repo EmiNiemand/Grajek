@@ -44,6 +44,7 @@ public:
     void InitializeSpawner(const int& min, const int& max, const int& delay);
     void NotifyPlayerStartsPlaying();
     void NotifyPlayerStopsPlaying();
+	void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
 
 };
 

@@ -22,6 +22,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/OptionsManager.h"
+#include "EngineManagers/AIManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -173,6 +174,7 @@ void PlayerManager::OnSessionToggle() {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
+		AIManager::GetInstance()->NotifyPlayerStopsPlaying();
         return;
     }
     if (sessionStarter) {
@@ -187,6 +189,7 @@ void PlayerManager::OnSessionToggle() {
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
     sessionStarter->Setup(equipment->instruments);
+	AIManager::GetInstance()->NotifyPlayerStartsPlaying();
 }
 
 void PlayerManager::OnSoundPlay(int index) {
@@ -203,7 +206,7 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     //TODO: uncomment when crowd manager gets implemented
-//        crowdManager.PlayedPattern(pat);
+	AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
 
     if (!pat) return;
 
