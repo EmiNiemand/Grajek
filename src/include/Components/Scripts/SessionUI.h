@@ -28,6 +28,7 @@ private:
     bool metronomeSoundEnabled;
     bool metronomeVisualEnabled;
     std::shared_ptr<Image> metronomeImage;
+    std::shared_ptr<AudioSource> tickSound;
 
     std::shared_ptr<Image> cheatSheet;
     bool cheatSheetActive = false;
@@ -43,6 +44,8 @@ public:
     void ToggleCheatSheet();
     // Fraction values: <0, 1>
     void UpdateAccuracy(float fraction);
+
+    void Update() override;
 };
 
 

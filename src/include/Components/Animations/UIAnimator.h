@@ -4,8 +4,10 @@
 #include <vector>
 #include "Components/Component.h"
 #include "glm/vec3.hpp"
-#include "GameObjectAnimator.h"
 #include "Components/UI/Image.h"
+
+enum AnimatedProperty { Position, Rotation, Scale, Color, Alpha };
+struct AnimationCheckpoint { AnimatedProperty property; glm::vec3 value; float duration=1; };
 
 class UIAnimator : public Component {
 private:

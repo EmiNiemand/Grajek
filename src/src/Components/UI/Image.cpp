@@ -137,6 +137,10 @@ glm::vec3 Image::GetColor() {
     return color;
 }
 
+float Image::GetAlpha() {
+    return alpha;
+}
+
 void Image::SetColor(glm::vec3 newColor) {
     color = newColor;
     if (color.x < 0.0f) color.x = 0.0f;
@@ -145,6 +149,12 @@ void Image::SetColor(glm::vec3 newColor) {
     if (color.x > 1.0f) color.x = 1.0f;
     if (color.y > 1.0f) color.y = 1.0f;
     if (color.z > 1.0f) color.z = 1.0f;
+}
+
+void Image::SetAlpha(float newAlpha) {
+    alpha = newAlpha;
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
 }
 
 void Image::Update() {
@@ -159,6 +169,7 @@ void Image::Draw() {
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     UIManager::GetInstance()->shader->SetVec3("color", color);
+    UIManager::GetInstance()->shader->SetFloat("alpha", alpha);
     glActiveTexture(GL_TEXTURE0);
     UIManager::GetInstance()->shader->SetInt("texture1", 0);
     glBindTexture(GL_TEXTURE_2D, textureID);
