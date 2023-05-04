@@ -24,7 +24,7 @@ class AIManager {
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& maxCharacters,
+    static void SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying, const int& maxCharacters,
                                 const int& spawnDelay, const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
                                 std::unordered_map<int, std::shared_ptr<GameObject>>* currentCharacters);
 
@@ -42,9 +42,9 @@ public:
     void Free();
 
     void InitializeSpawner(const int& min, const int& max, const int& delay);
-    void NotifyPlayerStartsPlaying();
+    void NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyPlayerStopsPlaying();
-	void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
+    void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
 
 };
 

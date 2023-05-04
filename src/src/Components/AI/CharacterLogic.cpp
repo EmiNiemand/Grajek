@@ -17,7 +17,6 @@ CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id
 CharacterLogic::~CharacterLogic() = default;
 
 void CharacterLogic::Start() {
-    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     characterMovement = parent->GetComponent<CharacterMovement>();
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
 
@@ -33,34 +32,30 @@ void CharacterLogic::OnCreate() {
 }
 
 void CharacterLogic::OnDestroy() {
-    player = nullptr;
     characterMovement = nullptr;
-    favGenres.clear();
     favInstrumentsNames.clear();
+    favGenres.clear();
+    favPatterns.clear();
     Component::OnDestroy();
 }
 
 void CharacterLogic::Free() {
-    player = nullptr;
     characterMovement = nullptr;
-    favGenres.clear();
     favInstrumentsNames.clear();
+    favGenres.clear();
+    favPatterns.clear();
 }
 
 void CharacterLogic::SetPathToPlayer() {
     currentState = WalkingToPlayer;
 
-    glm::vec3 newPosition = player->GetLocalPosition();
-    newPosition.x - RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
-    newPosition.z - RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
-
-    characterMovement->SetNewPathToPlayer(newPosition);
+    characterMovement->SetNewPath(currentState);
 }
 
 void CharacterLogic::ReturnToPreviousPath() {
     currentState = TraversingOnPath;
 
-    characterMovement->ReturnToPreviousPath();
+    characterMovement->SetNewPath(currentState);
 }
 
 void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, const MusicGenre& gen) {
@@ -68,48 +63,39 @@ void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, cons
     playerGenre = gen;
 }
 
-//void CharacterLogic::SetPlayerPattern() {
-//    playerPattern = pat;
-//
-//    if (favPatterns.Contains(playerPattern)) {
-//        currSatisfaction += 15;
-//
-//        if (currSatisfaction > 100)
-//            currSatisfaction = 100;
-//
-//    } else
-//        currSatisfaction -= 5;
-//
-//        if (currSatisfaction < 0)
-//            currSatisfaction = 0;
-//    }
-//
-//    if (currSatisfaction > minSatisfaction && !onPathToPlayer) {
-//        onPathToPlayer = true;
-//        SetPathToPlayer();
-//    } else if (currSatisfaction < minSatisfaction && onPathToPlayer) {
-//        onPathToPlayer = false;
-//        ReturnToPreviousPath();
-//    }
-//
-//    SetSatisfactionIndicator();
-//}
+void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) {
+    playerPattern = pat;
+
+    if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern) != favPatterns.end()) {
+        currentSatisfaction += 15;
+
+        if (currentSatisfaction > 100)
+            currentSatisfaction = 100;
+    } else {
+        currentSatisfaction -= 5;
+
+        if (currentSatisfaction < 0)
+            currentSatisfaction = 0;
+    }
+
+    if (currentSatisfaction >= minSatisfaction && currentState == TraversingOnPath) {
+        SetPathToPlayer();
+    } else if (currentSatisfaction < minSatisfaction && currentState == WalkingToPlayer) {
+        ReturnToPreviousPath();
+    }
+}
 
 void CharacterLogic::SetPlayerPlayingStatus(bool state) {
     if (state) {
         currentState = AlertedByPlayer;
         CalculateSatisfaction();
     } else {
-        currentState = TraversingOnPath;
+        ReturnToPreviousPath();
     }
 }
 
-const float CharacterLogic::GetCurrentSatisfaction() const {
-    return currentSatisfaction;
-}
-
 void CharacterLogic::CalculateSatisfaction() {
-    currentSatisfaction = 0;
+    currentSatisfaction = 100;
 
     if (currentState == AlertedByPlayer)
     {
@@ -125,6 +111,8 @@ void CharacterLogic::CalculateSatisfaction() {
     } else {
         ReturnToPreviousPath();
     }
+}
 
-//    SetSatisfactionIndicator();
+const float CharacterLogic::GetCurrentSatisfaction() const {
+    return currentSatisfaction;
 }

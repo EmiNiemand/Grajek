@@ -43,8 +43,8 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
         currentCharacters.insert({i, func(name)});
     }
 
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, maxCharacters, spawnDelay, charactersPrefabs,
-                                    &currentCharacters);
+    characterSpawner = std::jthread(SpawnCharacters, std::ref(mutex), playerIsPlaying, maxCharacters, spawnDelay,
+                                    charactersPrefabs, &currentCharacters);
 }
 
 void AIManager::Free() {
@@ -54,12 +54,13 @@ void AIManager::Free() {
     currentCharacters.clear();
 }
 
-void AIManager::NotifyPlayerStartsPlaying() {
+void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
     mutex.lock();
 
     playerIsPlaying = true;
 
     for (auto&& ch : currentCharacters) {
+        ch.second->GetComponent<CharacterLogic>()->SetPlayerInstrumentAndGenre(ins, gen);
         ch.second->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
     }
 
@@ -78,8 +79,18 @@ void AIManager::NotifyPlayerStopsPlaying() {
     mutex.unlock();
 }
 
-void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& maxCharacters,
-                                const int& spawnDelay,
+void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
+    mutex.lock();
+
+    for (auto&& ch : currentCharacters) {
+        ch.second->GetComponent<CharacterLogic>()->SetPlayerPattern(pat);
+    }
+
+    mutex.unlock();
+}
+
+void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
+                                const int& maxCharacters, const int& spawnDelay,
                                 const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
                                 std::unordered_map<int, std::shared_ptr<GameObject>>* currentCharacters) {
 
@@ -96,10 +107,15 @@ void AIManager::SpawnCharacters(const std::stop_token& token, const bool& player
 
             auto ch = func(name);
 
+            mutex.lock();
+
             if (playerIsPlaying)
                 ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 
             currentCharacters->insert({charactersAmount, ch});
+
+            mutex.unlock();
+
             ++charactersAmount;
         }
 

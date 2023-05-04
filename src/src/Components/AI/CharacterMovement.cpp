@@ -20,10 +20,9 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 CharacterMovement::~CharacterMovement() = default;
 
 void CharacterMovement::Start() {
-
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     rigidbody = parent->GetComponent<Rigidbody>();
-    SetNewRandomPoint();
-    CalculateNewPath();
+
     Component::Start();
 }
 
@@ -54,7 +53,7 @@ void CharacterMovement::Update() {
 }
 
 void CharacterMovement::AIUpdate() {
-    if (path.empty() && !isAlarmed) {
+    if (path.empty() && logicState != WalkingToPlayer) {
         SetNewRandomPoint();
         CalculateNewPath();
     }
@@ -76,32 +75,20 @@ void CharacterMovement::Free() {
 void CharacterMovement::SetNewRandomPoint() {
     endTarget.x = RandomnessManager::GetInstance()->GetFloat(-25, 25);
     endTarget.z = RandomnessManager::GetInstance()->GetFloat(-25, 25);
-}
-
-void CharacterMovement::SetNewPathToPlayer(glm::vec3 playerPosition) {
     previousTarget = endTarget;
-    endTarget = playerPosition;
-    isAlarmed = true;
-    speedMultiplier = 2.0f;
-    CalculateNewPath();
-}
-
-void CharacterMovement::ReturnToPreviousPath() {
-    endTarget = previousTarget;
-    isAlarmed = false;
-    speedMultiplier = 1.0f;
-    CalculateNewPath();
 }
 
 void CharacterMovement::SetNewPath(AI_STATE state) {
-    if (state == WalkingToPlayer) {
+    logicState = state;
+
+    if (logicState == WalkingToPlayer) {
         previousTarget = endTarget;
-        endTarget = playerPosition;
-        isAlarmed = true;
+        endTarget = playerTransform->GetLocalPosition();
+        endTarget.x -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
+        endTarget.z -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         speedMultiplier = 2.0f;
-    } else if (state == TraversingOnPath) {
+    } else if (logicState == TraversingOnPath) {
         endTarget = previousTarget;
-        isAlarmed = false;
         speedMultiplier = 1.0f;
     }
 

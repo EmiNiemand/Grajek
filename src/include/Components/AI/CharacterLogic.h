@@ -11,6 +11,7 @@
 #include "Components/Component.h"
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterStates.h"
+#include "Components/Scripts/PlayerManager.h"
 #include <vector>
 #include <unordered_map>
 
@@ -18,7 +19,6 @@ class GameObject;
 class CharacterMovement;
 
 class CharacterLogic : public Component {
-    std::shared_ptr<Transform> player;
     std::shared_ptr<CharacterMovement> characterMovement;
     float minSatisfaction = 0;
     float currentSatisfaction = 0;
@@ -26,12 +26,12 @@ class CharacterLogic : public Component {
 
     InstrumentName playerInstrumentName;
     MusicGenre playerGenre;
-// Music.Helpers.Pattern playerPattern;
+    std::shared_ptr<MusicPattern> playerPattern;
 
 public:
     std::vector<InstrumentName> favInstrumentsNames;
     std::vector<MusicGenre> favGenres;
-//    [SerializeField] public List<Music.Helpers.Pattern> favPatterns;
+    std::vector<std::shared_ptr<MusicPattern>> favPatterns;
 
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;
@@ -42,11 +42,12 @@ public:
     void OnDestroy() override;
     void Free();
 
-    void CalculateSatisfaction();
     void SetPathToPlayer();
     void ReturnToPreviousPath();
     void SetPlayerInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
+    void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pat);
     void SetPlayerPlayingStatus(bool state);
+    void CalculateSatisfaction();
     const float GetCurrentSatisfaction() const;
 
 };

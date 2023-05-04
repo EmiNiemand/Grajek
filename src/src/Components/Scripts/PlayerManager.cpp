@@ -189,7 +189,6 @@ void PlayerManager::OnSessionToggle() {
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
     sessionStarter->Setup(equipment->instruments);
-	AIManager::GetInstance()->NotifyPlayerStartsPlaying();
 }
 
 void PlayerManager::OnSoundPlay(int index) {
@@ -225,6 +224,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     activeMenu.reset();
     session = parent->AddComponent<MusicSession>();
     session->Setup(equipment->GetInstrumentWithName(instrument));
+    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 }
 
 void PlayerManager::OnCheatSheetToggle() {
