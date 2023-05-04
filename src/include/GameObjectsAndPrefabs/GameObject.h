@@ -85,7 +85,8 @@ public:
 
     void RecalculateGlobalRotation();
 
-    StaticObjData SaveStatic();
+    std::shared_ptr<StaticObjData> SaveStatic();
+    void LoadStatic(std::shared_ptr<StaticObjData> &data);
 };
 
 

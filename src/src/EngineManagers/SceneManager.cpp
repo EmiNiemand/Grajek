@@ -60,9 +60,8 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
     staticObjectsData = fileDataHandler.LoadMap();
 
-    std::vector<std::shared_ptr<IStaticSaveable>> dataPersistanceObjects = FindAllStaticSaveableObjects();
-
-    for (const auto &object: dataPersistanceObjects) {
+    for (const auto &object: staticObjectsData) {
+        //Create new gameObjects using data from the file(check if it already exists and if yes then just update the values)
         //GameObject newchild = GameObject(object);
         //activeScene->AddChild();
     }

@@ -10,7 +10,7 @@
 
 class StaticObjData {
 public:
-    glm::vec3 pos;
+    glm::vec3 position;
     glm::vec3 rot;
     glm::vec3 scale;
 

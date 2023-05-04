@@ -131,6 +131,10 @@ void GameObject::RecalculateGlobalRotation() {
     }
 }
 
-StaticObjData GameObject::SaveStatic() {
+std::shared_ptr<StaticObjData> GameObject::SaveStatic() {
     return StaticObjData();
+}
+
+void GameObject::LoadStatic(std::shared_ptr<StaticObjData> &data) {
+
 }

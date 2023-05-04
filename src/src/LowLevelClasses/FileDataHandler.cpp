@@ -85,10 +85,82 @@ void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_pt
 }
 
 std::vector<std::shared_ptr<StaticObjData>> FileDataHandler::LoadMap() {
-    return std::vector<std::shared_ptr<StaticObjData>>();
+    std::filesystem::path path(dataDirectoryPath);
+    path /= dataFileName + ".json";
+#ifdef DEBUG
+    spdlog::info("Save path: " + path.string());
+#endif
+
+    std::vector<std::shared_ptr<StaticObjData>> mapData = {};
+
+    try {
+        std::ifstream input(path);
+
+        nlohmann::json json;
+        input >> json;
+        from_json(json, mapData);
+    }
+    catch (std::exception e) {
+        spdlog::info("Failed to read a file content at path: " + path.string());
+    }
+
+    return mapData;
 }
 
 void FileDataHandler::SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData) {
+    std::filesystem::path path(dataDirectoryPath);
+    path /= dataFileName + ".json";
 
+#ifdef DEBUG
+    spdlog::info("Save path: " + path.string());
+#endif
+
+    try {
+        nlohmann::json json;
+        to_json(json, mapData);
+
+        std::ofstream saveFile(path);
+        saveFile << json << std::endl;
+    }
+    catch(std::exception e) {
+        spdlog::info("Failed to write a MAP file content at path: " + path.string());
+    }
+}
+
+void FileDataHandler::to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData) {
+    json = nlohmann::json::array({});
+    nlohmann::json objectJson;
+    for (const auto& object: mapData){
+        objectJson.clear();
+        objectJson["position.x"] = object->position.x;
+        objectJson["position.y"] = object->position.y;
+        objectJson["position.z"] = object->position.z;
+
+        objectJson["rotation.x"] = object->position.x;
+        objectJson["rotation.y"] = object->position.y;
+        objectJson["rotation.z"] = object->position.z;
+
+        objectJson["scale.x"] = object->position.x;
+        objectJson["scale.y"] = object->position.y;
+        objectJson["scale.z"] = object->position.z;
+
+        json.emplace(objectJson);
+    }
+
+}
+
+void FileDataHandler::from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData) {
+    mapData.clear();
+    std::shared_ptr<StaticObjData> newObject;
+for (const auto& object: json){
+    newObject = std::make_shared<StaticObjData>();
+    newObject->position.x = object["position.x"];
+    newObject->position.y = object["position.y"];
+    newObject->position.z = object["position.z"];
+
+    newObject->position.x = object["position.x"];
+    newObject->position.y = object["position.y"];
+    newObject->position.z = object["position.z"];
+}
 }
 
