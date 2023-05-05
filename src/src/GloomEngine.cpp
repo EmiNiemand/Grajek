@@ -85,10 +85,6 @@ void GloomEngine::Start() {
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
 
-    // Load game
-    std::filesystem::path path = std::filesystem::current_path();
-    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
-
     SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 }
 

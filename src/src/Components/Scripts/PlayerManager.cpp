@@ -18,6 +18,8 @@
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/OptionsManager.h"
+#include "EngineManagers/DataPersistanceManager.h"
+#include <filesystem>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -44,7 +46,12 @@ void PlayerManager::Awake() {
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     activeMenu = nullptr;
 
-    BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
+    BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
+
+    // Load game
+    std::filesystem::path path = std::filesystem::current_path();
+    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
+
     Component::Awake();
 }
 
