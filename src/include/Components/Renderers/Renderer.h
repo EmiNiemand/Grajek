@@ -11,7 +11,7 @@ private:
     std::shared_ptr<StaticModel> model;
 
 public:
-    Renderer(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    Renderer(const std::shared_ptr<GameObject> &parent, int id);
     ~Renderer() override;
 
 

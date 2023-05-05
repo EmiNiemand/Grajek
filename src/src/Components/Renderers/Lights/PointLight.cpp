@@ -2,7 +2,7 @@
 #include "GloomEngine.h"
 #include "EngineManagers/RendererManager.h"
 
-PointLight::PointLight(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {
+PointLight::PointLight(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     constant = 1.0f;
     linear = 0.007f;
     quadratic = 0.0002f;

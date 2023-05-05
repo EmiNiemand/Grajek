@@ -317,7 +317,7 @@ void GloomEngine::Free() const {
     glfwTerminate();
 }
 
-std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(uint32_t id) {
+std::shared_ptr<GameObject> GloomEngine::FindGameObjectWithId(int id) {
     if(!gameObjects.contains(id)) return nullptr;
     return gameObjects.find(id)->second;
 }

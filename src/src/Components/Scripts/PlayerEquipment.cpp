@@ -3,7 +3,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/GameData.h"
 
-PlayerEquipment::PlayerEquipment(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {}
+PlayerEquipment::PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 PlayerEquipment::~PlayerEquipment() = default;
 

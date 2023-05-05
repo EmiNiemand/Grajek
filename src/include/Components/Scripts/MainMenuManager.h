@@ -28,7 +28,7 @@ private:
     void OnUIMove(glm::vec2 moveVector);
 
 public:
-    MainMenuManager(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    MainMenuManager(const std::shared_ptr<GameObject> &parent, int id);
 };
 
 #endif //GLOOMENGINE_MAINMENUMANAGER_H

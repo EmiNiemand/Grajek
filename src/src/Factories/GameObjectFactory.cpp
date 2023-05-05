@@ -15,7 +15,7 @@ GameObjectFactory* GameObjectFactory::GetInstance() {
 
 std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
     if(tag == Tags::SCENE) {
-        uint32_t id = Utilities::Hash(name);
+        int id = Utilities::Hash(name);
 
         if (GloomEngine::GetInstance()->FindGameObjectWithId(id) != nullptr) {
             while(true) {
@@ -41,7 +41,7 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
             i++;
         }
     }
-    uint32_t id = Utilities::Hash(name);
+    int id = Utilities::Hash(name);
 
     if (GloomEngine::GetInstance()->FindGameObjectWithId(id) != nullptr) {
         while(true) {

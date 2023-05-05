@@ -6,7 +6,7 @@
 #include "Components/UI/Button.h"
 #include "Components/UI/Image.h"
 
-Shop::Shop(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+Shop::Shop(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
            Prefab(name, id, parent, tag) {
     prefabName = "Shop";
 }

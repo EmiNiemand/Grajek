@@ -50,7 +50,7 @@ public:
             }
         }
 
-        uint32_t id = Utilities::Hash(name);
+        int id = Utilities::Hash(name);
 
         if (GloomEngine::GetInstance()->FindGameObjectWithId(id) != nullptr) {
             while(true) {

@@ -28,7 +28,7 @@ private:
     bool useAbsoluteValues;
 
 public:
-    GameObjectAnimator(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    GameObjectAnimator(const std::shared_ptr<GameObject> &parent, int id);
 
     void Setup(std::shared_ptr<Transform> animatedTransform,
                std::vector<AnimationCheckpoint> animation,

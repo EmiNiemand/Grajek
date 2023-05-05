@@ -28,7 +28,7 @@ public:
 #endif
 
     float gridSize = 10.0f;
-    std::unordered_map<int, std::unordered_map<int, std::unordered_map<uint32_t, std::shared_ptr<BoxCollider>>>> grid;
+    std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, std::shared_ptr<BoxCollider>>>> grid;
 
 public:
     CollisionManager(CollisionManager &other) = delete;
@@ -46,7 +46,7 @@ public:
 #ifdef DEBUG
     void OnBoxCollidersChange();
 #endif
-    void RemoveBoxCollider(uint32_t componentId);
+    void RemoveBoxCollider(int componentId);
 
 private:
     explicit CollisionManager();

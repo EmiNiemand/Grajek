@@ -21,7 +21,7 @@ private:
     float rotationAngle = 0.0f;
 
 public:
-    PlayerMovement(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    PlayerMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerMovement() override;
 
     void Start() override;

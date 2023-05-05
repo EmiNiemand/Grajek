@@ -3,7 +3,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Scripts/PlayerManager.h"
 
-SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, uint32_t id) : Menu(parent, id) {}
+SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
 SessionStarter::~SessionStarter() {}
 

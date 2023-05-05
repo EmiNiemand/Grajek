@@ -24,9 +24,9 @@ public:
     glm::mat4 projection{};
 
     // pair of id and ptr to light
-    std::map<uint32_t, std::shared_ptr<PointLight>> pointLights;
-    std::map<uint32_t, std::shared_ptr<DirectionalLight>> directionalLights;
-    std::map<uint32_t, std::shared_ptr<SpotLight>> spotLights;
+    std::map<int, std::shared_ptr<PointLight>> pointLights;
+    std::map<int, std::shared_ptr<DirectionalLight>> directionalLights;
+    std::map<int, std::shared_ptr<SpotLight>> spotLights;
 
     std::vector<std::shared_ptr<Drawable>> drawBuffer;
 
@@ -48,8 +48,8 @@ public:
     void UpdateProjection() const;
     void UpdateCamera() const;
 
-    void UpdateLight(uint32_t componentId);
-    void RemoveLight(uint32_t componentId);
+    void UpdateLight(int componentId);
+    void RemoveLight(int componentId);
     void SetFov(float fov);
 private:
     explicit RendererManager();

@@ -5,7 +5,7 @@
 
 class Shop : public Prefab {
 public:
-    Shop(const std::string &name, uint32_t id, const std::shared_ptr<GameObject>& parent, Tags tag);
+    Shop(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
     ~Shop() override;
 
     std::shared_ptr<GameObject> Create() override;

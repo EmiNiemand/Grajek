@@ -5,7 +5,7 @@
 
 class Die : public Prefab {
 public:
-    Die(const std::string &name, uint32_t id, const std::shared_ptr<GameObject>& parent, Tags tag);
+    Die(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
     ~Die() override;
 
     std::shared_ptr<GameObject> Create() override;

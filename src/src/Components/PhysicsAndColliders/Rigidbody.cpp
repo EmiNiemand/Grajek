@@ -3,7 +3,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 
-Rigidbody::Rigidbody(const std::shared_ptr<GameObject> &parent, uint32_t id) : Component(parent, id) {
+Rigidbody::Rigidbody(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     parent->AddComponent<BoxCollider>();
 }
 

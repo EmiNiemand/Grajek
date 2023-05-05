@@ -4,7 +4,7 @@
 #include "GloomEngine.h"
 #include "Other/FrustumCulling.h"
 
-GameObject::GameObject(std::string name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+GameObject::GameObject(std::string name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
                                                                         name(std::move(name)), id(id), parent(parent), tag(tag) {
     bounds = FrustumCulling::GenerateAABB(nullptr);
 }
@@ -25,7 +25,7 @@ void GameObject::OnTransformUpdateComponents() {
     }
 }
 
-void GameObject::RemoveComponent(uint32_t componentId) {
+void GameObject::RemoveComponent(int componentId) {
     if (!components.contains(componentId)) return;
     Component::Destroy(components.find(componentId)->second);
     components.erase(componentId);
@@ -47,7 +47,7 @@ void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
     children.insert({child->GetId(), child});
 }
 
-void GameObject::RemoveChild(uint32_t childId) {
+void GameObject::RemoveChild(int childId) {
     if (!children.contains(childId)) return;
     children.find(childId)->second->RemoveAllChildren();
     children.find(childId)->second->RemoveAllComponents();

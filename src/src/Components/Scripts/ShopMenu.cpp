@@ -6,7 +6,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Scripts/ShopTrigger.h"
 
-ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, uint32_t id) : Menu(parent, id) {}
+ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
 ShopMenu::~ShopMenu() = default;
 

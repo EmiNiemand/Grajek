@@ -14,7 +14,7 @@ private:
     glm::vec3 color;
 
 public:
-    DirectionalLight(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    DirectionalLight(const std::shared_ptr<GameObject> &parent, int id);
     ~DirectionalLight() override;
 
     void OnCreate() override;

@@ -34,7 +34,7 @@ public:
     std::vector<MusicGenre> favGenres;
 //    [SerializeField] public List<Music.Helpers.Pattern> favPatterns;
 
-    CharacterLogic(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;
 
     void Start() override;

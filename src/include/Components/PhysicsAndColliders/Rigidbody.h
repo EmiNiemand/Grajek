@@ -22,7 +22,7 @@ public:
     float gravityScale = 5;
 
 public:
-    Rigidbody(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    Rigidbody(const std::shared_ptr<GameObject> &parent, int id);
     ~Rigidbody() override;
 
     void FixedUpdate() override;

@@ -31,7 +31,7 @@ class AudioSource : public Component {
     AudioDistanceMode distanceMode = AudioDistanceMode::Continuous;
 
 public:
-    AudioSource(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    AudioSource(const std::shared_ptr<GameObject> &parent, int id);
     ~AudioSource() override;
 
     void Start() override;

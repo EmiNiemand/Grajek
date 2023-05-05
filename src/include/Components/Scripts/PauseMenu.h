@@ -10,7 +10,7 @@ class PauseMenu : public Menu {
 public:
     bool gameShouldExit = false;
 
-    PauseMenu(const std::shared_ptr<GameObject> &parent, uint32_t id);
+    PauseMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~PauseMenu() override;
 
     void ShowMenu();

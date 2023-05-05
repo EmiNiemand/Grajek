@@ -9,7 +9,7 @@
 
 class UIComponent : public Component{
 public:
-    UIComponent(const std::shared_ptr<GameObject>& parent, uint32_t id);
+    UIComponent(const std::shared_ptr<GameObject>& parent, int id);
     ~UIComponent() override;
 
     void Update() override;

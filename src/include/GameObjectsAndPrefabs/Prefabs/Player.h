@@ -5,7 +5,7 @@
 
 class Player : public Prefab {
 public:
-    Player(const std::string &name, uint32_t id, const std::shared_ptr<GameObject>& parent, Tags tag);
+    Player(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
     ~Player() override;
 
     std::shared_ptr<GameObject> Create() override;
