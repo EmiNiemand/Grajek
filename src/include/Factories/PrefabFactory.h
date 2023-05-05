@@ -17,6 +17,7 @@
 class Player;
 class Die;
 class Shop;
+class House;
 
 class PrefabFactory {
 private:

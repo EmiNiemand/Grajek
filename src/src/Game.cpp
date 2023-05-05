@@ -27,6 +27,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
+#include "GameObjectsAndPrefabs/Prefabs/House.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -197,29 +198,21 @@ void Game::InitializeGame() const {
         float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
         float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
 
-        std::shared_ptr<GameObject> serialHouse = GameObject::Instantiate("House", activeScene);
+        std::shared_ptr<GameObject> serialHouse = Prefab::Instantiate<House>();
         serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
         serialHouse->transform->SetLocalRotation({0, -90, 0});
         serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
-        serialHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-        serialHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-        serialHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
 
-        std::shared_ptr<GameObject> serialHouseLeft = GameObject::Instantiate("House", activeScene);
+
+        std::shared_ptr<GameObject> serialHouseLeft = Prefab::Instantiate<House>();
         serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
         serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
         serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
-        serialHouseLeft->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-        serialHouseLeft->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-        serialHouseLeft->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
 
-        std::shared_ptr<GameObject> serialHouseRight = GameObject::Instantiate("House", activeScene);
+        std::shared_ptr<GameObject> serialHouseRight = Prefab::Instantiate<House>();
         serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
         serialHouseRight->transform->SetLocalRotation({0, 180, 0});
         serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
-        serialHouseRight->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-        serialHouseRight->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-        serialHouseRight->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
     }
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
