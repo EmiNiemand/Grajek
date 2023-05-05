@@ -8,36 +8,44 @@
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
-ShopMenu::~ShopMenu() {}
+ShopMenu::~ShopMenu() = default;
 
-void ShopMenu::Start() {
-    Component::Start();
+void ShopMenu::Awake() {
     // Remove already bought instruments from shop
     // TODO: improve
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     auto playerInstruments = playerManager->GetInstruments();
     if(playerInstruments.contains(InstrumentName::Drums))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>());
+    else
+        instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>());
     if(playerInstruments.contains(InstrumentName::Trumpet))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("SecondInstrument")->GetComponent<Button>());
+    else
+        instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("SecondInstrument")->GetComponent<Button>());
     if(playerInstruments.contains(InstrumentName::Launchpad))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("ThirdInstrument")->GetComponent<Button>());
+    else
+        instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("ThirdInstrument")->GetComponent<Button>());
     if(playerInstruments.contains(InstrumentName::Guitar))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
+    else
+        instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
+    Component::Awake();
 }
 
 bool ShopMenu::ShowMenu() {
     if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
     parent->EnableSelfAndChildren();
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.size() > 1) {
-        activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.begin()->second->GetComponent<Button>();
+    if (!instruments.empty()) {
+        activeButton = instruments[0];
         activeButton->isActive = true;
     }
     return true;
 }
 
 void ShopMenu::OnClick() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->children.size() < 2) return;
+    if (instruments.empty()) return;
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
@@ -54,6 +62,14 @@ void ShopMenu::OnClick() {
                 5000, Prefab::GetInstrument(InstrumentName::Guitar));
     }
     if(boughtInstrument) {
+        if (activeButton->GetParent()->GetName() == "FirstInstrument")
+            instruments.erase(instruments.begin());
+        else if (activeButton->GetParent()->GetName() == "SecondInstrument")
+            instruments.erase(instruments.begin() + 1);
+        else if (activeButton->GetParent()->GetName() == "ThirdInstrument")
+            instruments.erase(instruments.begin() + 2);
+        else if (activeButton->GetParent()->GetName() == "FourthInstrument")
+            instruments.erase(instruments.begin() + 3);
         DeleteButton(activeButton);
         spdlog::info("[SM] Bought instrument!");
     } else {
