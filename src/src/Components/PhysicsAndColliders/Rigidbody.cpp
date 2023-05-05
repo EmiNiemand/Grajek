@@ -3,6 +3,10 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 Rigidbody::Rigidbody(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
     parent->AddComponent<BoxCollider>();
 }
@@ -11,13 +15,17 @@ Rigidbody::~Rigidbody() = default;
 
 
 void Rigidbody::FixedUpdate() {
-    Component::FixedUpdate();
+#ifdef DEBUG
+    ZoneScopedNC("Rigidbody", 0xfc9d03);
+#endif
 
     parent->transform->SetLocalPosition(parent->transform->GetLocalPosition() + velocity);
     parent->transform->SetLocalRotation(rotation);
 
     this->AddForce(glm::vec3(0, -1, 0) * gravityScale, ForceMode::Force);
     this->AddForce(-velocity * linearDrag, ForceMode::Force);
+
+    Component::FixedUpdate();
 }
 
 void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {

@@ -4,6 +4,10 @@
 #include "EngineManagers/CollisionManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     size = {1.0f, 1.0f, 1.0f};
@@ -18,6 +22,10 @@ void BoxCollider::Start() {
 }
 
 void BoxCollider::FixedUpdate() {
+#ifdef DEBUG
+    ZoneScopedNC("BoxCollider", 0xf0fc03);
+#endif
+
     Component::FixedUpdate();
     if (!parent->GetComponent<Rigidbody>()) return;
 
@@ -34,6 +42,10 @@ void BoxCollider::OnDestroy() {
 }
 
 void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
+#ifdef DEBUG
+    ZoneScopedNC("CheckCollision", 0x03adfc);
+#endif
+
     bool isColliding = GetOBBCollision(other);
 
     if (!isColliding) {
@@ -102,6 +114,10 @@ glm::mat4 BoxCollider::GetModelMatrix() {
 }
 
 bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
+#ifdef DEBUG
+    ZoneScopedNC("GetOBBCollision", 0x0339fc);
+#endif
+
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
     const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));

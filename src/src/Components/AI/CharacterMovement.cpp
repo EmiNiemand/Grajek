@@ -30,6 +30,10 @@ void CharacterMovement::Start() {
 }
 
 void CharacterMovement::FixedUpdate() {
+#ifdef DEBUG
+    ZoneScopedNC("CharacterMovement", 0xfc0f03);
+#endif
+
     currentPosition = parent->transform->GetLocalPosition();
 
     if (!path.empty()) {

@@ -4,6 +4,10 @@
 #include "GloomEngine.h"
 #include "Other/FrustumCulling.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 GameObject::GameObject(std::string name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
                                                                         name(std::move(name)), id(id), parent(parent), tag(tag) {
     bounds = FrustumCulling::GenerateAABB(nullptr);
@@ -65,6 +69,10 @@ void GameObject::RemoveAllChildren() {
 }
 
 void GameObject::UpdateSelfAndChildren() {
+#ifdef DEBUG
+    ZoneScopedNC("SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren()", 0x03fcfc);
+#endif
+
     if (transform != nullptr && dirtyFlag) {
         ForceUpdateSelfAndChildren();
         OnTransformUpdateComponents();
