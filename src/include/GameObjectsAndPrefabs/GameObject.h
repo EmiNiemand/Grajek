@@ -15,7 +15,7 @@ class GloomEngine;
 struct AABB;
 
 class GameObject : public std::enable_shared_from_this<GameObject> {
-private:
+protected:
     // Name and id are unique
     int id;
     std::string name;
@@ -36,11 +36,11 @@ public:
     bool isOnFrustum = false;
 
 public:
-    GameObject(const std::string &name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
+    GameObject(std::string name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
     virtual ~GameObject();
 
     static std::shared_ptr<GameObject> Instantiate(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);
-    static void Destroy(std::shared_ptr<GameObject> gameObject);
+    static void Destroy(const std::shared_ptr<GameObject>& gameObject);
 
     template<class T>
     std::shared_ptr<T> AddComponent() {
@@ -83,6 +83,9 @@ public:
     bool GetEnabled() const;
 
     void RecalculateGlobalRotation();
+
+private:
+    inline void SetId(int newId) {id = newId;}
 };
 
 

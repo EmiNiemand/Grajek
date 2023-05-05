@@ -32,7 +32,7 @@ Animator::~Animator() {
 void Animator::LoadAnimationModel(const std::string& path) {
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
-    uint32_t hash = Utilities::Hash(newPath);
+    int hash = Utilities::Hash(newPath);
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
@@ -59,7 +59,7 @@ void Animator::LoadAnimations(const std::string& path)
 
         std::string animationName = animation->mName.C_Str();
 
-        uint32_t hash = Utilities::Hash(animationName);
+        int hash = Utilities::Hash(animationName);
 
         if (!animations.contains(hash)) {
             animations.insert({hash, std::make_shared<Animation>(animation->mDuration, animation->mTicksPerSecond)});

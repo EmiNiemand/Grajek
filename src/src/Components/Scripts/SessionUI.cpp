@@ -8,6 +8,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Animations/UIAnimator.h"
+#include "EngineManagers/RandomnessManager.h"
 
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -16,6 +17,14 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     metronomeVisualEnabled = true;
 
     metronomeImage = std::move(metronome);
+    GameObject::Instantiate("MetronomeAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(metronomeImage, {
+            {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
+    }, true);
+
+    tickSound = parent->AddComponent<AudioSource>();
+    tickSound->LoadAudioData("res/sounds/direct/tick.wav", AudioType::Direct);
+    tickSound->IsLooping(false);
 
     accuracyFeedback = GameObject::Instantiate("AccuracyFeedback", parent)->AddComponent<Text>();
     accuracyFeedback->LoadFont("Good", 960, 540, 60, Color::White, GameFont::KanitLight);
@@ -45,10 +54,17 @@ void SessionUI::PlaySound(int index) {
     auto circleAnimator = GameObject::Instantiate("CircleAnimator", parent->parent);
     auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", parent->parent);
     if (index == 0) {
-        nuta->LoadTexture(670, 700, "UI/Sesja/Nuta1.png", -0.1f);
+        int random = RandomnessManager::GetInstance()->GetInt(500, 700);
+        nuta->LoadTexture(random, 675, "UI/Sesja/Nuta1.png", -0.1f);
+        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+                {AnimatedProperty::Scale, glm::vec3(0.5f)}
+        }, false);
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
-                        {AnimatedProperty::Position, glm::vec3(670.0f, 775.0f, 0.0f)}
+                        {AnimatedProperty::Position, glm::vec3(random, 750.0f, 0.0f)}
                 }, false);
+        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+                {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, RandomnessManager::GetInstance()->GetFloat(-45.0f, 45.0f))}
+        }, false);
         circleAnimator->AddComponent<UIAnimator>()->Setup(circle1, {
                 {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
                 {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
@@ -58,10 +74,17 @@ void SessionUI::PlaySound(int index) {
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
         }, false);
     } else if (index == 1) {
-        nuta->LoadTexture(700, 300, "UI/Sesja/Nuta2.png", -0.1f);
+        int random = RandomnessManager::GetInstance()->GetInt(150, 450);
+        nuta->LoadTexture(625, random, "UI/Sesja/Nuta2.png", -0.1f);
+        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+                {AnimatedProperty::Scale, glm::vec3(0.5f)}
+        }, false);
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
-                        {AnimatedProperty::Position, glm::vec3(775.0f, 300.0f, 0.0f)}
+                        {AnimatedProperty::Position, glm::vec3(700.0f, random, 0.0f)}
                 }, false);
+        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+                {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, RandomnessManager::GetInstance()->GetFloat(-45.0f, 45.0f))}
+        }, false);
         circleAnimator->AddComponent<UIAnimator>()->Setup(circle2, {
                 {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
                 {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
@@ -71,10 +94,17 @@ void SessionUI::PlaySound(int index) {
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
         }, false);
     } else if (index == 2) {
-        nuta->LoadTexture(400, 530, "UI/Sesja/Nuta3.png", -0.1f);
+        int random = RandomnessManager::GetInstance()->GetInt(250, 450);
+        nuta->LoadTexture(random, 475, "UI/Sesja/Nuta3.png", -0.1f);
+        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+                {AnimatedProperty::Scale, glm::vec3(0.5f)}
+        }, false);
         animator->AddComponent<UIAnimator>()->Setup(nuta, {
-                        {AnimatedProperty::Position, glm::vec3(400.0f, 605.0f, 0.0f)}
+                        {AnimatedProperty::Position, glm::vec3(random, 550.0f, 0.0f)}
                 }, false);
+        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+                {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, RandomnessManager::GetInstance()->GetFloat(-45.0f, 45.0f))}
+        }, false);
         circleAnimator->AddComponent<UIAnimator>()->Setup(circle3, {
                 {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
                 {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
@@ -117,4 +147,11 @@ void SessionUI::UpdateAccuracy(float fraction) {
     accuracyFeedback->text = accuracyTexts[index];
     accuracyFeedback->color = accuracyColors[index];
     spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
+}
+
+void SessionUI::Update() {
+    if (metronomeImage->GetAlpha() == 1.0f) {
+        tickSound->PlaySound();
+    }
+    Component::Update();
 }

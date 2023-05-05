@@ -18,7 +18,7 @@ enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
 /// Sample defines singular noise that can be made with instrument
 struct Sample
 {
-	int id;
+    int id;
 	std::string clipPath;
 
     Sample(int id, std::string clip) : id(id), clipPath(std::move(clip)) {}

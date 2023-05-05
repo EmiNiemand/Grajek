@@ -4,7 +4,6 @@
 
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
-#include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 

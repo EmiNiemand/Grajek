@@ -23,8 +23,10 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
 
     playerManager = parent->GetComponent<PlayerManager>();
 
+    auto metronome = GameObject::Instantiate("Metronome", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<Image>();
+    metronome->LoadTexture(0, 0, "UI/Sesja/Ramka.png");
     sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<SessionUI>();
-    sessionUI->Setup(bpm, instrument->samples, nullptr);
+    sessionUI->Setup(bpm, instrument->samples, metronome);
 
     std::shared_ptr<GameObject> theme = GameObject::Instantiate("Theme", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"));
     if (instrument->NameToString() == "Drums") {

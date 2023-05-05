@@ -7,7 +7,7 @@
 
 Menu::Menu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-Menu::~Menu() {}
+Menu::~Menu() = default;
 
 void Menu::HideMenu() {
     parent->DisableSelfAndChildren();

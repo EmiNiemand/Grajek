@@ -9,10 +9,9 @@
 #include <unordered_map>
 #include <thread>
 #include <mutex>
-#include "GameObjectsAndPrefabs/Prefab.h"
+#include "Components/Scripts/MusicPattern.h"
 
 class GloomEngine;
-class GameObject;
 class CharacterLogic;
 
 class AIManager {
@@ -25,14 +24,13 @@ class AIManager {
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying, const int& maxCharacters,
-                                const int& spawnDelay, const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
+    static void SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
+                                const int& maxCharacters, const int& spawnDelay,
                                 std::unordered_map<int, std::shared_ptr<CharacterLogic>>* currentCharactersLogics);
 
 public:
     //TODO: Implement!
     //std::vector<std::shared_ptr<GameObject>> buildings;
-    std::vector<std::shared_ptr<GameObject> (*)(std::string)> charactersPrefabs;
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> currentCharactersLogics;
 
     AIManager(AIManager &other) = delete;

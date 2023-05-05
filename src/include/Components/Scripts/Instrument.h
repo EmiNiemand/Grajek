@@ -34,6 +34,8 @@ public:
     void AddSamples(const std::vector<std::string>& paths);
     std::string NameToString() const;
 
+    static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);
+
 };
 
 

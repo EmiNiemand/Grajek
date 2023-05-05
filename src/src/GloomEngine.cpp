@@ -85,10 +85,6 @@ void GloomEngine::Start() {
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
 
-    // Load game
-    std::filesystem::path path = std::filesystem::current_path();
-    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
-
     SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 }
 
@@ -363,8 +359,15 @@ void GloomEngine::InitializeWindow() {
     int monitorHeight = mode->height;
     glfwSetWindowPos(window, monitorWidth / 2 - OptionsManager::GetInstance()->width / 2, monitorHeight / 2 - OptionsManager::GetInstance()->height / 2);
 
+#ifdef RELEASE
     // Enable cursor - change last parameter to disable it
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
+
+#ifdef DEBUG
+    // Enable cursor - change last parameter to disable it
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+#endif
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)

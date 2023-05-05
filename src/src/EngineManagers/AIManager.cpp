@@ -4,11 +4,10 @@
 
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
-#include "GameObjectsAndPrefabs/Prefab.h"
+#include "GameObjectsAndPrefabs/Prefabs/CharacterDefault.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/AI/CharacterLogic.h"
 #include "spdlog/spdlog.h"
-#include <string>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -29,29 +28,27 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     maxCharacters = max;
     spawnDelay = delay;
 
-    charactersPrefabs = Prefab::GetCharacters();
-
-    int random, prefabsAmount = charactersPrefabs.size();
-    std::string name;
+    int random;
 
     for (int i = 0; i < min; i++) {
-        random = RandomnessManager::GetInstance()->GetInt(0, prefabsAmount - 1);
+        random = RandomnessManager::GetInstance()->GetInt(0, 0);
 
-        auto func = charactersPrefabs[random];
-        name = "Character " + std::to_string(i);
-        auto ch = func(name);
+        switch (random) {
+            case 0:
+                auto ch = Prefab::Instantiate<CharacterDefault>();
+                currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                break;
 
-        currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+        }
     }
 
     characterSpawner = std::jthread(SpawnCharacters, std::ref(mutex), playerIsPlaying, maxCharacters, spawnDelay,
-                                    charactersPrefabs, &currentCharactersLogics);
+                                    &currentCharactersLogics);
 }
 
 void AIManager::Free() {
     characterSpawner.request_stop();
     characterSpawner.join();
-    charactersPrefabs.clear();
     currentCharactersLogics.clear();
 }
 
@@ -92,27 +89,28 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
 
 void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
                                 const int& maxCharacters, const int& spawnDelay,
-                                const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
                                 std::unordered_map<int, std::shared_ptr<CharacterLogic>>* currentCharactersLogics) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
-    int random, prefabsAmount = charactersPrefabs.size(), charactersAmount = currentCharactersLogics->size();
-    std::string name;
+    int random, charactersAmount = (int)currentCharactersLogics->size();
+    std::shared_ptr<GameObject> character;
 
     while(!token.stop_requested()) {
         if (charactersAmount < maxCharacters) {
-            random = RandomnessManager::GetInstance()->GetInt(0, prefabsAmount - 1);
-
-            auto func = charactersPrefabs[random];
-            name = "Character " + std::to_string(charactersAmount);
-            auto ch = func(name);
+            random = RandomnessManager::GetInstance()->GetInt(0, 0);
 
             mutex.lock();
 
-            currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+            switch (random) {
+                case 0:
+                    character = Prefab::Instantiate<CharacterDefault>();
+                    currentCharactersLogics->insert({character->GetId(), character->GetComponent<CharacterLogic>()});
+                    break;
+
+            }
 
             if (playerIsPlaying)
-                ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
+                character->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 
             mutex.unlock();
 

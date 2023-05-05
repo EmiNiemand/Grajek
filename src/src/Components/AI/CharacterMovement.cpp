@@ -21,9 +21,11 @@ CharacterMovement::~CharacterMovement() = default;
 void CharacterMovement::Start() {
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     rigidbody = parent->GetComponent<Rigidbody>();
+
     SetNewRandomPoint();
     parent->transform->SetLocalPosition(endTarget);
     SetNewRandomPoint();
+
     Component::Start();
 }
 

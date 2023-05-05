@@ -17,6 +17,7 @@ private:
     float z = 0.0f;
     glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
     glm::vec3 color = glm::vec3(1.0f);
+    float alpha = 1.0f;
 
 public:
     Image(const std::shared_ptr<GameObject> &parent, int id);
@@ -28,10 +29,12 @@ public:
     */
     void LoadTexture(int x, int y, const std::string& path, float z = 0);
     glm::vec3 GetColor();
+    float GetAlpha();
     void SetPosition(float x2, float y2);
     void SetRotation(float angle);
     void SetScale(float scale);
     void SetColor(glm::vec3 newColor);
+    void SetAlpha(float newAlpha);
 
     void Update() override;
 

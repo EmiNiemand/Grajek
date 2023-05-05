@@ -11,7 +11,6 @@
 #include "Components/Component.h"
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterStates.h"
-#include "Components/Scripts/PlayerManager.h"
 #include <vector>
 #include <unordered_map>
 
