@@ -97,20 +97,14 @@ void CharacterLogic::SetPlayerPlayingStatus(bool state) {
 void CharacterLogic::CalculateSatisfaction() {
     currentSatisfaction = 100;
 
-    if (currentState == AlertedByPlayer)
-    {
-        if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
-            currentSatisfaction += 30;
+    if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
+        currentSatisfaction += 30;
 
-        if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName) != favInstrumentsNames.end())
-            currentSatisfaction += 20;
+    if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName) != favInstrumentsNames.end())
+        currentSatisfaction += 20;
 
-        if (currentSatisfaction > minSatisfaction) {
-            SetPathToPlayer();
-        }
-    } else {
-        ReturnToPreviousPath();
-    }
+    if (currentSatisfaction > minSatisfaction)
+        SetPathToPlayer();
 }
 
 const float CharacterLogic::GetCurrentSatisfaction() const {

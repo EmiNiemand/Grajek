@@ -2,7 +2,6 @@
 // Created by Adrian on 01.05.2023.
 //
 
-
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -22,7 +21,9 @@ CharacterMovement::~CharacterMovement() = default;
 void CharacterMovement::Start() {
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     rigidbody = parent->GetComponent<Rigidbody>();
-
+    SetNewRandomPoint();
+    parent->transform->SetLocalPosition(endTarget);
+    SetNewRandomPoint();
     Component::Start();
 }
 
@@ -32,8 +33,7 @@ void CharacterMovement::FixedUpdate() {
     if (!path.empty()) {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
-        newPosition = {path.begin()->x - currentPosition.x, 0, path.begin()->z - currentPosition.z};
-        newPosition = glm::normalize(newPosition) * speed * speedMultiplier;
+        newPosition = glm::normalize(path[0] - currentPosition) * speed * speedMultiplier;
 
         rigidbody->AddForce(newPosition, ForceMode::Force);
 
@@ -44,15 +44,17 @@ void CharacterMovement::FixedUpdate() {
         }
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
-
-        if (glm::distance(currentPosition, path[0]) < 1.0f)
-            path.erase(path.begin());
     }
 
     Component::FixedUpdate();
 }
 
 void CharacterMovement::AIUpdate() {
+    if (!path.empty()) {
+        if (glm::distance(currentPosition, path[0]) < 1.0f)
+            path.erase(path.begin());
+    }
+
     if (path.empty() && logicState != WalkingToPlayer) {
         SetNewRandomPoint();
         CalculateNewPath();
@@ -75,7 +77,6 @@ void CharacterMovement::Free() {
 void CharacterMovement::SetNewRandomPoint() {
     endTarget.x = RandomnessManager::GetInstance()->GetFloat(-25, 25);
     endTarget.z = RandomnessManager::GetInstance()->GetFloat(-25, 25);
-    previousTarget = endTarget;
 }
 
 void CharacterMovement::SetNewPath(AI_STATE state) {
@@ -96,6 +97,7 @@ void CharacterMovement::SetNewPath(AI_STATE state) {
 }
 
 void CharacterMovement::CalculateNewPath() {
+    speed = 0.0f;
     path.clear();
     path.push_back(endTarget);
 //    foreach (var obj in GameObject.FindGameObjectsWithTag("Obstacles"))

@@ -39,19 +39,20 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 
         auto func = charactersPrefabs[random];
         name = "Character " + std::to_string(i);
+        auto ch = func(name);
 
-        currentCharacters.insert({i, func(name)});
+        currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
     }
 
     characterSpawner = std::jthread(SpawnCharacters, std::ref(mutex), playerIsPlaying, maxCharacters, spawnDelay,
-                                    charactersPrefabs, &currentCharacters);
+                                    charactersPrefabs, &currentCharactersLogics);
 }
 
 void AIManager::Free() {
     characterSpawner.request_stop();
     characterSpawner.join();
     charactersPrefabs.clear();
-    currentCharacters.clear();
+    currentCharactersLogics.clear();
 }
 
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
@@ -59,9 +60,9 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
 
     playerIsPlaying = true;
 
-    for (auto&& ch : currentCharacters) {
-        ch.second->GetComponent<CharacterLogic>()->SetPlayerInstrumentAndGenre(ins, gen);
-        ch.second->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
+    for (auto&& ch : currentCharactersLogics) {
+        ch.second->SetPlayerInstrumentAndGenre(ins, gen);
+        ch.second->SetPlayerPlayingStatus(true);
     }
 
     mutex.unlock();
@@ -72,8 +73,8 @@ void AIManager::NotifyPlayerStopsPlaying() {
 
     playerIsPlaying = false;
 
-    for (auto&& ch : currentCharacters) {
-        ch.second->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(false);
+    for (auto&& ch : currentCharactersLogics) {
+        ch.second->SetPlayerPlayingStatus(false);
     }
 
     mutex.unlock();
@@ -82,8 +83,8 @@ void AIManager::NotifyPlayerStopsPlaying() {
 void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
     mutex.lock();
 
-    for (auto&& ch : currentCharacters) {
-        ch.second->GetComponent<CharacterLogic>()->SetPlayerPattern(pat);
+    for (auto&& ch : currentCharactersLogics) {
+        ch.second->SetPlayerPattern(pat);
     }
 
     mutex.unlock();
@@ -92,10 +93,10 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
 void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
                                 const int& maxCharacters, const int& spawnDelay,
                                 const std::vector<std::shared_ptr<GameObject> (*)(std::string)>& charactersPrefabs,
-                                std::unordered_map<int, std::shared_ptr<GameObject>>* currentCharacters) {
+                                std::unordered_map<int, std::shared_ptr<CharacterLogic>>* currentCharactersLogics) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
-    int random, prefabsAmount = charactersPrefabs.size(), charactersAmount = currentCharacters->size();
+    int random, prefabsAmount = charactersPrefabs.size(), charactersAmount = currentCharactersLogics->size();
     std::string name;
 
     while(!token.stop_requested()) {
@@ -104,15 +105,14 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
 
             auto func = charactersPrefabs[random];
             name = "Character " + std::to_string(charactersAmount);
-
             auto ch = func(name);
 
             mutex.lock();
 
+            currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+
             if (playerIsPlaying)
                 ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
-
-            currentCharacters->insert({charactersAmount, ch});
 
             mutex.unlock();
 
