@@ -46,7 +46,7 @@ void PlayerManager::Awake() {
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     activeMenu = nullptr;
 
-    BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
+    BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Load game
     std::filesystem::path path = std::filesystem::current_path();
