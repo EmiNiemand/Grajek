@@ -2,6 +2,7 @@
 #define OPENGLGP_SCENEMANAGER_H
 
 #include <memory>
+#include <string>
 
 
 class GloomEngine;
