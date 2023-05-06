@@ -29,6 +29,9 @@ public:
 
 private:
     explicit SceneManager();
+
+    void SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    void LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
 };
 
 

@@ -7,12 +7,20 @@
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <string>
+#include <vector>
 
 class StaticObjData {
 public:
+    std::string name;
+    int id;
+    std::string parentName;
+
     glm::vec3 position;
-    glm::vec3 rot;
+    glm::vec3 rotation;
     glm::vec3 scale;
+
+    std::vector<std::string> tags;
 
 public:
 StaticObjData();

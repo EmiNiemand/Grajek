@@ -158,9 +158,14 @@ for (const auto& object: json){
     newObject->position.y = object["position.y"];
     newObject->position.z = object["position.z"];
 
-    newObject->position.x = object["position.x"];
-    newObject->position.y = object["position.y"];
-    newObject->position.z = object["position.z"];
+    newObject->rotation.x = object["rotation.x"];
+    newObject->rotation.y = object["rotation.y"];
+    newObject->rotation.z = object["rotation.z"];
+
+    newObject->scale.x = object["position.x"];
+    newObject->scale.y = object["position.y"];
+    newObject->scale.z = object["position.z"];
+    mapData.push_back(newObject);
 }
 }
 

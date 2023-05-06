@@ -61,8 +61,8 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     staticObjectsData = fileDataHandler.LoadMap();
 
     for (const auto &object: staticObjectsData) {
-        //Create new gameObjects using data from the file(check if it already exists and if yes then just update the values)
-        //GameObject newchild = GameObject(object);
+        //Create new gameObjects using data from the file(check if it already exists and if yes then just update the values object.
+        //GameObject newchild = GameObject();
         //activeScene->AddChild();
     }
 }

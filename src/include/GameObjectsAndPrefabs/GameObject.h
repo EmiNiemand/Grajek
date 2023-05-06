@@ -85,7 +85,9 @@ public:
 
     void RecalculateGlobalRotation();
 
+    //Create shared pointer to object holding data of this object in format suitable for conversion into json
     std::shared_ptr<StaticObjData> SaveStatic();
+    //Update your values using data from passed pointer to instance of StaticObjData
     void LoadStatic(std::shared_ptr<StaticObjData> &data);
 };
 
