@@ -17,7 +17,6 @@ class Rigidbody;
 
 class CharacterMovement : public Component {
     AI_STATE logicState = Idle;
-    std::shared_ptr<Transform> playerTransform;
     std::shared_ptr<Rigidbody> rigidbody;
     std::vector<glm::vec3> path;
     glm::vec3 newPosition {};
@@ -34,9 +33,9 @@ public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
-    void Start() override;
     void FixedUpdate() override;
     void AIUpdate() override;
+    void OnCreate() override;
     void OnDestroy() override;
     void Free();
 

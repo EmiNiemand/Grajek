@@ -15,20 +15,16 @@ CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id
 
 CharacterLogic::~CharacterLogic() = default;
 
-void CharacterLogic::Start() {
-    characterMovement = parent->GetComponent<CharacterMovement>();
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
-
-    Component::Start();
-}
-
 //void CharacterLogic::AIUpdate() {
 //    Component::AIUpdate();
 //}
 //
-//void CharacterLogic::OnCreate() {
-//    Component::OnCreate();
-//}
+
+void CharacterLogic::OnCreate() {
+    characterMovement = parent->GetComponent<CharacterMovement>();
+    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
+    Component::OnCreate();
+}
 
 void CharacterLogic::OnDestroy() {
     characterMovement = nullptr;

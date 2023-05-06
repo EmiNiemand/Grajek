@@ -17,16 +17,25 @@ void ShopMenu::Awake() {
     auto playerInstruments = playerManager->GetInstruments();
     if(playerInstruments.contains(InstrumentName::Drums))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>());
-    else
+    else {
         instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("FirstInstrument")->GetComponent<Button>());
+        secondInstrumentIndex++;
+        thirdInstrumentIndex++;
+        fourthInstrumentIndex++;
+    }
     if(playerInstruments.contains(InstrumentName::Trumpet))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("SecondInstrument")->GetComponent<Button>());
-    else
+    else {
         instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("SecondInstrument")->GetComponent<Button>());
+        thirdInstrumentIndex++;
+        fourthInstrumentIndex++;
+    }
     if(playerInstruments.contains(InstrumentName::Launchpad))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("ThirdInstrument")->GetComponent<Button>());
-    else
+    else {
         instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("ThirdInstrument")->GetComponent<Button>());
+        fourthInstrumentIndex++;
+    }
     if(playerInstruments.contains(InstrumentName::Guitar))
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
     else
@@ -62,14 +71,20 @@ void ShopMenu::OnClick() {
                 5000, Instrument::GetInstrument(InstrumentName::Guitar));
     }
     if(boughtInstrument) {
-        if (activeButton->GetParent()->GetName() == "FirstInstrument")
+        if (activeButton->GetParent()->GetName() == "FirstInstrument"){
             instruments.erase(instruments.begin());
-        else if (activeButton->GetParent()->GetName() == "SecondInstrument")
-            instruments.erase(instruments.begin() + 1);
-        else if (activeButton->GetParent()->GetName() == "ThirdInstrument")
-            instruments.erase(instruments.begin() + 2);
-        else if (activeButton->GetParent()->GetName() == "FourthInstrument")
-            instruments.erase(instruments.begin() + 3);
+            secondInstrumentIndex--;
+            thirdInstrumentIndex--;
+            fourthInstrumentIndex--;
+        } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
+            instruments.erase(instruments.begin() + secondInstrumentIndex);
+            thirdInstrumentIndex--;
+            fourthInstrumentIndex--;
+        } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
+            instruments.erase(instruments.begin() + thirdInstrumentIndex);
+            fourthInstrumentIndex--;
+        } else if (activeButton->GetParent()->GetName() == "FourthInstrument")
+            instruments.erase(instruments.begin() + fourthInstrumentIndex);
         DeleteButton(activeButton);
         spdlog::info("[SM] Bought instrument!");
     } else {

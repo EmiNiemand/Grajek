@@ -53,7 +53,7 @@ void GloomEngine::Initialize() {
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
-    AIManager::GetInstance()->InitializeSpawner(5, 10, 2000);
+    AIManager::GetInstance()->InitializeSpawner(5, 10, 100);
 
     game = std::make_shared<Game>();
     game->InitializeGame();
