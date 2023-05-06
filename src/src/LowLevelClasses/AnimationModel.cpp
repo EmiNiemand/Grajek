@@ -151,6 +151,22 @@ void AnimationModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices,
     {
         int boneID = -1;
         std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+
+        int counter = 0;
+
+        for (int j = 0; j < boneName.size(); j++) {
+            if (boneName[j] == '_') counter++;
+            if (counter == 2) {
+                boneName = boneName.substr(j + 1, boneName.back());
+                break;
+            }
+        }
+
+        /// DO NOT TOUCH DOOPA
+        if (counter == 1) {
+            boneName = "doopa";
+        }
+
         if (bonerInfoMap.find(boneName) == bonerInfoMap.end())
         {
             BoneInfo newBoneInfo{};

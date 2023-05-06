@@ -21,14 +21,16 @@ struct AssimpNodeData
 class Animation
 {
 public:
-    float duration;
-    int ticksPerSecond;
+    std::string name;
+    float duration{};
+    int ticksPerSecond{};
     std::vector<Bone> bones;
     AssimpNodeData rootNode;
     std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:
-    Animation(float mDuration, int mTicksPerSecond);
+    Animation();
+    Animation(std::string name, float mDuration, int mTicksPerSecond);
     virtual ~Animation();
 
 	Bone* FindBone(const std::string& name);
@@ -41,6 +43,7 @@ public:
 
     void ReadMissingBones(const aiAnimation* animation, const std::shared_ptr<AnimationModel>& model);
     void ReadHierarchyData(AssimpNodeData& dest, const aiNode* src);
+    void Recalculate(const std::shared_ptr<AnimationModel>& model);
 };
 
 
