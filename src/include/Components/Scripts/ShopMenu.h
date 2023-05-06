@@ -10,6 +10,7 @@ class Button;
 class ShopMenu : public Menu {
 private:
     std::vector<std::shared_ptr<Button>> instruments;
+    short secondInstrumentIndex = 0, thirdInstrumentIndex = 0, fourthInstrumentIndex = 0;
 
 public:
     ShopMenu(const std::shared_ptr<GameObject> &parent, int id);

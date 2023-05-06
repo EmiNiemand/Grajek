@@ -13,7 +13,7 @@
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
-#include "Components/Scripts/SessionUI.h"
+#include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/SessionStarter.h"
 #include "Components/Scripts/PauseMenu.h"
