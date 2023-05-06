@@ -18,17 +18,6 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 
 CharacterMovement::~CharacterMovement() = default;
 
-void CharacterMovement::Start() {
-    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
-    rigidbody = parent->GetComponent<Rigidbody>();
-
-    SetNewRandomPoint();
-    parent->transform->SetLocalPosition(endTarget);
-    SetNewRandomPoint();
-
-    Component::Start();
-}
-
 void CharacterMovement::FixedUpdate() {
 #ifdef DEBUG
     ZoneScopedNC("CharacterMovement", 0xfc0f03);
@@ -69,6 +58,15 @@ void CharacterMovement::AIUpdate() {
     Component::AIUpdate();
 }
 
+void CharacterMovement::OnCreate() {
+    rigidbody = parent->GetComponent<Rigidbody>();
+
+    SetNewRandomPoint();
+    parent->transform->SetLocalPosition(endTarget);
+    SetNewRandomPoint();
+    Component::OnCreate();
+}
+
 void CharacterMovement::OnDestroy() {
     rigidbody = nullptr;
     path.clear();
@@ -90,7 +88,7 @@ void CharacterMovement::SetNewPath(AI_STATE state) {
 
     if (logicState == WalkingToPlayer) {
         previousTarget = endTarget;
-        endTarget = playerTransform->GetLocalPosition();
+        endTarget = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
         endTarget.x -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         endTarget.z -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         speedMultiplier = 2.0f;
