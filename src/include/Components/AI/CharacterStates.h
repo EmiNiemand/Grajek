@@ -5,11 +5,18 @@
 #ifndef GLOOMENGINE_CHARACTERSTATES_H
 #define GLOOMENGINE_CHARACTERSTATES_H
 
-enum AI_STATE {
-    Idle,
-    WalkingToPlayer,
-    TraversingOnPath,
+enum AI_LOGICSTATE {
+    RunningToPlayer,
+    WalkingOnPath,
     AlertedByPlayer
+};
+
+enum AI_ANIMATIONSTATE {
+    Idle,
+    Walking,
+    Running,
+    Cheering,
+    Booing
 };
 
 #endif //GLOOMENGINE_CHARACTERSTATES_H

@@ -7,10 +7,10 @@
 
 #include "GameObjectsAndPrefabs/Prefab.h"
 
-class CharacterDefault : public Prefab {
+class Default : public Prefab {
 public:
-    CharacterDefault(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
-    ~CharacterDefault() override;
+    Default(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
+    ~Default() override;
 
     std::shared_ptr<GameObject> Create() override;
 };

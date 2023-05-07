@@ -4,9 +4,11 @@
 
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
-#include "GameObjectsAndPrefabs/Prefabs/CharacterDefault.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/AI/CharacterLogic.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/RockDrums.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/JazzClap.h"
 #include "spdlog/spdlog.h"
 
 #ifdef DEBUG
@@ -29,13 +31,22 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     spawnDelay = delay;
 
     int random;
+    std::shared_ptr<GameObject> ch;
 
     for (int i = 0; i < min; i++) {
-        random = RandomnessManager::GetInstance()->GetInt(0, 0);
+        random = RandomnessManager::GetInstance()->GetInt(0, 2);
 
         switch (random) {
             case 0:
-                auto ch = Prefab::Instantiate<CharacterDefault>();
+                ch = Prefab::Instantiate<RockDrums>();
+                currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                break;
+            case 1:
+                ch = Prefab::Instantiate<Default>();
+                currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                break;
+            case 2:
+                ch = Prefab::Instantiate<JazzClap>();
                 currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                 break;
 
@@ -93,7 +104,7 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
 
     auto delay = std::chrono::milliseconds(spawnDelay);
     int random, charactersAmount = (int)currentCharactersLogics->size();
-    std::shared_ptr<GameObject> character;
+    std::shared_ptr<GameObject> ch;
 
     while(!token.stop_requested()) {
         if (charactersAmount < maxCharacters) {
@@ -103,14 +114,22 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
 
             switch (random) {
                 case 0:
-                    character = Prefab::Instantiate<CharacterDefault>();
-                    currentCharactersLogics->insert({character->GetId(), character->GetComponent<CharacterLogic>()});
+                    ch = Prefab::Instantiate<RockDrums>();
+                    currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                    break;
+                case 1:
+                    ch = Prefab::Instantiate<Default>();
+                    currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                    break;
+                case 2:
+                    ch = Prefab::Instantiate<JazzClap>();
+                    currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
 
             }
 
             if (playerIsPlaying)
-                character->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
+                ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 
             mutex.unlock();
 
@@ -119,4 +138,20 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
 
         std::this_thread::sleep_for(delay);
     }
+}
+
+const float AIManager::GetCombinedSatisfaction() {
+    float satisfaction = 0.0f;
+
+    mutex.lock();
+
+    for (auto&& ch : currentCharactersLogics) {
+        satisfaction += ch.second->GetCurrentSatisfaction();
+    }
+
+    satisfaction /= (float)currentCharactersLogics.size();
+
+    mutex.unlock();
+
+    return satisfaction;
 }

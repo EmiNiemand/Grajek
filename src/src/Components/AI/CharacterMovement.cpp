@@ -50,7 +50,7 @@ void CharacterMovement::AIUpdate() {
             path.erase(path.begin());
     }
 
-    if (path.empty() && logicState != WalkingToPlayer) {
+    if (path.empty() && logicState != RunningToPlayer) {
         SetNewRandomPoint();
         CalculateNewPath();
     }
@@ -83,16 +83,16 @@ void CharacterMovement::SetNewRandomPoint() {
     endTarget.z = RandomnessManager::GetInstance()->GetFloat(-25, 25);
 }
 
-void CharacterMovement::SetNewPath(AI_STATE state) {
+void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
     logicState = state;
 
-    if (logicState == WalkingToPlayer) {
+    if (logicState == RunningToPlayer) {
         previousTarget = endTarget;
         endTarget = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
         endTarget.x -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         endTarget.z -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         speedMultiplier = 2.0f;
-    } else if (logicState == TraversingOnPath) {
+    } else if (logicState == WalkingOnPath) {
         endTarget = previousTarget;
         speedMultiplier = 1.0f;
     }

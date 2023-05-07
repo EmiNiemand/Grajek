@@ -2,10 +2,11 @@
 // Created by Adrian on 01.05.2023.
 //
 
-#include "Components/AI/CharacterLogic.h"
-#include "Components/AI/CharacterMovement.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/AI/CharacterLogic.h"
+#include "Components/AI/CharacterMovement.h"
+#include "Components/Renderers/Animator.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -15,18 +16,21 @@ CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id
 
 CharacterLogic::~CharacterLogic() = default;
 
-//void CharacterLogic::AIUpdate() {
-//    Component::AIUpdate();
-//}
-//
+void CharacterLogic::Update() {
+//    characterAnimation->PlayAnimation()
+    Component::Update();
+}
+
 
 void CharacterLogic::OnCreate() {
     characterMovement = parent->GetComponent<CharacterMovement>();
+//    characterAnimation = parent->GetComponent<Animator>();
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
     Component::OnCreate();
 }
 
 void CharacterLogic::OnDestroy() {
+    characterAnimation = nullptr;
     characterMovement = nullptr;
     favInstrumentsNames.clear();
     favGenres.clear();
@@ -35,6 +39,7 @@ void CharacterLogic::OnDestroy() {
 }
 
 void CharacterLogic::Free() {
+    characterAnimation = nullptr;
     characterMovement = nullptr;
     favInstrumentsNames.clear();
     favGenres.clear();
@@ -42,13 +47,13 @@ void CharacterLogic::Free() {
 }
 
 void CharacterLogic::SetPathToPlayer() {
-    currentState = WalkingToPlayer;
+    currentState = RunningToPlayer;
 
     characterMovement->SetNewPath(currentState);
 }
 
 void CharacterLogic::ReturnToPreviousPath() {
-    currentState = TraversingOnPath;
+    currentState = WalkingOnPath;
 
     characterMovement->SetNewPath(currentState);
 }
@@ -73,9 +78,9 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) 
             currentSatisfaction = 0;
     }
 
-    if (currentSatisfaction >= minSatisfaction && currentState == TraversingOnPath) {
+    if (currentSatisfaction >= minSatisfaction && currentState == WalkingOnPath) {
         SetPathToPlayer();
-    } else if (currentSatisfaction < minSatisfaction && currentState == WalkingToPlayer) {
+    } else if (currentSatisfaction < minSatisfaction && currentState == RunningToPlayer) {
         ReturnToPreviousPath();
     }
 }
@@ -95,7 +100,8 @@ void CharacterLogic::CalculateSatisfaction() {
     if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
         currentSatisfaction += 30;
 
-    if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName) != favInstrumentsNames.end())
+    if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName)
+    != favInstrumentsNames.end())
         currentSatisfaction += 20;
 
     if (currentSatisfaction > minSatisfaction)

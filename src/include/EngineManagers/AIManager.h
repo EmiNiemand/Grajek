@@ -44,6 +44,7 @@ public:
     void NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
+    const float GetCombinedSatisfaction();
 
 };
 

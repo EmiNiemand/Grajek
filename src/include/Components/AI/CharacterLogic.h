@@ -9,19 +9,22 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Components/Component.h"
-#include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterStates.h"
+#include "Components/Scripts/MusicPattern.h"
+
 #include <vector>
 #include <unordered_map>
 
 class GameObject;
 class CharacterMovement;
+class Animator;
 
 class CharacterLogic : public Component {
     std::shared_ptr<CharacterMovement> characterMovement;
+    std::shared_ptr<Animator> characterAnimation;
     float minSatisfaction = 0;
     float currentSatisfaction = 0;
-    AI_STATE currentState = Idle;
+    AI_LOGICSTATE currentState = WalkingOnPath;
 
     InstrumentName playerInstrumentName;
     MusicGenre playerGenre;
@@ -35,7 +38,7 @@ public:
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;
 
-//    void AIUpdate() override;
+    void Update() override;
     void OnCreate() override;
     void OnDestroy() override;
     void Free();

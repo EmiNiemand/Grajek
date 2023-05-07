@@ -16,7 +16,7 @@ class GameObject;
 class Rigidbody;
 
 class CharacterMovement : public Component {
-    AI_STATE logicState = Idle;
+    AI_LOGICSTATE logicState;
     std::shared_ptr<Rigidbody> rigidbody;
     std::vector<glm::vec3> path;
     glm::vec3 newPosition {};
@@ -40,7 +40,7 @@ public:
     void Free();
 
     void SetNewRandomPoint();
-    void SetNewPath(AI_STATE state);
+    void SetNewPath(AI_LOGICSTATE state);
     void CalculateNewPath();
 
 };
