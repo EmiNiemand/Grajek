@@ -26,7 +26,7 @@ public:
     ~Animator() override;
 
     void LoadAnimationModel(const std::string& path);
-	void LoadAnimation(const std::string& path);
+	static void LoadAnimation(const std::string& path);
     void SetAnimation(const std::string& name);
 
 	void Update() override;
@@ -41,7 +41,8 @@ public:
     std::vector<glm::mat4>& GetFinalBoneMatrices();
 
 private:
-    void CalculateBoneTransform(const AssimpNodeData* node, const glm::mat4& parentTransform);
+    void CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform);
+    static void LoadModel(const std::string& path);
 
 };
 

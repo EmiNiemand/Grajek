@@ -19,11 +19,10 @@ Animation::Animation(std::string name, float mDuration, int mTicksPerSecond) : n
 
 Animation::~Animation() = default;
 
-Bone* Animation::FindBone(const std::string& name)
+std::shared_ptr<Bone> Animation::FindBone(const std::string& name)
 {
-    auto iter = std::find_if(bones.begin(), bones.end(), [&](const Bone& Bone) { return Bone.GetBoneName() == name; });
-    if (iter == bones.end()) return nullptr;
-    else return &(*iter);
+    if (!bones.contains(name)) return nullptr;
+    else return bones.at(name);
 }
 
 int Animation::GetTicksPerSecond() const {
@@ -34,11 +33,11 @@ float Animation::GetDuration() const {
     return duration;
 }
 
-const AssimpNodeData& Animation::GetRootNode() {
+AssimpNodeData& Animation::GetRootNode() {
     return rootNode;
 }
 
-const std::unordered_map<std::string,BoneInfo>& Animation::GetBoneIDMap() {
+const std::unordered_map<std::string, BoneInfo>& Animation::GetBoneIDMap() {
     return boneInfoMap;
 }
 
@@ -74,7 +73,7 @@ void Animation::ReadMissingBones(const aiAnimation* animation, const std::shared
             boneInfoMap[boneName].id = boneCount;
             boneCount++;
         }
-        bones.emplace_back(boneName, boneInfoMap[boneName].id, channel);
+        bones.insert({boneName, std::make_shared<Bone>(boneName, boneInfoMap[boneName].id, channel)});
     }
 }
 
@@ -112,14 +111,14 @@ void Animation::Recalculate(const std::shared_ptr<AnimationModel>& model) {
     boneInfoMap = model->GetBoneInfoMap();
     uint16_t& boneCount = model->GetBoneCount();
 
-    for (unsigned int i = 0; i < bones.size(); i++) {
-        std::string boneName = bones[i].GetBoneName();
+    for (auto&& bone : bones) {
+        std::string boneName = bone.second->GetBoneName();
 
         if (boneInfoMap.find(boneName) == boneInfoMap.end()) {
             boneInfoMap[boneName].id = boneCount;
             boneCount++;
         }
-        bones[i].SetId(boneInfoMap[boneName].id);
+        bone.second->SetId(boneInfoMap[boneName].id);
     }
 }
 

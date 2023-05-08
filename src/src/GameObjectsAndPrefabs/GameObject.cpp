@@ -85,6 +85,9 @@ void GameObject::UpdateSelfAndChildren() {
 }
 
 void GameObject::ForceUpdateSelfAndChildren() {
+#ifdef DEBUG
+    ZoneScopedNC("ForceUpdate", 0x0300fc);
+#endif
     if (parent != nullptr) transform->ComputeModelMatrix(parent->transform->GetModelMatrix());
     else transform->ComputeModelMatrix();
 
