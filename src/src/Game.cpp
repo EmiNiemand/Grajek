@@ -227,16 +227,16 @@ void Game::InitializeGame() const {
 	// Set up animated model
 	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
     auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-    animatedDoodAnimator->LoadAnimationModel("Animacje/BasicMan01.dae");
+    animatedDoodAnimator->LoadAnimationModel("basicMan/basicMan02/basicMan02.dae");
     animatedDoodAnimator->SetAnimation("Animacje/Idle.dae");
-	animatedDood->transform->SetLocalPosition({-2, 1, -10});
+	animatedDood->transform->SetLocalPosition({-2, 1, -15});
     animatedDood->transform->SetLocalRotation({0, -90, 0});
 	animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 10; i++) {
         std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator2 = animatedDood2->AddComponent<Animator>();
-        animatedDoodAnimator2->LoadAnimationModel("Animacje/Idle.dae");
+        animatedDoodAnimator2->LoadAnimationModel("basicMan/basicMan05/basicMan05.dae");
         animatedDoodAnimator2->SetAnimation("Animacje/Walk.dae");
         animatedDood2->transform->SetLocalPosition({-20 + i, 1, -10});
         animatedDood2->transform->SetLocalRotation({0, -90, 0});
@@ -260,6 +260,7 @@ bool Game::GameLoop() {
 
     if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
         shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+
 
     return shouldQuit;
 }

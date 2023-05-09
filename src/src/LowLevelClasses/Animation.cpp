@@ -45,15 +45,16 @@ void Animation::ReadMissingBones(const aiAnimation* animation, const std::shared
     unsigned int size = animation->mNumChannels;
 
     boneInfoMap = model->GetBoneInfoMap();//getting m_BoneInfoMap from Model class
-    uint16_t& boneCount = model->GetBoneCount(); //getting the m_BoneCounter from Model class
+    uint16_t boneCount = model->GetBoneCount(); //getting the m_BoneCounter from Model class
 
     //reading channels(bones engaged in an animation and their keyframes)
     for (unsigned int i = 0; i < size; i++)
     {
         auto channel = animation->mChannels[i];
 
-        int counter = 0;
         std::string boneName = channel->mNodeName.data;
+
+        int counter = 0;
 
         for (int j = 0; j < boneName.size(); j++) {
             if (boneName[j] == '_') counter++;
@@ -109,7 +110,7 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src) {
 
 void Animation::Recalculate(const std::shared_ptr<AnimationModel>& model) {
     boneInfoMap = model->GetBoneInfoMap();
-    uint16_t& boneCount = model->GetBoneCount();
+    uint16_t boneCount = model->GetBoneCount();
 
     for (auto&& bone : bones) {
         std::string boneName = bone.second->GetBoneName();

@@ -45,7 +45,7 @@ void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {
 
     // draw mesh
     glBindVertexArray(vao);
-    glDrawElements(type, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    glDrawElements(type, (int)indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     diffuseNr = 0;
