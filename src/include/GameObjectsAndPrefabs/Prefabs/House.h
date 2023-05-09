@@ -12,8 +12,6 @@ public:
     std::shared_ptr<GameObject> Create() override;
 
     shared_ptr <StaticObjectData> SaveStatic() override;
-
-    void LoadStatic(shared_ptr <StaticObjectData> &data) override;
 };
 
 

@@ -59,9 +59,3 @@ std::shared_ptr<StaticObjectData> Shop::SaveStatic() {
     newData->scale = this->transform->GetLocalScale();
     return newData;
 }
-
-void Shop::LoadStatic(std::shared_ptr<StaticObjectData> &data) {
-    this->transform->SetLocalPosition(data->position);
-    this->transform->SetLocalRotation(data->rotation);
-    this->transform->SetLocalScale(data->scale);
-}
