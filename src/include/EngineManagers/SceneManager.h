@@ -48,6 +48,7 @@ private:
     //IO function that saves map file from list of staticObjData
     void SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData, std::string dataDirectoryPath,
                  std::string dataFileName);
+    void FindAllStaticSaveablePrefabs();
 };
 
 

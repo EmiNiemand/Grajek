@@ -2,8 +2,9 @@
 #define GLOOMENGINE_SHOP_H
 
 #include "GameObjectsAndPrefabs/Prefab.h"
+#include "Interfaces/SaveableStaticObject.h"
 
-class Shop : public Prefab {
+class Shop : public Prefab,public SaveableStaticObject {
 public:
     Shop(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
     ~Shop() override;

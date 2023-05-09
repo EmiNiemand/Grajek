@@ -18,4 +18,12 @@ std::shared_ptr<GameObject> House::Create() {
     return house;
 }
 
+std::shared_ptr<StaticObjData> House::SaveStatic() {
+    return std::shared_ptr<StaticObjData>();
+}
+
+void House::LoadStatic(std::shared_ptr<StaticObjData> &data) {
+
+}
+
 
