@@ -7,7 +7,7 @@
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
-PauseMenu::~PauseMenu() {}
+PauseMenu::~PauseMenu() = default;
 
 void PauseMenu::ShowMenu() {
     parent->EnableSelfAndChildren();

@@ -44,3 +44,90 @@ std::string Instrument::NameToString() const {
     }
 }
 
+std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentName) {
+    auto instrument = std::make_shared<Instrument>();
+    instrument->Setup(instrumentName);
+
+    // Add samples
+    // -----------
+    switch (instrumentName) {
+        case Clap:
+            instrument->AddSamples({
+               "res/sounds/direct/clap/clapWeak.wav",
+               "res/sounds/direct/clap/clapStrong.wav"});
+            break;
+        case Drums:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+            // TODO: actually implement these three
+        case Trumpet:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+        case Launchpad:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+        case Guitar:
+            instrument->AddSamples({
+               "res/sounds/direct/drums/hat.wav",
+               "res/sounds/direct/drums/kick.wav",
+               "res/sounds/direct/drums/snare.wav"});
+            break;
+    }
+
+    // Add patterns
+    // ------------
+    switch (instrumentName) {
+        case Clap:
+            instrument->GeneratePattern({
+            // 1      *
+            // 0  * *
+            {0, 0}, {0, 0.5}, {1, 0.5}});
+            break;
+        case Drums:
+            // 2      *
+            // 1    *   *
+            // 0  *
+            instrument->GeneratePattern({
+                {0, 0}, {1, 0.5}, {2, 0.5},
+                {1, 0.5}});
+            break;
+            // TODO: actually implement these three
+        case Trumpet:
+            // 2       -
+            // 1     -   --
+            // 0  --
+            instrument->GeneratePattern({
+                {0, 0, 1.0}, {1, 0.5, 0.5},
+                {2, 0.5, 0.5}, {1, 0.5, 1.0}});
+            break;
+        case Launchpad:
+            // 2   * *
+            // 1 *     *
+            // 0 -------
+            instrument->GeneratePattern({
+                {0, 0, 2.0},
+                {1, 0}, {2, 0.5}, {2, 0.5},
+                {1, 0.5}});
+            break;
+        case Guitar:
+            // 2   *   *
+            // 1 *   *
+            // 0 -------
+            instrument->GeneratePattern({
+                {0, 0, 2.0},
+                {1, 0}, {2, 0.5},
+                {1, 0.5}, {2, 0.5}});
+            break;
+    }
+
+    return instrument;
+}

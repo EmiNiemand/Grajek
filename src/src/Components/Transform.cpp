@@ -23,6 +23,7 @@ glm::mat4 Transform::GetLocalModelMatrix()
 void Transform::ComputeModelMatrix()
 {
     mModelMatrix = GetLocalModelMatrix();
+    parent->dirtyFlag = false;
 }
 
 void Transform::ComputeModelMatrix(const glm::mat4& parentGlobalModelMatrix)

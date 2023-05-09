@@ -5,25 +5,23 @@
 #ifndef GLOOMENGINE_PREFAB_H
 #define GLOOMENGINE_PREFAB_H
 
-#include <memory>
-#include <string>
-#include "Components/Scripts/MusicPattern.h"
+#include "GameObject.h"
+#include "Factories/PrefabFactory.h"
 
-class GameObject;
-class Instrument;
+class Prefab : public GameObject {
+protected:
+    std::string prefabName;
 
-class Prefab {
 public:
-    // GameObjects
-    static std::shared_ptr<GameObject> GetPlayer(std::string name="Player");
-    static std::shared_ptr<GameObject> GetCube(std::string name="Cube");
-    static std::shared_ptr<GameObject> GetDancingDude(std::string name="dood");
-    static std::shared_ptr<GameObject> GetShop(std::string name="Shop");
-    // Instruments
-    static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);
+    Prefab(const std::string &name, int id, const std::shared_ptr<GameObject>& parent, Tags tag);
 
-    static std::vector<std::shared_ptr<GameObject> (*)(std::string)>& GetCharacters();
-    static std::shared_ptr<GameObject> GetDefaultCharacter(std::string name);
+    template<class T>
+    static std::shared_ptr<GameObject> Instantiate(std::string objectName = typeid(T).name()) {
+        return PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<T>(objectName);
+    }
+
+    const std::string& GetPrefabName() const;
+    virtual std::shared_ptr<GameObject> Create() = 0;
 };
 
 

@@ -5,10 +5,14 @@
 #include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/Scripts/PlayerManager.h"
-#include "Components/Scripts/SessionUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
+#include "Components/Scripts/SessionUI/ClapSessionUI.h"
+#include "Components/Scripts/SessionUI/DrumsSessionUI.h"
+#include "Components/Scripts/SessionUI/TrumpetSessionUI.h"
+#include "Components/Scripts/SessionUI/LaunchpadSessionUI.h"
+#include "Components/Scripts/SessionUI/GuitarSessionUI.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -23,8 +27,19 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
 
     playerManager = parent->GetComponent<PlayerManager>();
 
-    sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<SessionUI>();
-    sessionUI->Setup(bpm, instrument->samples, nullptr);
+    auto metronome = GameObject::Instantiate("Metronome", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<Image>();
+    metronome->LoadTexture(0, 0, "UI/Sesja/Ramka.png");
+    if (instrument->NameToString() == "Clap")
+        sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<ClapSessionUI>();
+    else if (instrument->NameToString() == "Drums")
+        sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<DrumsSessionUI>();
+    else if (instrument->NameToString() == "Trumpet")
+        sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<TrumpetSessionUI>();
+    else if (instrument->NameToString() == "Launchpad")
+        sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<LaunchpadSessionUI>();
+    else if (instrument->NameToString() == "Guitar")
+        sessionUI = GameObject::Instantiate("Session", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))->AddComponent<GuitarSessionUI>();
+    sessionUI->Setup(bpm, instrument->samples, metronome);
 
     std::shared_ptr<GameObject> theme = GameObject::Instantiate("Theme", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"));
     if (instrument->NameToString() == "Drums") {
@@ -35,6 +50,20 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
         theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokLaunchpad.png");
     } else if (instrument->NameToString() == "Guitar") {
         theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokGitara.png");
+    }
+
+    if (instrument->NameToString() == "Clap") {
+        GameObject::Instantiate("Circle1", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+        ->AddComponent<Image>()->LoadTexture(650, 600, "UI/Sesja/circle.png");
+        GameObject::Instantiate("Circle2", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+        ->AddComponent<Image>()->LoadTexture(1150, 600, "UI/Sesja/circle.png");
+    } else if (instrument->NameToString() == "Drums") {
+        GameObject::Instantiate("Circle1", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+                ->AddComponent<Image>()->LoadTexture(950, 800, "UI/Sesja/circle.png");
+        GameObject::Instantiate("Circle2", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+                ->AddComponent<Image>()->LoadTexture(1250, 800, "UI/Sesja/circle.png");
+        GameObject::Instantiate("Circle3", GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI"))
+                ->AddComponent<Image>()->LoadTexture(1550, 800, "UI/Sesja/circle.png");
     }
 }
 

@@ -2,12 +2,13 @@
 // Created by Adrian on 01.05.2023.
 //
 
-#include <numbers>
-#include "GameObjectsAndPrefabs/GameObject.h"
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/AI/CharacterStates.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include <numbers>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -17,47 +18,53 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 
 CharacterMovement::~CharacterMovement() = default;
 
-void CharacterMovement::Start() {
-    rigidbody = parent->GetComponent<Rigidbody>();
-    SetNewRandomPoint();
-    SetNewPathWithPathFinding();
-    Component::Start();
-}
+void CharacterMovement::FixedUpdate() {
+#ifdef DEBUG
+    ZoneScopedNC("CharacterMovement", 0xfc0f03);
+#endif
 
-void CharacterMovement::Update() {
     currentPosition = parent->transform->GetLocalPosition();
 
     if (!path.empty()) {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
-        glm::vec3 newPos = {path.begin()->x - currentPosition.x, 0, path.begin()->z - currentPosition.z};
-        newPos = glm::normalize(newPos);
-        newPos *= (speed * speedMultiplier);
+        newPosition = glm::normalize(path[0] - currentPosition) * speed * speedMultiplier;
 
-        rigidbody->AddForce(newPos, ForceMode::Force);
+        rigidbody->AddForce(newPosition, ForceMode::Force);
 
-        rotationAngle = std::atan2f(-newPos.x, -newPos.z) * 180.0f/std::numbers::pi;
+        rotationAngle = std::atan2f(-newPosition.x, -newPosition.z) * 180.0f/std::numbers::pi;
 
         if (rotationAngle < 0.0f) {
             rotationAngle += 360.0f;
         }
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
+    }
 
+    Component::FixedUpdate();
+}
+
+void CharacterMovement::AIUpdate() {
+    if (!path.empty()) {
         if (glm::distance(currentPosition, path[0]) < 1.0f)
             path.erase(path.begin());
     }
 
-    Component::Update();
-}
-
-void CharacterMovement::AIUpdate() {
-    if (path.empty() && !isAlarmed) {
+    if (path.empty() && logicState != RunningToPlayer) {
         SetNewRandomPoint();
-        SetNewPathWithPathFinding();
+        CalculateNewPath();
     }
 
     Component::AIUpdate();
+}
+
+void CharacterMovement::OnCreate() {
+    rigidbody = parent->GetComponent<Rigidbody>();
+
+    SetNewRandomPoint();
+    parent->transform->SetLocalPosition(endTarget);
+    SetNewRandomPoint();
+    Component::OnCreate();
 }
 
 void CharacterMovement::OnDestroy() {
@@ -76,22 +83,25 @@ void CharacterMovement::SetNewRandomPoint() {
     endTarget.z = RandomnessManager::GetInstance()->GetFloat(-25, 25);
 }
 
-void CharacterMovement::SetNewPathToPlayer(glm::vec3 playerPosition) {
-    previousTarget = endTarget;
-    endTarget = playerPosition;
-    isAlarmed = true;
-    speedMultiplier = 2.0f;
-    SetNewPathWithPathFinding();
+void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
+    logicState = state;
+
+    if (logicState == RunningToPlayer) {
+        previousTarget = endTarget;
+        endTarget = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
+        endTarget.x -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
+        endTarget.z -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
+        speedMultiplier = 2.0f;
+    } else if (logicState == WalkingOnPath) {
+        endTarget = previousTarget;
+        speedMultiplier = 1.0f;
+    }
+
+    CalculateNewPath();
 }
 
-void CharacterMovement::ReturnToPreviousPath() {
-    endTarget = previousTarget;
-    isAlarmed = false;
-    speedMultiplier = 1.0f;
-    SetNewPathWithPathFinding();
-}
-
-void CharacterMovement::SetNewPathWithPathFinding() {
+void CharacterMovement::CalculateNewPath() {
+    speed = 0.0f;
     path.clear();
     path.push_back(endTarget);
 //    foreach (var obj in GameObject.FindGameObjectsWithTag("Obstacles"))

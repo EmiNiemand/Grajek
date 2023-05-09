@@ -26,13 +26,12 @@ Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Drawable
 
 Animator::~Animator() {
     model.reset();
-    currentAnimation.reset();
 }
 
 void Animator::LoadAnimationModel(const std::string& path) {
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
-    uint32_t hash = Utilities::Hash(newPath);
+    int hash = Utilities::Hash(newPath);
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
@@ -44,9 +43,11 @@ void Animator::LoadAnimationModel(const std::string& path) {
     parent->bounds = FrustumCulling::GenerateAABB(model);
 }
 
-void Animator::LoadAnimations(const std::string& path)
+void Animator::LoadAnimation(const std::string& path)
 {
-    if (model == nullptr) LoadAnimationModel(path);
+    if (animationModels.empty()) LoadModel(path);
+
+    auto model = animationModels.begin()->second;
 
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
@@ -57,25 +58,22 @@ void Animator::LoadAnimations(const std::string& path)
     for (int i = 0; i < scene->mNumAnimations; i++){
         aiAnimation* animation = scene->mAnimations[i];
 
-        std::string animationName = animation->mName.C_Str();
-
-        uint32_t hash = Utilities::Hash(animationName);
+        int hash = Utilities::Hash(path);
 
         if (!animations.contains(hash)) {
-            animations.insert({hash, std::make_shared<Animation>(animation->mDuration, animation->mTicksPerSecond)});
+            animations.insert({hash, Animation(path, (float)animation->mDuration, (int)animation->mTicksPerSecond)});
         }
 
-        animations.at(hash)->ReadHierarchyData(animations.at(hash)->rootNode, scene->mRootNode);
-        animations.at(hash)->ReadMissingBones(animation, model);
+        animations.at(hash).ReadHierarchyData(animations.at(hash).rootNode, scene->mRootNode);
+        animations.at(hash).ReadMissingBones(animation, model);
     }
-
-	currentAnimation = animations.at(Utilities::Hash(scene->mAnimations[0]->mName.C_Str()));
 }
 
 void Animator::SetAnimation(const std::string &name) {
     currentAnimation = animations.at(Utilities::Hash(name));
-}
 
+    currentAnimation.Recalculate(model);
+}
 
 void Animator::Update() {
 #ifdef DEBUG
@@ -125,49 +123,69 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
 
 void Animator::UpdateAnimation(float deltaTime) {
 	//if(!isPlaying) return;
-	if (!currentAnimation) return;
+//	if (!currentAnimation) return;
 
-    currentTime += (float)currentAnimation->GetTicksPerSecond() * deltaTime;
-    currentTime = fmod(currentTime, currentAnimation->GetDuration());
-    CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
+    currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime;
+    currentTime = fmod(currentTime, currentAnimation.GetDuration());
+    CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
 }
 
-void Animator::PlayAnimation(std::shared_ptr<Animation> pAnimation) {
-    currentAnimation = std::move(pAnimation);
+void Animator::PlayAnimation(Animation pAnimation) {
+    currentAnimation = pAnimation;
     currentTime = 0.0f;
 	isPlaying = true;
 }
 
 void Animator::PauseAnimation() { isPlaying = false; }
 
-std::vector<glm::mat4>& Animator::GetFinalBoneMatrices()
-{
+std::vector<glm::mat4>& Animator::GetFinalBoneMatrices() {
     return finalBoneMatrices;
 }
 
-void Animator::CalculateBoneTransform(const AssimpNodeData* node, const glm::mat4& parentTransform)
-{
-    const std::string& nodeName = node->name;
-    glm::mat4 nodeTransform = node->transformation;
+void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform) {
+#ifdef DEBUG
+    ZoneScopedNC("Bone Transform", 0x800080);
+#endif
 
-	Bone* bone = currentAnimation->FindBone(nodeName);
+    std::vector<std::pair<glm::mat4, AssimpNodeData*>> toVisit = {};
 
-    if (bone)
-    {
-	    bone->Update(currentTime);
-        nodeTransform = bone->GetLocalTransform();
+    glm::mat4 globalTransformation = parentTransform;
+    toVisit.emplace_back(globalTransformation, node);
+
+    auto boneInfoMap = currentAnimation.GetBoneIDMap();
+
+    while (!toVisit.empty()) {
+        node = toVisit.at(0).second;
+
+        const std::string& nodeName = node->name;
+        glm::mat4 nodeTransform = node->transformation;
+
+        std::shared_ptr<Bone> bone = currentAnimation.FindBone(nodeName);
+
+        if (bone) {
+            bone->Update(currentTime);
+            nodeTransform = bone->GetLocalTransform();
+        }
+
+        globalTransformation = toVisit.at(0).first * nodeTransform;
+
+        finalBoneMatrices.at(boneInfoMap[nodeName].id) = globalTransformation * boneInfoMap[nodeName].offset;
+
+        for (auto& child : node->children) {
+            toVisit.emplace_back(globalTransformation, &child);
+        }
+
+        toVisit.erase(toVisit.begin());
     }
+}
 
-    glm::mat4 globalTransformation = parentTransform * nodeTransform;
+void Animator::LoadModel(const std::string &path) {
+    std::string newPath = "res/models/" + path;
+    std::filesystem::path normalizedPath(newPath);
+    int hash = Utilities::Hash(newPath);
 
-    auto boneInfoMap = currentAnimation->GetBoneIDMap();
-    if (boneInfoMap.find(nodeName) != boneInfoMap.end())
-    {
-        int index = boneInfoMap[nodeName].id;
-        glm::mat4 offset = boneInfoMap[nodeName].offset;
-        finalBoneMatrices.at(index) = globalTransformation * offset;
+    if (!animationModels.contains(hash)) {
+        animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
+                                                                        RendererManager::GetInstance()->shader)});
     }
-
-    for (const auto & i : node->children)
-		CalculateBoneTransform(&i, globalTransformation);
 }

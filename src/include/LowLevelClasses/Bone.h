@@ -51,6 +51,8 @@ public:
     [[nodiscard]] const std::string& GetBoneName() const;
     [[nodiscard]] int GetBoneID() const;
 
+    void SetId(int id);
+
     [[nodiscard]] int GetPositionIndex(float animationTime) const;
     [[nodiscard]] int GetRotationIndex(float animationTime) const;
     [[nodiscard]] int GetScaleIndex(float animationTime) const;

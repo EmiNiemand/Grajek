@@ -144,3 +144,7 @@ glm::mat4 Bone::InterpolateScaling(float animationTime)
 
     return glm::scale(glm::mat4(1.0f), finalScale);
 }
+
+void Bone::SetId(int id) {
+    ID = id;
+}

@@ -4,7 +4,6 @@
 
 #include "LowLevelClasses/FileDataHandler.h"
 #include "LowLevelClasses/GameData.h"
-#include "LowLevelClasses/StaticObjData.h"
 #include <spdlog/spdlog.h>
 #include <filesystem>
 #include <iostream>

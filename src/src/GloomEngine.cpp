@@ -53,7 +53,7 @@ void GloomEngine::Initialize() {
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
-    AIManager::GetInstance()->InitializeSpawner(30, 1, 1, 2000);
+    AIManager::GetInstance()->InitializeSpawner(5, 10, 100);
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -84,10 +84,6 @@ void GloomEngine::Start() {
     for (auto&& component : components){
         if (component.second->enabled && component.second->callOnStart) component.second->Start();
     }
-
-    // Load game
-    std::filesystem::path path = std::filesystem::current_path();
-    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
 
     SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 }
@@ -216,6 +212,7 @@ void GloomEngine::Update() {
         }
     }
     // Preparing shadow map
+    if (!FindGameObjectWithName("MainMenu"))
     {
 #ifdef DEBUG
         ZoneScopedNC("Prepare shadow", 0xFFD733);
@@ -252,6 +249,7 @@ void GloomEngine::Update() {
         glEnable(GL_DEPTH_TEST);
     }
     // Drawing debug lines for colliders
+    if (!FindGameObjectWithName("MainMenu"))
     {
 #ifdef DEBUG
         ZoneScopedNC("Draw colliders", 0x800000);
@@ -361,8 +359,15 @@ void GloomEngine::InitializeWindow() {
     int monitorHeight = mode->height;
     glfwSetWindowPos(window, monitorWidth / 2 - OptionsManager::GetInstance()->width / 2, monitorHeight / 2 - OptionsManager::GetInstance()->height / 2);
 
+#ifdef RELEASE
     // Enable cursor - change last parameter to disable it
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
+
+#ifdef DEBUG
+    // Enable cursor - change last parameter to disable it
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+#endif
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)

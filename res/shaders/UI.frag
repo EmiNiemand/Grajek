@@ -6,6 +6,8 @@ in vec2 TexCoord;
 uniform bool isText;
 uniform sampler2D texture1;
 uniform vec3 textColor;
+uniform vec3 color;
+uniform float alpha;
 
 void main()
 {
@@ -20,6 +22,6 @@ void main()
         vec4 texColor = texture(texture1, TexCoord);
         if(texColor.a < 0.5)
             discard;
-        FragColor = texColor;
+        FragColor = texColor * vec4(color, alpha);
     }
 }

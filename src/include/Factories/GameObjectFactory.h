@@ -10,8 +10,7 @@ class GameObject;
 
 class GameObjectFactory {
 private:
-    int id = 0;
-    static GameObjectFactory* gameObjectFactory;
+    inline static GameObjectFactory* gameObjectFactory = nullptr;
 
 public:
     GameObjectFactory(GameObjectFactory &other) = delete;

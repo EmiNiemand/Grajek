@@ -80,7 +80,7 @@ void AudioManager::CheckAudioDevice(const std::stop_token& token, ALCdevice** de
     static auto alcReopenDeviceSOFT = (LPALCREOPENDEVICESOFT)alcGetProcAddress(*device, "alcReopenDeviceSOFT");
     static auto alcResetDeviceSOFT = (LPALCRESETDEVICESOFT)alcGetProcAddress(*device, "alcResetDeviceSOFT");
 
-    while(true) {
+    while(!token.stop_requested()) {
         alcGetIntegerv(*device, ALC_CONNECTED, 1, &status);
 
         if (!status)
@@ -101,10 +101,6 @@ void AudioManager::CheckAudioDevice(const std::stop_token& token, ALCdevice** de
                 spdlog::info("Successfully reconnected OpenAL-Soft on " +
                              (std::string)alcGetString(*device, ALC_ALL_DEVICES_SPECIFIER));
             }
-        }
-
-        if (token.stop_requested()) {
-            return;
         }
 
         std::this_thread::sleep_for(500ms);

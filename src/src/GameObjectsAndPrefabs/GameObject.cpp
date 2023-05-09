@@ -1,19 +1,25 @@
+#include <utility>
+
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GloomEngine.h"
 #include "Other/FrustumCulling.h"
 
-GameObject::GameObject(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
-                                                                        name(name), id(id), parent(parent), tag(tag) {
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
+GameObject::GameObject(std::string name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+                                                                        name(std::move(name)), id(id), parent(parent), tag(tag) {
     bounds = FrustumCulling::GenerateAABB(nullptr);
 }
 
 GameObject::~GameObject() = default;
 
 std::shared_ptr<GameObject> GameObject::Instantiate(std::string name, std::shared_ptr<GameObject> parent, Tags tag) {
-    return GameObjectFactory::GetInstance()->CreateGameObject(name, parent, tag);
+    return GameObjectFactory::GetInstance()->CreateGameObject(std::move(name), parent, tag);
 }
 
-void GameObject::Destroy(std::shared_ptr<GameObject> gameObject) {
+void GameObject::Destroy(const std::shared_ptr<GameObject>& gameObject) {
     GloomEngine::GetInstance()->destroyGameObjectBuffer.emplace_back(gameObject);
 }
 
@@ -63,6 +69,10 @@ void GameObject::RemoveAllChildren() {
 }
 
 void GameObject::UpdateSelfAndChildren() {
+#ifdef DEBUG
+    ZoneScopedNC("SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren()", 0x03fcfc);
+#endif
+
     if (transform != nullptr && dirtyFlag) {
         ForceUpdateSelfAndChildren();
         OnTransformUpdateComponents();
@@ -75,6 +85,9 @@ void GameObject::UpdateSelfAndChildren() {
 }
 
 void GameObject::ForceUpdateSelfAndChildren() {
+#ifdef DEBUG
+    ZoneScopedNC("ForceUpdate", 0x0300fc);
+#endif
     if (parent != nullptr) transform->ComputeModelMatrix(parent->transform->GetModelMatrix());
     else transform->ComputeModelMatrix();
 

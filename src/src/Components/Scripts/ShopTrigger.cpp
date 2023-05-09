@@ -3,7 +3,7 @@
 
 ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-ShopTrigger::~ShopTrigger() {}
+ShopTrigger::~ShopTrigger() = default;
 
 void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;

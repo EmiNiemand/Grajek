@@ -14,7 +14,7 @@ public:
     ~PauseMenu() override;
 
     void ShowMenu();
-    void OnClick();
+    void OnClick() override;
 };
 
 #endif //GLOOMENGINE_PAUSEMENU_H

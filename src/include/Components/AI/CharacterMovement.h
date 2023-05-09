@@ -16,36 +16,33 @@ class GameObject;
 class Rigidbody;
 
 class CharacterMovement : public Component {
+    AI_LOGICSTATE logicState;
     std::shared_ptr<Rigidbody> rigidbody;
     std::vector<glm::vec3> path;
+    glm::vec3 newPosition {};
     glm::vec3 endTarget {};
     glm::vec3 previousTarget {};
     glm::vec3 currentPosition {};
     float speed = 0.0f;
     float maxSpeed = 0.5f;
-    float smoothingParam = 0.5f;
-    bool isMoving = false;
-    float rotationAngle = 0.0f;
-//    Pathfinding pathFinder;
-
     float speedMultiplier = 1.0f;
-    bool isAlarmed = false;
+    float smoothingParam = 0.5f;
+    float rotationAngle = 0.0f;
 
 public:
-
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
-    void Start() override;
-    void Update() override;
+    void FixedUpdate() override;
     void AIUpdate() override;
+    void OnCreate() override;
     void OnDestroy() override;
     void Free();
 
     void SetNewRandomPoint();
-    void SetNewPathToPlayer(glm::vec3 playerPosition);
-    void ReturnToPreviousPath();
-    void SetNewPathWithPathFinding();
+    void SetNewPath(AI_LOGICSTATE state);
+    void CalculateNewPath();
+
 };
 
 #endif //GLOOMENGINE_CHARACTERMOVEMENT_H

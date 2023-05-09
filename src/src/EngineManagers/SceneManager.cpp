@@ -2,8 +2,6 @@
 #include "GloomEngine.h"
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "LowLevelClasses/StaticObjData.h"
-#include "LowLevelClasses/FileDataHandler.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -30,8 +28,6 @@ void SceneManager::InitializeScene() {
 
 void SceneManager::ClearScene() {
     activeScene->RemoveAllChildren();
-    GloomEngine::GetInstance()->components.clear();
-    GloomEngine::GetInstance()->gameObjects.clear();
 }
 
 void SceneManager::Free() {

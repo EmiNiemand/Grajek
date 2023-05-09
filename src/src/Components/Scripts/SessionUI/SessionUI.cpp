@@ -2,7 +2,7 @@
 // Created by masterktos on 06.04.23.
 //
 
-#include "Components/Scripts/SessionUI.h"
+#include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -16,6 +16,14 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     metronomeVisualEnabled = true;
 
     metronomeImage = std::move(metronome);
+    GameObject::Instantiate("MetronomeAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(metronomeImage, {
+            {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
+    }, true);
+
+    tickSound = parent->AddComponent<AudioSource>();
+    tickSound->LoadAudioData("res/sounds/direct/tick.wav", AudioType::Direct);
+    tickSound->IsLooping(false);
 
     accuracyFeedback = GameObject::Instantiate("AccuracyFeedback", parent)->AddComponent<Text>();
     accuracyFeedback->LoadFont("Good", 960, 540, 60, Color::White, GameFont::KanitLight);
@@ -27,31 +35,13 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     }
 
     SetCheatSheet(GameObject::Instantiate("CheatSheet", parent->parent)->AddComponent<Image>());
-    cheatSheet->LoadTexture(451, -1100, "UI/Sesja/drumPatterns.png");
+    cheatSheet->LoadTexture(451, -1100, "UI/Sesja/drumPatterns.png", -0.2);
 }
 
 void SessionUI::SetCheatSheet(std::shared_ptr<Image> newCheatSheet) { cheatSheet = std::move(newCheatSheet); }
 
 void SessionUI::PlaySound(int index) {
     //TODO: play some kind of visual confirmation of playing sound
-    auto animator = GameObject::Instantiate("NutaAnimator", parent->parent);
-    auto nuta = GameObject::Instantiate("Nuta", animator)->AddComponent<Image>();
-    if (index == 0) {
-        nuta->LoadTexture(670, 700, "UI/Sesja/Nuta1.png");
-        animator->AddComponent<UIAnimator>()->Setup(nuta, {
-                        {AnimatedProperty::Position, glm::vec3(670.0f, 775.0f, 0.0f)}
-                }, false);
-    } else if (index == 1) {
-        nuta->LoadTexture(700, 300, "UI/Sesja/Nuta2.png");
-        animator->AddComponent<UIAnimator>()->Setup(nuta, {
-                        {AnimatedProperty::Position, glm::vec3(775.0f, 300.0f, 0.0f)}
-                }, false);
-    } else if (index == 2) {
-        nuta->LoadTexture(400, 530, "UI/Sesja/Nuta3.png");
-        animator->AddComponent<UIAnimator>()->Setup(nuta, {
-                        {AnimatedProperty::Position, glm::vec3(400.0f, 605.0f, 0.0f)}
-                }, false);
-    }
 //    animator.SetTrigger("Sound"+index);
     sampleSources[index]->ForcePlaySound();
     spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
@@ -85,4 +75,11 @@ void SessionUI::UpdateAccuracy(float fraction) {
     accuracyFeedback->text = accuracyTexts[index];
     accuracyFeedback->color = accuracyColors[index];
     spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
+}
+
+void SessionUI::Update() {
+    if (metronomeImage->GetAlpha() == 1.0f) {
+        tickSound->PlaySound();
+    }
+    Component::Update();
 }

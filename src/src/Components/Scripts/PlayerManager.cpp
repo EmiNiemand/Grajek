@@ -13,7 +13,7 @@
 #include "Components/Scripts/PlayerMovement.h"
 #include "Components/Scripts/PlayerEquipment.h"
 #include "Components/Scripts/PlayerUI.h"
-#include "Components/Scripts/SessionUI.h"
+#include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/SessionStarter.h"
 #include "Components/Scripts/PauseMenu.h"
@@ -22,6 +22,9 @@
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/OptionsManager.h"
+#include "EngineManagers/AIManager.h"
+#include "EngineManagers/DataPersistanceManager.h"
+#include <filesystem>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -48,7 +51,12 @@ void PlayerManager::Awake() {
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     activeMenu = nullptr;
 
-    BuyInstrument(0, Prefab::GetInstrument(InstrumentName::Clap));
+    BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
+
+    // Load game
+    std::filesystem::path path = std::filesystem::current_path();
+    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
+
     Component::Awake();
 }
 
@@ -173,6 +181,7 @@ void PlayerManager::OnSessionToggle() {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
+        AIManager::GetInstance()->NotifyPlayerStopsPlaying();
         return;
     }
     if (sessionStarter) {
@@ -202,8 +211,7 @@ void PlayerManager::OnSoundStop(int index) {
 }
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
-    //TODO: uncomment when crowd manager gets implemented
-//        crowdManager.PlayedPattern(pat);
+     AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
 
     if (!pat) return;
 
@@ -222,6 +230,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     activeMenu.reset();
     session = parent->AddComponent<MusicSession>();
     session->Setup(equipment->GetInstrumentWithName(instrument));
+    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 }
 
 void PlayerManager::OnCheatSheetToggle() {
@@ -296,7 +305,7 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     Camera::activeCamera->transform->SetLocalPosition(
             parent->transform->GetGlobalPosition() + Camera::activeCamera->GetComponent<Camera>()->cameraOffset);
     for(const auto& instrument : data->instruments)
-        equipment->BuyInstrument(0, Prefab::GetInstrument(instrument));
+        equipment->BuyInstrument(0, Instrument::GetInstrument(instrument));
 }
 
 void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {

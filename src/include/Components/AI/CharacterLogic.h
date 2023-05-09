@@ -9,46 +9,47 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Components/Component.h"
+#include "Components/AI/CharacterStates.h"
 #include "Components/Scripts/MusicPattern.h"
+
 #include <vector>
 #include <unordered_map>
 
 class GameObject;
 class CharacterMovement;
+class Animator;
 
 class CharacterLogic : public Component {
-    std::shared_ptr<Transform> player;
     std::shared_ptr<CharacterMovement> characterMovement;
+    std::shared_ptr<Animator> characterAnimation;
     float minSatisfaction = 0;
     float currentSatisfaction = 0;
-    bool playerIsPlaying = false;
-    bool onPathToPlayer = false;
-    float playerSkill;
+    AI_LOGICSTATE currentState = WalkingOnPath;
 
     InstrumentName playerInstrumentName;
     MusicGenre playerGenre;
-// Music.Helpers.Pattern playerPattern;
+    std::shared_ptr<MusicPattern> playerPattern;
 
 public:
     std::vector<InstrumentName> favInstrumentsNames;
     std::vector<MusicGenre> favGenres;
-//    [SerializeField] public List<Music.Helpers.Pattern> favPatterns;
+    std::vector<std::shared_ptr<MusicPattern>> favPatterns;
 
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;
 
-    void Start() override;
-    void AIUpdate() override;
+    void Update() override;
     void OnCreate() override;
     void OnDestroy() override;
     void Free();
 
-    void CalculateSatisfaction();
-    void SetPathToPlayer() const;
-    void ReturnToPreviousPath() const;
+    void SetPathToPlayer();
+    void ReturnToPreviousPath();
     void SetPlayerInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
-    void SetPlayerStatus();
-    float GetCurrentSatisfaction() const;
+    void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pat);
+    void SetPlayerPlayingStatus(bool state);
+    void CalculateSatisfaction();
+    const float GetCurrentSatisfaction() const;
 
 };
 

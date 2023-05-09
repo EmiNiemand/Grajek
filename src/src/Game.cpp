@@ -23,6 +23,11 @@
 #include "Components/Audio/AudioSource.h"
 #include "Components/Scripts/ShopMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
+#include "Components/Scripts/MainMenu.h"
+#include "GameObjectsAndPrefabs/Prefabs/Player.h"
+#include "GameObjectsAndPrefabs/Prefabs/Die.h"
+#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
+#include "GameObjectsAndPrefabs/Prefabs/House.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -52,11 +57,11 @@ void Game::InitializeGame() const {
 
     // Set up player
     // -------------
-    std::shared_ptr<GameObject> player = Prefab::GetPlayer();
+    std::shared_ptr<GameObject> player = Prefab::Instantiate<Player>();
 
     // Set up ground
     // -------------
-    std::shared_ptr<GameObject> ground = Prefab::GetCube("Ground");
+    std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, -10});
     ground->transform->SetLocalScale({40, 2, 40});
     ground->GetComponent<Renderer>()->textScale = glm::vec2(40, 40);
@@ -79,7 +84,7 @@ void Game::InitializeGame() const {
     // ---------
     auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
     ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1450, 0, "UI/kotek.png");
+    ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
 
 
     // Set up pause menu
@@ -87,7 +92,7 @@ void Game::InitializeGame() const {
     pause->AddComponent<PauseMenu>();
     std::shared_ptr<GameObject> resumeButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
     std::shared_ptr<GameObject> optionsButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit to main menu", 32);
+    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
     std::shared_ptr<GameObject> exitButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
     std::shared_ptr<GameObject> pauseBackground = pause->GetComponent<PauseMenu>()->Menu::AddImage("Background", 0, 0, "UI/pause.png");
     resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
@@ -124,7 +129,7 @@ void Game::InitializeGame() const {
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    std::shared_ptr<GameObject> shop = Prefab::GetShop();
+    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
 
 
 //    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
@@ -193,29 +198,21 @@ void Game::InitializeGame() const {
         float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
         float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
 
-        std::shared_ptr<GameObject> serialHouse = GameObject::Instantiate("House", activeScene);
+        std::shared_ptr<GameObject> serialHouse = Prefab::Instantiate<House>();
         serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
         serialHouse->transform->SetLocalRotation({0, -90, 0});
         serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
-        serialHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-        serialHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-        serialHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
 
-        std::shared_ptr<GameObject> serialHouseLeft = GameObject::Instantiate("House", activeScene);
+
+        std::shared_ptr<GameObject> serialHouseLeft = Prefab::Instantiate<House>();
         serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
         serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
         serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
-        serialHouseLeft->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-        serialHouseLeft->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-        serialHouseLeft->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
 
-        std::shared_ptr<GameObject> serialHouseRight = GameObject::Instantiate("House", activeScene);
+        std::shared_ptr<GameObject> serialHouseRight = Prefab::Instantiate<House>();
         serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
         serialHouseRight->transform->SetLocalRotation({0, 180, 0});
         serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
-        serialHouseRight->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-        serialHouseRight->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-        serialHouseRight->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
     }
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
@@ -224,10 +221,27 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
+    Animator::LoadAnimation("Animacje/Idle.dae");
+    Animator::LoadAnimation("Animacje/Walk.dae");
+
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = Prefab::GetDancingDude();
-	animatedDood->transform->SetLocalPosition({-2, 0, -10});
-	animatedDood->transform->SetLocalScale({1.5, 1.5, 1.5});
+	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+    auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+    animatedDoodAnimator->LoadAnimationModel("Animacje/BasicMan01.dae");
+    animatedDoodAnimator->SetAnimation("Animacje/Idle.dae");
+	animatedDood->transform->SetLocalPosition({-2, 1, -10});
+    animatedDood->transform->SetLocalRotation({0, -90, 0});
+	animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
+
+    for (int i = 0; i < 3; i++) {
+        std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+        auto animatedDoodAnimator2 = animatedDood2->AddComponent<Animator>();
+        animatedDoodAnimator2->LoadAnimationModel("Animacje/Idle.dae");
+        animatedDoodAnimator2->SetAnimation("Animacje/Walk.dae");
+        animatedDood2->transform->SetLocalPosition({-20 + i, 1, -10});
+        animatedDood2->transform->SetLocalRotation({0, -90, 0});
+        animatedDood2->transform->SetLocalScale({0.25, 0.25, 0.25});
+    }
 
 //    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
 //    sphere->transform->SetLocalPosition({-5, 2, 0});
@@ -241,7 +255,11 @@ void Game::InitializeGame() const {
 }
 
 bool Game::GameLoop() {
-    shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
+        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
+        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
 
     return shouldQuit;
 }

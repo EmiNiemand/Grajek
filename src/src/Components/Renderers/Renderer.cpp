@@ -67,7 +67,7 @@ void Renderer::Draw(std::shared_ptr<Shader> shader) {
 void Renderer::LoadModel(std::string path) {
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
-    uint32_t hash = Utilities::Hash(newPath);
+    int hash = Utilities::Hash(newPath);
 
     if (!models.contains(hash)) {
         models.insert({hash, std::make_shared<StaticModel>(normalizedPath.string(), RendererManager::GetInstance()->shader, GL_TRIANGLES)});
