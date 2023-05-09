@@ -7,7 +7,7 @@
 
 #include <string>
 #include "nlohmann/json.hpp"
-#include "LowLevelClasses/StaticObjData.h"
+#include "LowLevelClasses/StaticObjectData.h"
 
 class GameData;
 

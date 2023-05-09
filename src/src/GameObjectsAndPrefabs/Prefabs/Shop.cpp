@@ -50,3 +50,18 @@ std::shared_ptr<GameObject> Shop::Create() {
 
     return shop;
 }
+
+std::shared_ptr<StaticObjectData> Shop::SaveStatic() {
+    std::shared_ptr<StaticObjectData> newData;
+    newData->name = this->GetPrefabName();
+    newData->position = this->transform->GetLocalPosition();
+    newData->rotation = this->transform->GetLocalRotation();
+    newData->scale = this->transform->GetLocalScale();
+    return newData;
+}
+
+void Shop::LoadStatic(std::shared_ptr<StaticObjectData> &data) {
+    this->transform->SetLocalPosition(data->position);
+    this->transform->SetLocalRotation(data->rotation);
+    this->transform->SetLocalScale(data->scale);
+}

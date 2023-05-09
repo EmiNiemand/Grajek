@@ -4,16 +4,16 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Interfaces/SaveableStaticObject.h"
 
-class House : public Prefab, public SaveableStaticObject {
+class House : public Prefab,public SaveableStaticObject {
 public:
     House(const std::string &name, uint32_t id, const std::shared_ptr<GameObject>& parent, Tags tag);
     ~House() override;
 
     std::shared_ptr<GameObject> Create() override;
 
-    std::shared_ptr<StaticObjData> SaveStatic() override;
+    shared_ptr <StaticObjectData> SaveStatic() override;
 
-    void LoadStatic(std::shared_ptr<StaticObjData> &data) override;
+    void LoadStatic(shared_ptr <StaticObjectData> &data) override;
 };
 
 

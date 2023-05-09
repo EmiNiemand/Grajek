@@ -18,12 +18,19 @@ std::shared_ptr<GameObject> House::Create() {
     return house;
 }
 
-std::shared_ptr<StaticObjData> House::SaveStatic() {
-    return std::shared_ptr<StaticObjData>();
+std::shared_ptr<StaticObjectData> House::SaveStatic() {
+    std::shared_ptr<StaticObjectData> newData;
+    newData->name = this->GetPrefabName();
+    newData->position = this->transform->GetLocalPosition();
+    newData->rotation = this->transform->GetLocalRotation();
+    newData->scale = this->transform->GetLocalScale();
+    return newData;
 }
 
-void House::LoadStatic(std::shared_ptr<StaticObjData> &data) {
-
+void House::LoadStatic(std::shared_ptr<StaticObjectData> &data) {
+    this->transform->SetLocalPosition(data->position);
+    this->transform->SetLocalRotation(data->rotation);
+    this->transform->SetLocalScale(data->scale);
 }
 
 

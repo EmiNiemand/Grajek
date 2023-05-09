@@ -3,6 +3,7 @@
 
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Interfaces/SaveableStaticObject.h"
+#include <memory>
 
 class Shop : public Prefab,public SaveableStaticObject {
 public:
@@ -10,6 +11,10 @@ public:
     ~Shop() override;
 
     std::shared_ptr<GameObject> Create() override;
+
+    shared_ptr <StaticObjectData> SaveStatic() override;
+
+    void LoadStatic(shared_ptr <StaticObjectData> &data) override;
 };
 
 

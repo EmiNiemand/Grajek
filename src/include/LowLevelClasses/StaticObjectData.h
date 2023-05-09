@@ -2,29 +2,24 @@
 // Created by Mateusz on 04.05.2023.
 //
 
-#ifndef GLOOMENGINE_STATICOBJDATA_H
-#define GLOOMENGINE_STATICOBJDATA_H
+#ifndef GLOOMENGINE_STATICOBJECTDATA_H
+#define GLOOMENGINE_STATICOBJECTDATA_H
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <string>
 #include <vector>
 
-class StaticObjData {
+class StaticObjectData {
 public:
     std::string name;
-    int id;
-    std::string parentName;
-
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
 
-    std::vector<std::string> tags;
-
 public:
-StaticObjData();
+StaticObjectData();
 };
 
 
-#endif //GLOOMENGINE_STATICOBJDATA_H
+#endif //GLOOMENGINE_STATICOBJECTDATA_H

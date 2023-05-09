@@ -2,6 +2,7 @@
 #include "GloomEngine.h"
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "Interfaces/SaveableStaticObject.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -39,16 +40,18 @@ void SceneManager::Free() {
 }
 
 void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
-    std::vector<std::shared_ptr<StaticObjData>> staticObjectsData;
-    for (const auto& object : activeScene->children) {
-        staticObjectsData.push_back(object.second->SaveStatic());
+    std::vector<std::shared_ptr<SaveableStaticObject>> saveableStaticPrefabs;
+    std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
+    saveableStaticPrefabs = FindAllStaticSaveablePrefabs();
+    for (const auto& object : saveableStaticPrefabs) {
+        staticObjectsData.push_back(object->SaveStatic());
     }
 
     SaveMap(staticObjectsData,dataDirectoryPath,dataFileName);
 }
 
 void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
-    std::vector<std::shared_ptr<StaticObjData>> staticObjectsData;
+    std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
 
     for (const auto &object: staticObjectsData) {
@@ -58,14 +61,14 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     }
 }
 
-std::vector<std::shared_ptr<StaticObjData>> SceneManager::LoadMap(std::string dataDirectoryPath, std::string dataFileName) {
+std::vector<std::shared_ptr<StaticObjectData>> SceneManager::LoadMap(std::string dataDirectoryPath, std::string dataFileName) {
     std::filesystem::path path(dataDirectoryPath);
     path /= dataFileName + ".json";
 #ifdef DEBUG
     spdlog::info("Save path: " + path.string());
 #endif
 
-    std::vector<std::shared_ptr<StaticObjData>> mapData = {};
+    std::vector<std::shared_ptr<StaticObjectData>> mapData = {};
 
     try {
         std::ifstream input(path);
@@ -81,7 +84,7 @@ std::vector<std::shared_ptr<StaticObjData>> SceneManager::LoadMap(std::string da
     return mapData;
 }
 
-void SceneManager::SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData, std::string dataDirectoryPath,std::string dataFileName) {
+void SceneManager::SaveMap(std::vector<std::shared_ptr<StaticObjectData>> mapData, std::string dataDirectoryPath, std::string dataFileName) {
     std::filesystem::path path(dataDirectoryPath);
     path /= dataFileName + ".json";
 
@@ -101,7 +104,7 @@ void SceneManager::SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData, 
     }
 }
 
-void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData) {
+void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjectData>>& mapData) {
     json = nlohmann::json::array({});
     nlohmann::json objectJson;
     for (const auto& object: mapData){
@@ -123,11 +126,11 @@ void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<Sta
 
 }
 
-void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData) {
+void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjectData>>& mapData) {
     mapData.clear();
-    std::shared_ptr<StaticObjData> newObject;
+    std::shared_ptr<StaticObjectData> newObject;
     for (const auto& object: json){
-        newObject = std::make_shared<StaticObjData>();
+        newObject = std::make_shared<StaticObjectData>();
         newObject->position.x = object["position.x"];
         newObject->position.y = object["position.y"];
         newObject->position.z = object["position.z"];
@@ -141,4 +144,15 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject->scale.z = object["position.z"];
         mapData.push_back(newObject);
     }
+}
+
+std::vector<std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStaticSaveablePrefabs() {
+    std::vector<std::shared_ptr<SaveableStaticObject>> objects;
+
+    for (const auto& object : activeScene->children) {
+        if (std::dynamic_pointer_cast<SaveableStaticObject>(object.second) != nullptr) {
+            objects.push_back(std::dynamic_pointer_cast<SaveableStaticObject>(object.second));
+        }
+    }
+    return objects;
 }

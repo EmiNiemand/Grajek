@@ -3,7 +3,8 @@
 
 #include <memory>
 #include "nlohmann/json.hpp"
-#include "LowLevelClasses/StaticObjData.h"
+#include "LowLevelClasses/StaticObjectData.h"
+#include "Interfaces/SaveableStaticObject.h"
 #include <string>
 
 
@@ -39,16 +40,16 @@ private:
     explicit SceneManager();
 
     // Conversion of List of staticObjectData objects into json to be saved.
-    void to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData);
+    void to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjectData>>& mapData);
     // Conversion of List of staticObjectData objects into json to be loaded.
-    void from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData);
+    void from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjectData>>& mapData);
 
     //IO function that reads map file and returns ready vector of pointers to staticObjData objects.
-    std::vector<std::shared_ptr<StaticObjData>> LoadMap(std::string dataDirectoryPath, std::string dataFileName);
+    std::vector<std::shared_ptr<StaticObjectData>> LoadMap(std::string dataDirectoryPath, std::string dataFileName);
     //IO function that saves map file from list of staticObjData
-    void SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData, std::string dataDirectoryPath,
+    void SaveMap(std::vector<std::shared_ptr<StaticObjectData>> mapData, std::string dataDirectoryPath,
                  std::string dataFileName);
-    void FindAllStaticSaveablePrefabs();
+    std::vector<std::shared_ptr<SaveableStaticObject>> FindAllStaticSaveablePrefabs();
 };
 
 
