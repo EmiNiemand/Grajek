@@ -5,6 +5,8 @@
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
+#include <fstream>
+
 #endif
 
 SceneManager::SceneManager() = default;
@@ -39,26 +41,104 @@ void SceneManager::Free() {
 void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::vector<std::shared_ptr<StaticObjData>> staticObjectsData;
     for (const auto& object : activeScene->children) {
-        object.second->SaveStatic();
+        staticObjectsData.push_back(object.second->SaveStatic());
     }
 
-    FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
-    fileDataHandler.SaveMap(staticObjectsData);
+    SaveMap(staticObjectsData,dataDirectoryPath,dataFileName);
 }
-//#ifdef DEBUG
-//    spdlog::info("Saving game: " + std::to_string(gameData->money) + ", " + std::to_string(gameData->reputation)
-//                 + ", [" + std::to_string(gameData->playerPosition.x) + ", " + std::to_string(gameData->playerPosition.y)
-//                 + ", " + std::to_string(gameData->playerPosition.z) + "]");
-//#endif
 
 void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::vector<std::shared_ptr<StaticObjData>> staticObjectsData;
-    FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
-    staticObjectsData = fileDataHandler.LoadMap();
+    staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
 
     for (const auto &object: staticObjectsData) {
-        //Create new gameObjects using data from the file(check if it already exists and if yes then just update the values object.
+        //Create new prefabs using data from the file
         //GameObject newchild = GameObject();
         //activeScene->AddChild();
+    }
+}
+
+std::vector<std::shared_ptr<StaticObjData>> SceneManager::LoadMap(std::string dataDirectoryPath, std::string dataFileName) {
+    std::filesystem::path path(dataDirectoryPath);
+    path /= dataFileName + ".json";
+#ifdef DEBUG
+    spdlog::info("Save path: " + path.string());
+#endif
+
+    std::vector<std::shared_ptr<StaticObjData>> mapData = {};
+
+    try {
+        std::ifstream input(path);
+
+        nlohmann::json json;
+        input >> json;
+        from_json(json, mapData);
+    }
+    catch (std::exception e) {
+        spdlog::info("Failed to read a file content at path: " + path.string());
+    }
+
+    return mapData;
+}
+
+void SceneManager::SaveMap(std::vector<std::shared_ptr<StaticObjData>> mapData, std::string dataDirectoryPath,std::string dataFileName) {
+    std::filesystem::path path(dataDirectoryPath);
+    path /= dataFileName + ".json";
+
+#ifdef DEBUG
+    spdlog::info("Save path: " + path.string());
+#endif
+
+    try {
+        nlohmann::json json;
+        to_json(json, mapData);
+
+        std::ofstream saveFile(path);
+        saveFile << json << std::endl;
+    }
+    catch(std::exception e) {
+        spdlog::info("Failed to write a MAP file content at path: " + path.string());
+    }
+}
+
+void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData) {
+    json = nlohmann::json::array({});
+    nlohmann::json objectJson;
+    for (const auto& object: mapData){
+        objectJson.clear();
+        objectJson["position.x"] = object->position.x;
+        objectJson["position.y"] = object->position.y;
+        objectJson["position.z"] = object->position.z;
+
+        objectJson["rotation.x"] = object->position.x;
+        objectJson["rotation.y"] = object->position.y;
+        objectJson["rotation.z"] = object->position.z;
+
+        objectJson["scale.x"] = object->position.x;
+        objectJson["scale.y"] = object->position.y;
+        objectJson["scale.z"] = object->position.z;
+
+        json.emplace(objectJson);
+    }
+
+}
+
+void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData) {
+    mapData.clear();
+    std::shared_ptr<StaticObjData> newObject;
+    for (const auto& object: json){
+        newObject = std::make_shared<StaticObjData>();
+        newObject->position.x = object["position.x"];
+        newObject->position.y = object["position.y"];
+        newObject->position.z = object["position.z"];
+
+        newObject->rotation.x = object["rotation.x"];
+        newObject->rotation.y = object["rotation.y"];
+        newObject->rotation.z = object["rotation.z"];
+
+        newObject->scale.x = object["position.x"];
+        newObject->scale.y = object["position.y"];
+        newObject->scale.z = object["position.z"];
+        mapData.push_back(newObject);
     }
 }

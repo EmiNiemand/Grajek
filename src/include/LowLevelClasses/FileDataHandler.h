@@ -7,6 +7,7 @@
 
 #include <string>
 #include "nlohmann/json.hpp"
+#include "LowLevelClasses/StaticObjData.h"
 
 class GameData;
 
@@ -25,9 +26,6 @@ public:
 private:
     void to_json(nlohmann::json &json, const std::shared_ptr<GameData>& gameData);
     void from_json(const nlohmann::json &json, const std::shared_ptr<GameData>& gameData);
-
-    void to_json(nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData);
-    void from_json(const nlohmann::json &json, std::vector<std::shared_ptr<StaticObjData>>& mapData);
 };
 
 
