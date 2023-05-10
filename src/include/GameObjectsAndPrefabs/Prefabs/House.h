@@ -11,7 +11,7 @@ public:
 
     std::shared_ptr<GameObject> Create() override;
 
-    shared_ptr <StaticObjectData> SaveStatic() override;
+    std::shared_ptr<StaticObjectData> SaveStatic() override;
 };
 
 
