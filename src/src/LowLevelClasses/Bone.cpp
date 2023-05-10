@@ -25,25 +25,13 @@ Bone::Bone(std::string  name, int ID, const aiNodeAnim* channel) : name(std::mov
         data.timeStamp = timeStamp;
         rotations.push_back(data);
     }
-
-    numScales = channel->mNumScalingKeys;
-    for (unsigned int keyIndex = 0; keyIndex < numScales; ++keyIndex)
-    {
-        aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
-        auto timeStamp = channel->mScalingKeys[keyIndex].mTime;
-        KeyScale data{};
-        data.scale = GetGLMVec(scale);
-        data.timeStamp = (float)timeStamp;
-        scales.push_back(data);
-    }
 }
 
 void Bone::Update(float animationTime)
 {
     glm::mat4 translation = InterpolatePosition(animationTime);
     glm::mat4 rotation = InterpolateRotation(animationTime);
-    glm::mat4 scale = InterpolateScaling(animationTime);
-    localTransform = translation * rotation * scale;
+    localTransform = translation * rotation;
 }
 
 glm::mat4 Bone::GetLocalTransform() {
@@ -71,15 +59,6 @@ int Bone::GetRotationIndex(float animationTime) const {
     for (int index = 0; index < numRotations - 1; ++index)
     {
         if (animationTime < rotations[index + 1].timeStamp)
-            return index;
-    }
-    return -1;
-}
-
-int Bone::GetScaleIndex(float animationTime) const {
-    for (int index = 0; index < numScales - 1; ++index)
-    {
-        if (animationTime < scales[index + 1].timeStamp)
             return index;
     }
     return -1;
@@ -127,22 +106,6 @@ glm::mat4 Bone::InterpolateRotation(float animationTime)
     finalRotation = glm::normalize(finalRotation);
 
     return glm::toMat4(finalRotation);
-}
-
-glm::mat4 Bone::InterpolateScaling(float animationTime)
-{
-    if (numScales == 1)
-        return glm::scale(glm::mat4(1.0f), scales[0].scale);
-
-    int p0Index = GetScaleIndex(animationTime);
-    if (p0Index == -1) {
-        return glm::mat4(1);
-    }
-    int p1Index = p0Index + 1;
-    float scaleFactor = GetScaleFactor(scales[p0Index].timeStamp, scales[p1Index].timeStamp, animationTime);
-    glm::vec3 finalScale = glm::mix(scales[p0Index].scale, scales[p1Index].scale, scaleFactor);
-
-    return glm::scale(glm::mat4(1.0f), finalScale);
 }
 
 void Bone::SetId(int id) {

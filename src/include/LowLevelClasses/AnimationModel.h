@@ -31,7 +31,7 @@ public:
 
     // Getters
     std::unordered_map<std::string, BoneInfo>& GetBoneInfoMap();
-    uint16_t& GetBoneCount();
+    uint16_t GetBoneCount();
 
 protected:
     static void SetVertexBoneDataToDefault(Vertex& vertex);

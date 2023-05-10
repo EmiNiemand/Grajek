@@ -2,6 +2,7 @@
 #include "GloomEngine.h"
 #include "Utilities.h"
 #include "EngineManagers/RendererManager.h"
+#include "EngineManagers/AnimationManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/Bone.h"
 #include "Other/FrustumCulling.h"
@@ -11,6 +12,7 @@
 #include "assimp/postprocess.h"
 #include <filesystem>
 #include <utility>
+#include <unordered_set>
 
 
 #ifdef DEBUG
@@ -82,7 +84,9 @@ void Animator::Update() {
     if (!parent->isOnFrustum) {
         return;
     }
-    UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
+
+    AnimationManager::GetInstance()->AddToBuffer(std::dynamic_pointer_cast<Animator>(shared_from_this()));
+
     Drawable::Update();
 }
 
@@ -144,14 +148,12 @@ std::vector<glm::mat4>& Animator::GetFinalBoneMatrices() {
 
 void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform) {
 #ifdef DEBUG
-    ZoneScopedNC("Bone Transform", 0x800080);
+    ZoneScopedNC("CBT", 0x808080);
 #endif
-
-    std::vector<std::pair<glm::mat4, AssimpNodeData*>> toVisit = {};
+    std::vector<std::pair<glm::mat4, AssimpNodeData *>> toVisit = {};
 
     glm::mat4 globalTransformation = parentTransform;
     toVisit.emplace_back(globalTransformation, node);
-
     auto boneInfoMap = currentAnimation.GetBoneIDMap();
 
     while (!toVisit.empty()) {
@@ -159,7 +161,6 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
 
         const std::string& nodeName = node->name;
         glm::mat4 nodeTransform = node->transformation;
-
         std::shared_ptr<Bone> bone = currentAnimation.FindBone(nodeName);
 
         if (bone) {
@@ -171,8 +172,8 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
 
         finalBoneMatrices.at(boneInfoMap[nodeName].id) = globalTransformation * boneInfoMap[nodeName].offset;
 
-        for (auto& child : node->children) {
-            toVisit.emplace_back(globalTransformation, &child);
+        for (int i = 0; i < node->children.size(); i++) {
+            toVisit.emplace_back(globalTransformation, &node->children[i]);
         }
 
         toVisit.erase(toVisit.begin());

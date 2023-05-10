@@ -11,6 +11,7 @@ public:
     std::shared_ptr<GameObject> activeCamera;
     std::shared_ptr<GameObject> activeScene;
     bool shouldQuit = false;
+    bool isCreated = false;
 
 public:
     explicit Game();

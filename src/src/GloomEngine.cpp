@@ -6,6 +6,7 @@
 #include "EngineManagers/UIManager.h"
 #include "EngineManagers/CollisionManager.h"
 #include "EngineManagers/ShadowManager.h"
+#include "EngineManagers/AnimationManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
 #include "EngineManagers/DebugManager.h"
@@ -23,6 +24,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/PlayerMovement.h"
 #include "Other/FrustumCulling.h"
+#include "Components/Renderers/Animator.h"
 
 #include <filesystem>
 #include <stb_image.h>
@@ -208,8 +210,12 @@ void GloomEngine::Update() {
                 component.second->Start();
                 component.second->GetParent()->UpdateSelfAndChildren();
             }
-            if (component.second->enabled) component.second->Update();
+            if (component.second->enabled) {
+                component.second->Update();
+            }
         }
+        AnimationManager::GetInstance()->UpdateAnimations();
+
     }
     // Preparing shadow map
     if (!FindGameObjectWithName("MainMenu"))
@@ -217,9 +223,14 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Prepare shadow", 0xFFD733);
 #endif
-        // Prepare shadow framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
-        glClear(GL_DEPTH_BUFFER_BIT);
+        {
+#ifdef DEBUG
+            ZoneScopedNC("Bind buffer and clear depth buffer", 0xFFD733);
+#endif
+            // Prepare shadow framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
+            glClear(GL_DEPTH_BUFFER_BIT);
+        }
         ShadowManager::GetInstance()->PrepareShadow();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
