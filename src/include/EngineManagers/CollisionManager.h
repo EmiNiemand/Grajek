@@ -8,6 +8,8 @@
 #include <vector>
 #include <unordered_map>
 
+#define GRID_SIZE 100
+
 class Shader;
 class GloomEngine;
 class BoxCollider;
@@ -28,7 +30,7 @@ public:
 #endif
 
     float gridSize = 10.0f;
-    std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, std::shared_ptr<BoxCollider>>>> grid;
+    std::unordered_map<int, std::shared_ptr<BoxCollider>> grid[GRID_SIZE * GRID_SIZE];
 
 public:
     CollisionManager(CollisionManager &other) = delete;

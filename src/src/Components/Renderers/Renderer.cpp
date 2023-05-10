@@ -42,6 +42,7 @@ void Renderer::Draw() {
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
     shader->SetFloat("material.refraction", material.refraction);
+    shader->SetBool("isAnimated", false);
 
     model->Draw();
 }
@@ -56,6 +57,7 @@ void Renderer::Draw(std::shared_ptr<Shader> shader) {
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
     shader->SetFloat("material.refraction", material.refraction);
+    shader->SetBool("isAnimated", false);
 
     model->Draw(shader);
 }

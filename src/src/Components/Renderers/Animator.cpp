@@ -21,9 +21,8 @@
 
 Animator::Animator(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {
     currentTime = 0.0;
-    finalBoneMatrices.reserve(100);
 
-    for (int i = 0; i < 100; i++) finalBoneMatrices.emplace_back(1.0f);
+    for (int i = 0; i < BONE_NUMBER; i++) finalBoneMatrices[i] = glm::mat4(1.0f);
 }
 
 Animator::~Animator() {
@@ -96,14 +95,15 @@ void Animator::Draw() {
     auto shader = RendererManager::GetInstance()->shader;
 
     shader->Activate();
-    for (int i = 0; i < finalBoneMatrices.size(); ++i)
-        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices.at(i));
+    for (int i = 0; i < BONE_NUMBER; ++i)
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
     shader->SetMat4("model", parent->transform->GetModelMatrix());
     shader->SetVec2("texStrech", textScale);
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
     shader->SetFloat("material.refraction", material.refraction);
+    shader->SetBool("isAnimated", true);
 
     model->Draw();
 }
@@ -112,14 +112,15 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
     if(model == nullptr) return;
 
     shader->Activate();
-    for (int i = 0; i < finalBoneMatrices.size(); ++i)
-        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices.at(i));
+    for (int i = 0; i < BONE_NUMBER; ++i)
+        shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", finalBoneMatrices[i]);
     shader->SetMat4("model", parent->transform->GetModelMatrix());
     shader->SetVec2("texStrech", textScale);
     shader->SetVec3("material.color", material.color);
     shader->SetFloat("material.shininess", material.shininess);
     shader->SetFloat("material.reflection", material.reflection);
     shader->SetFloat("material.refraction", material.refraction);
+    shader->SetBool("isAnimated", true);
 
     model->Draw(shader);
 }
@@ -142,17 +143,16 @@ void Animator::PlayAnimation(Animation pAnimation) {
 
 void Animator::PauseAnimation() { isPlaying = false; }
 
-std::vector<glm::mat4>& Animator::GetFinalBoneMatrices() {
+glm::mat4* Animator::GetFinalBoneMatrices() {
     return finalBoneMatrices;
 }
 
 void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform) {
-#ifdef DEBUG
-    ZoneScopedNC("CBT", 0x808080);
-#endif
     std::vector<std::pair<glm::mat4, AssimpNodeData *>> toVisit = {};
 
+    glm::mat4 nodeTransform;
     glm::mat4 globalTransformation = parentTransform;
+
     toVisit.emplace_back(globalTransformation, node);
     auto boneInfoMap = currentAnimation.GetBoneIDMap();
 
@@ -160,7 +160,7 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
         node = toVisit.at(0).second;
 
         const std::string& nodeName = node->name;
-        glm::mat4 nodeTransform = node->transformation;
+        nodeTransform = node->transformation;
         std::shared_ptr<Bone> bone = currentAnimation.FindBone(nodeName);
 
         if (bone) {
@@ -170,7 +170,7 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
 
         globalTransformation = toVisit.at(0).first * nodeTransform;
 
-        finalBoneMatrices.at(boneInfoMap[nodeName].id) = globalTransformation * boneInfoMap[nodeName].offset;
+        finalBoneMatrices[boneInfoMap[nodeName].id] = globalTransformation * boneInfoMap[nodeName].offset;
 
         for (int i = 0; i < node->children.size(); i++) {
             toVisit.emplace_back(globalTransformation, &node->children[i]);

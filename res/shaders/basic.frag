@@ -57,9 +57,9 @@ struct Material {
 // CONSTANTS
 // ---------
 
-#define NR_POINT_LIGHTS 32
-#define NR_DIRECTIONAL_LIGHTS 32
-#define NR_SPOT_LIGHTS 32
+#define NR_POINT_LIGHTS 8
+#define NR_DIRECTIONAL_LIGHTS 8
+#define NR_SPOT_LIGHTS 8
 
 #define NR_DIFFUSE 1
 #define NR_SPECULAR 1

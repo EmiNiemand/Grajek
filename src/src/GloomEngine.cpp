@@ -223,14 +223,11 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Prepare shadow", 0xFFD733);
 #endif
-        {
-#ifdef DEBUG
-            ZoneScopedNC("Bind buffer and clear depth buffer", 0xFFD733);
-#endif
-            // Prepare shadow framebuffer
-            glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
-            glClear(GL_DEPTH_BUFFER_BIT);
-        }
+
+        // Prepare shadow framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, ShadowManager::GetInstance()->depthMapFBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
         ShadowManager::GetInstance()->PrepareShadow();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

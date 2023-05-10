@@ -10,12 +10,14 @@
 #include "Drawable.h"
 #include "LowLevelClasses/Animation.h"
 
+#define BONE_NUMBER 40
+
 class Animator : public Drawable {
 private:
     inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
     inline static std::unordered_map<int, Animation> animations;
 
-    std::vector<glm::mat4> finalBoneMatrices;
+    glm::mat4 finalBoneMatrices[BONE_NUMBER];
     Animation currentAnimation;
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
@@ -38,7 +40,7 @@ public:
     void PlayAnimation(Animation pAnimation);
 	void PauseAnimation();
 
-    std::vector<glm::mat4>& GetFinalBoneMatrices();
+    glm::mat4* GetFinalBoneMatrices();
 
 private:
     void CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform);

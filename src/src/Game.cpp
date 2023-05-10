@@ -233,7 +233,7 @@ void Game::InitializeGame() const {
     animatedDood->transform->SetLocalRotation({0, -90, 0});
 	animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1; i++) {
         std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator2 = animatedDood2->AddComponent<Animator>();
         animatedDoodAnimator2->LoadAnimationModel("basicMan/basicMan05/basicMan05.dae");
