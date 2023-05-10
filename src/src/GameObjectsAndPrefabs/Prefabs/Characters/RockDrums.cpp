@@ -27,8 +27,8 @@ std::shared_ptr<GameObject> RockDrums::Create() {
     character->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
 
-    auto characterLogic = character->AddComponent<CharacterLogic>();
     auto characterMovement = character->AddComponent<CharacterMovement>();
+    auto characterLogic = character->AddComponent<CharacterLogic>();
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
     characterLogic->favGenres.push_back(Rock);

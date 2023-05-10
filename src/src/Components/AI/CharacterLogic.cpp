@@ -21,7 +21,6 @@ void CharacterLogic::Update() {
     Component::Update();
 }
 
-
 void CharacterLogic::OnCreate() {
     characterMovement = parent->GetComponent<CharacterMovement>();
 //    characterAnimation = parent->GetComponent<Animator>();
