@@ -38,7 +38,6 @@ public:
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;
 
-    void Update() override;
     void OnCreate() override;
     void OnDestroy() override;
     void Free();

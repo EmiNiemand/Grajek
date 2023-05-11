@@ -18,7 +18,6 @@ public:
     glm::vec3 cameraOffset = glm::vec3(0,0,0);
     float zoomLevel = 1.0f; // effective level of zoom. defined as multiplier to the offset on the camera
     float desiredZoomLevel = 1.0f; // zoom level that will be interpolated to
-    bool isZoomed = false;
 
 public:
     Camera(const std::shared_ptr<GameObject> &parent, int id);
