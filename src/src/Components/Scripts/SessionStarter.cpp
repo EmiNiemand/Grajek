@@ -32,6 +32,7 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
 }
 
 void SessionStarter::ChangeActiveButton(glm::vec2 moveVector) {
+    if (!activeButton->previousButton) return;
     if (moveVector.x == 1.0f) {
         activeButton->isActive = false;
         activeButton = activeButton->nextButton;
