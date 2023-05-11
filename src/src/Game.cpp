@@ -224,15 +224,18 @@ void Game::InitializeGame() const {
 //    Animator::LoadAnimation("Animacje/Idle.dae");
 //    Animator::LoadAnimation("Animacje/Walk.dae");
     Animator::LoadAnimation("testLessBones/animations/Walk.dae");
+    Animator::LoadAnimation("testLessBones/animations/Idle.dae");
 
 	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-    auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-    animatedDoodAnimator->LoadAnimationModel("testLessBones/man.dae");
-    animatedDoodAnimator->SetAnimation("testLessBones/animations/Walk.dae");
-	animatedDood->transform->SetLocalPosition({-2, 1, -15});
-    animatedDood->transform->SetLocalRotation({0, -90, 0});
-	animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
+    for (int i = 0; i < 30; i++) {
+        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+        animatedDoodAnimator->LoadAnimationModel("testLessBones/man.dae");
+        animatedDoodAnimator->SetAnimation("testLessBones/animations/Walk.dae");
+        animatedDood->transform->SetLocalPosition({-20 + i, 0, -10});
+        animatedDood->transform->SetLocalRotation({0, -90, 0});
+        animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
+    }
 
 //    for (int i = 0; i < 1; i++) {
 //        std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
