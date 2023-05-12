@@ -185,7 +185,7 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("testLessBones/animations/Idle.dae");
 
 	// Set up animated model
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 10; i++) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
         animatedDoodAnimator->LoadAnimationModel("testLessBones/man.dae");
