@@ -18,7 +18,7 @@ void AnimationManager::AddToBuffer(const std::shared_ptr<Animator>& animator) {
 }
 
 void AnimationManager::UpdateAnimations() {
-    auto chunk = (unsigned int)std::ceil((float)buffer.size() / (float)maxNumberOfThreads);
+    auto chunk = (unsigned int)std::ceil((float)buffer.size() / (float)(maxNumberOfThreads + 1));
 
     std::vector<std::shared_ptr<Animator>> animators;
 
@@ -31,7 +31,7 @@ void AnimationManager::UpdateAnimations() {
     }
 
     if (!animators.empty()) {
-        threads.emplace_back(&AnimationManager::ConcurrenceCalculation, animationManager, std::move(animators), GloomEngine::GetInstance()->deltaTime);
+        ConcurrenceCalculation(std::move(animators), GloomEngine::GetInstance()->deltaTime);
         animators.clear();
     }
 

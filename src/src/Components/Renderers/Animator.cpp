@@ -155,37 +155,48 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
 //#endif
     auto boneInfoMap = currentAnimation.GetBoneIDMap();
 
-    int iterator = 0;
+    const int nodeNumber = currentAnimation.nodeCounter;
 
-    std::vector<std::pair<glm::mat4, AssimpNodeData *>> toVisit = {};
+    auto matrices = new glm::mat4[nodeNumber];
+    auto toVisit = new std::pair<int, AssimpNodeData *>[nodeNumber];
 
     glm::mat4 nodeTransform;
-    glm::mat4 globalTransformation = parentTransform;
+    glm::mat4 globalTransformation;
 
-    toVisit.emplace_back(globalTransformation, node);
+    int iterator = 0;
 
-    while (iterator <  toVisit.size()) {
-        node = toVisit.at(iterator).second;
+    std::string* nodeName;
+    std::shared_ptr<Bone> bone;
 
-        const std::string& nodeName = node->name;
+    matrices[iterator] = parentTransform;
+
+    toVisit[iterator] = std::make_pair(iterator, node);
+
+    for (int i = 0; i < nodeNumber; i++) {
+        node = toVisit[i].second;
+
+        nodeName = &node->name;
         nodeTransform = node->transformation;
-        const std::shared_ptr<Bone>& bone = currentAnimation.FindBone(nodeName);
+        bone = currentAnimation.FindBone(*nodeName);
 
         if (bone) {
             bone->Update(currentTime);
             nodeTransform = bone->GetLocalTransform();
         }
 
-        globalTransformation = toVisit.at(iterator).first * nodeTransform;
+        globalTransformation = matrices[toVisit[i].first] * nodeTransform;
+        matrices[i] = globalTransformation;
 
-        finalBoneMatrices[boneInfoMap[nodeName].id] = globalTransformation * boneInfoMap[nodeName].offset;
+        finalBoneMatrices[boneInfoMap[*nodeName].id] = globalTransformation * boneInfoMap[*nodeName].offset;
 
-        for (int i = 0; i < node->children.size(); i++) {
-            toVisit.emplace_back(globalTransformation, &node->children[i]);
+        for (int j = 0; j < node->children.size(); j++) {
+            iterator++;
+            toVisit[iterator] = std::make_pair(i, &node->children[j]);
         }
-
-        iterator++;
     }
+
+    delete[] matrices;
+    delete[] toVisit;
 }
 
 void Animator::LoadModel(const std::string &path) {

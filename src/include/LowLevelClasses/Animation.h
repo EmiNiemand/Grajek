@@ -26,6 +26,7 @@ public:
     int ticksPerSecond{};
     std::unordered_map<std::string, std::shared_ptr<Bone>> bones;
     AssimpNodeData rootNode;
+    int nodeCounter = 0;
     std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:
@@ -33,7 +34,7 @@ public:
     Animation(std::string name, float mDuration, int mTicksPerSecond);
     virtual ~Animation();
 
-	std::shared_ptr<Bone> FindBone(const std::string& name);
+	const std::shared_ptr<Bone>& FindBone(const std::string& name);
 
 
     [[nodiscard]] int GetTicksPerSecond() const;

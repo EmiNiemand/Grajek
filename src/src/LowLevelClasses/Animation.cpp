@@ -2,6 +2,8 @@
 
 #include "LowLevelClasses/Animation.h"
 #include "LowLevelClasses/Bone.h"
+#include "ProjectSettings.h"
+
 #include "assimp/Importer.hpp"
 #include "stb_image.h"
 #include "spdlog/spdlog.h"
@@ -10,15 +12,15 @@ Animation::Animation() = default;
 
 Animation::Animation(std::string name, float mDuration, int mTicksPerSecond) : name(std::move(name))
 {
-    bones.reserve(50);
-    boneInfoMap.reserve(50);
+    bones.reserve(BONE_NUMBER);
+    boneInfoMap.reserve(BONE_NUMBER);
     duration = mDuration;
     ticksPerSecond = mTicksPerSecond;
 }
 
 Animation::~Animation() = default;
 
-std::shared_ptr<Bone> Animation::FindBone(const std::string& name)
+const std::shared_ptr<Bone>& Animation::FindBone(const std::string& name)
 {
     if (!bones.contains(name)) return nullptr;
     else return bones.at(name);
@@ -82,6 +84,9 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src) {
     assert(src);
 
     dest.name = src->mName.data;
+
+    nodeCounter++;
+
     int counter = 0;
 
     for (int j = 0; j < dest.name.size(); j++) {

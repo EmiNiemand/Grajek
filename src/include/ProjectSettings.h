@@ -5,6 +5,8 @@
 #ifndef OPENGLGP_PROJECTSETTINGS_H
 #define OPENGLGP_PROJECTSETTINGS_H
 
+#define BONE_NUMBER 25
+
 enum class Tags{
     DEFAULT,
     CAMERA,
