@@ -216,13 +216,15 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     if (!pat) return;
 
     //TODO: uncomment when crowd manager gets implemented
-    equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
+    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
+    equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
 
     playerUI->UpdateCash(equipment->cash);
     playerUI->UpdateRep(equipment->rep);
 }
 
 void PlayerManager::CreateMusicSession(InstrumentName instrument) {
+    OnMove(glm::vec2());
     Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(0.5f);
     GloomEngine::GetInstance()->timeScale = 1;
     sessionStarter->Stop();
