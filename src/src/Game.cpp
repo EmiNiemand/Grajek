@@ -73,13 +73,6 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({10, 20, 10});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-//    std::shared_ptr<GameObject> pointLight = GameObject::Instantiate("pointLight", activeScene);
-//    pointLight->AddComponent<PointLight>();
-//    pointLight->transform->SetLocalPosition({0, 4, -10});
-//    pointLight->GetComponent<PointLight>()->SetAmbient({0.2, 0.2, 0.2});
-//    pointLight->GetComponent<PointLight>()->SetDiffuse({0.6, 0.6, 0.6});
-//    pointLight->GetComponent<PointLight>()->SetSpecular({0.9, 0.9, 0.9});
-
     // Set up UI
     // ---------
     auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
@@ -131,23 +124,6 @@ void Game::InitializeGame() const {
     // Set up shop menu
     std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
 
-
-//    std::shared_ptr<GameObject> lowPolyHouse = GameObject::Instantiate("House", activeScene);
-//    lowPolyHouse->transform->SetLocalPosition({15, 0, -20});
-//    lowPolyHouse->transform->SetLocalRotation({0, -110, 0});
-//    lowPolyHouse->transform->SetLocalScale({1.5, 1.5, 2});
-//    lowPolyHouse->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
-//    lowPolyHouse->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
-//    lowPolyHouse->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
-//    auto portalRadioSound = lowPolyHouse->AddComponent<AudioSource>();
-//    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
-//    portalRadioSound->SetPositionOffset({0.0f, 0.0f, 4.5f});
-//    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
-//    portalRadioSound->SetMaxDistance(20.0f);
-//    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
-//    portalRadioSound->IsLooping(true);
-//    portalRadioSound->PlaySound();
-
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
     bench->transform->SetLocalPosition({0, 0, -10});
     bench->transform->SetLocalRotation({0, -90, 0});
@@ -171,24 +147,6 @@ void Game::InitializeGame() const {
     bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
     bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
     bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
-
-//    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
-//            bench->transform, {
-//                    {AnimatedProperty::Position, glm::vec3(0, 10, 0), 0.5f},
-//                    {AnimatedProperty::Position, glm::vec3(0, -10, 0), 0.5f},
-//            }, true);
-//
-//    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
-//            bench->transform, {
-//                    {AnimatedProperty::Scale, glm::vec3(2)},
-//                    {AnimatedProperty::Scale, glm::vec3(0.5f)},
-//            }, true);
-//
-//    GameObject::Instantiate("BenchAnimator")->AddComponent<GameObjectAnimator>()->Setup(
-//            bench2->transform, {
-//                    {AnimatedProperty::Position, glm::vec3(0, 10, 0)},
-//                    {AnimatedProperty::Position, glm::vec3(0, -10, 0)},
-//            }, true);
 
     int maxHouses = 7;
     int houseOffset = 7;
@@ -233,24 +191,16 @@ void Game::InitializeGame() const {
     animatedDood->transform->SetLocalRotation({0, -90, 0});
 	animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 20; i++) {
         std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator2 = animatedDood2->AddComponent<Animator>();
-        animatedDoodAnimator2->LoadAnimationModel("basicMan/basicMan05/basicMan05.dae");
+        animatedDoodAnimator2->LoadAnimationModel("basicMan/basicMan07/basicMan07.dae");
         animatedDoodAnimator2->SetAnimation("Animacje/Walk.dae");
         animatedDood2->transform->SetLocalPosition({-20 + i, 1, -10});
         animatedDood2->transform->SetLocalRotation({0, -90, 0});
         animatedDood2->transform->SetLocalScale({0.25, 0.25, 0.25});
     }
 
-//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-//    sphere->transform->SetLocalPosition({-5, 2, 0});
-//    sphere->transform->SetLocalScale({2, 2, 2});
-//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-//    rSphere->material.refraction = 1.0f;
-
-    //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
 }
 

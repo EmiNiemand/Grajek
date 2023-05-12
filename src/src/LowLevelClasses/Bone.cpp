@@ -67,8 +67,8 @@ int Bone::GetRotationIndex(float animationTime) const {
 float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
     float scaleFactor;
-    float midWayLength = animationTime - lastTimeStamp;
-    float framesDiff = nextTimeStamp - lastTimeStamp;
+    const float midWayLength = animationTime - lastTimeStamp;
+    const float framesDiff = nextTimeStamp - lastTimeStamp;
     scaleFactor = midWayLength / framesDiff;
     return scaleFactor;
 }

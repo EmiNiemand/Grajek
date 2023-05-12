@@ -10,7 +10,7 @@
 #include "Drawable.h"
 #include "LowLevelClasses/Animation.h"
 
-#define BONE_NUMBER 40
+#define BONE_NUMBER 50
 
 class Animator : public Drawable {
 private:

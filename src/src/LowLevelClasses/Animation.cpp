@@ -3,7 +3,6 @@
 #include "LowLevelClasses/Animation.h"
 #include "LowLevelClasses/Bone.h"
 #include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
 #include "stb_image.h"
 #include "spdlog/spdlog.h"
 
@@ -11,8 +10,8 @@ Animation::Animation() = default;
 
 Animation::Animation(std::string name, float mDuration, int mTicksPerSecond) : name(std::move(name))
 {
-    bones.reserve(100);
-    boneInfoMap.reserve(100);
+    bones.reserve(50);
+    boneInfoMap.reserve(50);
     duration = mDuration;
     ticksPerSecond = mTicksPerSecond;
 }
@@ -74,6 +73,7 @@ void Animation::ReadMissingBones(const aiAnimation* animation, const std::shared
             boneInfoMap[boneName].id = boneCount;
             boneCount++;
         }
+
         bones.insert({boneName, std::make_shared<Bone>(boneName, boneInfoMap[boneName].id, channel)});
     }
 }
