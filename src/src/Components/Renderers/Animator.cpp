@@ -31,8 +31,8 @@ Animator::~Animator() {
 
 void Animator::LoadAnimationModel(const std::string& path) {
     std::string newPath = "res/models/" + path;
-    std::filesystem::path normalizedPath(newPath);
-    int hash = Utilities::Hash(newPath);
+    const std::filesystem::path normalizedPath(newPath);
+    const int hash = Utilities::Hash(newPath);
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
@@ -54,12 +54,12 @@ void Animator::LoadAnimation(const std::string& path)
     std::filesystem::path normalizedPath(newPath);
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(newPath, aiProcess_Triangulate);
+    const aiScene* scene = importer.ReadFile(newPath, aiProcess_LimitBoneWeights);
     assert(scene && scene->mRootNode);
     for (int i = 0; i < scene->mNumAnimations; i++){
         aiAnimation* animation = scene->mAnimations[i];
 
-        int hash = Utilities::Hash(path);
+        const int hash = Utilities::Hash(path);
 
         if (!animations.contains(hash)) {
             animations.insert({hash, Animation(path, (float)animation->mDuration, (int)animation->mTicksPerSecond)});
@@ -85,6 +85,8 @@ void Animator::Update() {
     }
 
     AnimationManager::GetInstance()->AddToBuffer(std::dynamic_pointer_cast<Animator>(shared_from_this()));
+
+//    UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
 
     Drawable::Update();
 }
@@ -148,27 +150,33 @@ glm::mat4* Animator::GetFinalBoneMatrices() {
 }
 
 void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform) {
+//#ifdef DEBUG
+//    ZoneScopedNC("CBT", 0xDC143C);
+//#endif
+    auto boneInfoMap = currentAnimation.GetBoneIDMap();
+
+    int iterator = 0;
+
     std::vector<std::pair<glm::mat4, AssimpNodeData *>> toVisit = {};
 
     glm::mat4 nodeTransform;
     glm::mat4 globalTransformation = parentTransform;
 
     toVisit.emplace_back(globalTransformation, node);
-    auto boneInfoMap = currentAnimation.GetBoneIDMap();
 
-    while (!toVisit.empty()) {
-        node = toVisit.at(0).second;
+    while (iterator <  toVisit.size()) {
+        node = toVisit.at(iterator).second;
 
         const std::string& nodeName = node->name;
         nodeTransform = node->transformation;
-        std::shared_ptr<Bone> bone = currentAnimation.FindBone(nodeName);
+        const std::shared_ptr<Bone>& bone = currentAnimation.FindBone(nodeName);
 
         if (bone) {
             bone->Update(currentTime);
             nodeTransform = bone->GetLocalTransform();
         }
 
-        globalTransformation = toVisit.at(0).first * nodeTransform;
+        globalTransformation = toVisit.at(iterator).first * nodeTransform;
 
         finalBoneMatrices[boneInfoMap[nodeName].id] = globalTransformation * boneInfoMap[nodeName].offset;
 
@@ -176,7 +184,7 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
             toVisit.emplace_back(globalTransformation, &node->children[i]);
         }
 
-        toVisit.erase(toVisit.begin());
+        iterator++;
     }
 }
 

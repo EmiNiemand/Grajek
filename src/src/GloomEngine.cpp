@@ -99,6 +99,39 @@ bool GloomEngine::MainLoop() {
     glfwPollEvents();
     glfwSetWindowSize(window, OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height);
 
+    // AI UPDATE
+    int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
+    int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
+    if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
+#ifdef DEBUG
+        ZoneScopedNC("AI update", 0x00FF00);
+#endif
+        if (timeScale != 0) {
+            AIUpdate();
+        }
+
+        AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
+        if (AIDeltaTime > idealAIDeltaTime + 0.01f) AIDeltaTime = idealAIDeltaTime;
+        lastAIFrameTime = currentTime;
+    }
+
+    // FIXED UPDATE
+    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
+    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
+    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+#ifdef DEBUG
+        ZoneScopedNC("Fixed update", 0x00008B);
+#endif
+        if (timeScale != 0) {
+            FixedUpdate();
+        }
+
+        fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
+        if (fixedDeltaTime > idealFixedDeltaTime + 0.01f) fixedDeltaTime = idealFixedDeltaTime;
+        lastFixedFrameTime = currentTime;
+    }
+
+    // UPDATE
     int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
     int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
@@ -115,36 +148,6 @@ bool GloomEngine::MainLoop() {
 
         glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
-    }
-
-    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
-    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
-    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
-#ifdef DEBUG
-        ZoneScopedNC("Fixed update", 0x00008B);
-#endif
-        if (timeScale != 0) {
-            FixedUpdate();
-        }
-
-        fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
-        if (fixedDeltaTime > idealFixedDeltaTime + 0.01f) fixedDeltaTime = idealFixedDeltaTime;
-        lastFixedFrameTime = currentTime;
-    }
-
-    int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
-    int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
-    if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
-#ifdef DEBUG
-        ZoneScopedNC("AI update", 0x00FF00);
-#endif
-        if (timeScale != 0) {
-            AIUpdate();
-        }
-
-        AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
-        if (AIDeltaTime > idealAIDeltaTime + 0.01f) AIDeltaTime = idealAIDeltaTime;
-        lastAIFrameTime = currentTime;
     }
 
 #ifdef DEBUG

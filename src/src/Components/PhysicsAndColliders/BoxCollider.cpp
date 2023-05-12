@@ -22,9 +22,9 @@ void BoxCollider::Start() {
 }
 
 void BoxCollider::FixedUpdate() {
-#ifdef DEBUG
-    ZoneScopedNC("BoxCollider", 0xf0fc03);
-#endif
+//#ifdef DEBUG
+//    ZoneScopedNC("BoxCollider", 0xf0fc03);
+//#endif
 
     Component::FixedUpdate();
     if (!parent->GetComponent<Rigidbody>()) return;
@@ -42,9 +42,9 @@ void BoxCollider::OnDestroy() {
 }
 
 void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
-#ifdef DEBUG
-    ZoneScopedNC("CheckCollision", 0x03adfc);
-#endif
+//#ifdef DEBUG
+//    ZoneScopedNC("CheckCollision", 0x03adfc);
+//#endif
 
     bool isColliding = GetOBBCollision(other);
 
