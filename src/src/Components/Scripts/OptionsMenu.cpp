@@ -2,6 +2,7 @@
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
+#include "Components/UI/Image.h"
 #include "Components/Scripts/PauseMenu.h"
 #include "EngineManagers/PostProcessingManager.h"
 #include "Components/Audio/AudioListener.h"
@@ -38,6 +39,9 @@ void OptionsMenu::Start() {
     button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
     button = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolution")->GetComponent<Button>();
     button->ChangePosition(button->x, shadowResolutionButtonY[shadowResolutionIterator]);
+
+    GameObject::Instantiate("Background", parent)->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity90.png");
+
     Component::Start();
 }
 

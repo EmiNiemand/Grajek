@@ -166,6 +166,7 @@ void Image::Update() {
 
 void Image::Draw() {
     if (!mesh) return;
+    if(alpha <= 0.1f) return;
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     UIManager::GetInstance()->shader->SetVec3("color", color);
