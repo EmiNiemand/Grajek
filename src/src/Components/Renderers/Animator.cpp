@@ -86,8 +86,6 @@ void Animator::Update() {
 
     AnimationManager::GetInstance()->AddToBuffer(std::dynamic_pointer_cast<Animator>(shared_from_this()));
 
-//    UpdateAnimation(GloomEngine::GetInstance()->deltaTime);
-
     Drawable::Update();
 }
 
@@ -129,9 +127,6 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
 
 
 void Animator::UpdateAnimation(float deltaTime) {
-	//if(!isPlaying) return;
-//	if (!currentAnimation) return;
-
     currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime;
     currentTime = fmod(currentTime, currentAnimation.GetDuration());
     CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
@@ -187,7 +182,8 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
         globalTransformation = matrices[toVisit[i].first] * nodeTransform;
         matrices[i] = globalTransformation;
 
-        finalBoneMatrices[boneInfoMap[*nodeName].id] = globalTransformation * boneInfoMap[*nodeName].offset;
+        if (bone)
+            finalBoneMatrices[boneInfoMap[*nodeName].id] = globalTransformation * boneInfoMap[*nodeName].offset;
 
         for (int j = 0; j < node->children.size(); j++) {
             iterator++;

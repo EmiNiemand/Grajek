@@ -28,7 +28,7 @@ void BoxCollider::FixedUpdate() {
 
     Component::FixedUpdate();
     if (!parent->GetComponent<Rigidbody>()) return;
-
+    CollisionManager::GetInstance()->RemoveDynamicBoxCollider(parent->transform->GetGlobalPosition(), id);
     SetCollidersGridPoints();
 }
 
@@ -316,6 +316,9 @@ glm::vec3 BoxCollider::GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, g
 }
 
 void BoxCollider::SetCollidersGridPoints() {
+#ifdef DEBUG
+    ZoneScopedNC("SCGP", 0x0339fc);
+#endif
     glm::mat4 model = GetModelMatrix();
 
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -348,7 +351,7 @@ void BoxCollider::SetCollidersGridPoints() {
         int x = points[0].x;
         int y = points[0].y;
 
-        CollisionManager::GetInstance()->grid[x * y + GRID_SIZE].insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+        CollisionManager::GetInstance()->grid[(x + GRID_SIZE / 2) + (y + GRID_SIZE / 2) * GRID_SIZE].insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         return;
     }
 
@@ -366,7 +369,7 @@ void BoxCollider::SetCollidersGridPoints() {
 
     for (int x = minX; x <= maxX; x++) {
         for (int y = minY; y <= maxY; y++) {
-            CollisionManager::GetInstance()->grid[x * y + GRID_SIZE].insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
+            CollisionManager::GetInstance()->grid[(x + GRID_SIZE / 2) + (y + GRID_SIZE / 2) * GRID_SIZE].insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         }
     }
 }

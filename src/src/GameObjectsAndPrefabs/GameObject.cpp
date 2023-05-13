@@ -72,30 +72,40 @@ void GameObject::UpdateSelfAndChildren() {
 #ifdef DEBUG
     ZoneScopedNC("SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren()", 0x03fcfc);
 #endif
+    const int gameObjectsSize = (int)GloomEngine::GetInstance()->gameObjects.size() + 1;
 
-    if (transform != nullptr && dirtyFlag) {
-        ForceUpdateSelfAndChildren();
-        OnTransformUpdateComponents();
-        return;
+    auto toCheck = new std::shared_ptr<GameObject>[gameObjectsSize];
+
+    int checkIterator = 1;
+
+    toCheck[0] = shared_from_this();
+
+    if (dirtyFlag) ForceUpdateSelfAndChildren();
+
+    for (int i = 0; i < checkIterator; i++) {
+        for (const auto& child : toCheck[i]->children) {
+            if (child.second->dirtyFlag) {
+                child.second->ForceUpdateSelfAndChildren();
+            }
+            toCheck[checkIterator] = child.second;
+            checkIterator++;
+        }
     }
 
-    for (auto&& child : children) {
-        child.second->UpdateSelfAndChildren();
-    }
+    delete[] toCheck;
 }
 
 void GameObject::ForceUpdateSelfAndChildren() {
 #ifdef DEBUG
     ZoneScopedNC("ForceUpdate", 0x0300fc);
 #endif
-    if (parent != nullptr) transform->ComputeModelMatrix(parent->transform->GetModelMatrix());
-    else transform->ComputeModelMatrix();
-
-    for (auto&& child : children)
-    {
-        child.second->ForceUpdateSelfAndChildren();
-        child.second->OnTransformUpdateComponents();
+    if (parent == nullptr) {
+        transform->ComputeModelMatrix();
     }
+    else {
+        transform->ComputeModelMatrix(parent->transform->GetModelMatrix());
+    }
+    OnTransformUpdateComponents();
 }
 
 void GameObject::EnableSelfAndChildren() {
