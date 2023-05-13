@@ -2,6 +2,9 @@
 #include "GloomEngine.h"
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
+#include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
+#include "Game.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -26,8 +29,23 @@ void SceneManager::InitializeScene() {
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
 }
 
-void SceneManager::ClearScene() {
+void SceneManager::LoadScene(const std::string& scene) {
+    if (scene == "Scene") {
+        ClearScene();
+        InitializeScene();
+        GloomEngine::GetInstance()->game->activeCamera = Camera::activeCamera;
+        GloomEngine::GetInstance()->game->InitializeGame();
+    } else if (scene == "MainMenu") {
+        ClearScene();
+//        activeScene = GameObject::Instantiate("MainMenuScene", nullptr, Tags::SCENE);
+        Prefab::Instantiate<MainMenuPrefab>();
+    }
+}
+
+void SceneManager::ClearScene() const {
     activeScene->RemoveAllChildren();
+    // TODO destroy scene
+//    GameObject::Destroy(activeScene);
 }
 
 void SceneManager::Free() {
