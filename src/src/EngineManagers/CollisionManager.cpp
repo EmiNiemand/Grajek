@@ -68,7 +68,7 @@ void CollisionManager::ManageCollision() {
 }
 
 #ifdef DEBUG
-void CollisionManager::DrawColliders() {
+void CollisionManager::Draw() {
     OnBoxCollidersChange();
 
     colliderDebugShader->Activate();

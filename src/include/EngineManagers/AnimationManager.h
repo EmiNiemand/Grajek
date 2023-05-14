@@ -12,11 +12,13 @@ class Animator;
 
 class AnimationManager {
 private:
+    unsigned int bufferIterator = 0;
+
     inline static AnimationManager* animationManager;
 
     inline static unsigned int maxNumberOfThreads = std::thread::hardware_concurrency() / 2;
     std::vector<std::thread> threads;
-    std::vector<std::shared_ptr<Animator>> buffer;
+    std::shared_ptr<Animator> buffer[1000];
 
 public:
     AnimationManager(AnimationManager &other) = delete;
@@ -32,6 +34,7 @@ private:
     explicit AnimationManager();
 
     void ConcurrenceCalculation(std::vector<std::shared_ptr<Animator>> animators, float deltaTime);
+    void ClearBuffer();
 };
 
 

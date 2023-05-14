@@ -38,7 +38,7 @@ public:
 
     static PostProcessingManager* GetInstance();
 
-    void DrawBuffer();
+    void Draw();
     void Free() const;
 
     void WindowResize();

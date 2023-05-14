@@ -36,15 +36,20 @@ void RendererManager::Free() const {
     cubeMapShader->Delete();
 }
 
+void RendererManager::Draw() {
+    DrawObjects();
+    ClearBuffer();
+}
+
 void RendererManager::DrawObjects() {
-    for (const auto& drawable : drawBuffer) {
-        drawable->Draw();
+    for (int i = 0; i < bufferIterator; ++i) {
+        drawBuffer[i]->Draw();
     }
-    drawBuffer.clear();
 }
 
 void RendererManager::AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableComponent) {
-    drawBuffer.emplace_back(DrawableComponent);
+    drawBuffer[bufferIterator] = DrawableComponent;
+    ++bufferIterator;
 }
 
 void RendererManager::UpdateProjection() const {
@@ -70,19 +75,19 @@ void RendererManager::UpdateCamera() const {
 
 void RendererManager::UpdateLight(int componentId) {
 
-    for (int i = 0; i < spotLights.size(); i++) {
+    for (int i = 0; i < spotLights.size(); ++i) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
             UpdateSpotLight(i, shader);
             return;
         }
     }
-    for (int i = 0; i < directionalLights.size(); i++) {
+    for (int i = 0; i < directionalLights.size(); ++i) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
             UpdateDirectionalLight(i, shader);
             return;
         }
     }
-    for (int i = 0; i < pointLights.size(); i++) {
+    for (int i = 0; i < pointLights.size(); ++i) {
         if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
             UpdatePointLight(i, shader);
             return;
@@ -91,19 +96,19 @@ void RendererManager::UpdateLight(int componentId) {
 }
 
 void RendererManager::RemoveLight(int componentId) {
-    for (int i = 0; i < spotLights.size(); i++) {
+    for (int i = 0; i < spotLights.size(); ++i) {
         if (spotLights.at(i) != nullptr && spotLights.at(i)->GetId() == componentId) {
             RemoveSpotLight(i, shader);
             return;
         }
     }
-    for (int i = 0; i < directionalLights.size(); i++) {
+    for (int i = 0; i < directionalLights.size(); ++i) {
         if (directionalLights.at(i) != nullptr && directionalLights.at(i)->GetId() == componentId) {
             RemoveDirectionalLight(i, shader);
             return;
         }
     }
-    for (int i = 0; i < pointLights.size(); i++) {
+    for (int i = 0; i < pointLights.size(); ++i) {
         if (pointLights.at(i) != nullptr && pointLights.at(i)->GetId() == componentId) {
             RemovePointLight(i, shader);
             return;
@@ -208,4 +213,11 @@ void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Sha
 void RendererManager::SetFov(float fov) {
     RendererManager::fov = fov;
     UpdateProjection();
+}
+
+void RendererManager::ClearBuffer() {
+    for (int i = 0; i < bufferIterator; ++i) {
+        drawBuffer[i] = nullptr;
+    }
+    bufferIterator = 0;
 }
