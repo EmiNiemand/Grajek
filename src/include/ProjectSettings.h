@@ -5,7 +5,7 @@
 #ifndef OPENGLGP_PROJECTSETTINGS_H
 #define OPENGLGP_PROJECTSETTINGS_H
 
-#define BONE_NUMBER 25
+#define BONE_NUMBER 20
 
 enum class Tags{
     DEFAULT,

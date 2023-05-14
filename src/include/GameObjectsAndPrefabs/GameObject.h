@@ -71,9 +71,7 @@ public:
     void RemoveChild(int childId);
     void RemoveAllChildren();
 
-
     void UpdateSelfAndChildren();
-    void ForceUpdateSelfAndChildren();
 
     void EnableSelfAndChildren();
     void DisableSelfAndChildren();
@@ -85,6 +83,8 @@ public:
     void RecalculateGlobalRotation();
 
 private:
+    void ForceUpdateSelfAndChildren();
+
     inline void SetId(int newId) {id = newId;}
 };
 

@@ -23,8 +23,9 @@ private:
     std::vector<unsigned int> indices;
 
 public:
-#ifdef DEBUG
     glm::ivec2 playerPosition = glm::ivec2(0.0f);
+
+#ifdef DEBUG
     glm::vec3 debugColor = {0.0, 1.0, 0.0};
     std::shared_ptr<Shader> colliderDebugShader;
 #endif
@@ -49,6 +50,7 @@ public:
     void OnBoxCollidersChange();
 #endif
     void RemoveBoxCollider(int componentId);
+    void RemoveDynamicBoxCollider(const glm::vec3& position, int componentId);
 
 private:
     explicit CollisionManager();

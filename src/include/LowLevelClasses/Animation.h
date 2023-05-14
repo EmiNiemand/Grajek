@@ -34,7 +34,7 @@ public:
     Animation(std::string name, float mDuration, int mTicksPerSecond);
     virtual ~Animation();
 
-	const std::shared_ptr<Bone>& FindBone(const std::string& name);
+	std::shared_ptr<Bone> FindBone(const std::string& name);
 
 
     [[nodiscard]] int GetTicksPerSecond() const;

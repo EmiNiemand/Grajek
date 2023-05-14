@@ -20,7 +20,7 @@ Animation::Animation(std::string name, float mDuration, int mTicksPerSecond) : n
 
 Animation::~Animation() = default;
 
-const std::shared_ptr<Bone>& Animation::FindBone(const std::string& name)
+std::shared_ptr<Bone> Animation::FindBone(const std::string& name)
 {
     if (!bones.contains(name)) return nullptr;
     else return bones.at(name);

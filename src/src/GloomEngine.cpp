@@ -172,7 +172,7 @@ void GloomEngine::Update() {
         ZoneScopedNC("Destroy objects and components", 0xFFD733);
 #endif
         std::vector<std::shared_ptr<Component>> componentBuffer = destroyComponentBuffer;
-        for (auto &&component: componentBuffer) {
+        for (const auto& component: componentBuffer) {
             component->OnDestroy();
             component->GetParent()->RemoveComponent(component->GetId());
             RemoveComponent(component);
@@ -180,7 +180,7 @@ void GloomEngine::Update() {
         destroyComponentBuffer.erase(destroyComponentBuffer.begin(), destroyComponentBuffer.begin() + (int)componentBuffer.size());
 
         std::vector<std::shared_ptr<GameObject>> gameObjectBuffer = destroyGameObjectBuffer;
-        for (auto &&gameObject: gameObjectBuffer) {
+        for (const auto& gameObject: gameObjectBuffer) {
             gameObject->parent->RemoveChild(gameObject->GetId());
             RemoveGameObject(gameObject);
         }
@@ -193,7 +193,7 @@ void GloomEngine::Update() {
 #endif
         FrustumCulling::GetInstance()->UpdateFrustum();
 
-        for (auto &&gameObject: gameObjects) {
+        for (const auto& gameObject: gameObjects) {
 
             gameObject.second->isOnFrustum = FrustumCulling::GetInstance()->IsOnFrustum(gameObject.second->bounds,
                                                                                         gameObject.second->transform);
@@ -204,7 +204,7 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Component update", 0xFF69B4);
 #endif
-        for (auto &&component: components) {
+        for (const auto& component: components) {
             if (component.second->callOnAwake) {
                 component.second->Awake();
                 component.second->GetParent()->UpdateSelfAndChildren();
@@ -292,7 +292,7 @@ void GloomEngine::Update() {
 }
 
 void GloomEngine::FixedUpdate() {
-    for (auto&& component : components) {
+    for (const auto& component : components) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
@@ -302,7 +302,7 @@ void GloomEngine::FixedUpdate() {
 }
 
 void GloomEngine::AIUpdate() {
-    for (auto&& component : components) {
+    for (const auto& component : components) {
         if (component.second->enabled) component.second->AIUpdate();
     }
 }
