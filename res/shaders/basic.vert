@@ -15,7 +15,7 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat4 lightSpaceMatrix = mat4(0.0f);
 
-const int MAX_BONES = 40;
+const int MAX_BONES = 20;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 
@@ -36,7 +36,7 @@ void main()
                 totalPosition = vec4(aPos,1.0f);
                 break;
             }
-            vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos,1.0f);
+            vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos, 1.0f);
             totalPosition += localPosition * weights[i];
         }
 

@@ -55,6 +55,7 @@ class GloomEngine {
 private:
     friend class SceneManager;
     friend class DataPersistanceManager;
+    friend class GameObject;
 
     /// Do not touch this variable
     inline static GloomEngine* gloomEngine;

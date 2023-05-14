@@ -25,8 +25,8 @@ struct KeyRotation
 class Bone
 {
 private:
-    std::vector<KeyPosition> positions;
-    std::vector<KeyRotation> rotations;
+    KeyPosition* positions;
+    KeyRotation* rotations;
     unsigned int numPositions;
     unsigned int numRotations;
 
@@ -37,9 +37,11 @@ private:
 public:
     Bone(std::string  name, int ID, const aiNodeAnim* channel);
 
+    virtual ~Bone();
+
     void Update(float animationTime);
 
-    glm::mat4 GetLocalTransform();
+    [[nodiscard]] const glm::mat4& GetLocalTransform() const;
     [[nodiscard]] const std::string& GetBoneName() const;
     [[nodiscard]] int GetBoneID() const;
 
@@ -52,7 +54,7 @@ public:
 private:
     float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
 
-    glm::mat4 InterpolatePosition(float animationTime);
+    glm::vec3 InterpolatePosition(float animationTime);
     glm::mat4 InterpolateRotation(float animationTime);
 };
 

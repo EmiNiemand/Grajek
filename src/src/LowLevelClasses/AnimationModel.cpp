@@ -1,5 +1,7 @@
 #include "LowLevelClasses/AnimationModel.h"
 #include "Other/GLMHelper.h"
+#include "ProjectSettings.h"
+
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "stb_image.h"
@@ -8,14 +10,14 @@
 
 AnimationModel::AnimationModel(const std::string &path, std::shared_ptr<Shader> &shader,
                                int type, bool gamma) : Model(path, shader, type, gamma) {
-    boneInfoMap.reserve(40);
+    boneInfoMap.reserve(BONE_NUMBER);
     AnimationModel::LoadModel(path);
 }
 
 
 AnimationModel::AnimationModel(const Mesh &mesh, std::shared_ptr<Shader> &shader,
                                int type) : Model(mesh, shader, type) {
-    boneInfoMap.reserve(40);
+    boneInfoMap.reserve(BONE_NUMBER);
     meshes.push_back(mesh);
 }
 
@@ -23,8 +25,7 @@ void AnimationModel::LoadModel(std::string const &path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
-        aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
     // check for errors
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {

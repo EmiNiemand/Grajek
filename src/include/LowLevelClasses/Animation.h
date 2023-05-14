@@ -26,6 +26,7 @@ public:
     int ticksPerSecond{};
     std::unordered_map<std::string, std::shared_ptr<Bone>> bones;
     AssimpNodeData rootNode;
+    int nodeCounter = 0;
     std::unordered_map<std::string, BoneInfo> boneInfoMap;
 
 public:

@@ -31,8 +31,8 @@ Animator::~Animator() {
 
 void Animator::LoadAnimationModel(const std::string& path) {
     std::string newPath = "res/models/" + path;
-    std::filesystem::path normalizedPath(newPath);
-    int hash = Utilities::Hash(newPath);
+    const std::filesystem::path normalizedPath(newPath);
+    const int hash = Utilities::Hash(newPath);
 
     if (!animationModels.contains(hash)) {
         animationModels.insert({hash, std::make_shared<AnimationModel>( normalizedPath.string(),
@@ -54,12 +54,12 @@ void Animator::LoadAnimation(const std::string& path)
     std::filesystem::path normalizedPath(newPath);
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(newPath, aiProcess_Triangulate);
+    const aiScene* scene = importer.ReadFile(newPath, aiProcess_LimitBoneWeights);
     assert(scene && scene->mRootNode);
     for (int i = 0; i < scene->mNumAnimations; i++){
         aiAnimation* animation = scene->mAnimations[i];
 
-        int hash = Utilities::Hash(path);
+        const int hash = Utilities::Hash(path);
 
         if (!animations.contains(hash)) {
             animations.insert({hash, Animation(path, (float)animation->mDuration, (int)animation->mTicksPerSecond)});
@@ -127,9 +127,6 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
 
 
 void Animator::UpdateAnimation(float deltaTime) {
-	//if(!isPlaying) return;
-//	if (!currentAnimation) return;
-
     currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime;
     currentTime = fmod(currentTime, currentAnimation.GetDuration());
     CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
@@ -148,36 +145,54 @@ glm::mat4* Animator::GetFinalBoneMatrices() {
 }
 
 void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform) {
-    std::vector<std::pair<glm::mat4, AssimpNodeData *>> toVisit = {};
-
-    glm::mat4 nodeTransform;
-    glm::mat4 globalTransformation = parentTransform;
-
-    toVisit.emplace_back(globalTransformation, node);
+//#ifdef DEBUG
+//    ZoneScopedNC("CBT", 0xDC143C);
+//#endif
     auto boneInfoMap = currentAnimation.GetBoneIDMap();
 
-    while (!toVisit.empty()) {
-        node = toVisit.at(0).second;
+    const int nodeNumber = currentAnimation.nodeCounter;
 
-        const std::string& nodeName = node->name;
+    auto matrices = new glm::mat4[nodeNumber];
+    auto toVisit = new std::pair<int, AssimpNodeData *>[nodeNumber];
+
+    glm::mat4 nodeTransform;
+    glm::mat4 globalTransformation;
+
+    int iterator = 0;
+
+    std::string* nodeName;
+    std::shared_ptr<Bone> bone;
+
+    matrices[iterator] = parentTransform;
+
+    toVisit[iterator] = std::make_pair(iterator, node);
+
+    for (int i = 0; i < nodeNumber; i++) {
+        node = toVisit[i].second;
+
+        nodeName = &node->name;
         nodeTransform = node->transformation;
-        std::shared_ptr<Bone> bone = currentAnimation.FindBone(nodeName);
+        bone = currentAnimation.FindBone(*nodeName);
 
         if (bone) {
             bone->Update(currentTime);
             nodeTransform = bone->GetLocalTransform();
         }
 
-        globalTransformation = toVisit.at(0).first * nodeTransform;
+        globalTransformation = matrices[toVisit[i].first] * nodeTransform;
+        matrices[i] = globalTransformation;
 
-        finalBoneMatrices[boneInfoMap[nodeName].id] = globalTransformation * boneInfoMap[nodeName].offset;
+        if (bone)
+            finalBoneMatrices[boneInfoMap[*nodeName].id] = globalTransformation * boneInfoMap[*nodeName].offset;
 
-        for (int i = 0; i < node->children.size(); i++) {
-            toVisit.emplace_back(globalTransformation, &node->children[i]);
+        for (int j = 0; j < node->children.size(); j++) {
+            iterator++;
+            toVisit[iterator] = std::make_pair(i, &node->children[j]);
         }
-
-        toVisit.erase(toVisit.begin());
     }
+
+    delete[] matrices;
+    delete[] toVisit;
 }
 
 void Animator::LoadModel(const std::string &path) {
