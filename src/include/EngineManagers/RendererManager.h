@@ -45,6 +45,7 @@ public:
 
     void Draw();
     void DrawObjects();
+    void DrawObjects(const std::shared_ptr<Shader>& drawShader);
     void AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableComponent);
 
     void UpdateProjection() const;

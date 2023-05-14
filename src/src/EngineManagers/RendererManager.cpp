@@ -47,6 +47,12 @@ void RendererManager::DrawObjects() {
     }
 }
 
+void RendererManager::DrawObjects(const std::shared_ptr<Shader>& drawShader) {
+    for (int i = 0; i < bufferIterator; ++i) {
+        drawBuffer[i]->Draw(drawShader);
+    }
+}
+
 void RendererManager::AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableComponent) {
     drawBuffer[bufferIterator] = DrawableComponent;
     ++bufferIterator;

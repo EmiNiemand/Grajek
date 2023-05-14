@@ -78,7 +78,7 @@ void ShadowManager::PrepareShadow() {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
 
-        RendererManager::GetInstance()->DrawObjects();
+        RendererManager::GetInstance()->DrawObjects(shadowShader);
 
         glDisable(GL_CULL_FACE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
