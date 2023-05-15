@@ -153,11 +153,7 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
-
     // SCENE BUILDINGS
-	std::vector<std::string> buildingPaths = {
-			"jazz1", "jazz2", "jazz3", "jazz4", "kamienica1", "kamienica2", "kamienica3"
-	};
 	std::map<std::string, int> buildingSizes = {
 			{"jazz1", 6},
 			{"jazz2", 7},
@@ -165,58 +161,91 @@ void Game::InitializeGame() const {
 			{"jazz4", 6},
 			{"kamienica1", 6},
 			{"kamienica2", 10},
-			{"kamienica3", 6}
+			{"kamienica3", 6},
+			{"moduê1", 6},
+			{"moduê2", 6},
+			{"moduê3", 6},
+			{"moduê4", 6},
+			{"moduê5", 10},
+			{"moduê6", 6}
 	};
-	float currentXPos = -20;
+	float currentXPos = -25;
+	float currentYPos = -30;
 
+	std::string squareBuildings[] = {
+			"kamienica1", "kamienica2", "kamienica3",
+			"moduê1", "moduê2"
+	};
 
+	std::vector<std::string> buildingPaths = {
+			squareBuildings[0], squareBuildings[2],
+			squareBuildings[0], squareBuildings[4], squareBuildings[1],
+			squareBuildings[3], squareBuildings[2],
+	};
+
+	// LEFT CORNER
+	{
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos - 9.5, 0, currentYPos+4});
+		test->transform->SetLocalRotation({0, 90, 0});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
+	}
+
+	// FRONT FACE
 	for(int i=0; i < buildingPaths.size(); i++) {
 		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
 
 		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-		test->transform->SetLocalPosition({currentXPos, 0, -30});
+		test->transform->SetLocalPosition({currentXPos, 0, currentYPos});
 		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-		test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
-		test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
 
 		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
 	}
 
-    std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-    test->transform->SetLocalPosition({0, 0, -30});
-    test->transform->SetLocalScale({1, 1, 1});
-    test->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz1.obj");
-    test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
-    test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+	// RIGHT CORNER
+	{
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos + 5, 0, currentYPos});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
+	}
 
-    std::shared_ptr<GameObject> test1 = GameObject::Instantiate("TestHouse", activeScene);
-    test1->transform->SetLocalPosition({7, 0, -30});
-    test1->transform->SetLocalScale({1, 1, 1});
-    test1->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz2.obj");
-    test1->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
-    test1->GetComponent<BoxCollider>()->SetSize({6, 6, 3.5});
+	currentYPos = -20;
 
-    std::shared_ptr<GameObject> test2 = GameObject::Instantiate("TestHouse", activeScene);
-    test2->transform->SetLocalPosition({-9, 0, -30});
-    test2->transform->SetLocalScale({1, 1, 1});
-    test2->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
-    test2->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
-    test2->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
+	// LEFT FACE
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
 
-    std::shared_ptr<GameObject> test3 = GameObject::Instantiate("TestHouse", activeScene);
-    test3->transform->SetLocalPosition({-19, 0, -30});
-    test3->transform->SetLocalScale({1, 1, 1});
-    test3->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
-    test3->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
-    test3->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({-35, 0, currentYPos});
+		test->transform->SetLocalRotation({0, 90, 0});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
 
-    std::shared_ptr<GameObject> test4 = GameObject::Instantiate("TestHouse", activeScene);
-    test4->transform->SetLocalPosition({16, 0, -30});
-    test4->transform->SetLocalScale({1, 1, 1});
-    test4->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz4.obj");
-    test4->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
-    test4->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
 
+	currentYPos = -20;
+
+	// RIGHT FACE
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos+10, 0, currentYPos});
+		test->transform->SetLocalRotation({0, -90, 0});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
 
     Animator::LoadAnimation("Animacje/BasicChlop.dae");
 
