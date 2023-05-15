@@ -47,7 +47,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->cameraOffset = glm::vec3(0, 40, 40);
 
     // Set up cubemap
     // --------------
@@ -148,36 +148,54 @@ void Game::InitializeGame() const {
     bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
     bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
 
-    int maxHouses = 7;
-    int houseOffset = 7;
-    for (int i = 0; i < maxHouses; ++i) {
-        if(i == ceil(maxHouses/2.0f) - 1) continue;
-
-        float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
-        float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
-
-        std::shared_ptr<GameObject> serialHouse = Prefab::Instantiate<House>();
-        serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
-        serialHouse->transform->SetLocalRotation({0, -90, 0});
-        serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
-
-
-        std::shared_ptr<GameObject> serialHouseLeft = Prefab::Instantiate<House>();
-        serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
-        serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
-        serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
-
-        std::shared_ptr<GameObject> serialHouseRight = Prefab::Instantiate<House>();
-        serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
-        serialHouseRight->transform->SetLocalRotation({0, 180, 0});
-        serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
-    }
-
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
     hydrant->transform->SetLocalPosition({15, 0, -15});
     hydrant->transform->SetLocalRotation({0, -65, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
+
+
+    // SCENE BUILDINGS
+    std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+    test->transform->SetLocalPosition({0, 5, -30});
+    test->transform->SetLocalRotation({0, -90, 0});
+    test->transform->SetLocalScale({1, 1, 1});
+    test->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz1.obj");
+    test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+
+    std::shared_ptr<GameObject> test1 = GameObject::Instantiate("TestHouse", activeScene);
+    test1->transform->SetLocalPosition({6.4, 4, -30});
+    test1->transform->SetLocalRotation({0, -90, 0});
+    test1->transform->SetLocalScale({1, 1, 1});
+    test1->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz2.obj");
+    test1->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test1->GetComponent<BoxCollider>()->SetSize({6, 6, 3.5});
+
+    std::shared_ptr<GameObject> test2 = GameObject::Instantiate("TestHouse", activeScene);
+    test2->transform->SetLocalPosition({-8.5, 5, -30});
+    test2->transform->SetLocalRotation({0, -90, 0});
+    test2->transform->SetLocalScale({1, 1, 1});
+    test2->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
+    test2->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test2->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
+
+    std::shared_ptr<GameObject> test3 = GameObject::Instantiate("TestHouse", activeScene);
+    test3->transform->SetLocalPosition({-19.25, 5, -30});
+    test3->transform->SetLocalRotation({0, -90, 0});
+    test3->transform->SetLocalScale({1, 1, 1});
+    test3->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
+    test3->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test3->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
+
+    std::shared_ptr<GameObject> test4 = GameObject::Instantiate("TestHouse", activeScene);
+    test4->transform->SetLocalPosition({16, 4, -30});
+    test4->transform->SetLocalRotation({0, -90, 0});
+    test4->transform->SetLocalScale({1, 1, 1});
+    test4->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz4.obj");
+    test4->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test4->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+
 
     Animator::LoadAnimation("Animacje/BasicChlop.dae");
 
@@ -191,13 +209,6 @@ void Game::InitializeGame() const {
         animatedDood->transform->SetLocalRotation({0, 0, 0});
         animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
     }
-
-//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-//    sphere->transform->SetLocalPosition({-5, 2, 0});
-//    sphere->transform->SetLocalScale({2, 2, 2});
-//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-//    rSphere->material.refraction = 1.0f;
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
