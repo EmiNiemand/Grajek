@@ -13,6 +13,7 @@ void ShopTrigger::OnTriggerStay(const std::shared_ptr<GameObject> &gameObject) {
 }
 
 void ShopTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
+    if (gameObject->GetName() != "Player") return;
     active = false;
     parent->children.begin()->second->DisableSelfAndChildren();
     Component::OnTriggerExit(gameObject);

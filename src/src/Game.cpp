@@ -28,6 +28,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
+#include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -121,7 +122,7 @@ void Game::InitializeGame() const {
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
+    Prefab::Instantiate<Shop>();
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
     bench->transform->SetLocalPosition({0, 0, -10});
@@ -152,6 +153,11 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalRotation({0, -65, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
+
+    auto savePoint1 = Prefab::Instantiate<SavePoint>();
+    savePoint1->transform->SetLocalPosition({-15, 0, -10});
+    savePoint1->transform->SetLocalRotation({0, 45, 0});
+    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
 
 //    Animator::LoadAnimation("Animacje/Idle.dae");
 //    Animator::LoadAnimation("Animacje/Walk.dae");
