@@ -81,13 +81,12 @@ void Game::InitializeGame() const {
 
 
     // Set up pause menu
-    std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
-    pause->AddComponent<PauseMenu>();
-    std::shared_ptr<GameObject> resumeButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
-    std::shared_ptr<GameObject> optionsButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
-    std::shared_ptr<GameObject> exitButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
-    std::shared_ptr<GameObject> pauseBackground = pause->GetComponent<PauseMenu>()->Menu::AddImage("Background", 0, 0, "UI/pause.png");
+    auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
+    std::shared_ptr<GameObject> resumeButton = pause->AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
+    std::shared_ptr<GameObject> optionsButton = pause->AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
+    std::shared_ptr<GameObject> exitToMainMenuButton = pause->AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
+    std::shared_ptr<GameObject> exitButton = pause->AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
+    std::shared_ptr<GameObject> pauseBackground = pause->AddImage("Background", 0, 0, "UI/pause.png");
     resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
     resumeButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
     optionsButton->GetComponent<Button>()->previousButton = resumeButton->GetComponent<Button>();
@@ -96,7 +95,7 @@ void Game::InitializeGame() const {
     exitToMainMenuButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->nextButton = resumeButton->GetComponent<Button>();
-    pause->DisableSelfAndChildren();
+    pause->GetParent()->DisableSelfAndChildren();
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
@@ -156,6 +155,33 @@ void Game::InitializeGame() const {
 
 
     // SCENE BUILDINGS
+	std::vector<std::string> buildingPaths = {
+			"jazz1", "jazz2", "jazz3", "jazz4", "kamienica1", "kamienica2", "kamienica3"
+	};
+	std::map<std::string, int> buildingSizes = {
+			{"jazz1", 6},
+			{"jazz2", 7},
+			{"jazz3", 10},
+			{"jazz4", 6},
+			{"kamienica1", 6},
+			{"kamienica2", 10},
+			{"kamienica3", 6}
+	};
+	float currentXPos = -20;
+
+
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos, 0, -30});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+
+		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
+
     std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
     test->transform->SetLocalPosition({0, 0, -30});
     test->transform->SetLocalScale({1, 1, 1});
