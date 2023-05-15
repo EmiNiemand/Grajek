@@ -28,7 +28,8 @@ public:
     std::map<int, std::shared_ptr<DirectionalLight>> directionalLights;
     std::map<int, std::shared_ptr<SpotLight>> spotLights;
 
-    std::vector<std::shared_ptr<Drawable>> drawBuffer;
+    unsigned int bufferIterator = 0;
+    std::shared_ptr<Drawable> drawBuffer[1000];
 
     std::shared_ptr<Shader> shader;
     std::shared_ptr<Shader> cubeMapShader;
@@ -42,7 +43,9 @@ public:
 
     void Free() const;
 
+    void Draw();
     void DrawObjects();
+    void DrawObjects(const std::shared_ptr<Shader>& drawShader);
     void AddToDrawBuffer(const std::shared_ptr<Drawable>& DrawableComponent);
 
     void UpdateProjection() const;
@@ -60,6 +63,8 @@ private:
     void RemovePointLight(int id, const std::shared_ptr<Shader>& lightShader);
     void RemoveDirectionalLight(int id, const std::shared_ptr<Shader>& lightShader);
     void RemoveSpotLight(int id, const std::shared_ptr<Shader>& lightShader);
+
+    void ClearBuffer();
 };
 
 

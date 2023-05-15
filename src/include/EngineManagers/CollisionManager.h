@@ -42,7 +42,7 @@ public:
 
     void ManageCollision();
 #ifdef DEBUG
-    void DrawColliders();
+    void Draw();
 #endif
     void Free();
 

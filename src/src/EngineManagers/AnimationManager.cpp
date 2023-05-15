@@ -14,17 +14,18 @@ AnimationManager *AnimationManager::GetInstance() {
 }
 
 void AnimationManager::AddToBuffer(const std::shared_ptr<Animator>& animator) {
-    buffer.push_back(animator);
+    buffer[bufferIterator] = animator;
+    ++bufferIterator;
 }
 
 void AnimationManager::UpdateAnimations() {
-    auto chunk = (unsigned int)std::ceil((float)buffer.size() / (float)(maxNumberOfThreads + 1));
+    auto chunk = (unsigned int)std::ceil((float)bufferIterator / (float)(maxNumberOfThreads + 1));
 
     std::vector<std::shared_ptr<Animator>> animators;
 
-    const int sizeForThreads = buffer.size() - chunk;
+    const int sizeForThreads = (int)bufferIterator - chunk;
 
-    for (int i = 0; i < sizeForThreads; i++) {
+    for (int i = 0; i < sizeForThreads; ++i) {
         animators.push_back(buffer[i]);
         if (animators.size() % chunk == 0) {
             threads.emplace_back(&AnimationManager::ConcurrenceCalculation, animationManager, std::move(animators), GloomEngine::GetInstance()->deltaTime);
@@ -32,7 +33,7 @@ void AnimationManager::UpdateAnimations() {
         }
     }
 
-    for (int i = sizeForThreads; i < buffer.size(); i++) {
+    for (int i = sizeForThreads; i < bufferIterator; ++i) {
         animators.push_back(buffer[i]);
     }
 
@@ -46,12 +47,19 @@ void AnimationManager::UpdateAnimations() {
         }
     }
 
-    buffer.clear();
+    ClearBuffer();
 }
 
 void AnimationManager::ConcurrenceCalculation(std::vector<std::shared_ptr<Animator>> animators, float deltaTime) {
-    for (int i = 0; i < animators.size(); i++) {
+    for (int i = 0; i < animators.size(); ++i) {
         animators[i]->UpdateAnimation(deltaTime);
     }
+}
+
+void AnimationManager::ClearBuffer() {
+    for (int i = 0; i < bufferIterator; ++i) {
+        buffer[i] = nullptr;
+    }
+    bufferIterator = 0;
 }
 

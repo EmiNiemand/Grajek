@@ -20,14 +20,26 @@ void UIManager::Free() const {
     shader->Delete();
 }
 
-void UIManager::DrawUI() {
-    for (const auto& component : drawBuffer) {
-        component->Draw();
-    }
+void UIManager::Draw() {
+    DrawUI();
+    ClearBuffer();
+}
 
-    drawBuffer.clear();
+void UIManager::DrawUI() {
+    for (int i = 0; i < bufferIterator; ++i) {
+        drawBuffer[i]->Draw();
+    }
 }
 
 void UIManager::AddToDrawBuffer(const std::shared_ptr<UIComponent> &component) {
-    drawBuffer.emplace_back(component);
+    drawBuffer[bufferIterator] = component;
+    ++bufferIterator;
 }
+
+void UIManager::ClearBuffer() {
+    for (int i = 0; i < bufferIterator; ++i) {
+        drawBuffer[i] = nullptr;
+    }
+    bufferIterator = 0;
+}
+

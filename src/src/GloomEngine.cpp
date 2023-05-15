@@ -171,20 +171,21 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Destroy objects and components", 0xFFD733);
 #endif
-        std::vector<std::shared_ptr<Component>> componentBuffer = destroyComponentBuffer;
-        for (const auto& component: componentBuffer) {
+
+        for (int i = 0; i < destroyComponentBufferIterator; ++i) {
+            const auto& component = destroyComponentBuffer[i];
             component->OnDestroy();
-            component->GetParent()->RemoveComponent(component->GetId());
+            component->GetParent()->RemoveComponent((int)component->GetId());
             RemoveComponent(component);
         }
-        destroyComponentBuffer.erase(destroyComponentBuffer.begin(), destroyComponentBuffer.begin() + (int)componentBuffer.size());
+        ClearDestroyComponentBuffer();
 
-        std::vector<std::shared_ptr<GameObject>> gameObjectBuffer = destroyGameObjectBuffer;
-        for (const auto& gameObject: gameObjectBuffer) {
+        for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
+            const auto& gameObject = destroyGameObjectBuffer[i];
             gameObject->parent->RemoveChild(gameObject->GetId());
             RemoveGameObject(gameObject);
         }
-        destroyGameObjectBuffer.erase(destroyGameObjectBuffer.begin(), destroyGameObjectBuffer.begin() + (int)gameObjectBuffer.size());
+        ClearDestroyGameObjectBuffer();
     }
     //Frustum culling
     {
@@ -246,7 +247,7 @@ void GloomEngine::Update() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindTexture(GL_TEXTURE_2D, ShadowManager::GetInstance()->depthMap);
-        RendererManager::GetInstance()->DrawObjects();
+        RendererManager::GetInstance()->Draw();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -255,7 +256,7 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Post processing", 0xFFD733);
 #endif
-        PostProcessingManager::GetInstance()->DrawBuffer();
+        PostProcessingManager::GetInstance()->Draw();
 
         glEnable(GL_DEPTH_TEST);
     }
@@ -264,7 +265,7 @@ void GloomEngine::Update() {
     {
 #ifdef DEBUG
         ZoneScopedNC("Draw colliders", 0x800000);
-        CollisionManager::GetInstance()->DrawColliders();
+        CollisionManager::GetInstance()->Draw();
 #endif
     }
     // Drawing UI elements
@@ -273,7 +274,7 @@ void GloomEngine::Update() {
         ZoneScopedNC("Draw UI", 0xFFD733);
 #endif
 
-        UIManager::GetInstance()->DrawUI();
+        UIManager::GetInstance()->Draw();
     }
     // Rendering IMGUI debug windows
     {
@@ -425,4 +426,28 @@ void GloomEngine::RemoveComponent(const std::shared_ptr<Component>& component) {
 void GloomEngine::glfwErrorCallback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+void GloomEngine::AddGameObjectToDestroyBuffer(const std::shared_ptr<GameObject>& gameObject) {
+    destroyGameObjectBuffer[destroyGameObjectBufferIterator] = gameObject;
+    ++destroyGameObjectBufferIterator;
+}
+
+void GloomEngine::AddComponentToDestroyBuffer(const std::shared_ptr<Component>& component) {
+    destroyComponentBuffer[destroyComponentBufferIterator] = component;
+    ++destroyComponentBufferIterator;
+}
+
+void GloomEngine::ClearDestroyGameObjectBuffer() {
+    for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
+        destroyGameObjectBuffer[i] = nullptr;
+    }
+    destroyGameObjectBufferIterator = 0;
+}
+
+void GloomEngine::ClearDestroyComponentBuffer() {
+    for (int i = 0; i < destroyComponentBufferIterator; ++i) {
+        destroyComponentBuffer[i] = nullptr;
+    }
+    destroyComponentBufferIterator = 0;
 }
