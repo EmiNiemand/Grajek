@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 3.5.1 commit date:2023-04-24, commit time:18:11, hash:e1ccd9d4a1d3</authoring_tool>
     </contributor>
-    <created>2023-05-15T03:00:16</created>
-    <modified>2023-05-15T03:00:16</modified>
+    <created>2023-05-15T03:17:33</created>
+    <modified>2023-05-15T03:17:33</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -98,6 +98,7 @@
     </controller>
   </library_controllers>
   <library_animations>
+    <animation id="action_container-Postac_001" name="Postac.001"/>
     <animation id="action_container-Armature_002" name="Armature.002">
       <animation id="Armature_002_Walko_Brzuch_pose_matrix" name="Armature.002">
         <source id="Armature_002_Walko_Brzuch_pose_matrix-input">
@@ -452,7 +453,6 @@
         <channel source="#Armature_002_Walko_Lydka_L_pose_matrix-sampler" target="Armature_002_Lydka_L/transform"/>
       </animation>
     </animation>
-    <animation id="action_container-Postac_001" name="Postac.001"/>
   </library_animations>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">

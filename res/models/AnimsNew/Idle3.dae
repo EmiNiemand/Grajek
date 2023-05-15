@@ -5,46 +5,13 @@
       <author>Blender User</author>
       <authoring_tool>Blender 3.5.1 commit date:2023-04-24, commit time:18:11, hash:e1ccd9d4a1d3</authoring_tool>
     </contributor>
-    <created>2023-05-15T02:56:29</created>
-    <modified>2023-05-15T02:56:29</modified>
+    <created>2023-05-15T03:17:42</created>
+    <modified>2023-05-15T03:17:42</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
-  <library_effects>
-    <effect id="Material_001-effect">
-      <profile_COMMON>
-        <newparam sid="Tekstura_png-surface">
-          <surface type="2D">
-            <init_from>Tekstura_png</init_from>
-          </surface>
-        </newparam>
-        <newparam sid="Tekstura_png-sampler">
-          <sampler2D>
-            <source>Tekstura_png-surface</source>
-          </sampler2D>
-        </newparam>
-        <technique sid="common">
-          <lambert>
-            <emission>
-              <color sid="emission">0 0 0 1</color>
-            </emission>
-            <diffuse>
-              <texture texture="Tekstura_png-sampler" texcoord="UVMap"/>
-            </diffuse>
-            <index_of_refraction>
-              <float sid="ior">1.45</float>
-            </index_of_refraction>
-          </lambert>
-        </technique>
-      </profile_COMMON>
-    </effect>
-  </library_effects>
+  <library_effects/>
   <library_images/>
-  <library_materials>
-    <material id="Material_001-material" name="Material.001">
-      <instance_effect url="#Material_001-effect"/>
-    </material>
-  </library_materials>
   <library_geometries>
     <geometry id="Cube_001-mesh" name="Cube.001">
       <mesh>
@@ -80,7 +47,7 @@
         <vertices id="Cube_001-mesh-vertices">
           <input semantic="POSITION" source="#Cube_001-mesh-positions"/>
         </vertices>
-        <triangles material="Material_001-material" count="582">
+        <triangles count="582">
           <input semantic="VERTEX" source="#Cube_001-mesh-vertices" offset="0"/>
           <input semantic="NORMAL" source="#Cube_001-mesh-normals" offset="1"/>
           <input semantic="TEXCOORD" source="#Cube_001-mesh-map-0" offset="2" set="1"/>
@@ -131,6 +98,7 @@
     </controller>
   </library_controllers>
   <library_animations>
+    <animation id="action_container-Postac_001" name="Postac.001"/>
     <animation id="action_container-Armature_002" name="Armature.002">
       <animation id="Armature_002_Idle3o_Klatka_pose_matrix" name="Armature.002">
         <source id="Armature_002_Idle3o_Klatka_pose_matrix-input">
@@ -325,7 +293,6 @@
         <channel source="#Armature_002_Idle3o_Przedradmie_L_pose_matrix-sampler" target="Armature_002_Przedradmie_L/transform"/>
       </animation>
     </animation>
-    <animation id="action_container-Postac_001" name="Postac.001"/>
   </library_animations>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
@@ -472,13 +439,6 @@
           <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
           <instance_controller url="#Armature_002_Postac_001-skin">
             <skeleton>#Armature_002_Brzuch</skeleton>
-            <bind_material>
-              <technique_common>
-                <instance_material symbol="Material_001-material" target="#Material_001-material">
-                  <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-                </instance_material>
-              </technique_common>
-            </bind_material>
           </instance_controller>
         </node>
       </node>

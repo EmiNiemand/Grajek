@@ -5,7 +5,7 @@ layout(location = 2) in vec2 aTexCoords;
 layout(location = 5) in ivec4 boneIds;
 layout(location = 6) in vec4 weights;
 
-const int MAX_BONES = 25;
+const int MAX_BONES = 20;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 
@@ -26,7 +26,7 @@ void main()
                 totalPosition = vec4(aPos,1.0f);
                 break;
             }
-            vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos,1.0f);
+            vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos, 1.0f);
             totalPosition += localPosition * weights[i];
         }
 

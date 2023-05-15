@@ -195,21 +195,11 @@ void Game::InitializeGame() const {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
         animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
+        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
         animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
         animatedDood->transform->SetLocalRotation({0, 90*i, 0});
         animatedDood->transform->SetLocalScale({1, 1, 1});
     }
-
-//    for (int i = 0; i < 1; i++) {
-//        std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-//        auto animatedDoodAnimator2 = animatedDood2->AddComponent<Animator>();
-//        animatedDoodAnimator2->LoadAnimationModel("basicMan/basicMan05/basicMan05.dae");
-//        animatedDoodAnimator2->SetAnimation("Animacje/Walk.dae");
-//        animatedDood2->transform->SetLocalPosition({-20 + i, 1, -10});
-//        animatedDood2->transform->SetLocalRotation({0, -90, 0});
-//        animatedDood2->transform->SetLocalScale({0.25, 0.25, 0.25});
-//    }
 
 //    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
 //    sphere->transform->SetLocalPosition({-5, 2, 0});
