@@ -167,7 +167,7 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
 
     toVisit[iterator] = std::make_pair(iterator, node);
 
-    for (int i = 0; i < nodeNumber; i++) {
+    for (int i = 0; i < nodeNumber; ++i) {
         node = toVisit[i].second;
 
         nodeName = &node->name;

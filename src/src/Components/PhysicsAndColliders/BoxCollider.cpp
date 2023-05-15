@@ -148,16 +148,16 @@ bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
 
     auto rMatrix = glm::mat3(1.0f);
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
             rMatrix[i][j] = glm::dot(vectors[i], otherVectors[j]);
         }
     }
 
     glm::mat3 absRMatrix;
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
             absRMatrix[i][j] = fabs(rMatrix[i][j]) + 0.001f;
         }
     }
@@ -367,8 +367,8 @@ void BoxCollider::SetCollidersGridPoints() {
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX; x <= maxX; x++) {
-        for (int y = minY; y <= maxY; y++) {
+    for (int x = minX; x <= maxX; ++x) {
+        for (int y = minY; y <= maxY; ++y) {
             CollisionManager::GetInstance()->grid[(x + GRID_SIZE / 2) + (y + GRID_SIZE / 2) * GRID_SIZE].insert({id, std::dynamic_pointer_cast<BoxCollider>(shared_from_this())});
         }
     }

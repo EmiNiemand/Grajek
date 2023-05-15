@@ -191,7 +191,7 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("AnimsNew/Idle3.dae");
 
 	// Set up animated model
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 10; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
         animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
@@ -214,10 +214,12 @@ void Game::InitializeGame() const {
 
 bool Game::GameLoop() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
-        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+        if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>())
+            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
 
     if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
-        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+        if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>())
+            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
 
 
     return shouldQuit;
