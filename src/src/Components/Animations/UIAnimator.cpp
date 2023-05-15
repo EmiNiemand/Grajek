@@ -19,7 +19,10 @@ void UIAnimator::Setup(std::shared_ptr<Image> animatedImage,
     type = behaviour;
     counter = 0;
 
-    if(type == AnimationBehaviour::Resetable) checkpointIndex = checkpoints.size();
+    if(type == AnimationBehaviour::Resetable) {
+        counter = checkpoint.duration+1;
+        checkpointIndex = checkpoints.size();
+    }
 
     CalcValueDelta();
 }
@@ -34,7 +37,6 @@ void UIAnimator::Update() {
     // ------------------------------------------
     if(counter > checkpoint.duration) {
         checkpointIndex++;
-        counter = 0;
 
         // Finish, loop or suspend animation
         // ---------------------------------
@@ -50,30 +52,29 @@ void UIAnimator::Update() {
                     break;
             }
         }
+        counter = 0;
         checkpoint = checkpoints[checkpointIndex];
         CalcValueDelta();
     }
 
+    float deltaTime = GloomEngine::GetInstance()->deltaTime;
+    auto imageTransform = image->GetParent()->transform;
     switch (checkpoint.property) {
         case Position:
-            image->SetPosition(image->GetParent()->transform->GetLocalPosition().x
-                                        + valueDelta.x * GloomEngine::GetInstance()->deltaTime,
-                               image->GetParent()->transform->GetLocalPosition().y
-                                        + valueDelta.y * GloomEngine::GetInstance()->deltaTime);
+            image->SetPosition(imageTransform->GetLocalPosition().x + valueDelta.x * deltaTime,
+                               imageTransform->GetLocalPosition().y + valueDelta.y * deltaTime);
             break;
         case Rotation:
-            image->SetRotation(image->GetParent()->transform->GetLocalRotation().z
-                                     + valueDelta.z * GloomEngine::GetInstance()->deltaTime);
+            image->SetRotation(imageTransform->GetLocalRotation().z + valueDelta.z * deltaTime);
             break;
         case Scale:
-            image->SetScale(image->GetParent()->transform->GetLocalScale().x
-                            + valueDelta.x * GloomEngine::GetInstance()->deltaTime);
+            image->SetScale(imageTransform->GetLocalScale().x + valueDelta.x * deltaTime);
             break;
         case Color:
-            image->SetColor(image->GetColor() + valueDelta * GloomEngine::GetInstance()->deltaTime);
+            image->SetColor(image->GetColor() + valueDelta * deltaTime);
             break;
         case Alpha:
-            image->SetAlpha(image->GetAlpha() + valueDelta.x * GloomEngine::GetInstance()->deltaTime);
+            image->SetAlpha(image->GetAlpha() + valueDelta.x * deltaTime);
             break;
     }
 
@@ -86,23 +87,25 @@ void UIAnimator::Reset() {
     checkpointIndex = 0;
     checkpoint = checkpoints[0];
     counter = 0;
+    CalcValueDelta();
 }
 
 void UIAnimator::CalcValueDelta() {
+    auto imageTransform = image->GetParent()->transform;
     switch(checkpoint.property) {
         case Position:
             valueDelta = (checkpoint.value
-                          - image->GetParent()->transform->GetLocalPosition())
+                          - imageTransform->GetLocalPosition())
                          / checkpoint.duration;
             break;
         case Rotation:
             valueDelta = (checkpoint.value
-                          - image->GetParent()->transform->GetLocalRotation())
+                          - imageTransform->GetLocalRotation())
                          / checkpoint.duration;
             break;
         case Scale:
             valueDelta = (checkpoint.value
-                          - image->GetParent()->transform->GetLocalScale())
+                          - imageTransform->GetLocalScale())
                          / checkpoint.duration;
             break;
         case Color:

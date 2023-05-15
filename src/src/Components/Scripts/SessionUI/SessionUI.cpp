@@ -70,7 +70,7 @@ void SessionUI::UpdateAccuracy(float fraction) {
     //TODO: Show accuracy feedback when changing text is implemented
     //accuracyFeedback->text = accuracyTexts[index];
     //accuracyFeedback->color = accuracyColors[index];
-    accuracyRatingAnimator[index]->Reset();
+    //accuracyRatingAnimator[index]->Reset();
     spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
 }
 
@@ -97,12 +97,8 @@ void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
 
 void SessionUI::AccuracyFeedbackSetup() {
     int screenWidth, screenHeight;
-    int accuracyTextWidth = 756;
-    int accuracyTextHeight = 256;
     glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
-    //accuracyFeedback = GameObject::Instantiate("AccuracyFeedback", parent)->AddComponent<Text>();
-    //accuracyFeedback->LoadFont("Good", 960, 540, 60, Color::White, GameFont::KanitLight);
-    //TODO: add animations to accuracy feedback
+
     accuracyRatingAnimator = {
             GameObject::Instantiate("AccuracyPoorAnimator", parent)->AddComponent<UIAnimator>(),
             GameObject::Instantiate("AccuracyNiceAnimator", parent)->AddComponent<UIAnimator>(),
@@ -115,7 +111,8 @@ void SessionUI::AccuracyFeedbackSetup() {
     };
     for (int i = 0; i < accuracyRatingAnimator.size(); ++i) {
         auto ratingImage = GameObject::Instantiate("AccuracyPoor", parent)->AddComponent<Image>();
-        ratingImage->LoadTexture(screenWidth/2 - accuracyTextWidth/2, screenHeight/2 - accuracyTextHeight/2, accuracyImagePaths[i], 1);
+        ratingImage->LoadTexture(0, 0, accuracyImagePaths[i], 1);
+        ratingImage->SetPosition(screenWidth/2 - ratingImage->width/2, screenHeight/2 - ratingImage->height/2);
         ratingImage->SetAlpha(0);
         accuracyRatingAnimator[i]->Setup(ratingImage, {
                 {AnimatedProperty::Alpha, glm::vec3(1.0f), 0},
