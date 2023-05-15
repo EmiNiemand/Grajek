@@ -18,7 +18,7 @@ std::shared_ptr<Mesh> Image::CreateMesh() {
     glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
 
     UpdateCorners();
-    
+
     std::vector<Vertex> vertices;
     Vertex vertex1{}, vertex2{}, vertex3{}, vertex4{};
 
@@ -165,12 +165,12 @@ void Image::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Image", 0x800080);
 #endif
+    if (!mesh) return;
+    if (alpha <= 0.1f) return;
     UIComponent::Update();
 }
 
 void Image::Draw() {
-    if (!mesh) return;
-    if(alpha <= 0.1f) return;
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     UIManager::GetInstance()->shader->SetVec3("color", color);
