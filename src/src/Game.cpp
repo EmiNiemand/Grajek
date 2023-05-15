@@ -47,7 +47,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->cameraOffset = glm::vec3(0, 40, 40);
 
     // Set up cubemap
     // --------------
@@ -81,13 +81,12 @@ void Game::InitializeGame() const {
 
 
     // Set up pause menu
-    std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
-    pause->AddComponent<PauseMenu>();
-    std::shared_ptr<GameObject> resumeButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
-    std::shared_ptr<GameObject> optionsButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
-    std::shared_ptr<GameObject> exitButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
-    std::shared_ptr<GameObject> pauseBackground = pause->GetComponent<PauseMenu>()->Menu::AddImage("Background", 0, 0, "UI/pause.png");
+    auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
+    std::shared_ptr<GameObject> resumeButton = pause->AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
+    std::shared_ptr<GameObject> optionsButton = pause->AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
+    std::shared_ptr<GameObject> exitToMainMenuButton = pause->AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
+    std::shared_ptr<GameObject> exitButton = pause->AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
+    std::shared_ptr<GameObject> pauseBackground = pause->AddImage("Background", 0, 0, "UI/pause.png");
     resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
     resumeButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
     optionsButton->GetComponent<Button>()->previousButton = resumeButton->GetComponent<Button>();
@@ -96,19 +95,19 @@ void Game::InitializeGame() const {
     exitToMainMenuButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->nextButton = resumeButton->GetComponent<Button>();
-    pause->DisableSelfAndChildren();
+    pause->GetParent()->DisableSelfAndChildren();
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> backToPauseMenu = options->Menu::AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-    std::shared_ptr<GameObject> musicVolume = options->Menu::AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowResolution = options->Menu::AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowFullScreen = options->Menu::AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> shadowResolution = options->Menu::AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> previousValue = options->Menu::AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> currentValue = options->Menu::AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-    std::shared_ptr<GameObject> nextValue = options->Menu::AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> optionsBackground = options->Menu::AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
+    std::shared_ptr<GameObject> backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
+    std::shared_ptr<GameObject> musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
+    std::shared_ptr<GameObject> nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
     backToPauseMenu->GetComponent<Button>()->previousButton = shadowResolution->GetComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->nextButton = musicVolume->GetComponent<Button>();
     musicVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
@@ -148,36 +147,86 @@ void Game::InitializeGame() const {
     bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
     bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
 
-    int maxHouses = 7;
-    int houseOffset = 7;
-    for (int i = 0; i < maxHouses; ++i) {
-        if(i == ceil(maxHouses/2.0f) - 1) continue;
-
-        float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
-        float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
-
-        std::shared_ptr<GameObject> serialHouse = Prefab::Instantiate<House>();
-        serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
-        serialHouse->transform->SetLocalRotation({0, -90, 0});
-        serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
-
-
-        std::shared_ptr<GameObject> serialHouseLeft = Prefab::Instantiate<House>();
-        serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
-        serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
-        serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
-
-        std::shared_ptr<GameObject> serialHouseRight = Prefab::Instantiate<House>();
-        serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
-        serialHouseRight->transform->SetLocalRotation({0, 180, 0});
-        serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
-    }
-
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
     hydrant->transform->SetLocalPosition({15, 0, -15});
     hydrant->transform->SetLocalRotation({0, -65, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
+
+//    Animator::LoadAnimation("Animacje/Idle.dae");
+//    Animator::LoadAnimation("Animacje/Walk.dae");
+//    Animator::LoadAnimation("testLessBones/animations/Walk.dae");
+//    Animator::LoadAnimation("testLessBones/animations/Idle.dae");
+
+    Animator::LoadAnimation("AnimsNew/Walk.dae");
+    Animator::LoadAnimation("AnimsNew/Happy.dae");
+    Animator::LoadAnimation("AnimsNew/Angry.dae");
+    Animator::LoadAnimation("AnimsNew/Idle1.dae");
+    Animator::LoadAnimation("AnimsNew/Idle3.dae");
+
+    // SCENE BUILDINGS
+	std::vector<std::string> buildingPaths = {
+			"jazz1", "jazz2", "jazz3", "jazz4", "kamienica1", "kamienica2", "kamienica3"
+	};
+	std::map<std::string, int> buildingSizes = {
+			{"jazz1", 6},
+			{"jazz2", 7},
+			{"jazz3", 10},
+			{"jazz4", 6},
+			{"kamienica1", 6},
+			{"kamienica2", 10},
+			{"kamienica3", 6}
+	};
+	float currentXPos = -20;
+
+
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos, 0, -30});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+
+		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
+
+    std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+    test->transform->SetLocalPosition({0, 0, -30});
+    test->transform->SetLocalScale({1, 1, 1});
+    test->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz1.obj");
+    test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+
+    std::shared_ptr<GameObject> test1 = GameObject::Instantiate("TestHouse", activeScene);
+    test1->transform->SetLocalPosition({7, 0, -30});
+    test1->transform->SetLocalScale({1, 1, 1});
+    test1->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz2.obj");
+    test1->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test1->GetComponent<BoxCollider>()->SetSize({6, 6, 3.5});
+
+    std::shared_ptr<GameObject> test2 = GameObject::Instantiate("TestHouse", activeScene);
+    test2->transform->SetLocalPosition({-9, 0, -30});
+    test2->transform->SetLocalScale({1, 1, 1});
+    test2->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
+    test2->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test2->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
+
+    std::shared_ptr<GameObject> test3 = GameObject::Instantiate("TestHouse", activeScene);
+    test3->transform->SetLocalPosition({-19, 0, -30});
+    test3->transform->SetLocalScale({1, 1, 1});
+    test3->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
+    test3->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test3->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
+
+    std::shared_ptr<GameObject> test4 = GameObject::Instantiate("TestHouse", activeScene);
+    test4->transform->SetLocalPosition({16, 0, -30});
+    test4->transform->SetLocalScale({1, 1, 1});
+    test4->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz4.obj");
+    test4->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
+    test4->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
+
 
     Animator::LoadAnimation("Animacje/BasicChlop.dae");
 
@@ -185,19 +234,12 @@ void Game::InitializeGame() const {
     for (int i = 0; i < 10; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
-        animatedDoodAnimator->SetAnimation("Animacje/BasicChlop.dae");
-        animatedDood->transform->SetLocalPosition({-15 + i, 1, -10});
-        animatedDood->transform->SetLocalRotation({0, 0, 0});
-        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
+        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
+        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
+        animatedDood->transform->SetLocalScale({1, 1, 1});
     }
-
-//    std::shared_ptr<GameObject> sphere = GameObject::Instantiate("Sphere", activeScene);
-//    sphere->transform->SetLocalPosition({-5, 2, 0});
-//    sphere->transform->SetLocalScale({2, 2, 2});
-//    sphere->AddComponent<Renderer>()->LoadModel("sphere/sphere.obj");
-//    std::shared_ptr<Renderer> rSphere = sphere->GetComponent<Renderer>();
-//    rSphere->material.refraction = 1.0f;
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

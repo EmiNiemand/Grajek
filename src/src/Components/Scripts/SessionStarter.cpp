@@ -8,17 +8,36 @@ SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, int id
 SessionStarter::~SessionStarter() {}
 
 void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instruments) {
-    int i = 0;
+
+    int screenWidth, screenHeight;
+    int buttonWidth = 256;
+    int margin = 50;
+
+    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
+
+    int buttonOffset = buttonWidth + margin;
+                    // We start from the middle of a screen...
+    int xPosBegin = screenWidth/2 +
+            // Offset pivot to button's middle point...
+            buttonWidth/2 -
+            // Try to distribute this nicely around the screen's middle...
+            (instruments.size()/2) * buttonOffset +
+            // And - if there's uneven amount of instruments - move
+            // all buttons so that middle instruments is in the middle
+            // of the screen
+            (buttonOffset/2.0f) * ((instruments.size()+1)%2);
+
     for (const auto& instrument : instruments)
     {
-        // 100 -- buttonWidth / 2
-        // 200 -- buttonWidth
-        std::shared_ptr<GameObject> button = Menu::AddButton(std::to_string((int)instrument->name), 960 - instruments.size() * 100 + i * 200 + 100 * ((i + 1) - instruments.size()) + 50 * i + 25, 450, "UI/buttonInactive.png", "UI/buttonActive.png", instrument->NameToString(), 32);
+        std::shared_ptr<GameObject> button = Menu::AddButton(
+                std::to_string((int)instrument->name),
+                xPosBegin + buttonOffset * buttons.size(), screenHeight/2,
+                "UI/Icons/small/icon"+instrument->NameToString()+"Inactive.png",
+                "UI/Icons/small/icon"+instrument->NameToString()+".png");
         buttons.push_back(button->GetComponent<Button>());
-        i++;
     }
     if (buttons.size() > 1) {
-        i = 0;
+        int i = 0;
         for (const auto &button: buttons) {
             if (i != 0) button->previousButton = buttons[i - 1];
             if (i != buttons.size()-1) button->nextButton = buttons[i + 1];
@@ -29,6 +48,7 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
     }
     activeButton = buttons[0];
     buttons[0]->isActive = true;
+    AddImage("DarkBackground", 0, 0, "UI/backgroundOpacity90.png");
 }
 
 void SessionStarter::ChangeActiveButton(glm::vec2 moveVector) {

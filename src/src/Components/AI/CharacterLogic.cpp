@@ -13,6 +13,8 @@
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
+#include <algorithm>
+
 #endif
 
 CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
@@ -60,7 +62,7 @@ void CharacterLogic::SetPathToPlayer() {
     wykrzyknik->LoadTexture((int)x, (int)y, "UI/Wykrzyknik.png");
     animator->AddComponent<UIAnimator>()->Setup(wykrzyknik, {
             {AnimatedProperty::Position, glm::vec3(x, y + 50.0f, 0.0f)}
-    }, false);
+    });
 
     characterMovement->SetNewPath(currentState);
 }

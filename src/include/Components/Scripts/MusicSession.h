@@ -42,6 +42,9 @@ public:
     void StopSample(int index);
     void ToggleCheatSheet();
 
+    void ToggleMetronomeVisuals();
+    void ToggleMetronomeSound();
+
 private:
     void DetectPattern();
     void CalcAccuracyAndReset(const std::shared_ptr<MusicPattern>& goodPattern);
