@@ -1,7 +1,7 @@
-# Blender 3.5.1 MTL File: 'None'
+# Blender 3.5.1 MTL File: 'budynki.blend'
 # www.blender.org
 
-newmtl BasicTexture.002
+newmtl BasicTexture
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Ks 0.500000 0.500000 0.500000

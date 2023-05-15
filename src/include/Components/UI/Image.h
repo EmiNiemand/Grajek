@@ -13,16 +13,17 @@ class Image : public UIComponent {
 private:
     unsigned int textureID{};
     std::shared_ptr<Mesh> mesh;
-    int x = 0, y = 0, width = 1920, height = 1080;
+    int x = 0, y = 0;
     float z = 0.0f;
     glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
     glm::vec3 color = glm::vec3(1.0f);
     float alpha = 1.0f;
 
 public:
+    int width = 1920, height = 1080;
     Image(const std::shared_ptr<GameObject> &parent, int id);
 
-    static std::shared_ptr<Mesh> CreateMesh(int x, int y, int width, int height, float z = 0);
+    std::shared_ptr<Mesh> CreateMesh();
     /**
     * x from 0 to 1920\n
     * y from 0 to 1080
@@ -39,6 +40,9 @@ public:
     void Update() override;
 
     void Draw() override;
+
+private:
+    void UpdateCorners();
 };
 
 #endif //GLOOMENGINE_IMAGE_H

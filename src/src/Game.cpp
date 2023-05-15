@@ -99,15 +99,15 @@ void Game::InitializeGame() const {
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> backToPauseMenu = options->Menu::AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-    std::shared_ptr<GameObject> musicVolume = options->Menu::AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowResolution = options->Menu::AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowFullScreen = options->Menu::AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> shadowResolution = options->Menu::AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> previousValue = options->Menu::AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> currentValue = options->Menu::AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-    std::shared_ptr<GameObject> nextValue = options->Menu::AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> optionsBackground = options->Menu::AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
+    std::shared_ptr<GameObject> backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
+    std::shared_ptr<GameObject> musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
+    std::shared_ptr<GameObject> nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
     backToPauseMenu->GetComponent<Button>()->previousButton = shadowResolution->GetComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->nextButton = musicVolume->GetComponent<Button>();
     musicVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
@@ -152,6 +152,17 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalRotation({0, -65, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
+
+//    Animator::LoadAnimation("Animacje/Idle.dae");
+//    Animator::LoadAnimation("Animacje/Walk.dae");
+//    Animator::LoadAnimation("testLessBones/animations/Walk.dae");
+//    Animator::LoadAnimation("testLessBones/animations/Idle.dae");
+
+    Animator::LoadAnimation("AnimsNew/Walk.dae");
+    Animator::LoadAnimation("AnimsNew/Happy.dae");
+    Animator::LoadAnimation("AnimsNew/Angry.dae");
+    Animator::LoadAnimation("AnimsNew/Idle1.dae");
+    Animator::LoadAnimation("AnimsNew/Idle3.dae");
 
     // SCENE BUILDINGS
 	std::map<std::string, int> buildingSizes = {
@@ -253,11 +264,11 @@ void Game::InitializeGame() const {
     for (int i = 0; i < 10; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
-        animatedDoodAnimator->SetAnimation("Animacje/BasicChlop.dae");
-        animatedDood->transform->SetLocalPosition({-15 + i, 1, -10});
-        animatedDood->transform->SetLocalRotation({0, 0, 0});
-        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
+        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
+        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
+        animatedDood->transform->SetLocalScale({1, 1, 1});
     }
 
     //camera->SetTarget(pivot);
