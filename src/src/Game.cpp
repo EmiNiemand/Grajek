@@ -157,40 +157,35 @@ void Game::InitializeGame() const {
 
     // SCENE BUILDINGS
     std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-    test->transform->SetLocalPosition({0, 5, -30});
-    test->transform->SetLocalRotation({0, -90, 0});
+    test->transform->SetLocalPosition({0, 0, -30});
     test->transform->SetLocalScale({1, 1, 1});
     test->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz1.obj");
     test->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
     test->GetComponent<BoxCollider>()->SetSize({6, 6, 3});
 
     std::shared_ptr<GameObject> test1 = GameObject::Instantiate("TestHouse", activeScene);
-    test1->transform->SetLocalPosition({6.4, 4, -30});
-    test1->transform->SetLocalRotation({0, -90, 0});
+    test1->transform->SetLocalPosition({7, 0, -30});
     test1->transform->SetLocalScale({1, 1, 1});
     test1->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz2.obj");
     test1->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
     test1->GetComponent<BoxCollider>()->SetSize({6, 6, 3.5});
 
     std::shared_ptr<GameObject> test2 = GameObject::Instantiate("TestHouse", activeScene);
-    test2->transform->SetLocalPosition({-8.5, 5, -30});
-    test2->transform->SetLocalRotation({0, -90, 0});
+    test2->transform->SetLocalPosition({-9, 0, -30});
     test2->transform->SetLocalScale({1, 1, 1});
     test2->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
     test2->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
     test2->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
 
     std::shared_ptr<GameObject> test3 = GameObject::Instantiate("TestHouse", activeScene);
-    test3->transform->SetLocalPosition({-19.25, 5, -30});
-    test3->transform->SetLocalRotation({0, -90, 0});
+    test3->transform->SetLocalPosition({-19, 0, -30});
     test3->transform->SetLocalScale({1, 1, 1});
     test3->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz3.obj");
     test3->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
     test3->GetComponent<BoxCollider>()->SetSize({6, 6, 5.5});
 
     std::shared_ptr<GameObject> test4 = GameObject::Instantiate("TestHouse", activeScene);
-    test4->transform->SetLocalPosition({16, 4, -30});
-    test4->transform->SetLocalRotation({0, -90, 0});
+    test4->transform->SetLocalPosition({16, 0, -30});
     test4->transform->SetLocalScale({1, 1, 1});
     test4->AddComponent<Renderer>()->LoadModel("Budynki/modele/jazz4.obj");
     test4->AddComponent<BoxCollider>()->SetOffset({-6, -3, 0});
