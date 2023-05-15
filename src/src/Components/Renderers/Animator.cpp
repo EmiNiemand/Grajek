@@ -205,3 +205,8 @@ void Animator::LoadModel(const std::string &path) {
                                                                         RendererManager::GetInstance()->shader)});
     }
 }
+
+void Animator::OnDestroy() {
+
+    Component::OnDestroy();
+}

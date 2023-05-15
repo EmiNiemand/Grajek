@@ -7,8 +7,10 @@ class StaticModel;
 
 class Renderer : public Drawable {
 private:
-    inline static std::unordered_map<uint32_t, std::shared_ptr<StaticModel>> models;
     std::shared_ptr<StaticModel> model;
+
+public:
+    inline static std::unordered_map<int, std::shared_ptr<StaticModel>> models;
 
 public:
     Renderer(const std::shared_ptr<GameObject> &parent, int id);

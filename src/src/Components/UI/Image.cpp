@@ -161,11 +161,12 @@ void Image::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Image", 0x800080);
 #endif
+    if (!mesh) return;
+    if (alpha <= 0.1f) return;
     UIComponent::Update();
 }
 
 void Image::Draw() {
-    if (!mesh) return;
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     UIManager::GetInstance()->shader->SetVec3("color", color);
