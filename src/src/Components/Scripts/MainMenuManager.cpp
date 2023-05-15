@@ -14,6 +14,8 @@ MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, int 
 
 void MainMenuManager::Start() {
     mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>();
+    newGameMenu = GloomEngine::GetInstance()->FindGameObjectWithName("NewGameMenu")->GetComponent<NewGameMenu>();
+    loadGameMenu = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>();
     activeMenu = mainMenu;
     Component::Start();
 }
@@ -38,12 +40,12 @@ void MainMenuManager::OnMenuToggle() {
     mainMenu->ShowMenu();
 }
 
-void MainMenuManager::OnApply() {
+void MainMenuManager::OnApply() const {
     if(!activeMenu) return;
     activeMenu->OnClick();
 }
 
-void MainMenuManager::OnUIMove(glm::vec2 moveVector) {
+void MainMenuManager::OnUIMove(glm::vec2 moveVector) const {
     if(!activeMenu) return;
     activeMenu->ChangeActiveButton(moveVector);
 }

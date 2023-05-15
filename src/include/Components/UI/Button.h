@@ -14,7 +14,6 @@ private:
     unsigned int textureIsActive;
     std::shared_ptr<Mesh> textureMesh;
     std::shared_ptr<Mesh> textMesh;
-    std::string text;
     int width, height;
     int textX ,textY;
     glm::vec3 color;
@@ -23,6 +22,7 @@ private:
 
 public:
     int x, y;
+    std::string text;
     bool isActive = false;
     std::shared_ptr<Button> previousButton, nextButton;
 

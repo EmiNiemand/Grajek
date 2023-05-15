@@ -1,6 +1,8 @@
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
 #include "Components/Scripts/MainMenuManager.h"
 #include "Components/UI/Button.h"
+#include "Components/Scripts/NewGameMenu.h"
+#include "Components/Scripts/LoadGameMenu.h"
 
 MainMenuPrefab::MainMenuPrefab(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
             Prefab(name, id, parent, tag) {
@@ -12,6 +14,8 @@ MainMenuPrefab::~MainMenuPrefab() = default;
 std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     auto mainMenuScene = shared_from_this();
     GameObject::Instantiate("MainMenuManager", mainMenuScene)->AddComponent<MainMenuManager>();
+
+    // Main Menu
     std::shared_ptr<GameObject> mainMenu = GameObject::Instantiate("MainMenu", mainMenuScene);
     mainMenu->AddComponent<MainMenu>();
     std::shared_ptr<GameObject> newGameButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("NewGameButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "New Game", 32);
@@ -30,6 +34,40 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     creditsButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->previousButton = creditsButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->nextButton = newGameButton->GetComponent<Button>();
+
+    // New Game Menu
+    auto newGameMenu = GameObject::Instantiate("NewGameMenu", mainMenuScene)->AddComponent<NewGameMenu>();
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 5; j++) {
+            newGameMenu->Menu::AddButton("NewGame" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
+        }
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("NewGame1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGame10")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("NewGame1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGame2")->GetComponent<Button>();
+    for (int i = 2; i <= 9; i++) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("NewGame" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGame" + std::to_string(i - 1))->GetComponent<Button>();
+        GloomEngine::GetInstance()->FindGameObjectWithName("NewGame" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGame" + std::to_string(i + 1))->GetComponent<Button>();
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("NewGame10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGame9")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("NewGame10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGame1")->GetComponent<Button>();
+    newGameMenu->GetParent()->DisableSelfAndChildren();
+
+    // Load Game Menu
+    auto loadGameMenu = GameObject::Instantiate("LoadGameMenu", mainMenuScene)->AddComponent<LoadGameMenu>();
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 5; j++) {
+            loadGameMenu->Menu::AddButton("LoadGame" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
+        }
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame10")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame2")->GetComponent<Button>();
+    for (int i = 2; i <= 9; i++) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame" + std::to_string(i - 1))->GetComponent<Button>();
+        GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame" + std::to_string(i + 1))->GetComponent<Button>();
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame9")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame1")->GetComponent<Button>();
+    loadGameMenu->GetParent()->DisableSelfAndChildren();
 
     return mainMenuScene;
 }
