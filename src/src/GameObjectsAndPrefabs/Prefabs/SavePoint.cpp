@@ -14,11 +14,11 @@ SavePoint::~SavePoint() = default;
 
 std::shared_ptr<GameObject> SavePoint::Create() {
     auto savePoint = shared_from_this();
-    savePoint->AddComponent<Renderer>()->LoadModel("SavePoint.obj");
+    savePoint->AddComponent<Renderer>()->LoadModel("SavePoint/SavePoint.obj");
     savePoint->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     savePoint->GetComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
     std::shared_ptr<GameObject> s = GameObject::Instantiate("S", savePoint);
-    s->AddComponent<Renderer>()->LoadModel("S.obj");
+    s->AddComponent<Renderer>()->LoadModel("SavePoint/S.obj");
     s->AddComponent<GameObjectAnimator>()->Setup(s->transform, {
             {AnimatedProperty::Rotation, glm::vec3(0.0f, -360.0f, 0.0f), 5.0f},
     }, true);
