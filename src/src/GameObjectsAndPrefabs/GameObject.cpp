@@ -43,7 +43,13 @@ void GameObject::RemoveAllComponents() {
 }
 
 void GameObject::SetParent(const std::shared_ptr<GameObject> &newParent) {
+    if (tag == Tags::SCENE) {
+        parent = newParent;
+        return;
+    }
+    parent->children.erase(id);
     parent = newParent;
+    newParent->AddChild(shared_from_this());
 }
 
 void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
