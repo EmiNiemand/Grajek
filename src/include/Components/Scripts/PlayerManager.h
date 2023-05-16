@@ -21,6 +21,7 @@ class SessionStarter;
 class PauseMenu;
 class OptionsMenu;
 class ShopMenu;
+class SavePointMenu;
 class Menu;
 
 
@@ -37,6 +38,7 @@ private:
     std::shared_ptr<PauseMenu> pauseMenu;
     std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<ShopMenu> shopMenu;
+    std::shared_ptr<SavePointMenu> savePointMenu;
     glm::vec2 moveInput;
 
 public:

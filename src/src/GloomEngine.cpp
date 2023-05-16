@@ -161,7 +161,7 @@ bool GloomEngine::MainLoop() {
 //  Save game on quit
     if (glfwWindowShouldClose(window) || endGame) {
         std::filesystem::path path = std::filesystem::current_path();
-        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
+        DataPersistanceManager::GetInstance()->SaveGame(path.string(), SceneManager::GetInstance()->file);
     }
     return glfwWindowShouldClose(window) || endGame;
 }

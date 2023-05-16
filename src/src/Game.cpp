@@ -21,13 +21,14 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
-#include "Components/Scripts/ShopMenu.h"
+#include "Components/Scripts/SavePointMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
 #include "Components/Scripts/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
+#include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -47,7 +48,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 30, 30);
+    camera->cameraOffset = glm::vec3(0, 20, 20);
 
     // Set up cubemap
     // --------------
@@ -70,7 +71,7 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({10, 20, 10});
+    sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     // Set up UI
@@ -121,7 +122,7 @@ void Game::InitializeGame() const {
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
+    Prefab::Instantiate<Shop>();
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
     bench->transform->SetLocalPosition({0, 0, -10});
@@ -152,6 +153,27 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalRotation({0, -65, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
+
+    auto savePoint1 = Prefab::Instantiate<SavePoint>();
+    savePoint1->transform->SetLocalPosition({-20, 0, 10});
+    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+
+    // Save Point Menu
+    auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 5; j++) {
+            savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
+        }
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save2")->GetComponent<Button>();
+    for (int i = 2; i <= 9; i++) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i - 1))->GetComponent<Button>();
+        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i + 1))->GetComponent<Button>();
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save9")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
+    savePointMenu->GetParent()->DisableSelfAndChildren();
 
 //    Animator::LoadAnimation("Animacje/Idle.dae");
 //    Animator::LoadAnimation("Animacje/Walk.dae");
@@ -270,6 +292,19 @@ void Game::InitializeGame() const {
 
 		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
 	}
+
+    Animator::LoadAnimation("Animacje/BasicChlop.dae");
+
+	// Set up animated model
+    for (int i = 0; i < 10; ++i) {
+        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
+        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
+        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
+        animatedDood->transform->SetLocalScale({1, 1, 1});
+    }
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

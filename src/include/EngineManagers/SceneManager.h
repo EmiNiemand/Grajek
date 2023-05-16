@@ -15,6 +15,7 @@ private:
 public:
     std::shared_ptr<GameObject> activeScene;
 
+    std::string file;
 public:
     SceneManager(SceneManager &other) = delete;
     void operator=(const SceneManager&) = delete;

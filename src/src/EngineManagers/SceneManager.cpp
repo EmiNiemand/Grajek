@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Renderer.h"
+#include "Components/Scripts/LoadGameMenu.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -33,6 +34,8 @@ void SceneManager::InitializeScene() {
 
 void SceneManager::LoadScene(const std::string& scene) {
     if (scene == "Scene") {
+        if (!GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file.empty())
+            file = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file;
         ClearScene();
         InitializeScene();
         GloomEngine::GetInstance()->game->activeCamera = Camera::activeCamera;

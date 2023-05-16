@@ -50,15 +50,15 @@ void CollisionManager::ManageCollision() {
 
                     glm::vec3 boxPosition = glm::vec3(box.second->GetModelMatrix() * glm::vec4(0,0,0,1));
                     glm::vec3 box2Position = glm::vec3(box2.second->GetModelMatrix() * glm::vec4(0,0,0,1));
-                    float distance = glm::length(box2Position - boxPosition);
+                    float distance = glm::length(glm::vec2(box2Position.x, box2Position.z) - glm::vec2(boxPosition.x, boxPosition.z));
 
-                    glm::vec3 boxScale = box.second->GetSize() * box.second->GetParent()->transform->GetLocalScale();
+                    glm::vec3 boxScale = box.second->GetSize() * box.second->GetParent()->transform->GetGlobalScale();
                     float boxSizeLength = glm::length(glm::vec3(boxScale.x, 0, boxScale.z));
 
-                    glm::vec3 box2Scale = box2.second->GetSize() * box2.second->GetParent()->transform->GetLocalScale();
+                    glm::vec3 box2Scale = box2.second->GetSize() * box2.second->GetParent()->transform->GetGlobalScale();
                     float box2SizeLength = glm::length(glm::vec3(box2Scale.x, 0, box2Scale.z));
 
-                    if (distance > boxSizeLength + box2SizeLength) continue;
+                    if (distance >= boxSizeLength + box2SizeLength) continue;
 
                     box.second->CheckCollision(box2.second);
                 }
@@ -93,7 +93,7 @@ void CollisionManager::Free() {
     glDeleteBuffers(1, &ebo);
 #endif
 
-    for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+    for (int i = 0; i < GRID_SIZE * GRID_SIZE; ++i) {
         grid[i].clear();
     }
 }

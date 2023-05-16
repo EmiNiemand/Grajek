@@ -4,16 +4,15 @@
 #include "Components/Component.h"
 #include "glm/vec2.hpp"
 #include "MainMenu.h"
+#include "LoadGameMenu.h"
 
 class Menu;
-class MainMenuOptionsMenu;
 
 class MainMenuManager : public Component {
-private:
+public:
     std::shared_ptr<Menu> activeMenu;
     std::shared_ptr<MainMenu> mainMenu;
-//    std::shared_ptr<NewGameMenu> newGameMenu;
-//    std::shared_ptr<LoadGameMenu> loadGameMenu;
+    std::shared_ptr<LoadGameMenu> loadGameMenu;
 //    std::shared_ptr<MainMenuOptionsMenu> optionsMenu;
 //    std::shared_ptr<CreditsMenu> creditsMenu;
 
@@ -24,8 +23,8 @@ private:
     void PollInput();
 
     void OnMenuToggle();
-    void OnApply();
-    void OnUIMove(glm::vec2 moveVector);
+    void OnApply() const;
+    void OnUIMove(glm::vec2 moveVector) const;
 
 public:
     MainMenuManager(const std::shared_ptr<GameObject> &parent, int id);

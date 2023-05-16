@@ -2,6 +2,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/SceneManager.h"
+#include "Components/Scripts/MainMenuManager.h"
 
 MainMenu::MainMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -22,11 +23,15 @@ void MainMenu::ShowMenu() {
 
 void MainMenu::OnClick() {
     if (!activeButton) return;
+    auto mainMenuManager = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenuManager")->GetComponent<MainMenuManager>();
     if (activeButton->GetParent()->GetName() == "NewGameButton") {
+        HideMenu();
         GloomEngine::GetInstance()->timeScale = 1;
         SceneManager::GetInstance()->LoadScene("Scene");
     } else if (activeButton->GetParent()->GetName() == "LoadGameButton") {
-
+        HideMenu();
+        mainMenuManager->activeMenu = mainMenuManager->loadGameMenu;
+        mainMenuManager->loadGameMenu->ShowMenu();
     } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
 
     } else if (activeButton->GetParent()->GetName() == "ExitFromGameButton") {
