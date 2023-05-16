@@ -48,7 +48,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 40, 40);
+    camera->cameraOffset = glm::vec3(0, 20, 20);
 
     // Set up cubemap
     // --------------
@@ -71,7 +71,7 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({10, 20, 10});
+    sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     // Set up UI
