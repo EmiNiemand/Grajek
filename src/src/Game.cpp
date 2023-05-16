@@ -47,7 +47,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 40, 40);
+    camera->cameraOffset = glm::vec3(0, 30, 30);
 
     // Set up cubemap
     // --------------
@@ -164,6 +164,19 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("AnimsNew/Idle1.dae");
     Animator::LoadAnimation("AnimsNew/Idle3.dae");
 
+    Animator::LoadAnimation("Animacje/BasicChlop.dae");
+
+    // Set up animated model
+    for (int i = 0; i < 10; ++i) {
+        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
+        animatedDood->transform->SetLocalPosition({-20 + 2*i, 1, -10});
+        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
+        animatedDood->transform->SetLocalScale({1, 1, 1});
+    }
+
     // SCENE BUILDINGS
 	std::map<std::string, int> buildingSizes = {
 			{"jazz1", 6},
@@ -257,19 +270,6 @@ void Game::InitializeGame() const {
 
 		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
 	}
-
-    Animator::LoadAnimation("Animacje/BasicChlop.dae");
-
-	// Set up animated model
-    for (int i = 0; i < 10; ++i) {
-        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
-        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
-        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
-        animatedDood->transform->SetLocalScale({1, 1, 1});
-    }
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
