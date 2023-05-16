@@ -9,17 +9,14 @@
 
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
-    cashText = GameObject::Instantiate("CashText", parent)->AddComponent<Text>();
-    repText = GameObject::Instantiate("RepText", parent)->AddComponent<Text>();
-
-    cashText->LoadFont("$$$: -", 10, 330, 30);
-    repText->LoadFont("Rep:  -", 10, 300, 30);
+    cashText = GloomEngine::GetInstance()->FindGameObjectWithName("Money")->GetComponent<Text>();
+    repText = GloomEngine::GetInstance()->FindGameObjectWithName("Reputation")->GetComponent<Text>();
 }
 
 void PlayerUI::UpdateCash(int newAmount) {
-	cashText->text = "$$$: " + std::to_string(newAmount);
+	cashText->text = "Money: " + std::to_string(newAmount);
 }
 
 void PlayerUI::UpdateRep(int newAmount) {
-	repText->text = "Rep:  " + std::to_string(newAmount);
+	repText->text = "Rep: " + std::to_string(newAmount);
 }

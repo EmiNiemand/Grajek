@@ -74,12 +74,12 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    // Set up UI
+    // Set up player UI
     // ---------
-    auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
-    ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
-
+    auto playerUI = GameObject::Instantiate("PlayerUI", activeScene)->AddComponent<Menu>();
+    playerUI->AddText("Money", "Money: 0", 140, 1040, 22);
+    playerUI->AddText("Reputation", "Rep: 0", 140, 1000, 22);
+    playerUI->AddImage("UI", 0, 952, "UI/Player.png");
 
     // Set up pause menu
     auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
