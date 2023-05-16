@@ -21,7 +21,7 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
-#include "Components/Scripts/ShopMenu.h"
+#include "Components/Scripts/SavePointMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
 #include "Components/Scripts/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
@@ -155,9 +155,25 @@ void Game::InitializeGame() const {
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
-    savePoint1->transform->SetLocalPosition({-15, 0, -10});
-    savePoint1->transform->SetLocalRotation({0, 45, 0});
+    savePoint1->transform->SetLocalPosition({-20, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+
+    // Save Point Menu
+    auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 5; j++) {
+            savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
+        }
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save2")->GetComponent<Button>();
+    for (int i = 2; i <= 9; i++) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i - 1))->GetComponent<Button>();
+        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i + 1))->GetComponent<Button>();
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save9")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
+    savePointMenu->GetParent()->DisableSelfAndChildren();
 
 //    Animator::LoadAnimation("Animacje/Idle.dae");
 //    Animator::LoadAnimation("Animacje/Walk.dae");

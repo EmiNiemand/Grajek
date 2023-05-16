@@ -11,7 +11,8 @@ Menu::~Menu() = default;
 
 void Menu::HideMenu() {
     parent->DisableSelfAndChildren();
-    activeButton->isActive = false;
+    if (activeButton)
+        activeButton->isActive = false;
 }
 
 void Menu::ChangeActiveButton(glm::vec2 moveVector) {

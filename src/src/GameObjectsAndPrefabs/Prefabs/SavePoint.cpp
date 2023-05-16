@@ -2,6 +2,7 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/SavePointTrigger.h"
+#include "Components/UI/Image.h"
 
 SavePoint::SavePoint(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) : Prefab(
         name, id, parent, tag) {
@@ -21,8 +22,8 @@ std::shared_ptr<GameObject> SavePoint::Create() {
     savePointTrigger->GetComponent<BoxCollider>()->SetSize({2, 1, 2});
     savePointTrigger->GetComponent<BoxCollider>()->isTrigger = true;
     savePointTrigger->AddComponent<SavePointTrigger>();
-//    GameObject::Instantiate("ShopButton", savePointTrigger)->AddComponent<Image>()->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
-//    savePointTrigger->children.begin()->second->DisableSelfAndChildren();
+    GameObject::Instantiate("SavePointButton", savePointTrigger)->AddComponent<Image>()->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
+    savePointTrigger->children.begin()->second->DisableSelfAndChildren();
 
     return savePoint;
 }

@@ -19,6 +19,7 @@
 #include "Components/Scripts/PauseMenu.h"
 #include "Components/Scripts/OptionsMenu.h"
 #include "Components/Scripts/ShopMenu.h"
+#include "Components/Scripts/SavePointMenu.h"
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/OptionsManager.h"
@@ -49,6 +50,7 @@ void PlayerManager::Awake() {
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
+    savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
     activeMenu = nullptr;
 
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
@@ -97,16 +99,26 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 //TODO: implement interaction with IUsable
 void PlayerManager::OnInteract() {
     if(session) return;
-    if(activeMenu && activeMenu != shopMenu) return;
+    if(activeMenu && activeMenu != shopMenu && activeMenu != savePointMenu) return;
 
     if (!shopMenu->GetParent()->GetEnabled()) {
         if (shopMenu->ShowMenu()) {
             GloomEngine::GetInstance()->timeScale = 0;
             activeMenu = shopMenu;
+            return;
         }
-    } else {
+    }
+    if (!savePointMenu->GetParent()->GetEnabled()) {
+        if (savePointMenu->ShowMenu()) {
+            GloomEngine::GetInstance()->timeScale = 0;
+            activeMenu = savePointMenu;
+            return;
+        }
+    }
+    if (shopMenu->GetParent()->GetEnabled() || savePointMenu->GetParent()->GetEnabled()) {
         GloomEngine::GetInstance()->timeScale = 1;
         shopMenu->HideMenu();
+        savePointMenu->HideMenu();
         activeMenu.reset();
     }
 }

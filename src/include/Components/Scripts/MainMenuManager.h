@@ -4,7 +4,6 @@
 #include "Components/Component.h"
 #include "glm/vec2.hpp"
 #include "MainMenu.h"
-#include "NewGameMenu.h"
 #include "LoadGameMenu.h"
 
 class Menu;
@@ -13,7 +12,6 @@ class MainMenuManager : public Component {
 public:
     std::shared_ptr<Menu> activeMenu;
     std::shared_ptr<MainMenu> mainMenu;
-    std::shared_ptr<NewGameMenu> newGameMenu;
     std::shared_ptr<LoadGameMenu> loadGameMenu;
 //    std::shared_ptr<MainMenuOptionsMenu> optionsMenu;
 //    std::shared_ptr<CreditsMenu> creditsMenu;

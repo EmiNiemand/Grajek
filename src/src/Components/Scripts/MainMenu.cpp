@@ -26,8 +26,8 @@ void MainMenu::OnClick() {
     auto mainMenuManager = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenuManager")->GetComponent<MainMenuManager>();
     if (activeButton->GetParent()->GetName() == "NewGameButton") {
         HideMenu();
-        mainMenuManager->activeMenu = mainMenuManager->newGameMenu;
-        mainMenuManager->newGameMenu->ShowMenu();
+        GloomEngine::GetInstance()->timeScale = 1;
+        SceneManager::GetInstance()->LoadScene("Scene");
     } else if (activeButton->GetParent()->GetName() == "LoadGameButton") {
         HideMenu();
         mainMenuManager->activeMenu = mainMenuManager->loadGameMenu;

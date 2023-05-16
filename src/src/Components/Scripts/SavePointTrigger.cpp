@@ -8,15 +8,13 @@ SavePointTrigger::~SavePointTrigger() = default;
 void SavePointTrigger::OnTriggerStay(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     active = true;
-    spdlog::info("aaaaaaaaaaaa");
-//    parent->children.begin()->second->EnableSelfAndChildren();
+    parent->children.begin()->second->EnableSelfAndChildren();
     Component::OnTriggerStay(gameObject);
 }
 
 void SavePointTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     active = false;
-    spdlog::info("bbb");
-//    parent->children.begin()->second->DisableSelfAndChildren();
+    parent->children.begin()->second->DisableSelfAndChildren();
     Component::OnTriggerExit(gameObject);
 }
