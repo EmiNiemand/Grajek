@@ -18,7 +18,7 @@ std::shared_ptr<GameObject> SavePoint::Create() {
 
     auto savePointTrigger = GameObject::Instantiate("SavePointTrigger", savePoint);
     savePointTrigger->AddComponent<BoxCollider>()->SetOffset({3.25, 0.5, 0});
-    savePointTrigger->GetComponent<BoxCollider>()->SetSize({1, 2, 1});
+    savePointTrigger->GetComponent<BoxCollider>()->SetSize({2, 1, 2});
     savePointTrigger->GetComponent<BoxCollider>()->isTrigger = true;
     savePointTrigger->AddComponent<SavePointTrigger>();
 //    GameObject::Instantiate("ShopButton", savePointTrigger)->AddComponent<Image>()->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
