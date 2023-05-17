@@ -36,7 +36,7 @@ void SceneManager::InitializeScene() {
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
 
-    std::filesystem::path path = std::filesystem::current_path().parent_path().parent_path();
+    std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "ProjectConfig";
 

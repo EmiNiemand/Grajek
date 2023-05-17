@@ -57,6 +57,10 @@ void PlayerManager::Awake() {
 
     // Load game
     std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "ProjectConfig";
+    path /= "Saves";
+
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), SceneManager::GetInstance()->file);
 
     Component::Awake();
