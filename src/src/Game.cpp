@@ -48,7 +48,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->cameraOffset = glm::vec3(0, 30, 30);
 
     // Set up cubemap
     // --------------
