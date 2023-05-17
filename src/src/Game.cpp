@@ -175,18 +175,11 @@ void Game::InitializeGame() const {
     GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
     savePointMenu->GetParent()->DisableSelfAndChildren();
 
-//    Animator::LoadAnimation("Animacje/Idle.dae");
-//    Animator::LoadAnimation("Animacje/Walk.dae");
-//    Animator::LoadAnimation("testLessBones/animations/Walk.dae");
-//    Animator::LoadAnimation("testLessBones/animations/Idle.dae");
-
     Animator::LoadAnimation("AnimsNew/Walk.dae");
     Animator::LoadAnimation("AnimsNew/Happy.dae");
     Animator::LoadAnimation("AnimsNew/Angry.dae");
     Animator::LoadAnimation("AnimsNew/Idle1.dae");
     Animator::LoadAnimation("AnimsNew/Idle3.dae");
-
-    Animator::LoadAnimation("Animacje/BasicChlop.dae");
 
     // Set up animated model
     for (int i = 0; i < 10; ++i) {
@@ -197,6 +190,30 @@ void Game::InitializeGame() const {
         animatedDood->transform->SetLocalPosition({-20 + 2*i, 1, -10});
         animatedDood->transform->SetLocalRotation({0, 90*i, 0});
         animatedDood->transform->SetLocalScale({1, 1, 1});
+    }
+
+    Animator::LoadAnimation("Animacje/BasicChlop.dae");
+
+    int x = 0;
+    int y = 0;
+
+    // Set up animated model
+    for (int i = 0; i < 100; ++i) {
+        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+        animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
+        animatedDoodAnimator->SetAnimation("Animacje/BasicChlop.dae");
+        if (i % 25 == 0) {
+            x = 0;
+            y++;
+        }
+        animatedDood->transform->SetLocalPosition({-12 + x, 1, -10 + 2 * y});
+        animatedDood->transform->SetLocalRotation({0, 0, 0});
+        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        x++;
+        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
+        }, false);
     }
 
     // SCENE BUILDINGS
@@ -292,30 +309,6 @@ void Game::InitializeGame() const {
 
 		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
 	}
-
-    Animator::LoadAnimation("Animacje/BasicChlop.dae");
-
-    int x = 0;
-    int y = 0;
-
-	// Set up animated model
-    for (int i = 0; i < 100; ++i) {
-        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
-        animatedDoodAnimator->SetAnimation("Animacje/BasicChlop.dae");
-        if (i % 25 == 0) {
-            x = 0;
-            y++;
-        }
-        animatedDood->transform->SetLocalPosition({-12 + x, 1, -10 + 2 * y});
-        animatedDood->transform->SetLocalRotation({0, 0, 0});
-        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-        x++;
-        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
-                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
-        }, false);
-    }
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
