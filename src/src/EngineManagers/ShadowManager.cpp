@@ -6,6 +6,10 @@
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "LowLevelClasses/Shader.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 ShadowManager::ShadowManager() {
     shadowShader = std::make_shared<Shader>("shadowMap.vert", "shadowMap.frag");
 
@@ -41,34 +45,44 @@ ShadowManager *ShadowManager::GetInstance() {
 }
 
 void ShadowManager::PrepareShadow() {
-    glm::mat4 lightProjection, lightView;
-    glm::mat4 lightSpaceMatrix;
-    glm::vec3 lightPos = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetGlobalPosition();
+    {
+#ifdef DEBUG
+        ZoneScopedNC("Calc mat4 and pass to shader", 0xFFD733);
+#endif
+        glm::mat4 lightProjection, lightView;
+        glm::mat4 lightSpaceMatrix;
+        glm::vec3 lightPos = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetGlobalPosition();
 //    lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)shadowWidth / (GLfloat)shadowHeight, 0.1f, 10.0f); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-    lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, nearPlane, farPlane);
+        lightProjection = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, nearPlane, farPlane);
 
-    glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetGlobalPosition();
-    glm::vec3 upVector = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetUp();
-    lightView = glm::lookAt(playerPos + lightPos, playerPos, upVector);
-    lightSpaceMatrix = lightProjection * lightView;
+        glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName(
+                "Player")->transform->GetGlobalPosition();
+        glm::vec3 upVector = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetUp();
+        lightView = glm::lookAt(playerPos + lightPos, playerPos, upVector);
+        lightSpaceMatrix = lightProjection * lightView;
 
-    // render scene from light's point of view
-    shadowShader->Activate();
-    shadowShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+        // render scene from light's point of view
+        shadowShader->Activate();
+        shadowShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-    RendererManager::GetInstance()->shader->Activate();
-    RendererManager::GetInstance()->shader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-    glViewport(0, 0, shadowResolution, shadowResolution);
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    for (const auto& drawable : RendererManager::GetInstance()->drawBuffer) {
-        drawable->Draw(shadowShader);
+        RendererManager::GetInstance()->shader->Activate();
+        RendererManager::GetInstance()->shader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
     }
-    glDisable(GL_CULL_FACE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    {
+#ifdef DEBUG
+        ZoneScopedNC("Draw objects", 0xFFD733);
+#endif
+        glViewport(0, 0, shadowResolution, shadowResolution);
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+
+        RendererManager::GetInstance()->DrawObjects(shadowShader);
+
+        glDisable(GL_CULL_FACE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
 
 void ShadowManager::Free() const {

@@ -50,17 +50,6 @@ void Camera::Update() {
     ZoneScopedNC("Camera", 0x800080);
 #endif
     if (GloomEngine::GetInstance()->timeScale == 1) {
-        //TODO: move these to some outer class
-        // we change desired zoom on the camera when pressing Z.
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_Z)) {
-            if (!isZoomed) {
-                isZoomed = true;
-                SetZoomLevel(0.5f);
-            } else {
-                isZoomed = false;
-                SetZoomLevel(1.0f);
-            }
-        }
         glm::vec3 playerPosition = player->transform->GetLocalPosition();
         glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
         zoomLevel = Utilities::Lerp(zoomLevel, desiredZoomLevel, 0.02f);

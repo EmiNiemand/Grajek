@@ -15,20 +15,20 @@ void ClapSessionUI::PlaySound(int index) {
         circleAnimator->AddComponent<UIAnimator>()->Setup(circle1, {
                 {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
                 {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
-        }, false);
+        });
         circleAnimator2->AddComponent<UIAnimator>()->Setup(circle1, {
                 {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
-        }, false);
+        });
     } else {
         circleAnimator->AddComponent<UIAnimator>()->Setup(circle2, {
                 {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
                 {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
-        }, false);
+        });
         circleAnimator2->AddComponent<UIAnimator>()->Setup(circle2, {
                 {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
-        }, false);
+        });
     }
     SessionUI::PlaySound(index);
 }

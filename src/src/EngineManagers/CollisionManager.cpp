@@ -7,6 +7,10 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
+#endif
+
 CollisionManager::CollisionManager() {
 #ifdef DEBUG
     colliderDebugShader = std::make_shared<Shader>("colliderDebug.vert", "colliderDebug.frag");
@@ -29,28 +33,32 @@ CollisionManager* CollisionManager::GetInstance() {
 
 
 void CollisionManager::ManageCollision() {
-    if (grid.empty()) return;
+    int gridPos;
+
+    glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetGlobalPosition();
+    playerPosition = glm::ivec2((int)(playerPos.x / gridSize) + GRID_SIZE / 2, (int)(playerPos.z / gridSize) + GRID_SIZE / 2);
 
     // Handle collision
-    for (const auto& x : grid) {
-        for (const auto& y : grid.at(x.first)) {
-            for (const auto& box : grid.at(x.first).at(y.first)) {
+    for (int x = -5; x <= 5; x++) {
+        for (int y = -5; y <= 5; y++) {
+            gridPos = (playerPosition.x + x) + (playerPosition.y + y) * GRID_SIZE;
+            for (const auto& box : grid[gridPos]) {
                 if (!box.second->GetParent()->GetComponent<Rigidbody>() && !box.second->isTrigger) continue;
 
-                for (const auto& box2 : grid.at(x.first).at(y.first)) {
+                for (const auto& box2 : grid[gridPos]) {
                     if (box.second == box2.second) continue;
 
                     glm::vec3 boxPosition = glm::vec3(box.second->GetModelMatrix() * glm::vec4(0,0,0,1));
                     glm::vec3 box2Position = glm::vec3(box2.second->GetModelMatrix() * glm::vec4(0,0,0,1));
-                    float distance = glm::length(box2Position - boxPosition);
+                    float distance = glm::length(glm::vec2(box2Position.x, box2Position.z) - glm::vec2(boxPosition.x, boxPosition.z));
 
-                    glm::vec3 boxScale = box.second->GetSize() * box.second->GetParent()->transform->GetLocalScale();
+                    glm::vec3 boxScale = box.second->GetSize() * box.second->GetParent()->transform->GetGlobalScale();
                     float boxSizeLength = glm::length(glm::vec3(boxScale.x, 0, boxScale.z));
 
-                    glm::vec3 box2Scale = box2.second->GetSize() * box2.second->GetParent()->transform->GetLocalScale();
+                    glm::vec3 box2Scale = box2.second->GetSize() * box2.second->GetParent()->transform->GetGlobalScale();
                     float box2SizeLength = glm::length(glm::vec3(box2Scale.x, 0, box2Scale.z));
 
-                    if (distance > boxSizeLength + box2SizeLength) continue;
+                    if (distance >= boxSizeLength + box2SizeLength) continue;
 
                     box.second->CheckCollision(box2.second);
                 }
@@ -60,10 +68,7 @@ void CollisionManager::ManageCollision() {
 }
 
 #ifdef DEBUG
-void CollisionManager::DrawColliders() {
-    glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetGlobalPosition();
-    playerPosition = glm::ivec2((int)(playerPos.x / gridSize), (int)(playerPos.z / gridSize));
-
+void CollisionManager::Draw() {
     OnBoxCollidersChange();
 
     colliderDebugShader->Activate();
@@ -71,10 +76,10 @@ void CollisionManager::DrawColliders() {
     colliderDebugShader->SetMat4("projection", RendererManager::GetInstance()->projection);
     colliderDebugShader->SetMat4("view", Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix());
 
-    for (auto&& box : grid.at(playerPosition.x).at(playerPosition.y)) {
+    for (auto&& box : grid[playerPosition.x + playerPosition.y * GRID_SIZE]) {
         colliderDebugShader->SetMat4("model", box.second->GetModelMatrix());
         glBindVertexArray(vao);
-        glDrawElements(GL_LINES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
 }
@@ -87,17 +92,33 @@ void CollisionManager::Free() {
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
 #endif
-    grid.clear();
+
+    for (int i = 0; i < GRID_SIZE * GRID_SIZE; ++i) {
+        grid[i].clear();
+    }
 }
 
 void CollisionManager::RemoveBoxCollider(int componentId) {
-    for (const auto& gridX : grid) {
-        for (const auto& gridY : grid.at(gridX.first)) {
-            if (grid.at(gridX.first).at(gridY.first).contains(componentId))
-                grid.at(gridX.first).at(gridY.first).erase(componentId);
+#ifdef DEBUG
+    ZoneScopedNC("RBC", 0x0339fc);
+#endif
+    for (int i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+        if (grid[i].contains(componentId)) grid[i].erase(componentId);
+    }
+}
+
+void CollisionManager::RemoveDynamicBoxCollider(const glm::vec3& position, int componentId) {
+#ifdef DEBUG
+    ZoneScopedNC("RDBC", 0x0339fc);
+#endif
+    glm::ivec2 gridPos = glm::ivec2((int)(position.x / gridSize) + GRID_SIZE / 2, (int)(position.z / gridSize) + GRID_SIZE / 2);
+
+    for (int x = -1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
+            int newGridPos = (gridPos.x + x) + (gridPos.y + y) * GRID_SIZE;
+            if (grid[newGridPos].contains(componentId)) grid[newGridPos].erase(componentId);
         }
     }
-
 }
 
 #ifdef DEBUG
@@ -106,16 +127,7 @@ void CollisionManager::OnBoxCollidersChange() {
     indices.clear();
     int i = 0;
 
-    if (!CollisionManager::GetInstance()->grid.contains(playerPosition.x))
-        CollisionManager::GetInstance()->grid.insert({playerPosition.x, std::unordered_map<int,
-            std::unordered_map<int, std::shared_ptr<BoxCollider>>>()});
-
-    if (!CollisionManager::GetInstance()->grid.at(playerPosition.x).contains(playerPosition.y))
-        CollisionManager::GetInstance()->grid.at(playerPosition.x).insert({playerPosition.y,
-            std::unordered_map<int, std::shared_ptr<BoxCollider>>()});
-
-
-    for (auto&& col : grid.at(playerPosition.x).at(playerPosition.y)) {
+    for (auto&& col : grid[playerPosition.x + playerPosition.y * GRID_SIZE]) {
         for (auto&& point : col.second->GetBoxPoints()) {
             vertices.push_back(point);
         }

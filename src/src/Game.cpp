@@ -21,13 +21,14 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
-#include "Components/Scripts/ShopMenu.h"
+#include "Components/Scripts/SavePointMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
 #include "Components/Scripts/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
+#include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -47,7 +48,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->cameraOffset = glm::vec3(0, 30, 30);
 
     // Set up cubemap
     // --------------
@@ -70,24 +71,23 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({10, 20, 10});
+    sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    // Set up UI
+    // Set up player UI
     // ---------
-    auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
-    ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
-
+    auto playerUI = GameObject::Instantiate("PlayerUI", activeScene)->AddComponent<Menu>();
+    playerUI->AddText("Money", "Money: 0", 140, 1040, 22);
+    playerUI->AddText("Reputation", "Rep: 0", 140, 1000, 22);
+    playerUI->AddImage("UI", 0, 952, "UI/Player.png");
 
     // Set up pause menu
-    std::shared_ptr<GameObject> pause = GameObject::Instantiate("Pause", activeScene);
-    pause->AddComponent<PauseMenu>();
-    std::shared_ptr<GameObject> resumeButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
-    std::shared_ptr<GameObject> optionsButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
-    std::shared_ptr<GameObject> exitButton = pause->GetComponent<PauseMenu>()->Menu::AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
-    std::shared_ptr<GameObject> pauseBackground = pause->GetComponent<PauseMenu>()->Menu::AddImage("Background", 0, 0, "UI/pause.png");
+    auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
+    std::shared_ptr<GameObject> resumeButton = pause->AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
+    std::shared_ptr<GameObject> optionsButton = pause->AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
+    std::shared_ptr<GameObject> exitToMainMenuButton = pause->AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
+    std::shared_ptr<GameObject> exitButton = pause->AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
+    std::shared_ptr<GameObject> pauseBackground = pause->AddImage("Background", 0, 0, "UI/pause.png");
     resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
     resumeButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
     optionsButton->GetComponent<Button>()->previousButton = resumeButton->GetComponent<Button>();
@@ -96,19 +96,19 @@ void Game::InitializeGame() const {
     exitToMainMenuButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
     exitButton->GetComponent<Button>()->nextButton = resumeButton->GetComponent<Button>();
-    pause->DisableSelfAndChildren();
+    pause->GetParent()->DisableSelfAndChildren();
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> backToPauseMenu = options->Menu::AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-    std::shared_ptr<GameObject> musicVolume = options->Menu::AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowResolution = options->Menu::AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowFullScreen = options->Menu::AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> shadowResolution = options->Menu::AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> previousValue = options->Menu::AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> currentValue = options->Menu::AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-    std::shared_ptr<GameObject> nextValue = options->Menu::AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> optionsBackground = options->Menu::AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
+    std::shared_ptr<GameObject> backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
+    std::shared_ptr<GameObject> musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+    std::shared_ptr<GameObject> previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
+    std::shared_ptr<GameObject> nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+    std::shared_ptr<GameObject> optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
     backToPauseMenu->GetComponent<Button>()->previousButton = shadowResolution->GetComponent<Button>();
     backToPauseMenu->GetComponent<Button>()->nextButton = musicVolume->GetComponent<Button>();
     musicVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
@@ -122,7 +122,7 @@ void Game::InitializeGame() const {
     options->GetParent()->DisableSelfAndChildren();
 
     // Set up shop menu
-    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
+    Prefab::Instantiate<Shop>();
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
     bench->transform->SetLocalPosition({0, 0, -10});
@@ -154,27 +154,148 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
-    Animator::LoadAnimation("Animacje/Idle.dae");
-    Animator::LoadAnimation("Animacje/Walk.dae");
+    auto savePoint1 = Prefab::Instantiate<SavePoint>();
+    savePoint1->transform->SetLocalPosition({-20, 0, 10});
+    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
 
-	// Set up animated model
-	std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-    auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-    animatedDoodAnimator->LoadAnimationModel("Animacje/BasicMan01.dae");
-    animatedDoodAnimator->SetAnimation("Animacje/Idle.dae");
-	animatedDood->transform->SetLocalPosition({-2, 1, -10});
-    animatedDood->transform->SetLocalRotation({0, -90, 0});
-	animatedDood->transform->SetLocalScale({0.25, 0.25, 0.25});
-
-    for (int i = 0; i < 3; i++) {
-        std::shared_ptr<GameObject> animatedDood2 = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-        auto animatedDoodAnimator2 = animatedDood2->AddComponent<Animator>();
-        animatedDoodAnimator2->LoadAnimationModel("Animacje/Idle.dae");
-        animatedDoodAnimator2->SetAnimation("Animacje/Walk.dae");
-        animatedDood2->transform->SetLocalPosition({-20 + i, 1, -10});
-        animatedDood2->transform->SetLocalRotation({0, -90, 0});
-        animatedDood2->transform->SetLocalScale({0.25, 0.25, 0.25});
+    // Save Point Menu
+    auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 5; j++) {
+            savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
+        }
     }
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save2")->GetComponent<Button>();
+    for (int i = 2; i <= 9; i++) {
+        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i - 1))->GetComponent<Button>();
+        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i + 1))->GetComponent<Button>();
+    }
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save9")->GetComponent<Button>();
+    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
+    savePointMenu->GetParent()->DisableSelfAndChildren();
+
+    Animator::LoadAnimation("AnimsNew/Walk.dae");
+    Animator::LoadAnimation("AnimsNew/Happy.dae");
+    Animator::LoadAnimation("AnimsNew/Angry.dae");
+    Animator::LoadAnimation("AnimsNew/Idle1.dae");
+    Animator::LoadAnimation("AnimsNew/Idle3.dae");
+
+    int x = 0;
+    int y = 0;
+
+    // Set up animated model
+    for (int i = 0; i < 100; ++i) {
+        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
+        if (i % 25 == 0) {
+            x = 0;
+            y++;
+        }
+        animatedDood->transform->SetLocalPosition({-12 + x, 0, -10 + 2 * y});
+        animatedDood->transform->SetLocalRotation({0, 0, 0});
+        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        x++;
+        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
+        }, false);
+    }
+
+    // SCENE BUILDINGS
+	std::map<std::string, int> buildingSizes = {
+			{"jazz1", 6},
+			{"jazz2", 7},
+			{"jazz3", 10},
+			{"jazz4", 6},
+			{"kamienica1", 6},
+			{"kamienica2", 10},
+			{"kamienica3", 6},
+			{"moduê1", 6},
+			{"moduê2", 6},
+			{"moduê3", 6},
+			{"moduê4", 6},
+			{"moduê5", 10},
+			{"moduê6", 6}
+	};
+	float currentXPos = -25;
+	float currentYPos = -30;
+
+	std::string squareBuildings[] = {
+			"kamienica1", "kamienica2", "kamienica3",
+			"moduê1", "moduê2"
+	};
+
+	std::vector<std::string> buildingPaths = {
+			squareBuildings[0], squareBuildings[2],
+			squareBuildings[0], squareBuildings[4], squareBuildings[1],
+			squareBuildings[3], squareBuildings[2],
+	};
+
+	// LEFT CORNER
+	{
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos - 9.5, 0, currentYPos+4});
+		test->transform->SetLocalRotation({0, 90, 0});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
+	}
+
+	// FRONT FACE
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos, 0, currentYPos});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+
+		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
+
+	// RIGHT CORNER
+	{
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos + 5, 0, currentYPos});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
+	}
+
+	currentYPos = -20;
+
+	// LEFT FACE
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({-35, 0, currentYPos});
+		test->transform->SetLocalRotation({0, 90, 0});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
+
+	currentYPos = -20;
+
+	// RIGHT FACE
+	for(int i=0; i < buildingPaths.size(); i++) {
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+
+		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+		test->transform->SetLocalPosition({currentXPos+10, 0, currentYPos});
+		test->transform->SetLocalRotation({0, -90, 0});
+		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+
+		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+	}
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
@@ -182,10 +303,13 @@ void Game::InitializeGame() const {
 
 bool Game::GameLoop() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
-        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+        if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>())
+            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
 
     if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
-        shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+        if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>())
+            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+
 
     return shouldQuit;
 }

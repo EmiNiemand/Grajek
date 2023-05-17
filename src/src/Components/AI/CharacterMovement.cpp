@@ -86,13 +86,13 @@ void CharacterMovement::SetNewRandomPoint() {
 void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
     logicState = state;
 
-    if (logicState == RunningToPlayer) {
+    if (state == RunningToPlayer) {
         previousTarget = endTarget;
         endTarget = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
         endTarget.x -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         endTarget.z -= RandomnessManager::GetInstance()->GetFloat(0.5f, 2.0f);
         speedMultiplier = 2.0f;
-    } else if (logicState == WalkingOnPath) {
+    } else if (state == WalkingOnPath) {
         endTarget = previousTarget;
         speedMultiplier = 1.0f;
     }

@@ -9,17 +9,19 @@
 
 #include "Drawable.h"
 #include "LowLevelClasses/Animation.h"
+#include "ProjectSettings.h"
 
 class Animator : public Drawable {
 private:
-    inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
-    inline static std::unordered_map<int, Animation> animations;
-
-    std::vector<glm::mat4> finalBoneMatrices;
+    glm::mat4 finalBoneMatrices[BONE_NUMBER];
     Animation currentAnimation;
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
 	bool isPlaying = false;
+
+public:
+    inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
+    inline static std::unordered_map<int, Animation> animations;
 
 public:
     Animator(const std::shared_ptr<GameObject> &parent, int id);
@@ -29,6 +31,7 @@ public:
 	static void LoadAnimation(const std::string& path);
     void SetAnimation(const std::string& name);
 
+    void OnDestroy() override;
 	void Update() override;
     void Draw() override;
 
@@ -38,7 +41,7 @@ public:
     void PlayAnimation(Animation pAnimation);
 	void PauseAnimation();
 
-    std::vector<glm::mat4>& GetFinalBoneMatrices();
+    glm::mat4* GetFinalBoneMatrices();
 
 private:
     void CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& parentTransform);

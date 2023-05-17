@@ -2,8 +2,9 @@
 
 #include "LowLevelClasses/Animation.h"
 #include "LowLevelClasses/Bone.h"
+#include "ProjectSettings.h"
+
 #include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
 #include "stb_image.h"
 #include "spdlog/spdlog.h"
 
@@ -11,8 +12,8 @@ Animation::Animation() = default;
 
 Animation::Animation(std::string name, float mDuration, int mTicksPerSecond) : name(std::move(name))
 {
-    bones.reserve(100);
-    boneInfoMap.reserve(100);
+    bones.reserve(BONE_NUMBER);
+    boneInfoMap.reserve(BONE_NUMBER);
     duration = mDuration;
     ticksPerSecond = mTicksPerSecond;
 }
@@ -45,15 +46,16 @@ void Animation::ReadMissingBones(const aiAnimation* animation, const std::shared
     unsigned int size = animation->mNumChannels;
 
     boneInfoMap = model->GetBoneInfoMap();//getting m_BoneInfoMap from Model class
-    uint16_t& boneCount = model->GetBoneCount(); //getting the m_BoneCounter from Model class
+    uint16_t boneCount = model->GetBoneCount(); //getting the m_BoneCounter from Model class
 
     //reading channels(bones engaged in an animation and their keyframes)
     for (unsigned int i = 0; i < size; i++)
     {
         auto channel = animation->mChannels[i];
 
-        int counter = 0;
         std::string boneName = channel->mNodeName.data;
+
+        int counter = 0;
 
         for (int j = 0; j < boneName.size(); j++) {
             if (boneName[j] == '_') counter++;
@@ -73,6 +75,7 @@ void Animation::ReadMissingBones(const aiAnimation* animation, const std::shared
             boneInfoMap[boneName].id = boneCount;
             boneCount++;
         }
+
         bones.insert({boneName, std::make_shared<Bone>(boneName, boneInfoMap[boneName].id, channel)});
     }
 }
@@ -81,6 +84,9 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src) {
     assert(src);
 
     dest.name = src->mName.data;
+
+    nodeCounter++;
+
     int counter = 0;
 
     for (int j = 0; j < dest.name.size(); j++) {
@@ -109,7 +115,7 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src) {
 
 void Animation::Recalculate(const std::shared_ptr<AnimationModel>& model) {
     boneInfoMap = model->GetBoneInfoMap();
-    uint16_t& boneCount = model->GetBoneCount();
+    uint16_t boneCount = model->GetBoneCount();
 
     for (auto&& bone : bones) {
         std::string boneName = bone.second->GetBoneName();

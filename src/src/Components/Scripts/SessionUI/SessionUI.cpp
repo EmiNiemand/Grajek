@@ -11,34 +11,30 @@
 
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::shared_ptr<Image> metronome) {
+void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath) {
     metronomeSoundEnabled = true;
     metronomeVisualEnabled = true;
 
-    metronomeImage = std::move(metronome);
-    GameObject::Instantiate("MetronomeAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(metronomeImage, {
-            {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
-            {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
-    }, true);
+    MetronomeSetup(metronomePath, bpm);
+    AccuracyFeedbackSetup();
 
-    tickSound = parent->AddComponent<AudioSource>();
-    tickSound->LoadAudioData("res/sounds/direct/tick.wav", AudioType::Direct);
-    tickSound->IsLooping(false);
-
-    accuracyFeedback = GameObject::Instantiate("AccuracyFeedback", parent)->AddComponent<Text>();
-    accuracyFeedback->LoadFont("Good", 960, 540, 60, Color::White, GameFont::KanitLight);
-
+    // Set up sound samples
+    // --------------------
     for (const auto& sample: samples)
     {
         sampleSources.push_back(GameObject::Instantiate("Sample", parent)->AddComponent<AudioSource>());
         sampleSources.back()->LoadAudioData(sample->clipPath.c_str(), AudioType::Direct);
     }
 
-    SetCheatSheet(GameObject::Instantiate("CheatSheet", parent->parent)->AddComponent<Image>());
-    cheatSheet->LoadTexture(451, -1100, "UI/Sesja/drumPatterns.png", -0.2);
+    // Set up cheat sheet
+    // ------------------
+    SetCheatSheet("UI/Sesja/drumPatterns.png");
 }
 
-void SessionUI::SetCheatSheet(std::shared_ptr<Image> newCheatSheet) { cheatSheet = std::move(newCheatSheet); }
+void SessionUI::SetCheatSheet(std::string cheatSheetPath) {
+    cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
+    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -1);
+}
 
 void SessionUI::PlaySound(int index) {
     //TODO: play some kind of visual confirmation of playing sound
@@ -54,12 +50,12 @@ void SessionUI::ToggleCheatSheet() {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(
                 cheatSheet, {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
-                }, false);
+                });
     } else {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(
                 cheatSheet, {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
-                }, false);
+                });
     }
 }
 
@@ -72,8 +68,9 @@ void SessionUI::UpdateAccuracy(float fraction) {
     }
 
     //TODO: Show accuracy feedback when changing text is implemented
-    accuracyFeedback->text = accuracyTexts[index];
-    accuracyFeedback->color = accuracyColors[index];
+    //accuracyFeedback->text = accuracyTexts[index];
+    //accuracyFeedback->color = accuracyColors[index];
+    //accuracyRatingAnimator[index]->Reset();
     spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
 }
 
@@ -83,3 +80,44 @@ void SessionUI::Update() {
     }
     Component::Update();
 }
+
+# pragma region Helper methods
+void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
+    metronomeImage = GameObject::Instantiate("Metronome", parent)->AddComponent<Image>();
+    metronomeImage->LoadTexture(0, 0, metronomePath, -0.5);
+    GameObject::Instantiate("MetronomeAnimator", parent)->AddComponent<UIAnimator>()->Setup(metronomeImage, {
+            {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
+    }, AnimationBehaviour::Looping);
+
+    tickSound = parent->AddComponent<AudioSource>();
+    tickSound->LoadAudioData("res/sounds/direct/tick.wav", AudioType::Direct);
+    tickSound->IsLooping(false);
+}
+
+void SessionUI::AccuracyFeedbackSetup() {
+    int screenWidth, screenHeight;
+    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
+
+    accuracyRatingAnimator = {
+            GameObject::Instantiate("AccuracyPoorAnimator", parent)->AddComponent<UIAnimator>(),
+            GameObject::Instantiate("AccuracyNiceAnimator", parent)->AddComponent<UIAnimator>(),
+            GameObject::Instantiate("AccuracyGreatAnimator", parent)->AddComponent<UIAnimator>(),
+            GameObject::Instantiate("AccuracyPerfectAnimator", parent)->AddComponent<UIAnimator>()
+    };
+    std::string accuracyImagePaths[] = {
+            "UI/Sesja/accuracyPoor.png", "UI/Sesja/accuracyNice.png",
+            "UI/Sesja/accuracyAwesome.png", "UI/Sesja/AccuracyPerfect.png"
+    };
+    for (int i = 0; i < accuracyRatingAnimator.size(); ++i) {
+        auto ratingImage = GameObject::Instantiate("AccuracyPoor", parent)->AddComponent<Image>();
+        ratingImage->LoadTexture(0, 0, accuracyImagePaths[i], 1);
+        ratingImage->SetPosition(screenWidth/2 - ratingImage->width/2, screenHeight/2 - ratingImage->height/2);
+        ratingImage->SetAlpha(0);
+        accuracyRatingAnimator[i]->Setup(ratingImage, {
+                {AnimatedProperty::Alpha, glm::vec3(1.0f), 0},
+                {AnimatedProperty::Alpha, glm::vec3(0.0f), 1}
+        }, AnimationBehaviour::Resetable);
+    }
+}
+#pragma endregion

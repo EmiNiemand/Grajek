@@ -20,6 +20,7 @@ private:
 public:
     std::shared_ptr<GameObject> activeScene;
 
+    std::string file;
 public:
     SceneManager(SceneManager &other) = delete;
     void operator=(const SceneManager&) = delete;
@@ -28,9 +29,8 @@ public:
     static SceneManager* GetInstance();
 
     void InitializeScene();
-    //TODO: decide how to load scene and implement
-    //void LoadScene();
-    void ClearScene();
+    void LoadScene(const std::string& scene);
+    void ClearScene() const;
     void Free();
 
 

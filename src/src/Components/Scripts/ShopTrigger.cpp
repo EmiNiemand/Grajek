@@ -5,7 +5,7 @@ ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Co
 
 ShopTrigger::~ShopTrigger() = default;
 
-void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
+void ShopTrigger::OnTriggerStay(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     active = true;
     parent->children.begin()->second->EnableSelfAndChildren();
@@ -13,6 +13,7 @@ void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) 
 }
 
 void ShopTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
+    if (gameObject->GetName() != "Player") return;
     active = false;
     parent->children.begin()->second->DisableSelfAndChildren();
     Component::OnTriggerExit(gameObject);

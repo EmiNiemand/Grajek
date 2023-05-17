@@ -5,8 +5,14 @@
 #include "Interfaces/SaveableStaticObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
+#include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
+#include "Game.h"
+#include "Components/Renderers/Animator.h"
+#include "Components/Renderers/Renderer.h"
+#include "Components/Scripts/LoadGameMenu.h"
 
 #include <fstream>
+
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -37,8 +43,28 @@ void SceneManager::InitializeScene() {
     SceneManager::GetInstance()->LoadStaticObjects(path.string(),"map0");
 }
 
-void SceneManager::ClearScene() {
+void SceneManager::LoadScene(const std::string& scene) {
+    if (scene == "Scene") {
+        if (!GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file.empty())
+            file = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file;
+        ClearScene();
+        InitializeScene();
+        GloomEngine::GetInstance()->game->activeCamera = Camera::activeCamera;
+        GloomEngine::GetInstance()->game->activeScene = activeScene;
+        GloomEngine::GetInstance()->game->InitializeGame();
+    } else if (scene == "MainMenu") {
+        ClearScene();
+        activeScene = GameObject::Instantiate("MainMenuScene", nullptr, Tags::SCENE);
+        Prefab::Instantiate<MainMenuPrefab>();
+    }
+}
+
+void SceneManager::ClearScene() const {
     activeScene->RemoveAllChildren();
+    Animator::animationModels.clear();
+    Animator::animations.clear();
+    Renderer::models.clear();
+    GameObject::Destroy(activeScene);
 }
 
 void SceneManager::Free() {

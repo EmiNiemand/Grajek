@@ -9,8 +9,10 @@ class UIComponent;
 
 class UIManager {
 private:
+    unsigned int bufferIterator = 0;
+
     inline static UIManager* uiManager;
-    std::vector<std::shared_ptr<UIComponent>> drawBuffer;
+    std::shared_ptr<UIComponent> drawBuffer[1000];
 
 public:
     std::shared_ptr<Shader> shader;
@@ -24,11 +26,14 @@ public:
 
     void Free() const;
 
+    void Draw();
     void DrawUI();
     void AddToDrawBuffer(const std::shared_ptr<UIComponent>& component);
 
 private:
     explicit UIManager();
+
+    void ClearBuffer();
 };
 
 #endif //GLOOMENGINE_UIMANAGER_H

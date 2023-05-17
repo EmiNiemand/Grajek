@@ -19,6 +19,7 @@
 #include "Components/Scripts/PauseMenu.h"
 #include "Components/Scripts/OptionsMenu.h"
 #include "Components/Scripts/ShopMenu.h"
+#include "Components/Scripts/SavePointMenu.h"
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/OptionsManager.h"
@@ -36,7 +37,7 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
-    equipment->Setup(5, 10);
+    equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
     playerUI->UpdateRep(equipment->GetRep());
@@ -49,13 +50,14 @@ void PlayerManager::Awake() {
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
+    savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
     activeMenu = nullptr;
 
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Load game
     std::filesystem::path path = std::filesystem::current_path();
-    DataPersistanceManager::GetInstance()->LoadGame(path.string(), "Save1");
+    DataPersistanceManager::GetInstance()->LoadGame(path.string(), SceneManager::GetInstance()->file);
 
     Component::Awake();
 }
@@ -97,16 +99,26 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 //TODO: implement interaction with IUsable
 void PlayerManager::OnInteract() {
     if(session) return;
-    if(activeMenu && activeMenu != shopMenu) return;
+    if(activeMenu && activeMenu != shopMenu && activeMenu != savePointMenu) return;
 
     if (!shopMenu->GetParent()->GetEnabled()) {
         if (shopMenu->ShowMenu()) {
             GloomEngine::GetInstance()->timeScale = 0;
             activeMenu = shopMenu;
+            return;
         }
-    } else {
+    }
+    if (!savePointMenu->GetParent()->GetEnabled()) {
+        if (savePointMenu->ShowMenu()) {
+            GloomEngine::GetInstance()->timeScale = 0;
+            activeMenu = savePointMenu;
+            return;
+        }
+    }
+    if (shopMenu->GetParent()->GetEnabled() || savePointMenu->GetParent()->GetEnabled()) {
         GloomEngine::GetInstance()->timeScale = 1;
         shopMenu->HideMenu();
+        savePointMenu->HideMenu();
         activeMenu.reset();
     }
 }
@@ -216,13 +228,15 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     if (!pat) return;
 
     //TODO: uncomment when crowd manager gets implemented
-    equipment->AddReward(1 /*crowdManager->GetCrowdSatisfaction()/100*/);
+    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
+    equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
 
     playerUI->UpdateCash(equipment->cash);
     playerUI->UpdateRep(equipment->rep);
 }
 
 void PlayerManager::CreateMusicSession(InstrumentName instrument) {
+    OnMove(glm::vec2());
     Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(0.5f);
     GloomEngine::GetInstance()->timeScale = 1;
     sessionStarter->Stop();

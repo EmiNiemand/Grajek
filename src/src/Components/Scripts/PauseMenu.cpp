@@ -4,6 +4,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Scripts/OptionsMenu.h"
 #include "Components/Scripts/PlayerManager.h"
+#include "EngineManagers/SceneManager.h"
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -25,7 +26,7 @@ void PauseMenu::OnClick() {
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
     } else if (activeButton->GetParent()->GetName() == "ExitToMainMenuButton") {
-        // TODO load main menu scene
+        SceneManager::GetInstance()->LoadScene("MainMenu");
     } else if (activeButton->GetParent()->GetName() == "ExitButton") {
         gameShouldExit = true;
     }

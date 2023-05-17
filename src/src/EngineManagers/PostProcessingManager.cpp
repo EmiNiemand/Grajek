@@ -86,7 +86,7 @@ PostProcessingManager *PostProcessingManager::GetInstance() {
     return postProcessingManager;
 }
 
-void PostProcessingManager::DrawBuffer() {
+void PostProcessingManager::Draw() {
     glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
     // clear all relevant buffers
     glm::vec4 screenColor = GloomEngine::GetInstance()->screenColor;

@@ -8,6 +8,8 @@
 #include <vector>
 #include <unordered_map>
 
+#define GRID_SIZE 100
+
 class Shader;
 class GloomEngine;
 class BoxCollider;
@@ -21,14 +23,15 @@ private:
     std::vector<unsigned int> indices;
 
 public:
-#ifdef DEBUG
     glm::ivec2 playerPosition = glm::ivec2(0.0f);
+
+#ifdef DEBUG
     glm::vec3 debugColor = {0.0, 1.0, 0.0};
     std::shared_ptr<Shader> colliderDebugShader;
 #endif
 
     float gridSize = 10.0f;
-    std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, std::shared_ptr<BoxCollider>>>> grid;
+    std::unordered_map<int, std::shared_ptr<BoxCollider>> grid[GRID_SIZE * GRID_SIZE];
 
 public:
     CollisionManager(CollisionManager &other) = delete;
@@ -39,7 +42,7 @@ public:
 
     void ManageCollision();
 #ifdef DEBUG
-    void DrawColliders();
+    void Draw();
 #endif
     void Free();
 
@@ -47,6 +50,7 @@ public:
     void OnBoxCollidersChange();
 #endif
     void RemoveBoxCollider(int componentId);
+    void RemoveDynamicBoxCollider(const glm::vec3& position, int componentId);
 
 private:
     explicit CollisionManager();

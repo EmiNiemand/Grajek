@@ -1,5 +1,7 @@
 #include "LowLevelClasses/AnimationModel.h"
 #include "Other/GLMHelper.h"
+#include "ProjectSettings.h"
+
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include "stb_image.h"
@@ -8,14 +10,14 @@
 
 AnimationModel::AnimationModel(const std::string &path, std::shared_ptr<Shader> &shader,
                                int type, bool gamma) : Model(path, shader, type, gamma) {
-    boneInfoMap.reserve(100);
+    boneInfoMap.reserve(BONE_NUMBER);
     AnimationModel::LoadModel(path);
 }
 
 
 AnimationModel::AnimationModel(const Mesh &mesh, std::shared_ptr<Shader> &shader,
                                int type) : Model(mesh, shader, type) {
-    boneInfoMap.reserve(100);
+    boneInfoMap.reserve(BONE_NUMBER);
     meshes.push_back(mesh);
 }
 
@@ -196,4 +198,4 @@ void AnimationModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices,
 
 std::unordered_map<std::string, BoneInfo> &AnimationModel::GetBoneInfoMap() { return boneInfoMap; }
 
-uint16_t &AnimationModel::GetBoneCount() { return boneCounter; }
+uint16_t AnimationModel::GetBoneCount() { return boneCounter; }

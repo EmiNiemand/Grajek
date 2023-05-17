@@ -2,7 +2,7 @@
 
 Utilities* Utilities::utilities = nullptr;
 
-Utilities::Utilities() {}
+Utilities::Utilities() = default;
 
 Utilities::~Utilities() {}
 
