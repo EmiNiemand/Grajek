@@ -1,7 +1,7 @@
 //
 // Created by MasterKtos on 28.03.2023.
 //
-
+#ifdef DEBUG
 #include "EngineManagers/DebugManager.h"
 #include "imgui.h"
 #include "EngineManagers/SceneManager.h"
@@ -10,6 +10,7 @@
 #include "psapi.h"
 #include <string.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
 
 DebugManager::DebugManager() {
     displaySelected = false;
@@ -33,7 +34,6 @@ void DebugManager::Initialize(GLFWwindow* window, const char* glsl_version) {
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -47,12 +47,12 @@ void DebugManager::Render() {
     ImGui::NewFrame();
 
     DisplaySystemInfo();
-
+    SaveMenu();
     {
         ImGui::Begin("Debug Window");
 
         ImGui::Text("Hierarchy Tree");
-        ImGui::Text(SceneManager::GetInstance()->activeScene.get()->GetName().c_str());
+        ImGui::Text(SceneManager::GetInstance()->activeScene->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton("Open")) {
             displaySelected = true;
@@ -60,7 +60,7 @@ void DebugManager::Render() {
         }
         ImGui::Indent();
         std::string label;
-        for (const auto& child : SceneManager::GetInstance()->activeScene.get()->children) {
+        for (const auto& child : SceneManager::GetInstance()->activeScene->children) {
             label = "Open##" + std::to_string(child.first);
             ImGui::Text(child.second->GetName().c_str());
             ImGui::SameLine();
@@ -85,9 +85,9 @@ void DebugManager::Render() {
         glm::vec3 scaleHolder;
 
 
-        positionHolder = selected->transform.get()->GetLocalPosition();
-        rotationHolder = selected->transform.get()->GetLocalRotation();
-        scaleHolder = selected->transform.get()->GetLocalScale();
+        positionHolder = selected->transform->GetLocalPosition();
+        rotationHolder = selected->transform->GetLocalRotation();
+        scaleHolder = selected->transform->GetLocalScale();
         if (!transformExtracted) {
             ExtractVec3ToFloat3(positionHolder, inputVector1);
             ExtractVec3ToFloat3(rotationHolder, inputVector2);
@@ -98,9 +98,9 @@ void DebugManager::Render() {
         rotationHolder = InjectFloat3IntoVec3(inputVector2);
         scaleHolder = InjectFloat3IntoVec3(inputVector3);
 
-        selected->transform.get()->SetLocalPosition(positionHolder);
-        selected->transform.get()->SetLocalRotation(rotationHolder);
-        selected->transform.get()->SetLocalScale(scaleHolder);
+        selected->transform->SetLocalPosition(positionHolder);
+        selected->transform->SetLocalRotation(rotationHolder);
+        selected->transform->SetLocalScale(scaleHolder);
 
 
         ImGui::Begin("Properties");
@@ -121,7 +121,7 @@ void DebugManager::Render() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
-    if (gameObject.get()->children.empty())
+    if (gameObject->children.empty())
         return;
     ImGui::Indent();
     std::string label;
@@ -188,18 +188,22 @@ void DebugManager::SaveMenu()
 {
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
+        std::filesystem::path path = std::filesystem::current_path();
+        path /= "res";
+        path /= "ProjectConfig";
 
+        SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
-    if (ImGui::SmallButton("Load")) {
-
+    if (ImGui::SmallButton("Add new house")){
+        SceneManager::GetInstance()->CreatePrefabObject("House");
     }
-    ImGui::End;
+    ImGui::End();
 }
 
 void DebugManager::Free() const {
-#ifdef DEBUG
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-#endif
 }
+#endif

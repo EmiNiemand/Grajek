@@ -9,7 +9,6 @@
 #include "EngineManagers/AnimationManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
-#include "EngineManagers/DebugManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/RandomnessManager.h"
@@ -30,6 +29,7 @@
 #include <stb_image.h>
 
 #ifdef DEBUG
+#include "EngineManagers/DebugManager.h"
 #include <tracy/Tracy.hpp>
 #endif
 
@@ -158,11 +158,6 @@ bool GloomEngine::MainLoop() {
 
     bool endGame = game->GameLoop();
 
-//  Save game on quit
-    if (glfwWindowShouldClose(window) || endGame) {
-        std::filesystem::path path = std::filesystem::current_path();
-        DataPersistanceManager::GetInstance()->SaveGame(path.string(), SceneManager::GetInstance()->file);
-    }
     return glfwWindowShouldClose(window) || endGame;
 }
 

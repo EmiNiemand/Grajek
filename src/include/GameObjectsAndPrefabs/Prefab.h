@@ -19,7 +19,6 @@ public:
     static std::shared_ptr<GameObject> Instantiate(std::string objectName = typeid(T).name()) {
         return PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<T>(objectName);
     }
-
     const std::string& GetPrefabName() const;
     virtual std::shared_ptr<GameObject> Create() = 0;
 };

@@ -2,6 +2,8 @@
 #define GLOOMENGINE_SHOP_H
 
 #include "GameObjectsAndPrefabs/Prefab.h"
+#include "Interfaces/SaveableStaticObject.h"
+#include <memory>
 
 class Shop : public Prefab {
 public:
