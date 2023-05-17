@@ -12,6 +12,7 @@
 
 class StaticObjectData {
 public:
+    int positionInList;
     std::string name;
     glm::vec3 position;
     glm::vec3 rotation;

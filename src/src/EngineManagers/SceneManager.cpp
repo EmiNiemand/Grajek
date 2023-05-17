@@ -3,6 +3,8 @@
 #include "Components/Renderers/Camera.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Interfaces/SaveableStaticObject.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
+#include "GameObjectsAndPrefabs/Prefabs/House.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -40,11 +42,11 @@ void SceneManager::Free() {
 }
 
 void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
-    std::vector<std::shared_ptr<SaveableStaticObject>> saveableStaticPrefabs;
+    std::map<int,std::shared_ptr<SaveableStaticObject>> saveableStaticPrefabs;
     std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
     saveableStaticPrefabs = FindAllStaticSaveablePrefabs();
     for (const auto& object : saveableStaticPrefabs) {
-        staticObjectsData.push_back(object->SaveStatic());
+        staticObjectsData.push_back(object.second->SaveStatic());
     }
 
     SaveMap(staticObjectsData,dataDirectoryPath,dataFileName);
@@ -53,11 +55,16 @@ void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const
 void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
+    spdlog::info("Loaded map objects successfully.");
 
+    std::shared_ptr<GameObject> newGameObject;
     for (const auto &object: staticObjectsData) {
-        //Create new prefabs using data from the file
-        //GameObject newchild = GameObject();
-        //activeScene->AddChild();
+        if(object->name == "House"){
+            newGameObject = Prefab::Instantiate<House>();
+            newGameObject->transform->SetLocalPosition(object->position);
+            newGameObject->transform->SetLocalRotation(object->rotation);
+            newGameObject->transform->SetLocalScale(object->scale);
+        }
     }
 }
 
@@ -109,19 +116,22 @@ void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<Sta
     nlohmann::json objectJson;
     for (const auto& object: mapData){
         objectJson.clear();
+
+        objectJson["name"] = object -> name;
+
         objectJson["position.x"] = object->position.x;
         objectJson["position.y"] = object->position.y;
         objectJson["position.z"] = object->position.z;
 
-        objectJson["rotation.x"] = object->position.x;
-        objectJson["rotation.y"] = object->position.y;
-        objectJson["rotation.z"] = object->position.z;
+        objectJson["rotation.x"] = object->rotation.x;
+        objectJson["rotation.y"] = object->rotation.y;
+        objectJson["rotation.z"] = object->rotation.z;
 
-        objectJson["scale.x"] = object->position.x;
-        objectJson["scale.y"] = object->position.y;
-        objectJson["scale.z"] = object->position.z;
+        objectJson["scale.x"] = object->scale.x;
+        objectJson["scale.y"] = object->scale.y;
+        objectJson["scale.z"] = object->scale.z;
 
-        json.emplace(objectJson);
+        json.push_back(objectJson);
     }
 
 }
@@ -131,6 +141,9 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
     std::shared_ptr<StaticObjectData> newObject;
     for (const auto& object: json){
         newObject = std::make_shared<StaticObjectData>();
+
+        newObject->name = object["name"];
+
         newObject->position.x = object["position.x"];
         newObject->position.y = object["position.y"];
         newObject->position.z = object["position.z"];
@@ -139,20 +152,30 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject->rotation.y = object["rotation.y"];
         newObject->rotation.z = object["rotation.z"];
 
-        newObject->scale.x = object["position.x"];
-        newObject->scale.y = object["position.y"];
-        newObject->scale.z = object["position.z"];
+        newObject->scale.x = object["scale.x"];
+        newObject->scale.y = object["scale.y"];
+        newObject->scale.z = object["scale.z"];
         mapData.push_back(newObject);
     }
 }
 
-std::vector<std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStaticSaveablePrefabs() {
-    std::vector<std::shared_ptr<SaveableStaticObject>> objects;
-
-    for (const auto& object : activeScene->children) {
+std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStaticSaveablePrefabs() {
+    std::map<int,std::shared_ptr<SaveableStaticObject>> objects;
+    int i = 0;
+    for (const auto& object : SceneManager::GetInstance()->activeScene->children) {
+        i++;
         if (std::dynamic_pointer_cast<SaveableStaticObject>(object.second) != nullptr) {
-            objects.push_back(std::dynamic_pointer_cast<SaveableStaticObject>(object.second));
+            objects[object.first] = (std::dynamic_pointer_cast<SaveableStaticObject>(object.second));
         }
     }
+
     return objects;
+}
+
+void SceneManager::ClearAllStaticObjects() {
+    std::map<int, std::shared_ptr<SaveableStaticObject>> StaticObjects = FindAllStaticSaveablePrefabs();
+;
+    for(const auto& staticObject : StaticObjects){
+        SceneManager::GetInstance()->activeScene->children.erase(staticObject.first);
+    }
 }

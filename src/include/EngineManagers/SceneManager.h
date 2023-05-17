@@ -10,6 +10,8 @@
 
 class GloomEngine;
 class GameObject;
+//Insert prefab classes here
+class House;
 
 class SceneManager {
 private:
@@ -34,6 +36,7 @@ public:
 
     void SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
     void LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    void ClearAllStaticObjects();
 
 #include "nlohmann/json.hpp"
 private:
@@ -49,7 +52,7 @@ private:
     //IO function that saves map file from list of staticObjData
     void SaveMap(std::vector<std::shared_ptr<StaticObjectData>> mapData, std::string dataDirectoryPath,
                  std::string dataFileName);
-    std::vector<std::shared_ptr<SaveableStaticObject>> FindAllStaticSaveablePrefabs();
+    std::map<int, std::shared_ptr<SaveableStaticObject>> FindAllStaticSaveablePrefabs();
 };
 
 
