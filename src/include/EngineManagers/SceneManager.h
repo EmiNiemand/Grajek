@@ -36,6 +36,7 @@ public:
 
     void SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
     void LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName);
+    void CreatePrefabObject(const std::string name);
     void ClearAllStaticObjects();
 
 #include "nlohmann/json.hpp"

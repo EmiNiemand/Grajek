@@ -194,6 +194,9 @@ void DebugManager::SaveMenu()
 
         SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
+    if (ImGui::SmallButton("Add new house")){
+        SceneManager::GetInstance()->CreatePrefabObject("House");
+    }
     ImGui::End();
 }
 
