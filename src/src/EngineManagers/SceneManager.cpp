@@ -61,10 +61,10 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     for (const auto &object: staticObjectsData) {
         if(object->name == "House"){
             newGameObject = Prefab::Instantiate<House>();
-            newGameObject->transform->SetLocalPosition(object->position);
-            newGameObject->transform->SetLocalRotation(object->rotation);
-            newGameObject->transform->SetLocalScale(object->scale);
         }
+        newGameObject->transform->SetLocalPosition(object->position);
+        newGameObject->transform->SetLocalRotation(object->rotation);
+        newGameObject->transform->SetLocalScale(object->scale);
     }
 }
 
@@ -178,4 +178,13 @@ void SceneManager::ClearAllStaticObjects() {
     for(const auto& staticObject : StaticObjects){
         SceneManager::GetInstance()->activeScene->children.erase(staticObject.first);
     }
+}
+
+void SceneManager::CreatePrefabObject(const std::string name) {
+    std::shared_ptr<GameObject> newGameObject;
+    if(name == "House"){
+        spdlog::info("Created object from prefab House.");
+        newGameObject = Prefab::Instantiate<House>();
+    }
+    spdlog::info("Failed to find prefab with name: " + name);
 }
