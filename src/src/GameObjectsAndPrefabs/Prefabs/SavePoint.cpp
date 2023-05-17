@@ -24,7 +24,7 @@ std::shared_ptr<GameObject> SavePoint::Create() {
     }, true);
 
     auto savePointTrigger = GameObject::Instantiate("SavePointTrigger", savePoint);
-    savePointTrigger->AddComponent<BoxCollider>()->SetOffset({3.25, 0.5, 0});
+    savePointTrigger->AddComponent<BoxCollider>()->SetOffset({0, 0.5, 0});
     savePointTrigger->GetComponent<BoxCollider>()->SetSize({2, 1, 2});
     savePointTrigger->GetComponent<BoxCollider>()->isTrigger = true;
     savePointTrigger->AddComponent<SavePointTrigger>();
