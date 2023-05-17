@@ -46,7 +46,6 @@ struct AABB
 
     AABB(const glm::vec3& inCenter, float iI, float iJ, float iK) : center{ inCenter }, extents{ iI, iJ, iK } {}
 
-    //see https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
     [[nodiscard]] bool IsOnOrForwardPlane(const Plane& plane) const
     {
         // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
@@ -92,6 +91,7 @@ struct AABB
 class FrustumCulling {
 private:
     Frustum frustum{};
+    Frustum shadowFrustum{};
     inline static FrustumCulling* frustumCulling;
 
 public:
