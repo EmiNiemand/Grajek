@@ -156,7 +156,12 @@ void Game::InitializeGame() const {
 
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
     savePoint1->transform->SetLocalPosition({-20, 0, 10});
-    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+    savePoint1->transform->SetLocalScale({5.0, 5.0, 5.0});
+
+    auto brama = GameObject::Instantiate("Brama", activeScene);
+    brama->AddComponent<Renderer>()->LoadModel("Brama.obj");
+    brama->transform->SetLocalPosition(glm::vec3(0.0, 0.0, 0.0));
+    brama->transform->SetLocalScale(glm::vec3(0.5f));
 
     // Save Point Menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
@@ -199,8 +204,9 @@ void Game::InitializeGame() const {
         animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
         x++;
         animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
-                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
-        }, false);
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f},
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -30.0f), 0.1f}
+        }, true);
     }
 
     // SCENE BUILDINGS
