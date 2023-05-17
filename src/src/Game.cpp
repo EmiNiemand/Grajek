@@ -282,15 +282,23 @@ void Game::InitializeGame() const {
 
     Animator::LoadAnimation("Animacje/BasicChlop.dae");
 
+    int x = 0;
+    int y = 0;
+
 	// Set up animated model
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 100; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
-        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
-        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
-        animatedDood->transform->SetLocalScale({1, 1, 1});
+        animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
+        animatedDoodAnimator->SetAnimation("Animacje/BasicChlop.dae");
+        if (i % 25 == 0) {
+            x = 0;
+            y++;
+        }
+        animatedDood->transform->SetLocalPosition({-12 + x, 1, 10 + 2 * y});
+        animatedDood->transform->SetLocalRotation({0, 0, 0});
+        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        x++;
     }
 
     //camera->SetTarget(pivot);
