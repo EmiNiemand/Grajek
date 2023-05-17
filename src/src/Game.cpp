@@ -295,10 +295,13 @@ void Game::InitializeGame() const {
             x = 0;
             y++;
         }
-        animatedDood->transform->SetLocalPosition({-12 + x, 1, 10 + 2 * y});
+        animatedDood->transform->SetLocalPosition({-12 + x, 1, -10 + 2 * y});
         animatedDood->transform->SetLocalRotation({0, 0, 0});
         animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
         x++;
+        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
+        }, false);
     }
 
     //camera->SetTarget(pivot);
