@@ -156,7 +156,12 @@ void Game::InitializeGame() const {
 
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
     savePoint1->transform->SetLocalPosition({-20, 0, 10});
-    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+    savePoint1->transform->SetLocalScale({5.0, 5.0, 5.0});
+
+    auto brama = GameObject::Instantiate("Brama", activeScene);
+    brama->AddComponent<Renderer>()->LoadModel("Brama.obj");
+    brama->transform->SetLocalPosition(glm::vec3(0.0, 0.0, 0.0));
+    brama->transform->SetLocalScale(glm::vec3(0.5f));
 
     // Save Point Menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
@@ -286,7 +291,7 @@ void Game::InitializeGame() const {
     int y = 0;
 
 	// Set up animated model
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 200; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
         animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
@@ -295,13 +300,14 @@ void Game::InitializeGame() const {
             x = 0;
             y++;
         }
-        animatedDood->transform->SetLocalPosition({-12 + x, 1, -10 + 2 * y});
+        animatedDood->transform->SetLocalPosition({-12 + x, 1, -15 + 2 * y});
         animatedDood->transform->SetLocalRotation({0, 0, 0});
         animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
         x++;
         animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
-                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
-        }, false);
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f},
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -30.0f), 0.1f}
+        }, true);
     }
 
     //camera->SetTarget(pivot);
