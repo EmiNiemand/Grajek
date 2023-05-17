@@ -6,10 +6,10 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
 
-#ifdef DEBUG
-#include <tracy/Tracy.hpp>
 #include <fstream>
 
+#ifdef DEBUG
+#include <tracy/Tracy.hpp>
 #endif
 
 SceneManager::SceneManager() = default;
@@ -29,6 +29,12 @@ void SceneManager::InitializeScene() {
 #endif
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
+
+    std::filesystem::path path = std::filesystem::current_path().parent_path().parent_path();
+    path /= "res";
+    path /= "ProjectConfig";
+
+    SceneManager::GetInstance()->LoadStaticObjects(path.string(),"map0");
 }
 
 void SceneManager::ClearScene() {

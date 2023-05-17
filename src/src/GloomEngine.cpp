@@ -8,7 +8,6 @@
 #include "EngineManagers/ShadowManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
-#include "EngineManagers/DebugManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/RandomnessManager.h"
@@ -28,6 +27,7 @@
 #include <stb_image.h>
 
 #ifdef DEBUG
+#include "EngineManagers/DebugManager.h"
 #include <tracy/Tracy.hpp>
 #endif
 

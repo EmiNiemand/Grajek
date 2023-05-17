@@ -1,7 +1,7 @@
 //
 // Created by MasterKtos on 28.03.2023.
 //
-
+#ifdef DEBUG
 #include "EngineManagers/DebugManager.h"
 #include "imgui.h"
 #include "EngineManagers/SceneManager.h"
@@ -10,6 +10,7 @@
 #include "psapi.h"
 #include <string.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
 
 DebugManager::DebugManager() {
     displaySelected = false;
@@ -33,7 +34,6 @@ void DebugManager::Initialize(GLFWwindow* window, const char* glsl_version) {
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -188,18 +188,19 @@ void DebugManager::SaveMenu()
 {
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
-        SceneManager::GetInstance()->SaveStaticObjects("","map0");
-    }
-    if (ImGui::SmallButton("Load")) {
-        SceneManager::GetInstance()->LoadStaticObjects("","map0");
+        std::filesystem::path path = std::filesystem::current_path().parent_path().parent_path();
+        path /= "res";
+        path /= "ProjectConfig";
+
+        SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
     ImGui::End();
 }
 
 void DebugManager::Free() const {
-#ifdef DEBUG
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-#endif
 }
+#endif
