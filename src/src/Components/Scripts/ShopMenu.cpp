@@ -43,12 +43,31 @@ void ShopMenu::Awake() {
     Component::Awake();
 }
 
+void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
+    activeButton->GetParent()->children.begin()->second->DisableSelfAndChildren();
+    if (moveVector.y == 1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->previousButton;
+        activeButton->isActive = true;
+    }
+    if (moveVector.y == -1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->nextButton;
+        activeButton->isActive = true;
+    }
+    activeButton->GetParent()->children.begin()->second->EnableSelfAndChildren();
+}
+
 bool ShopMenu::ShowMenu() {
     if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
     parent->EnableSelfAndChildren();
     if (!instruments.empty()) {
+        for (const auto & instrument : instruments) {
+            instrument->GetParent()->children.begin()->second->DisableSelfAndChildren();
+        }
         activeButton = instruments[0];
         activeButton->isActive = true;
+        activeButton->GetParent()->children.begin()->second->EnableSelfAndChildren();
     }
     return true;
 }

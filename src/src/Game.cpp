@@ -48,7 +48,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->cameraOffset = glm::vec3(0, 30, 30);
 
     // Set up cubemap
     // --------------
@@ -74,12 +74,12 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    // Set up UI
+    // Set up player UI
     // ---------
-    auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
-    ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
-
+    auto playerUI = GameObject::Instantiate("PlayerUI", activeScene)->AddComponent<Menu>();
+    playerUI->AddText("Money", "Money: 0", 140, 1040, 22);
+    playerUI->AddText("Reputation", "Rep: 0", 140, 1000, 22);
+    playerUI->AddImage("UI", 0, 952, "UI/Player.png");
 
     // Set up pause menu
     auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
@@ -295,15 +295,26 @@ void Game::InitializeGame() const {
 
     Animator::LoadAnimation("Animacje/BasicChlop.dae");
 
+    int x = 0;
+    int y = 0;
+
 	// Set up animated model
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 100; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
-        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
-        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
-        animatedDood->transform->SetLocalScale({1, 1, 1});
+        animatedDoodAnimator->LoadAnimationModel("Animacje/BasicChlop.dae");
+        animatedDoodAnimator->SetAnimation("Animacje/BasicChlop.dae");
+        if (i % 25 == 0) {
+            x = 0;
+            y++;
+        }
+        animatedDood->transform->SetLocalPosition({-12 + x, 1, -10 + 2 * y});
+        animatedDood->transform->SetLocalRotation({0, 0, 0});
+        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        x++;
+        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f}
+        }, false);
     }
 
     //camera->SetTarget(pivot);

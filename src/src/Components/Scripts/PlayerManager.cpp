@@ -37,7 +37,7 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
-    equipment->Setup(5, 10);
+    equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
     playerUI->UpdateRep(equipment->GetRep());
