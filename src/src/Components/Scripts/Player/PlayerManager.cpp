@@ -161,9 +161,10 @@ void PlayerManager::OnMenuToggle() {
     if(activeMenu &&
         !(activeMenu == pauseMenu ||
           activeMenu == optionsMenu ||
-          activeMenu == shopMenu)) return;
+          activeMenu == shopMenu ||
+          activeMenu == savePointMenu)) return;
 
-    if (activeMenu != shopMenu && activeMenu != pauseMenu) {
+    if (activeMenu != shopMenu && activeMenu != pauseMenu && activeMenu != savePointMenu) {
         GloomEngine::GetInstance()->timeScale = 0;
         if(activeMenu == optionsMenu) {
             OptionsManager::GetInstance()->Save();
@@ -182,6 +183,11 @@ void PlayerManager::OnMenuToggle() {
     else if(activeMenu == shopMenu) {
         GloomEngine::GetInstance()->timeScale = 1;
         shopMenu->HideMenu();
+        activeMenu.reset();
+    }
+    else if(activeMenu == savePointMenu) {
+        GloomEngine::GetInstance()->timeScale = 1;
+        savePointMenu->HideMenu();
         activeMenu.reset();
     }
     else {
