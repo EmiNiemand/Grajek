@@ -1,4 +1,4 @@
-#include "Components/Scripts/ShopTrigger.h"
+#include "Components/Scripts/Menus/ShopTrigger.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
 ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}

@@ -1,4 +1,4 @@
-#include "Components/Scripts/SavePointTrigger.h"
+#include "Components/Scripts/Menus/SavePointTrigger.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 
 SavePointTrigger::SavePointTrigger(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}

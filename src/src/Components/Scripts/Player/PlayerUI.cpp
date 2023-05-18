@@ -2,7 +2,7 @@
 // Created by masterktos on 03.04.23.
 //
 
-#include "Components/Scripts/PlayerUI.h"
+#include "Components/Scripts/Player/PlayerUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Text.h"
 #include "Utilities.h"

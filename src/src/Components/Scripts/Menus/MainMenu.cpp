@@ -1,8 +1,8 @@
-#include "Components/Scripts/MainMenu.h"
+#include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/SceneManager.h"
-#include "Components/Scripts/MainMenuManager.h"
+#include "Components/Scripts/Menus/MainMenuManager.h"
 
 MainMenu::MainMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 

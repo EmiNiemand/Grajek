@@ -1,7 +1,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "Components/Scripts/SavePointTrigger.h"
+#include "Components/Scripts/Menus/SavePointTrigger.h"
 #include "Components/UI/Image.h"
 #include "Components/Animations/GameObjectAnimator.h"
 

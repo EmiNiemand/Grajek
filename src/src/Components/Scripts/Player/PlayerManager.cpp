@@ -2,33 +2,35 @@
 // Created by masterktos on 30.03.23.
 //
 
-#include "Components/Scripts/PlayerManager.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "GloomEngine.h"
 #include "Components/Renderers/Camera.h"
 #include "LowLevelClasses/GameData.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
-#include "Components/Scripts/PlayerInput.h"
-#include "Components/Scripts/PlayerMovement.h"
-#include "Components/Scripts/PlayerEquipment.h"
-#include "Components/Scripts/PlayerUI.h"
+#include "Components/Scripts/Player/PlayerInput.h"
+#include "Components/Scripts/Player/PlayerMovement.h"
+#include "Components/Scripts/Player/PlayerEquipment.h"
+#include "Components/Scripts/Player/PlayerUI.h"
 #include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/SessionStarter.h"
-#include "Components/Scripts/PauseMenu.h"
-#include "Components/Scripts/OptionsMenu.h"
-#include "Components/Scripts/ShopMenu.h"
-#include "Components/Scripts/SavePointMenu.h"
+#include "Components/Scripts/Menus/PauseMenu.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
+#include "Components/Scripts/Menus/ShopMenu.h"
+#include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
+#include "Components/Renderers/Animator.h"
+
 #include <filesystem>
 
 #ifdef DEBUG
-#include <tracy/Tracy.hpp>
+#include "tracy/Tracy.hpp"
 #endif
 
 PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
@@ -37,6 +39,12 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
+    auto animatorObject = GameObject::Instantiate("Animator", parent);
+    animator = animatorObject->AddComponent<Animator>();
+    // TODO: Change model later
+    animator->LoadAnimationModel("AnimsNew/Walk.dae");
+    animator->SetAnimation("AnimsNew/Idle1.dae");
+    animatorObject->transform->SetLocalRotation({0, 180, 0});
     equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
@@ -93,8 +101,14 @@ std::set<InstrumentName> PlayerManager::GetInstruments() {
 
 #pragma region Movement Events
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-    if(moveVector != glm::vec2(0))
+    if(moveVector != glm::vec2(0)) {
         moveVector = glm::normalize(moveVector);
+        animator->SetAnimation("AnimsNew/Walk.dae");
+    }
+    else {
+        animator->SetAnimation("AnimsNew/Idle1.dae");
+    }
+
 	movement->Move(moveVector);
 }
 #pragma endregion

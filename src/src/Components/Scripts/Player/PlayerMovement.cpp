@@ -3,7 +3,7 @@
 //
 
 #include <numbers>
-#include "Components/Scripts/PlayerMovement.h"
+#include "Components/Scripts/Player/PlayerMovement.h"
 #include "GloomEngine.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"

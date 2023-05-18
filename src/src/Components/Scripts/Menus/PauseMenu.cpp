@@ -1,9 +1,9 @@
-#include "Components/Scripts/PauseMenu.h"
+#include "Components/Scripts/Menus/PauseMenu.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
-#include "Components/Scripts/OptionsMenu.h"
-#include "Components/Scripts/PlayerManager.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "EngineManagers/SceneManager.h"
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}

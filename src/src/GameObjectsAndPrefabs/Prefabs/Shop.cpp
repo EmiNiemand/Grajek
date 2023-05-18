@@ -1,8 +1,8 @@
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "Components/Scripts/ShopMenu.h"
-#include "Components/Scripts/ShopTrigger.h"
+#include "Components/Scripts/Menus/ShopMenu.h"
+#include "Components/Scripts/Menus/ShopTrigger.h"
 #include "Components/UI/Button.h"
 #include "Components/UI/Image.h"
 

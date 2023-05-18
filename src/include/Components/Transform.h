@@ -40,6 +40,8 @@ public:
     [[nodiscard]] glm::vec3 GetBackward() const;
     [[nodiscard]] glm::vec3 GetForward() const;
     [[nodiscard]] glm::vec3 GetGlobalScale() const;
+private:
+    void SetDirtyFlag();
 };
 
 

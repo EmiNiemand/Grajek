@@ -10,10 +10,10 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "Components/Scripts/PlayerManager.h"
-#include "Components/Scripts/PlayerMovement.h"
-#include "Components/Scripts/PauseMenu.h"
-#include "Components/Scripts/OptionsMenu.h"
+#include "Components/Scripts/Player/PlayerManager.h"
+#include "Components/Scripts/Player/PlayerMovement.h"
+#include "Components/Scripts/Menus/PauseMenu.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
@@ -21,9 +21,9 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
-#include "Components/Scripts/SavePointMenu.h"
+#include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
-#include "Components/Scripts/MainMenu.h"
+#include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
@@ -55,6 +55,14 @@ void Game::InitializeGame() const {
     auto sky = GameObject::Instantiate("CubeMap", activeScene);
     auto skyCubeMap = sky->AddComponent<CubeMap>();
     skyCubeMap->LoadTextures("skybox/");
+
+    // Load all animations
+    // -------------
+    Animator::LoadAnimation("AnimsNew/Walk.dae");
+    Animator::LoadAnimation("AnimsNew/Happy.dae");
+    Animator::LoadAnimation("AnimsNew/Angry.dae");
+    Animator::LoadAnimation("AnimsNew/Idle1.dae");
+    Animator::LoadAnimation("AnimsNew/Idle3.dae");
 
     // Set up player
     // -------------
@@ -180,17 +188,12 @@ void Game::InitializeGame() const {
     GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
     savePointMenu->GetParent()->DisableSelfAndChildren();
 
-    Animator::LoadAnimation("AnimsNew/Walk.dae");
-    Animator::LoadAnimation("AnimsNew/Happy.dae");
-    Animator::LoadAnimation("AnimsNew/Angry.dae");
-    Animator::LoadAnimation("AnimsNew/Idle1.dae");
-    Animator::LoadAnimation("AnimsNew/Idle3.dae");
 
     int x = 0;
     int y = 0;
 
     // Set up animated model
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 50; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
         animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");

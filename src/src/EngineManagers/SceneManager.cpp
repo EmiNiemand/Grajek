@@ -9,7 +9,7 @@
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Renderer.h"
-#include "Components/Scripts/LoadGameMenu.h"
+#include "Components/Scripts/Menus/LoadGameMenu.h"
 
 #include <fstream>
 

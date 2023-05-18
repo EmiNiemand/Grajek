@@ -1,10 +1,10 @@
-#include "Components/Scripts/ShopMenu.h"
-#include "Components/Scripts/PlayerManager.h"
+#include "Components/Scripts/Menus/ShopMenu.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Button.h"
-#include "Components/Scripts/ShopTrigger.h"
+#include "Components/Scripts/Menus/ShopTrigger.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 

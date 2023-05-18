@@ -1,7 +1,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
-#include "Components/Scripts/MainMenuManager.h"
+#include "Components/Scripts/Menus/MainMenuManager.h"
 #include "Components/UI/Button.h"
-#include "Components/Scripts/LoadGameMenu.h"
+#include "Components/Scripts/Menus/LoadGameMenu.h"
 
 MainMenuPrefab::MainMenuPrefab(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
             Prefab(name, id, parent, tag) {

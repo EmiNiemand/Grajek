@@ -36,7 +36,8 @@ void Transform::SetLocalPosition(const glm::vec3& newPosition)
 {
     mPos = newPosition;
     if (!parent) return;
-    parent->dirtyFlag = true;
+    if (parent->dirtyFlag) return;
+    SetDirtyFlag();
 }
 
 void Transform::SetLocalRotation(const glm::vec3& newRotation)
@@ -44,14 +45,16 @@ void Transform::SetLocalRotation(const glm::vec3& newRotation)
     mEulerRot = newRotation;
     if (!parent) return;
     parent->RecalculateGlobalRotation();
-    parent->dirtyFlag = true;
+    if (parent->dirtyFlag) return;
+    SetDirtyFlag();
 }
 
 void Transform::SetLocalScale(const glm::vec3& newScale)
 {
     mScale = newScale;
     if (!parent) return;
-    parent->dirtyFlag = true;
+    if (parent->dirtyFlag) return;
+    SetDirtyFlag();
 }
 
 glm::vec3 Transform::GetGlobalPosition() const
@@ -103,4 +106,20 @@ glm::vec3 Transform::GetBackward() const
 glm::vec3 Transform::GetForward() const
 {
     return -mModelMatrix[2];
+}
+
+void Transform::SetDirtyFlag() {
+    const int gameObjectsSize = (int)GloomEngine::GetInstance()->gameObjects.size() + 1;
+    auto toSet = new std::shared_ptr<GameObject>[gameObjectsSize];
+
+    int checkIterator = 1;
+    toSet[0] = parent;
+
+    for (int i = 0; i < checkIterator; i++) {
+        toSet[i]->dirtyFlag = true;
+        for (const auto& child : toSet[i]->children) {
+            toSet[checkIterator] = child.second;
+            checkIterator++;
+        }
+    }
 }

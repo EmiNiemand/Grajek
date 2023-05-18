@@ -1,9 +1,9 @@
-#include "Components/Scripts/SavePointMenu.h"
+#include "Components/Scripts/Menus/SavePointMenu.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/DataPersistanceManager.h"
-#include "Components/Scripts/PlayerManager.h"
-#include "Components/Scripts/SavePointTrigger.h"
+#include "Components/Scripts/Player/PlayerManager.h"
+#include "Components/Scripts/Menus/SavePointTrigger.h"
 #include <filesystem>
 
 SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
