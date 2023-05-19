@@ -17,8 +17,12 @@ private:
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
 	bool isPlaying = false;
+    float blendingTimeInSeconds = 0.5f;
+    float blendingTimeInTicks = 0;
 
 public:
+    float previousAnimationTime = 0;
+    Animation previousAnimation;
     Animation currentAnimation;
 
     inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;

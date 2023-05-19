@@ -13,6 +13,7 @@
 #include <set>
 
 class PlayerMovement;
+class Rigidbody;
 class PlayerUI;
 class PlayerEquipment;
 class Instrument;
@@ -28,6 +29,9 @@ class Animator;
 
 class PlayerManager : public Component, public IDataPersistance {
 private:
+    std::shared_ptr<Rigidbody> rb;
+    float previousVelocity;
+
     std::shared_ptr<PlayerMovement> movement;
 //    PlayerCamera camera;
     std::shared_ptr<PlayerUI> playerUI;
