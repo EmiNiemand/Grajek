@@ -12,12 +12,14 @@
 
 class StaticObjectData {
 public:
-    int positionInList;
     std::string name;
+
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
 
+    std::string modelPath;
+    glm::vec3 coliderSize;
 public:
 StaticObjectData();
 };

@@ -7,6 +7,7 @@
 
 #include <memory>
 #include "LowLevelClasses/StaticObjectData.h"
+#include <glm/gtc/type_ptr.hpp>
 
 
 class SaveableStaticObject {
