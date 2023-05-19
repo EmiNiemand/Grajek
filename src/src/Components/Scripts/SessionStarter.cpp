@@ -29,12 +29,12 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
 
     for (const auto& instrument : instruments)
     {
-        std::shared_ptr<GameObject> button = Menu::AddButton(
+        auto button = Menu::AddButton(
                 std::to_string((int)instrument->name),
                 xPosBegin + buttonOffset * buttons.size(), screenHeight/2,
                 "UI/Icons/small/icon"+instrument->NameToString()+"Inactive.png",
                 "UI/Icons/small/icon"+instrument->NameToString()+".png");
-        buttons.push_back(button->GetComponent<Button>());
+        buttons.push_back(button);
     }
     if (buttons.size() > 1) {
         int i = 0;

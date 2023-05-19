@@ -20,6 +20,7 @@ private:
     float alpha = 1.0f;
 
 public:
+	// these are read-only
     int width = 1920, height = 1080;
     Image(const std::shared_ptr<GameObject> &parent, int id);
 
