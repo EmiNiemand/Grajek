@@ -148,30 +148,30 @@ void Game::InitializeGame() const {
     bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
     bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
 
-    int maxHouses = 7;
-    int houseOffset = 7;
-    for (int i = 0; i < maxHouses; ++i) {
-        if(i == ceil(maxHouses/2.0f) - 1) continue;
-
-        float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
-        float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
-
-        std::shared_ptr<GameObject> serialHouse = Prefab::Instantiate<House>();
-        serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
-        serialHouse->transform->SetLocalRotation({0, -90, 0});
-        serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
-
-
-        std::shared_ptr<GameObject> serialHouseLeft = Prefab::Instantiate<House>();
-        serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
-        serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
-        serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
-
-        std::shared_ptr<GameObject> serialHouseRight = Prefab::Instantiate<House>();
-        serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
-        serialHouseRight->transform->SetLocalRotation({0, 180, 0});
-        serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
-    }
+//    int maxHouses = 7;
+//    int houseOffset = 7;
+//    for (int i = 0; i < maxHouses; ++i) {
+//        if(i == ceil(maxHouses/2.0f) - 1) continue;
+//
+//        float houseDistance = houseOffset*maxHouses/2.0f + 5.0f;
+//        float housePlacement = houseOffset * (i - maxHouses/2.0f + 1/2.0f);
+//
+//        std::shared_ptr<GameObject> serialHouse = Prefab::Instantiate<House>();
+//        serialHouse->transform->SetLocalPosition({housePlacement, 0, -houseDistance});
+//        serialHouse->transform->SetLocalRotation({0, -90, 0});
+//        serialHouse->transform->SetLocalScale({1.5, 1.5, 2});
+//
+//
+//        std::shared_ptr<GameObject> serialHouseLeft = Prefab::Instantiate<House>();
+//        serialHouseLeft->transform->SetLocalPosition({-houseDistance, 0,  housePlacement});
+//        serialHouseLeft->transform->SetLocalRotation({0, 0, 0});
+//        serialHouseLeft->transform->SetLocalScale({1.5, 1.5, 2});
+//
+//        std::shared_ptr<GameObject> serialHouseRight = Prefab::Instantiate<House>();
+//        serialHouseRight->transform->SetLocalPosition({houseDistance, 0,  housePlacement});
+//        serialHouseRight->transform->SetLocalRotation({0, 180, 0});
+//        serialHouseRight->transform->SetLocalScale({1.5, 1.5, 2});
+//    }
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
     hydrant->transform->SetLocalPosition({15, 0, -15});

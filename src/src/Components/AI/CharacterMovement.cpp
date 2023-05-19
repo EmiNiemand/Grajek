@@ -4,9 +4,12 @@
 
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
+
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/AI/CharacterStates.h"
 #include "Components/AI/CharacterMovement.h"
+#include "Components/AI/CharacterPathfinding.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include <numbers>
 
@@ -39,17 +42,15 @@ void CharacterMovement::FixedUpdate() {
         }
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
+
+        if (glm::distance(currentPosition, path[0]) < 0.5f)
+            path.erase(path.begin());
     }
 
     Component::FixedUpdate();
 }
 
 void CharacterMovement::AIUpdate() {
-    if (!path.empty()) {
-        if (glm::distance(currentPosition, path[0]) < 1.0f)
-            path.erase(path.begin());
-    }
-
     if (path.empty() && logicState != RunningToPlayer) {
         SetNewRandomPoint();
         CalculateNewPath();
@@ -63,7 +64,7 @@ void CharacterMovement::OnCreate() {
 
     SetNewRandomPoint();
     parent->transform->SetLocalPosition(endTarget);
-    SetNewRandomPoint();
+
     Component::OnCreate();
 }
 
@@ -79,8 +80,9 @@ void CharacterMovement::Free() {
 }
 
 void CharacterMovement::SetNewRandomPoint() {
-    endTarget.x = RandomnessManager::GetInstance()->GetFloat(-25, 25);
-    endTarget.z = RandomnessManager::GetInstance()->GetFloat(-25, 25);
+    speed = 0.0f;
+    endTarget.x = RandomnessManager::GetInstance()->GetFloat(-15, 15);
+    endTarget.z = RandomnessManager::GetInstance()->GetFloat(-15, 15);
 }
 
 void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
@@ -101,23 +103,13 @@ void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
 }
 
 void CharacterMovement::CalculateNewPath() {
-    speed = 0.0f;
-    path.clear();
-    path.push_back(endTarget);
-//    foreach (var obj in GameObject.FindGameObjectsWithTag("Obstacles"))
-//    {
-//        var col = obj.GetComponent<BoxCollider>();
-//        if (col && ((transform.position.y + bCollider.height / 2 > obj.transform.position.y - col.size.y / 2 &&
-//                     transform.position.y - bCollider.height / 2 < obj.transform.position.y - col.size.y / 2) ||
-//                    (transform.position.y - bCollider.height / 2 < obj.transform.position.y + col.size.y / 2 &&
-//                     transform.position.y + bCollider.height / 2 > obj.transform.position.y + col.size.y / 2) ||
-//                    (transform.position.y + bCollider.height / 2 < obj.transform.position.y + col.size.y / 2 &&
-//                     transform.position.y - bCollider.height / 2 > obj.transform.position.y - col.size.y / 2)))
-//        {
-//            if (!hitColliders.ContainsKey(col.GetInstanceID())) hitColliders.Add(col.GetInstanceID(), col);
-//        }
-//    }
+#ifdef DEBUG
+    ZoneScopedNC("CalculateNewPath", 0xfc0f03);
+#endif
+    spdlog::info("pos  " + std::to_string(currentPosition.x) + ", " + std::to_string(currentPosition.z));
+    path = FindNewPath({currentPosition.x, currentPosition.z}, {endTarget.x, endTarget.z});
+    spdlog::info("endTarget  " + std::to_string(endTarget.x) + ", " + std::to_string(endTarget.z));
 
-//    path = pathFinder.FindPath(currentPosition, endTarget);
+    for (int i = 0; i < path.size(); i++)
+        spdlog::info("path " + std::to_string(i) + ": " + std::to_string(path[i].x) + ", " + std::to_string(path[i].z));
 }
-

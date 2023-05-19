@@ -155,3 +155,15 @@ const float AIManager::GetCombinedSatisfaction() {
 
     return satisfaction;
 }
+
+void AIManager::RemoveDynamicBoxCollider(const glm::vec3& position, int componentId) {
+    glm::ivec2 gridPos = glm::ivec2((int)(position.x / aiGridSize) + AI_GRID_SIZE / 2,
+                                    (int)(position.z / aiGridSize) + AI_GRID_SIZE / 2);
+
+    for (int x = -10; x <= 10; x++) {
+        for (int y = -10; y <= 10; y++) {
+            int newGridPos = (gridPos.x + x) + (gridPos.y + y) * AI_GRID_SIZE;
+            aiGrid[newGridPos] = false;
+        }
+    }
+}

@@ -8,6 +8,7 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "EngineManagers/CollisionManager.h"
 #include "Components/Component.h"
 #include <vector>
 #include <unordered_map>
@@ -16,7 +17,7 @@ class GameObject;
 class Rigidbody;
 
 class CharacterMovement : public Component {
-    AI_LOGICSTATE logicState;
+    AI_LOGICSTATE logicState = WalkingOnPath;
     std::shared_ptr<Rigidbody> rigidbody;
     std::vector<glm::vec3> path;
     glm::vec3 newPosition {};

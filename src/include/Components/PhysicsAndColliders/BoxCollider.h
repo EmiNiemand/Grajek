@@ -49,6 +49,7 @@ private:
     glm::vec3 GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, glm::vec3>> points, glm::vec3 position);
 
     void SetCollidersGridPoints();
+    void SetCollidersAIGridPoints();
 };
 
 #endif //OPENGLGP_BOXCOLLIDER_H

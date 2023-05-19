@@ -11,8 +11,11 @@
 #include <mutex>
 #include "Components/Scripts/MusicPattern.h"
 
+constexpr int AI_GRID_SIZE = 100;
+
 class GloomEngine;
 class CharacterLogic;
+class BoxCollider;
 
 class AIManager {
     bool playerIsPlaying = false;
@@ -32,6 +35,8 @@ public:
     //TODO: Implement!
     //std::vector<std::shared_ptr<GameObject>> buildings;
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> currentCharactersLogics;
+    const float aiGridSize = 1.0f;
+    inline static bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
 
     AIManager(AIManager &other) = delete;
     void operator=(const AIManager&) = delete;
@@ -45,6 +50,8 @@ public:
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedSatisfaction();
+    void RemoveBoxCollider(int componentId);
+    void RemoveDynamicBoxCollider(const glm::vec3& position, int componentId);
 
 };
 
