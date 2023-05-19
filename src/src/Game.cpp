@@ -190,10 +190,10 @@ void Game::InitializeGame() const {
     savePoint1->transform->SetLocalPosition({-20, 0, 10});
     savePoint1->transform->SetLocalScale({5.0, 5.0, 5.0});
 
-    auto brama = GameObject::Instantiate("Brama", activeScene);
-    brama->AddComponent<Renderer>()->LoadModel("Brama.obj");
-    brama->transform->SetLocalPosition(glm::vec3(0.0, 0.0, 0.0));
-    brama->transform->SetLocalScale(glm::vec3(0.5f));
+//    auto brama = GameObject::Instantiate("Brama", activeScene);
+//    brama->AddComponent<Renderer>()->LoadModel("Brama.obj");
+//    brama->transform->SetLocalPosition(glm::vec3(0.0, 0.0, 0.0));
+//    brama->transform->SetLocalScale(glm::vec3(0.5f));
 
     // Save Point Menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
