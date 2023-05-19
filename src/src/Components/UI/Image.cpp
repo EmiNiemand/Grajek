@@ -14,25 +14,22 @@
 Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
 std::shared_ptr<Mesh> Image::CreateMesh() {
-    int screenWidth, screenHeight;
-    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
-
     UpdateCorners();
 
     std::vector<Vertex> vertices;
     Vertex vertex1{}, vertex2{}, vertex3{}, vertex4{};
 
     // left bottom
-    vertex1.position = glm::vec3((float)2*leftBottom.x/screenWidth-1, (float)2*leftBottom.y/screenHeight-1, z);
+    vertex1.position = glm::vec3((float)leftBottom.x/960-1, (float)leftBottom.y/540-1, z);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
-    vertex2.position = glm::vec3((float)2*leftTop.x/screenWidth-1, (float)2*leftTop.y/screenHeight-1, z);
+    vertex2.position = glm::vec3((float)x/960-1, (float)y/540-1 + (float)height/540, z);
     vertex2.texCoords = glm::vec2(0.0f, 1.0f);
     // right bottom
-    vertex3.position = glm::vec3((float)2*rightBottom.x/screenWidth-1, (float)2*rightBottom.y/screenHeight-1, z);
+    vertex3.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1, z);
     vertex3.texCoords = glm::vec2(1.0f, 0.0f);
     // right top
-    vertex4.position = glm::vec3((float)2*rightTop.x/screenWidth-1, (float)2*rightTop.y/screenHeight-1, z);
+    vertex4.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1 + (float)height/540, z);
     vertex4.texCoords = glm::vec2(1.0f, 1.0f);
 
     vertices.push_back(vertex1);
@@ -82,40 +79,30 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
 }
 
 void Image::SetPosition(float x2, float y2) {
-    int screenWidth, screenHeight;
-    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
-
     x=x2; y=y2;
     parent->transform->SetLocalPosition(glm::vec3(x, y, z));
     UpdateCorners();
 
     mesh.reset();
     mesh = CreateMesh();
-    //mesh->vertices[0].position = glm::vec3(leftBottom.x/(float)screenWidth-1.0f, leftBottom.y/(float)screenHeight-1.0f, z);
-    //mesh->vertices[1].position = glm::vec3(leftTop.x/(float)screenWidth-1.0f, leftTop.y/(float)screenHeight-1.0f, z);
-    //mesh->vertices[2].position = glm::vec3(rightBottom.x/(float)screenWidth-1.0f, rightBottom.y/(float)screenHeight-1.0f, z);
-    //mesh->vertices[3].position = glm::vec3(rightTop.x/(float)screenWidth-1.0f, rightTop.y/(float)screenHeight-1.0f, z);
-    //mesh->setupMesh();
 }
 
 void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
     //TODO: replace these with pivot point (and add pivot point)
     float x2 = leftBottom.x, y2 = leftBottom.y;
-    float p = x2 + width / 2, q = y2 + height / 2;
+    float width2 = rightBottom.x - x2, height2 = leftTop.y - y2;
+    float p = x2 + width2 / 2, q = y2 + height2 / 2;
     float radians = glm::radians(angle);
     float cos = cosf(radians), sin = sinf(radians);
     mesh->vertices[0].position = glm::vec3(((x2 - p) * cos - (y2 - q) * sin + p)/960-1, ((x2 - p) * sin + (y2 - q) * cos + q)/540-1, z);
-    mesh->vertices[1].position = glm::vec3(((x2 - p) * cos - (y2 + height - q) * sin + p) / 960 - 1, ((x2 - p) * sin + (y2 + height - q) * cos + q) / 540 - 1, z);
-    mesh->vertices[2].position = glm::vec3(((x2 + width - p) * cos - (y2 - q) * sin + p) / 960 - 1, ((x2 + width - p) * sin + (y2 - q) * cos + q) / 540 - 1, z);
-    mesh->vertices[3].position = glm::vec3(((x2 + width - p) * cos - (y2 + height - q) * sin + p) / 960 - 1, ((x2 + width - p) * sin + (y2 + height - q) * cos + q) / 540 - 1, z);
+    mesh->vertices[1].position = glm::vec3(((x2 - p) * cos - (y2 + height2 - q) * sin + p)/960-1, ((x2 - p) * sin + (y2 + height2 - q) * cos + q)/540-1, z);
+    mesh->vertices[2].position = glm::vec3(((x2 + width2 - p) * cos - (y2 - q) * sin + p)/960-1, ((x2 + width2 - p) * sin + (y2 - q) * cos + q)/540-1, z);
+    mesh->vertices[3].position = glm::vec3(((x2 + width2 - p) * cos - (y2 + height2 - q) * sin + p)/960-1, ((x2 + width2 - p) * sin + (y2 + height2 - q) * cos + q)/540-1, z);
     mesh->setupMesh();
 }
 
 void Image::SetScale(float scale) {
-    int screenWidth, screenHeight;
-    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
-
     parent->transform->SetLocalScale(glm::vec3(scale));
 
     //TODO: again, try to count in pivot point
@@ -128,11 +115,6 @@ void Image::SetScale(float scale) {
     rightTop.x = rightBottom.x;
     rightTop.y = leftTop.y;
 
-    //mesh->vertices[0].position = glm::vec3(leftBottom.x/screenWidth-1, leftBottom.y/screenHeight-1, z);
-    //mesh->vertices[1].position = glm::vec3(leftTop.x/screenWidth-1, leftTop.y/screenHeight-1, z);
-    //mesh->vertices[2].position = glm::vec3(rightBottom.x/screenWidth-1, rightBottom.y/screenHeight-1, z);
-    //mesh->vertices[3].position = glm::vec3(rightTop.x/screenWidth-1, rightTop.y/screenHeight-1, z);
-    //mesh->setupMesh();
     mesh.reset();
     mesh = CreateMesh();
 }
@@ -171,6 +153,7 @@ void Image::Update() {
 }
 
 void Image::Draw() {
+    if (!mesh) return;
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     UIManager::GetInstance()->shader->SetVec3("color", color);

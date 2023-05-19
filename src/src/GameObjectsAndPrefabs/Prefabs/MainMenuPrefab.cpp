@@ -15,24 +15,23 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     GameObject::Instantiate("MainMenuManager", mainMenuScene)->AddComponent<MainMenuManager>();
 
     // Main Menu
-    std::shared_ptr<GameObject> mainMenu = GameObject::Instantiate("MainMenu", mainMenuScene);
-    mainMenu->AddComponent<MainMenu>();
-    std::shared_ptr<GameObject> newGameButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("NewGameButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "New Game", 32);
-    std::shared_ptr<GameObject> loadGameButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("LoadGameButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Load Game", 32);
-    std::shared_ptr<GameObject> optionsButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("OptionsButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> creditsButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("CreditsButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Credits", 32);
-    std::shared_ptr<GameObject> exitButton = mainMenu->GetComponent<MainMenu>()->Menu::AddButton("ExitFromGameButton", 900, 200, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
-    std::shared_ptr<GameObject> pauseBackground = mainMenu->GetComponent<MainMenu>()->Menu::AddImage("Background", 0, 0, "UI/MainMenu.png");
-    newGameButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
-    newGameButton->GetComponent<Button>()->nextButton = loadGameButton->GetComponent<Button>();
-    loadGameButton->GetComponent<Button>()->previousButton = newGameButton->GetComponent<Button>();
-    loadGameButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
-    optionsButton->GetComponent<Button>()->previousButton = loadGameButton->GetComponent<Button>();
-    optionsButton->GetComponent<Button>()->nextButton = creditsButton->GetComponent<Button>();
-    creditsButton->GetComponent<Button>()->previousButton = optionsButton->GetComponent<Button>();
-    creditsButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
-    exitButton->GetComponent<Button>()->previousButton = creditsButton->GetComponent<Button>();
-    exitButton->GetComponent<Button>()->nextButton = newGameButton->GetComponent<Button>();
+    auto mainMenu = GameObject::Instantiate("MainMenu", mainMenuScene)->AddComponent<MainMenu>();
+    auto newGameButton = mainMenu->AddButton("NewGameButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "New Game", 32);
+    auto loadGameButton = mainMenu->AddButton("LoadGameButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Load Game", 32);
+    auto optionsButton = mainMenu->AddButton("OptionsButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
+    auto creditsButton = mainMenu->AddButton("CreditsButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Credits", 32);
+    auto exitButton = mainMenu->AddButton("ExitFromGameButton", 900, 200, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
+    auto pauseBackground = mainMenu->AddImage("Background", 0, 0, "UI/MainMenu.png");
+    newGameButton->previousButton = exitButton;
+    newGameButton->nextButton = loadGameButton;
+    loadGameButton->previousButton = newGameButton;
+    loadGameButton->nextButton = optionsButton;
+    optionsButton->previousButton = loadGameButton;
+    optionsButton->nextButton = creditsButton;
+    creditsButton->previousButton = optionsButton;
+    creditsButton->nextButton = exitButton;
+    exitButton->previousButton = creditsButton;
+    exitButton->nextButton = newGameButton;
 
     // Load Game Menu
     auto loadGameMenu = GameObject::Instantiate("LoadGameMenu", mainMenuScene)->AddComponent<LoadGameMenu>();

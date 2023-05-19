@@ -28,24 +28,22 @@ void Menu::ChangeActiveButton(glm::vec2 moveVector) {
     }
 }
 
-std::shared_ptr<GameObject> Menu::AddImage(std::string name, int x, int y, const std::string &path) {
-    std::shared_ptr<GameObject> image = GameObject::Instantiate(name, parent);
-    image->AddComponent<Image>()->LoadTexture(x, y, path);
+std::shared_ptr<Image> Menu::AddImage(std::string name, int x, int y, const std::string &path) {
+    auto image = GameObject::Instantiate(name, parent)->AddComponent<Image>();
+	image->LoadTexture(x, y, path);
     return image;
 }
 
-std::shared_ptr<GameObject> Menu::AddText(std::string name, std::string text, int x, int y, FT_UInt fontSize, glm::vec3 color, const std::string &path) {
-    std::shared_ptr<GameObject> _text = GameObject::Instantiate(name, parent);
-    _text->AddComponent<Text>();
-    _text->GetComponent<Text>()->LoadFont(text, x, y, fontSize, color, path);
+std::shared_ptr<Text> Menu::AddText(std::string name, std::string text, int x, int y, FT_UInt fontSize, glm::vec3 color, const std::string &path) {
+    auto _text = GameObject::Instantiate(name, parent)->AddComponent<Text>();
+    _text->LoadFont(text, x, y, fontSize, color, path);
     return _text;
 }
 
-std::shared_ptr<GameObject> Menu::AddButton(std::string name, int x, int y, const std::string &pathInactive, const std::string &pathActive,
+std::shared_ptr<Button> Menu::AddButton(std::string name, int x, int y, const std::string &pathInactive, const std::string &pathActive,
                      std::string text, FT_UInt fontSize, glm::vec3 color, const std::string &fontPath) {
-    std::shared_ptr<GameObject> button = GameObject::Instantiate(name, parent);
-    button->AddComponent<Button>();
-    button->GetComponent<Button>()->LoadTexture(x, y, pathInactive, pathActive);
-    button->GetComponent<Button>()->LoadFont(text, fontSize, color, fontPath);
+    auto button = GameObject::Instantiate(std::move(name), parent)->AddComponent<Button>();
+    button->LoadTexture(x, y, pathInactive, pathActive);
+    button->LoadFont(std::move(text), fontSize, color, fontPath);
     return button;
 }

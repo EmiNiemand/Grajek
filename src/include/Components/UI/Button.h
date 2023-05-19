@@ -43,6 +43,9 @@ public:
     void ChangeText(std::string newText);
     void ChangePosition(int newX, int newY);
 
+	int GetWidth();
+	int GetHeight();
+
     void Update() override;
 
     void Draw() override;

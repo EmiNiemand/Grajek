@@ -80,46 +80,69 @@ void Game::InitializeGame() const {
     ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
     ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
 
-
     // Set up pause menu
     auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
-    std::shared_ptr<GameObject> resumeButton = pause->AddButton("ResumeButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "Resume", 32);
-    std::shared_ptr<GameObject> optionsButton = pause->AddButton("OptionsButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    std::shared_ptr<GameObject> exitToMainMenuButton = pause->AddButton("ExitToMainMenuButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Main Menu", 32);
-    std::shared_ptr<GameObject> exitButton = pause->AddButton("ExitButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
-    std::shared_ptr<GameObject> pauseBackground = pause->AddImage("Background", 0, 0, "UI/pause.png");
-    resumeButton->GetComponent<Button>()->previousButton = exitButton->GetComponent<Button>();
-    resumeButton->GetComponent<Button>()->nextButton = optionsButton->GetComponent<Button>();
-    optionsButton->GetComponent<Button>()->previousButton = resumeButton->GetComponent<Button>();
-    optionsButton->GetComponent<Button>()->nextButton = exitToMainMenuButton->GetComponent<Button>();
-    exitToMainMenuButton->GetComponent<Button>()->previousButton = optionsButton->GetComponent<Button>();
-    exitToMainMenuButton->GetComponent<Button>()->nextButton = exitButton->GetComponent<Button>();
-    exitButton->GetComponent<Button>()->previousButton = exitToMainMenuButton->GetComponent<Button>();
-    exitButton->GetComponent<Button>()->nextButton = resumeButton->GetComponent<Button>();
-    pause->GetParent()->DisableSelfAndChildren();
+	{
+		std::vector<std::string> buttonNames = {
+				"Resume",
+				"Options",
+				"Main Menu",
+				"Exit"
+		};
+
+		int buttonOffset = -100;
+		int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
+
+		std::vector<std::shared_ptr<Button>> buttonBuffer;
+
+		for (int i = 0; i < buttonNames.size(); ++i) {
+			auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
+												 "UI/buttonInactive.png", "UI/buttonActive.png",
+												 buttonNames[i], 32);
+			optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
+			currentYPos += buttonOffset;
+
+			buttonBuffer.push_back(optionButton);
+		}
+
+		pause->AddImage("Background", 0, 0, "UI/pause.png");
+
+		for(int i=0; i<buttonNames.size(); i++) {
+			auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
+			auto nextIndex = i+1==buttonNames.size() ? 0:i+1;
+			buttonBuffer[i]->previousButton = buttonBuffer[prevIndex];
+			buttonBuffer[i]->nextButton = buttonBuffer[nextIndex];
+		}
+
+		pause->GetParent()->DisableSelfAndChildren();
+	}
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    std::shared_ptr<GameObject> backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-    std::shared_ptr<GameObject> musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-    std::shared_ptr<GameObject> previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-    std::shared_ptr<GameObject> nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-    std::shared_ptr<GameObject> optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
-    backToPauseMenu->GetComponent<Button>()->previousButton = shadowResolution->GetComponent<Button>();
-    backToPauseMenu->GetComponent<Button>()->nextButton = musicVolume->GetComponent<Button>();
-    musicVolume->GetComponent<Button>()->previousButton = backToPauseMenu->GetComponent<Button>();
-    musicVolume->GetComponent<Button>()->nextButton = windowResolution->GetComponent<Button>();
-    windowResolution->GetComponent<Button>()->previousButton = musicVolume->GetComponent<Button>();
-    windowResolution->GetComponent<Button>()->nextButton = windowFullScreen->GetComponent<Button>();
-    windowFullScreen->GetComponent<Button>()->previousButton = windowResolution->GetComponent<Button>();
-    windowFullScreen->GetComponent<Button>()->nextButton = shadowResolution->GetComponent<Button>();
-    shadowResolution->GetComponent<Button>()->previousButton = windowFullScreen->GetComponent<Button>();
-    shadowResolution->GetComponent<Button>()->nextButton = backToPauseMenu->GetComponent<Button>();
-    options->GetParent()->DisableSelfAndChildren();
+	{
+		auto backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
+		auto musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+		auto windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+		auto windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+		auto shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+		auto previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+		auto currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
+		auto nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+		auto optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
+
+		backToPauseMenu->previousButton = shadowResolution;
+		backToPauseMenu->nextButton = musicVolume;
+		musicVolume->previousButton = backToPauseMenu;
+		musicVolume->nextButton = windowResolution;
+		windowResolution->previousButton = musicVolume;
+		windowResolution->nextButton = windowFullScreen;
+		windowFullScreen->previousButton = windowResolution;
+		windowFullScreen->nextButton = shadowResolution;
+		shadowResolution->previousButton = windowFullScreen;
+		shadowResolution->nextButton = backToPauseMenu;
+
+    	options->GetParent()->DisableSelfAndChildren();
+	}
 
     // Set up shop menu
     Prefab::Instantiate<Shop>();

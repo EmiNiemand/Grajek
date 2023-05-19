@@ -2,6 +2,7 @@
 #include <utility>
 #include "Components/UI/Text.h"
 #include "EngineManagers/UIManager.h"
+#include "GloomEngine.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -125,14 +126,10 @@ void Text::Draw() {
         GLfloat w = ch.Size.x;
         GLfloat h = ch.Size.y;
         // Update VBO for each character
-        this->mesh->vertices[0].position.x = xpos/960-1;
-        this->mesh->vertices[0].position.y = (ypos+h)/540-1;
-        this->mesh->vertices[1].position.x = xpos/960-1;
-        this->mesh->vertices[1].position.y = ypos/540-1;
-        this->mesh->vertices[2].position.x = (xpos+w)/960-1;
-        this->mesh->vertices[2].position.y = (ypos+h)/540-1;
-        this->mesh->vertices[3].position.x = (xpos+w)/960-1;
-        this->mesh->vertices[3].position.y = ypos/540-1;
+        this->mesh->vertices[0].position = {xpos/960-1,	   (ypos+h)/540-1, 0};
+        this->mesh->vertices[1].position = {xpos/960-1,	   ypos/540-1, 0};
+        this->mesh->vertices[2].position = {(xpos+w)/960-1, (ypos+h)/540-1, 0};
+        this->mesh->vertices[3].position = {(xpos+w)/960-1, ypos/540-1, 0};
 
         // Render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
