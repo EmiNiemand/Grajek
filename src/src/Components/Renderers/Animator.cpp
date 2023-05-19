@@ -73,6 +73,7 @@ void Animator::LoadAnimation(const std::string& path)
 void Animator::SetAnimation(const std::string &name) {
     previousAnimation = currentAnimation;
     previousAnimationTime = currentTime;
+	speed = 1;
 
     currentAnimation = animations.at(Utilities::Hash(name));
 
@@ -138,7 +139,7 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
 
 
 void Animator::UpdateAnimation(float deltaTime) {
-    currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime;
+    currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime * speed;
     if (currentTime == 0) {
         currentTime = 0.001f;
     }

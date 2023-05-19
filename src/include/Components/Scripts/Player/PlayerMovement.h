@@ -15,7 +15,7 @@ private:
     std::shared_ptr<Rigidbody> rb;
     glm::vec2 moveVector = {};
     float speed = 0.0f;
-    float maxSpeed = 0.15f;
+    float maxSpeed = 0.2f;
     float smoothingParam = 0.5f;
     bool isMoving = false;
     float rotationAngle = 0.0f;

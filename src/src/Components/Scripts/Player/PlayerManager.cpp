@@ -85,10 +85,13 @@ void PlayerManager::Update() {
     ZoneScopedNC("Player manager", 0x800080);
 #endif
     PollInput();
+
+	//TODO: move this to a separate method
     float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
     if (rb) {
         if (velocity > 0.01 && previousVelocity <= 0.01) {
             animator->SetAnimation("AnimsNew/Walk.dae");
+			animator->speed = 3;
         }
         else if (velocity <= 0.01 && previousVelocity > 0.01){
             animator->SetAnimation("AnimsNew/Angry.dae");

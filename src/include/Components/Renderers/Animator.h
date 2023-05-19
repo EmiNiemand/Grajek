@@ -21,6 +21,7 @@ private:
     float blendingTimeInTicks = 0;
 
 public:
+	float speed = 1;
     float previousAnimationTime = 0;
     Animation previousAnimation;
     Animation currentAnimation;
