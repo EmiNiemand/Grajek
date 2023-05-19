@@ -4,7 +4,7 @@
 
 #include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/MusicPattern.h"
-#include "Components/Scripts/PlayerManager.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"

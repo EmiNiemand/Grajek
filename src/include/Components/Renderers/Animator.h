@@ -14,12 +14,13 @@
 class Animator : public Drawable {
 private:
     glm::mat4 finalBoneMatrices[BONE_NUMBER];
-    Animation currentAnimation;
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
 	bool isPlaying = false;
 
 public:
+    Animation currentAnimation;
+
     inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
     inline static std::unordered_map<int, Animation> animations;
 

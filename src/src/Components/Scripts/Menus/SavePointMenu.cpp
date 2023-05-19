@@ -1,9 +1,9 @@
-#include "Components/Scripts/SavePointMenu.h"
+#include "Components/Scripts/Menus/SavePointMenu.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/DataPersistanceManager.h"
-#include "Components/Scripts/PlayerManager.h"
-#include "Components/Scripts/SavePointTrigger.h"
+#include "Components/Scripts/Player/PlayerManager.h"
+#include "Components/Scripts/Menus/SavePointTrigger.h"
 #include <filesystem>
 
 SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
@@ -41,6 +41,9 @@ void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
 void SavePointMenu::OnClick() {
     if (!activeButton) return;
     std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "ProjectConfig";
+    path /= "Saves";
     DataPersistanceManager::GetInstance()->SaveGame(path.string(), activeButton->text);
     GloomEngine::GetInstance()->timeScale = 1;
     HideMenu();

@@ -4,7 +4,7 @@
 
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
-#include "MusicPattern.h"
+#include "Components/Scripts/MusicPattern.h"
 #include <set>
 
 class Instrument;

@@ -1,7 +1,7 @@
 #include "Components/Scripts/SessionStarter.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
-#include "Components/Scripts/PlayerManager.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 
 SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 

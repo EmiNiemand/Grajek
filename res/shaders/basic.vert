@@ -15,7 +15,7 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat4 lightSpaceMatrix = mat4(0.0f);
 
-const int MAX_BONES = 20;
+const int MAX_BONES = 15;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 

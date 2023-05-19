@@ -1,10 +1,10 @@
-#include "Components/Scripts/ShopMenu.h"
-#include "Components/Scripts/PlayerManager.h"
+#include "Components/Scripts/Menus/ShopMenu.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Button.h"
-#include "Components/Scripts/ShopTrigger.h"
+#include "Components/Scripts/Menus/ShopTrigger.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -43,12 +43,31 @@ void ShopMenu::Awake() {
     Component::Awake();
 }
 
+void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
+    activeButton->GetParent()->children.begin()->second->DisableSelfAndChildren();
+    if (moveVector.y == 1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->previousButton;
+        activeButton->isActive = true;
+    }
+    if (moveVector.y == -1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->nextButton;
+        activeButton->isActive = true;
+    }
+    activeButton->GetParent()->children.begin()->second->EnableSelfAndChildren();
+}
+
 bool ShopMenu::ShowMenu() {
     if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
     parent->EnableSelfAndChildren();
     if (!instruments.empty()) {
+        for (const auto & instrument : instruments) {
+            instrument->GetParent()->children.begin()->second->DisableSelfAndChildren();
+        }
         activeButton = instruments[0];
         activeButton->isActive = true;
+        activeButton->GetParent()->children.begin()->second->EnableSelfAndChildren();
     }
     return true;
 }

@@ -53,17 +53,17 @@ void Animator::LoadAnimation(const std::string& path)
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
 
+    const int hash = Utilities::Hash(path);
+
+    if (animations.contains(hash)) return;
+
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(newPath, aiProcess_LimitBoneWeights);
     assert(scene && scene->mRootNode);
     for (int i = 0; i < scene->mNumAnimations; i++){
         aiAnimation* animation = scene->mAnimations[i];
 
-        const int hash = Utilities::Hash(path);
-
-        if (!animations.contains(hash)) {
-            animations.insert({hash, Animation(path, (float)animation->mDuration, (int)animation->mTicksPerSecond)});
-        }
+        animations.insert({hash, Animation(path, (float)animation->mDuration, (int)animation->mTicksPerSecond)});
 
         animations.at(hash).ReadHierarchyData(animations.at(hash).rootNode, scene->mRootNode);
         animations.at(hash).ReadMissingBones(animation, model);

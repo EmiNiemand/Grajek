@@ -1,7 +1,7 @@
 //
 // Created by MasterKtos on 28.03.2023.
 //
-
+#ifdef DEBUG
 #ifndef GLOOMENGINE_DEBUGMANAGER_H
 #define GLOOMENGINE_DEBUGMANAGER_H
 #include <GloomEngine.h>
@@ -39,5 +39,5 @@ public:
     void Free() const;
 };
 
-
 #endif //GLOOMENGINE_DEBUGMANAGER_H
+#endif

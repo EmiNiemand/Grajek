@@ -8,7 +8,7 @@
 
 #include "Components/Component.h"
 #include "Interfaces/IDataPersistance.h"
-#include "MusicPattern.h"
+#include "Components/Scripts/MusicPattern.h"
 #include "glm/vec2.hpp"
 #include <set>
 
@@ -23,6 +23,7 @@ class OptionsMenu;
 class ShopMenu;
 class SavePointMenu;
 class Menu;
+class Animator;
 
 
 class PlayerManager : public Component, public IDataPersistance {
@@ -39,6 +40,7 @@ private:
     std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<ShopMenu> shopMenu;
     std::shared_ptr<SavePointMenu> savePointMenu;
+    std::shared_ptr<Animator> animator;
     glm::vec2 moveInput;
 
 public:

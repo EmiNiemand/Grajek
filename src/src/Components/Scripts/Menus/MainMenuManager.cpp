@@ -1,13 +1,13 @@
-#include "Components/Scripts/MainMenuManager.h"
+#include "Components/Scripts/Menus/MainMenuManager.h"
 #include "GloomEngine.h"
 #include "Components/UI/Menu.h"
 #include "EngineManagers/HIDManager.h"
-#include "Components/Scripts/PlayerInput.h"
+#include "Components/Scripts/Player/PlayerInput.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "EngineManagers/OptionsManager.h"
 
 #ifdef DEBUG
-    #include <tracy/Tracy.hpp>
+    #include "tracy/Tracy.hpp"
 #endif
 
 MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}

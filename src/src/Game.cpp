@@ -10,10 +10,10 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "Components/Scripts/PlayerManager.h"
-#include "Components/Scripts/PlayerMovement.h"
-#include "Components/Scripts/PauseMenu.h"
-#include "Components/Scripts/OptionsMenu.h"
+#include "Components/Scripts/Player/PlayerManager.h"
+#include "Components/Scripts/Player/PlayerMovement.h"
+#include "Components/Scripts/Menus/PauseMenu.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
@@ -21,9 +21,9 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Audio/AudioSource.h"
-#include "Components/Scripts/SavePointMenu.h"
+#include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/Animations/GameObjectAnimator.h"
-#include "Components/Scripts/MainMenu.h"
+#include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
@@ -48,13 +48,21 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 20, 20);
+    camera->cameraOffset = glm::vec3(0, 30, 30);
 
     // Set up cubemap
     // --------------
     auto sky = GameObject::Instantiate("CubeMap", activeScene);
     auto skyCubeMap = sky->AddComponent<CubeMap>();
     skyCubeMap->LoadTextures("skybox/");
+
+    // Load all animations
+    // -------------
+    Animator::LoadAnimation("AnimsNew/Walk.dae");
+    Animator::LoadAnimation("AnimsNew/Happy.dae");
+    Animator::LoadAnimation("AnimsNew/Angry.dae");
+    Animator::LoadAnimation("AnimsNew/Idle1.dae");
+    Animator::LoadAnimation("AnimsNew/Idle3.dae");
 
     // Set up player
     // -------------
@@ -74,11 +82,12 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    // Set up UI
+    // Set up player UI
     // ---------
-    auto ui = GameObject::Instantiate("ui", activeScene)->AddComponent<Menu>();
-    ui->AddImage("Reksio", 50, 0, "UI/piesek.png");
-    ui->AddImage("Mruczek", 1742, 0, "UI/kotek.png");
+    auto playerUI = GameObject::Instantiate("PlayerUI", activeScene)->AddComponent<Menu>();
+    playerUI->AddText("Money", "Money: 0", 140, 1040, 22);
+    playerUI->AddText("Reputation", "Rep: 0", 140, 1000, 22);
+    playerUI->AddImage("UI", 0, 952, "UI/Player.png");
 
     // Set up pause menu
     auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
@@ -179,7 +188,12 @@ void Game::InitializeGame() const {
 
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
     savePoint1->transform->SetLocalPosition({-20, 0, 10});
-    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+    savePoint1->transform->SetLocalScale({5.0, 5.0, 5.0});
+
+    auto brama = GameObject::Instantiate("Brama", activeScene);
+    brama->AddComponent<Renderer>()->LoadModel("Brama.obj");
+    brama->transform->SetLocalPosition(glm::vec3(0.0, 0.0, 0.0));
+    brama->transform->SetLocalScale(glm::vec3(0.5f));
 
     // Save Point Menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
@@ -198,136 +212,123 @@ void Game::InitializeGame() const {
     GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
     savePointMenu->GetParent()->DisableSelfAndChildren();
 
-//    Animator::LoadAnimation("Animacje/Idle.dae");
-//    Animator::LoadAnimation("Animacje/Walk.dae");
-//    Animator::LoadAnimation("testLessBones/animations/Walk.dae");
-//    Animator::LoadAnimation("testLessBones/animations/Idle.dae");
 
-    Animator::LoadAnimation("AnimsNew/Walk.dae");
-    Animator::LoadAnimation("AnimsNew/Happy.dae");
-    Animator::LoadAnimation("AnimsNew/Angry.dae");
-    Animator::LoadAnimation("AnimsNew/Idle1.dae");
-    Animator::LoadAnimation("AnimsNew/Idle3.dae");
-
-    Animator::LoadAnimation("Animacje/BasicChlop.dae");
+    int x = 0;
+    int y = 0;
 
     // Set up animated model
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 50; ++i) {
         std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
         auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
         animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
-        animatedDood->transform->SetLocalPosition({-20 + 2*i, 1, -10});
-        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
-        animatedDood->transform->SetLocalScale({1, 1, 1});
+        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
+        if (i % 25 == 0) {
+            x = 0;
+            y++;
+        }
+        animatedDood->transform->SetLocalPosition({-12 + x, 0, -10 + 2 * y});
+        animatedDood->transform->SetLocalRotation({0, 0, 0});
+        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+        x++;
+        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f},
+                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -30.0f), 0.1f}
+        }, true);
     }
 
-    // SCENE BUILDINGS
-	std::map<std::string, int> buildingSizes = {
-			{"jazz1", 6},
-			{"jazz2", 7},
-			{"jazz3", 10},
-			{"jazz4", 6},
-			{"kamienica1", 6},
-			{"kamienica2", 10},
-			{"kamienica3", 6},
-			{"moduê1", 6},
-			{"moduê2", 6},
-			{"moduê3", 6},
-			{"moduê4", 6},
-			{"moduê5", 10},
-			{"moduê6", 6}
-	};
-	float currentXPos = -25;
-	float currentYPos = -30;
-
-	std::string squareBuildings[] = {
-			"kamienica1", "kamienica2", "kamienica3",
-			"moduê1", "moduê2"
-	};
-
-	std::vector<std::string> buildingPaths = {
-			squareBuildings[0], squareBuildings[2],
-			squareBuildings[0], squareBuildings[4], squareBuildings[1],
-			squareBuildings[3], squareBuildings[2],
-	};
-
-	// LEFT CORNER
-	{
-		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-		test->transform->SetLocalPosition({currentXPos - 9.5, 0, currentYPos+4});
-		test->transform->SetLocalRotation({0, 90, 0});
-		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
-		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
-	}
-
-	// FRONT FACE
-	for(int i=0; i < buildingPaths.size(); i++) {
-		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
-
-		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-		test->transform->SetLocalPosition({currentXPos, 0, currentYPos});
-		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-
-		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
-	}
-
-	// RIGHT CORNER
-	{
-		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-		test->transform->SetLocalPosition({currentXPos + 5, 0, currentYPos});
-		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
-		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
-	}
-
-	currentYPos = -20;
-
-	// LEFT FACE
-	for(int i=0; i < buildingPaths.size(); i++) {
-		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-
-		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-		test->transform->SetLocalPosition({-35, 0, currentYPos});
-		test->transform->SetLocalRotation({0, 90, 0});
-		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-
-		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-	}
-
-	currentYPos = -20;
-
-	// RIGHT FACE
-	for(int i=0; i < buildingPaths.size(); i++) {
-		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-
-		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-		test->transform->SetLocalPosition({currentXPos+10, 0, currentYPos});
-		test->transform->SetLocalRotation({0, -90, 0});
-		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-
-		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-	}
-
-    Animator::LoadAnimation("Animacje/BasicChlop.dae");
-
-	// Set up animated model
-    for (int i = 0; i < 10; ++i) {
-        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Angry.dae");
-        animatedDood->transform->SetLocalPosition({-20 + 2*i, 0, -10});
-        animatedDood->transform->SetLocalRotation({0, 90*i, 0});
-        animatedDood->transform->SetLocalScale({1, 1, 1});
-    }
+//    // SCENE BUILDINGS
+//	std::map<std::string, int> buildingSizes = {
+//			{"jazz1", 6},
+//			{"jazz2", 7},
+//			{"jazz3", 10},
+//			{"jazz4", 6},
+//			{"kamienica1", 6},
+//			{"kamienica2", 10},
+//			{"kamienica3", 6},
+//			{"moduê1", 6},
+//			{"moduê2", 6},
+//			{"moduê3", 6},
+//			{"moduê4", 6},
+//			{"moduê5", 10},
+//			{"moduê6", 6}
+//	};
+//	float currentXPos = -25;
+//	float currentYPos = -30;
+//
+//	std::string squareBuildings[] = {
+//			"kamienica1", "kamienica2", "kamienica3",
+//			"moduê1", "moduê2"
+//	};
+//
+//	std::vector<std::string> buildingPaths = {
+//			squareBuildings[0], squareBuildings[2],
+//			squareBuildings[0], squareBuildings[4], squareBuildings[1],
+//			squareBuildings[3], squareBuildings[2],
+//	};
+//
+//	// LEFT CORNER
+//	{
+//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+//		test->transform->SetLocalPosition({currentXPos - 9.5, 0, currentYPos+4});
+//		test->transform->SetLocalRotation({0, 90, 0});
+//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
+//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
+//	}
+//
+//	// FRONT FACE
+//	for(int i=0; i < buildingPaths.size(); i++) {
+//		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+//
+//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+//		test->transform->SetLocalPosition({currentXPos, 0, currentYPos});
+//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+//
+//		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
+//	}
+//
+//	// RIGHT CORNER
+//	{
+//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+//		test->transform->SetLocalPosition({currentXPos + 5, 0, currentYPos});
+//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
+//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
+//	}
+//
+//	currentYPos = -20;
+//
+//	// LEFT FACE
+//	for(int i=0; i < buildingPaths.size(); i++) {
+//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+//
+//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+//		test->transform->SetLocalPosition({-35, 0, currentYPos});
+//		test->transform->SetLocalRotation({0, 90, 0});
+//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+//
+//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+//	}
+//
+//	currentYPos = -20;
+//
+//	// RIGHT FACE
+//	for(int i=0; i < buildingPaths.size(); i++) {
+//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+//
+//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
+//		test->transform->SetLocalPosition({currentXPos+10, 0, currentYPos});
+//		test->transform->SetLocalRotation({0, -90, 0});
+//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
+//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
+//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
+//
+//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
+//	}
 
     //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);

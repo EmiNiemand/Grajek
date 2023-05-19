@@ -81,7 +81,6 @@ public:
     bool GetEnabled() const;
 
     void RecalculateGlobalRotation();
-
 private:
     void ForceUpdateSelfAndChildren();
 
