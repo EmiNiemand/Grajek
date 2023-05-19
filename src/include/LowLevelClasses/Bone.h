@@ -6,6 +6,7 @@
 #define GLOOMENGINE_BONE_H
 
 #include "Other/GLMHelper.h"
+#include "LowLevelClasses/Animation.h"
 
 #include <glm/gtx/quaternion.hpp>
 #include <vector>
@@ -39,7 +40,7 @@ public:
 
     virtual ~Bone();
 
-    void Update(float animationTime);
+    void Update(float animationTime, float previousAnimationTime, float blendingTime, const Animation& previousAnimation);
 
     [[nodiscard]] const glm::mat4& GetLocalTransform() const;
     [[nodiscard]] const std::string& GetBoneName() const;
@@ -54,8 +55,8 @@ public:
 private:
     float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
 
-    glm::vec3 InterpolatePosition(float animationTime);
-    glm::mat4 InterpolateRotation(float animationTime);
+    glm::vec3 InterpolatePosition(float animationTime, float previousAnimationTime, float blendingTime, Animation& previousAnimation);
+    glm::mat4 InterpolateRotation(float animationTime, float previousAnimationTime, float blendingTime, Animation& previousAnimation);
 };
 
 

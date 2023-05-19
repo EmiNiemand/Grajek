@@ -22,6 +22,7 @@
 #include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
@@ -38,6 +39,7 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 
 void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
+    rb = parent->GetComponent<Rigidbody>();
     equipment = parent->AddComponent<PlayerEquipment>();
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animator = animatorObject->AddComponent<Animator>();
@@ -83,6 +85,16 @@ void PlayerManager::Update() {
     ZoneScopedNC("Player manager", 0x800080);
 #endif
     PollInput();
+    float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
+    if (rb) {
+        if (velocity > 0.01 && previousVelocity <= 0.01) {
+            animator->SetAnimation("AnimsNew/Walk.dae");
+        }
+        else if (velocity <= 0.01 && previousVelocity > 0.01){
+            animator->SetAnimation("AnimsNew/Idle1.dae");
+        }
+    }
+    previousVelocity = velocity;
     Component::Update();
 }
 
@@ -101,13 +113,8 @@ std::set<InstrumentName> PlayerManager::GetInstruments() {
 
 #pragma region Movement Events
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-    if(moveVector != glm::vec2(0)) {
+    if(moveVector != glm::vec2(0))
         moveVector = glm::normalize(moveVector);
-        animator->SetAnimation("AnimsNew/Walk.dae");
-    }
-    else {
-        animator->SetAnimation("AnimsNew/Idle1.dae");
-    }
 
 	movement->Move(moveVector);
 }
