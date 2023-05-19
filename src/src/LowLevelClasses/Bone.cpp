@@ -79,7 +79,9 @@ int Bone::GetRotationIndex(float animationTime) const {
 
 float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
-    return animationTime / (nextTimeStamp + lastTimeStamp);
+    if (lastTimeStamp + nextTimeStamp == 0)
+        return abs(animationTime / 0.0001f);
+    return abs(animationTime / (nextTimeStamp + lastTimeStamp));
 }
 
 glm::vec3 Bone::InterpolatePosition(float animationTime, float previousAnimationTime, float blendingTime, Animation& previousAnimation)
@@ -87,16 +89,17 @@ glm::vec3 Bone::InterpolatePosition(float animationTime, float previousAnimation
     if (numPositions == 1)
         return positions[0].position;
 
-    const int p0Index = GetPositionIndex(animationTime);
-    if (animationTime < 0) {
-        const float scaleFactor = GetScaleFactor(blendingTime, positions[p0Index].timeStamp, animationTime);
+    int p0Index = GetPositionIndex(animationTime);
+    if (p0Index == -1) return glm::vec3(1);
+    if (animationTime <= 0) {
+        float scaleFactor = GetScaleFactor(blendingTime, positions[p0Index].timeStamp, animationTime);
         const glm::vec3 finalPosition = glm::mix(previousAnimation.FindBone(name)->positions[GetPositionIndex(previousAnimationTime)].position,
                                                  positions[p0Index].position, 1 - scaleFactor);
         return finalPosition;
     }
-    const int p1Index = p0Index + 1;
-    const float scaleFactor = GetScaleFactor(positions[p0Index].timeStamp, positions[p1Index].timeStamp, animationTime);
-    const glm::vec3 finalPosition = glm::mix(positions[p0Index].position, positions[p1Index].position, scaleFactor);
+    int p1Index = p0Index + 1;
+    float scaleFactor = GetScaleFactor(positions[p0Index].timeStamp, positions[p1Index].timeStamp, animationTime);
+    glm::vec3 finalPosition = glm::mix(positions[p0Index].position, positions[p1Index].position, scaleFactor);
     return finalPosition;
 }
 
@@ -108,18 +111,18 @@ glm::mat4 Bone::InterpolateRotation(float animationTime, float previousAnimation
         return glm::toMat4(rotation);
     }
 
-    const int p0Index = GetRotationIndex(animationTime);
-    if (animationTime < 0) {
-        const float scaleFactor = GetScaleFactor(blendingTime, rotations[p0Index].timeStamp, animationTime);
-        spdlog::info(scaleFactor);
+    int p0Index = GetRotationIndex(animationTime);
+    if (p0Index == -1) return glm::mat4(1);
+    if (animationTime <= 0) {
+        float scaleFactor = GetScaleFactor(blendingTime, rotations[p0Index].timeStamp, animationTime);
         glm::quat finalRotation = glm::slerp(previousAnimation.FindBone(name)->rotations[GetPositionIndex(previousAnimationTime)].orientation,
                                              rotations[p0Index].orientation, 1 - scaleFactor);
         finalRotation = glm::normalize(finalRotation);
 
         return glm::toMat4(finalRotation);
     }
-    const int p1Index = p0Index + 1;
-    const float scaleFactor = GetScaleFactor(rotations[p0Index].timeStamp, rotations[p1Index].timeStamp, animationTime);
+    int p1Index = p0Index + 1;
+    float scaleFactor = GetScaleFactor(rotations[p0Index].timeStamp, rotations[p1Index].timeStamp, animationTime);
     glm::quat finalRotation = glm::slerp(rotations[p0Index].orientation, rotations[p1Index].orientation, scaleFactor);
     finalRotation = glm::normalize(finalRotation);
 
