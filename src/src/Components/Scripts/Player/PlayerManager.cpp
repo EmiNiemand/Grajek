@@ -44,7 +44,7 @@ void PlayerManager::Awake() {
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animator = animatorObject->AddComponent<Animator>();
     // TODO: Change model later
-    animator->LoadAnimationModel("AnimsNew/Walk.dae");
+    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle1.dae");
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     equipment->Setup(0, 0);
