@@ -91,7 +91,7 @@ void PlayerManager::Update() {
 			animator->speed = 3;
         }
         else if (velocity <= 0.01 && previousVelocity > 0.01){
-            animator->SetAnimation("AnimsNew/Idle1.dae");
+            animator->SetAnimation("AnimsNew/Idle3.dae");
         }
     }
     previousVelocity = velocity;
