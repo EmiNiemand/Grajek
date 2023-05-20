@@ -93,9 +93,13 @@ glm::vec3 Bone::InterpolatePosition(float animationTime, float previousAnimation
     if (p0Index == -1) return glm::vec3(1);
     if (animationTime <= 0) {
         float scaleFactor = GetScaleFactor(blendingTime, positions[p0Index].timeStamp, animationTime);
-        const glm::vec3 finalPosition = glm::mix(previousAnimation.FindBone(name)->positions[GetPositionIndex(previousAnimationTime)].position,
-                                                 positions[p0Index].position, 1 - scaleFactor);
-        return finalPosition;
+        auto bone = previousAnimation.FindBone(name);
+        if (bone) {
+            const glm::vec3 finalPosition = glm::mix(bone ->positions[GetPositionIndex(previousAnimationTime)].position,
+                                                     positions[p0Index].position, 1 - scaleFactor);
+            return finalPosition;
+        }
+        return glm::vec3(1);
     }
     int p1Index = p0Index + 1;
     float scaleFactor = GetScaleFactor(positions[p0Index].timeStamp, positions[p1Index].timeStamp, animationTime);
@@ -115,11 +119,14 @@ glm::mat4 Bone::InterpolateRotation(float animationTime, float previousAnimation
     if (p0Index == -1) return glm::mat4(1);
     if (animationTime <= 0) {
         float scaleFactor = GetScaleFactor(blendingTime, rotations[p0Index].timeStamp, animationTime);
-        glm::quat finalRotation = glm::slerp(previousAnimation.FindBone(name)->rotations[GetPositionIndex(previousAnimationTime)].orientation,
-                                             rotations[p0Index].orientation, 1 - scaleFactor);
-        finalRotation = glm::normalize(finalRotation);
-
-        return glm::toMat4(finalRotation);
+        auto bone = previousAnimation.FindBone(name);
+        if (bone) {
+            glm::quat finalRotation = glm::slerp(bone->rotations[GetPositionIndex(previousAnimationTime)].orientation,
+                                                 rotations[p0Index].orientation, 1 - scaleFactor);
+            finalRotation = glm::normalize(finalRotation);
+            return glm::toMat4(finalRotation);
+        }
+        return glm::mat4(1);
     }
     int p1Index = p0Index + 1;
     float scaleFactor = GetScaleFactor(rotations[p0Index].timeStamp, rotations[p1Index].timeStamp, animationTime);
