@@ -154,19 +154,13 @@ void main()
     float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
 
     if (intensity > 0.9) {
-        intensity = 0.8;
-    }
-    else if (intensity > 0.7) {
-        intensity = 0.65;
+        intensity = 0.5;
     }
     else if (intensity > 0.5) {
         intensity = 0.50;
     }
-    else if (intensity > 0.3) {
-        intensity = 0.35;
-    }
-    else if (intensity > 0.01) {
-        intensity = 0.20;
+    else if (intensity > 0.2) {
+        intensity = 0.2;
     }
     else {
         intensity = 0.0;
@@ -179,7 +173,7 @@ void main()
     shadowResult = shadowResult + shadowResult * celColor;
 
     //     rim light
-    float rimLight = pow(max(0, (1 - dot(normalize(-directionalLights[0].direction), N))), 1.5);
+    float rimLight = pow(max(0, (1 - dot(normalize(-directionalLights[0].direction), N))), 0.5);
 
     result = result + result * rimLight;
     shadowResult = shadowResult + shadowResult * rimLight;
