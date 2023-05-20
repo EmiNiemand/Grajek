@@ -66,10 +66,7 @@ void PlayerManager::Awake() {
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Load game
-    std::filesystem::path path = std::filesystem::current_path();
-    path /= "res";
-    path /= "ProjectConfig";
-    path /= "Saves";
+    std::filesystem::path path = std::filesystem::current_path() / "res" / "ProjectConfig" / "Saves";
 
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), SceneManager::GetInstance()->file);
 
