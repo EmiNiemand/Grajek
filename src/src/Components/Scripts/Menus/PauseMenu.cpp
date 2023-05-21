@@ -25,7 +25,7 @@ void PauseMenu::OnClick() {
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
         HideMenu();
         GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
-    } else if (activeButton->GetParent()->GetName() == "ExitToMainMenuButton") {
+    } else if (activeButton->GetParent()->GetName() == "Main MenuButton") {
         SceneManager::GetInstance()->LoadScene("MainMenu");
     } else if (activeButton->GetParent()->GetName() == "ExitButton") {
         gameShouldExit = true;
