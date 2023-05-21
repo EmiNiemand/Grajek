@@ -8,7 +8,7 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "EngineManagers/CollisionManager.h"
+#include "EngineManagers/AIManager.h"
 #include "Components/Component.h"
 #include <vector>
 #include <unordered_map>
@@ -18,8 +18,10 @@ class Rigidbody;
 
 class CharacterMovement : public Component {
     AI_LOGICSTATE logicState = WalkingOnPath;
-    std::shared_ptr<Rigidbody> rigidbody;
-    std::vector<glm::vec3>* path;
+    std::shared_ptr<Rigidbody> rigidbody = nullptr;
+    std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
+    std::vector<glm::vec3> path;
+    int pathIterator = -1;
     glm::vec3 newPosition {};
     glm::vec3 endTarget {};
     glm::vec3 previousTarget {};
@@ -30,20 +32,21 @@ class CharacterMovement : public Component {
     float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
 
+    static const glm::vec3 GetNewSpawnPoint();
+    void SetNewRandomEndPoint();
+    void CalculateNewPath();
+
 public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
-    void Start() override;
     void FixedUpdate() override;
     void AIUpdate() override;
     void OnCreate() override;
     void OnDestroy() override;
     void Free();
 
-    void SetNewRandomPoint();
     void SetNewPath(AI_LOGICSTATE state);
-    void CalculateNewPath();
 
 };
 

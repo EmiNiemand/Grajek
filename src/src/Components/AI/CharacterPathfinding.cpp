@@ -2,12 +2,13 @@
 // Created by Adrian on 13.05.2023.
 //
 
+#include <algorithm>
 #include "Components/AI/CharacterPathfinding.h"
-#include "GameObjectsAndPrefabs/GameObject.h"
-#include "Components/PhysicsAndColliders/Rigidbody.h"
-#include "Components/PhysicsAndColliders/BoxCollider.h"
 
-CharacterPathfinding::CharacterPathfinding() = default;
+CharacterPathfinding::CharacterPathfinding()  {
+    aiGrid = AIManager::GetInstance()->aiGrid;
+    aiGridSize = AIManager::GetInstance()->aiGridSize;
+}
 
 CharacterPathfinding::~CharacterPathfinding() = default;
 
@@ -19,32 +20,18 @@ inline const glm::ivec2 CharacterPathfinding::LocalToGrid(const glm::vec2& posit
     return {position.x / aiGridSize + AI_GRID_SIZE / 2.0f, position.y / aiGridSize + AI_GRID_SIZE / 2.0f};
 }
 
-std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
-    const glm::ivec2 startGridPos = LocalToGrid(currentPosition);
-    const glm::ivec2 endGridPos = LocalToGrid(endTarget);
-    glm::ivec2 gridIndex;
+const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
+    startGridPos = LocalToGrid(currentPosition);
+    endGridPos = LocalToGrid(endTarget);
 
-    std::unordered_map<int, Node*> openList;
-    std::unordered_map<int, Node*> closedList;
-
-    Node *currentNode = new Node();
+    currentNode = std::make_shared<Node>();
     currentNode->pos = startGridPos;
     currentNode->gCost = 0;
     currentNode->CalculateHCost(endGridPos);
 
-    Node *endNode = new Node();
-    endNode->pos = endGridPos;
-    endNode->fCost = 100000;
-
-    Node *node = nullptr;
-
     openList.insert({startGridPos.x * 100 + startGridPos.y, currentNode});
 
     while (!openList.empty()) {
-        openList.erase(currentNode->pos.x * 100 + currentNode->pos.y);
-
-        closedList.insert({currentNode->pos.x * 100 + currentNode->pos.y, currentNode});
-
         if (currentNode->pos == endGridPos)
             break;
 
@@ -69,7 +56,7 @@ std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& curr
                         node->CalculateFCost();
                     }
                 } else {
-                    node = new Node();
+                    node = std::make_shared<Node>();
                     node->parent = currentNode;
                     node->pos = gridIndex;
                     node->CalculateHCost(endGridPos);
@@ -80,38 +67,32 @@ std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& curr
             }
         }
 
-        currentNode = endNode;
+        maxfCost = FLT_MAX;
 
         for (const auto &n: openList) {
-            if (n.second->fCost < currentNode->fCost)
+            if (n.second->fCost < maxfCost) {
                 currentNode = n.second;
+                maxfCost = n.second->fCost;
+            }
         }
+
+        openList.erase(currentNode->pos.x * 100 + currentNode->pos.y);
+
+        closedList.insert({currentNode->pos.x * 100 + currentNode->pos.y, currentNode});
     }
 
     std::vector<glm::vec3> squares;
 
-    while (currentNode != nullptr) {
+    while (true) {
         squares.push_back(GridToLocal(currentNode->pos));
         currentNode = currentNode->parent;
+        if (currentNode->parent == nullptr)
+            break;
     }
-
-    std::reverse(squares.begin(), squares.end());
-
-    auto* path = new std::vector<glm::vec3>(squares.size());
-
-    std::move(squares.begin(), squares.end(), path->begin());
-
-    for (auto &n: openList)
-        delete n.second;
 
     openList.clear();
 
-    for (auto &n: closedList)
-        delete n.second;
-
     closedList.clear();
 
-    delete endNode;
-
-    return path;
+    return squares;
 }

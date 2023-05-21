@@ -30,7 +30,8 @@ std::shared_ptr<GameObject> RockDrums::Create() {
 
     auto characterIndicator = character->AddComponent<Indicator>();
     characterIndicator->SetTexturePath("UI/Wykrzyknik.png");
-    auto characterMovement = character->AddComponent<CharacterMovement>();
+
+    character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };

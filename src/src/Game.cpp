@@ -241,7 +241,7 @@ void Game::InitializeGame() const {
     animator->SetAnimation("AnimsNew/Walk.dae");
     animatorObject->transform->SetLocalRotation({0, 90, 0});
     sklepikarz->AddComponent<GameObjectAnimator>()->Setup(sklepikarz->transform, {
-            {AnimatedProperty::Position, glm::vec3(8.0f, 0.0f, 0.0f), 5.0f}
+            {AnimatedProperty::Position, glm::vec3(8.0f, 2.0f, 0.0f), 5.0f}
     }, false);
 
 //    // SCENE BUILDINGS

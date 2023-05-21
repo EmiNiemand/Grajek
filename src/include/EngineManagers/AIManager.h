@@ -12,8 +12,11 @@
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterPathfinding.h"
 
+constexpr int AI_GRID_SIZE = 100;
+
 class GloomEngine;
 class CharacterLogic;
+class CharacterPathfinding;
 class BoxCollider;
 
 class AIManager {
@@ -35,6 +38,8 @@ public:
     //std::vector<std::shared_ptr<GameObject>> buildings;
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> currentCharactersLogics;
     std::shared_ptr<CharacterPathfinding> pathfinding;
+    const float aiGridSize = 1.0f;
+    bool aiGrid[AI_GRID_SIZE][AI_GRID_SIZE] = {};
 
     AIManager(AIManager &other) = delete;
     void operator=(const AIManager&) = delete;

@@ -10,7 +10,6 @@
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/RockDrums.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/JazzClap.h"
-#include "spdlog/spdlog.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -44,11 +43,11 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
                 currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                 break;
             case 1:
-                ch = Prefab::Instantiate<Default>();
+                ch = Prefab::Instantiate<JazzClap>();
                 currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                 break;
-            case 2:
-                ch = Prefab::Instantiate<JazzClap>();
+            default:
+                ch = Prefab::Instantiate<Default>();
                 currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                 break;
 
@@ -63,7 +62,6 @@ void AIManager::Free() {
     characterSpawner.request_stop();
     characterSpawner.join();
     currentCharactersLogics.clear();
-    pathfinding = nullptr;
 }
 
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
@@ -111,7 +109,7 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
 
     while(!token.stop_requested()) {
         if (charactersAmount < maxCharacters) {
-            random = RandomnessManager::GetInstance()->GetInt(0, 0);
+            random = RandomnessManager::GetInstance()->GetInt(0, 2);
 
             mutex.lock();
 
@@ -121,11 +119,11 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
                     currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
                 case 1:
-                    ch = Prefab::Instantiate<Default>();
+                    ch = Prefab::Instantiate<JazzClap>();
                     currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
-                case 2:
-                    ch = Prefab::Instantiate<JazzClap>();
+                default:
+                    ch = Prefab::Instantiate<Default>();
                     currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
 
@@ -183,10 +181,10 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
     auto zVector = glm::vec2(zVec.x, zVec.z);
 
     glm::ivec2 points[4] = {
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / pathfinding->aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / pathfinding->aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / pathfinding->aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / pathfinding->aiGridSize)
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiGridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiGridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiGridSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiGridSize)
     };
 
 
@@ -196,7 +194,7 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
         int x = points[0].x;
         int y = points[0].y;
 
-        AIManager::GetInstance()->pathfinding->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+        AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         return;
     }
 
@@ -212,9 +210,11 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX - 1; x <= maxX + 1; ++x) {
-        for (int y = minY - 1; y <= maxY + 1; ++y) {
-            AIManager::GetInstance()->pathfinding->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+    const int size = (int)aiGridSize;
+
+    for (int x = minX - size; x <= maxX + size; ++x) {
+        for (int y = minY - size; y <= maxY + size; ++y) {
+            AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         }
     }
 }

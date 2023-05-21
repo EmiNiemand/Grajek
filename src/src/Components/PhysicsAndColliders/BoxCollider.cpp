@@ -1,5 +1,4 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "EngineManagers/CollisionManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
@@ -38,7 +37,7 @@ void BoxCollider::FixedUpdate() {
 
 void BoxCollider::OnDestroy() {
     CollisionManager::GetInstance()->RemoveBoxCollider(id);
-    AIManager::GetInstance()->RemoveBoxCollider(std::dynamic_pointer_cast<BoxCollider>(shared_from_this()));
+//    AIManager::GetInstance()->RemoveBoxCollider(std::dynamic_pointer_cast<BoxCollider>(shared_from_this()));
 #ifdef DEBUG
     CollisionManager::GetInstance()->OnBoxCollidersChange();
 #endif
@@ -355,18 +354,7 @@ void BoxCollider::SetGridPoints() {
     SetCollidersGridPoints(colGridPoints);
 
     if (!isTrigger && !parent->GetComponent<Rigidbody>() && std::strcmp(parent->GetName().c_str(), "Ground") != 0) {
-        const float aiGridSize = AIManager::GetInstance()->pathfinding->aiGridSize;
-
-//        glm::ivec2 aiGridPoints[4] = {
-//                glm::ivec2(std::copysign(1.0f, point1.x) * std::ceil(std::fabs(point1.x)),
-//                           std::copysign(1.0f, point1.y) * std::ceil(std::fabs(point1.y))),
-//                glm::ivec2(std::copysign(1.0f, point2.x) * std::ceil(std::fabs(point2.x)),
-//                           std::copysign(1.0f, point2.y) * std::ceil(std::fabs(point2.y))),
-//                glm::ivec2(std::copysign(1.0f, point3.x) * std::ceil(std::fabs(point3.x)),
-//                           std::copysign(1.0f, point3.y) * std::ceil(std::fabs(point3.y))),
-//                glm::ivec2(std::copysign(1.0f, point4.x) * std::ceil(std::fabs(point4.x)),
-//                           std::copysign(1.0f, point4.y) * std::ceil(std::fabs(point4.y))),
-//        };
+        const float aiGridSize = AIManager::GetInstance()->aiGridSize;
 
         glm::ivec2 aiGridPoints[4] = {
                 glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiGridSize),
@@ -374,13 +362,6 @@ void BoxCollider::SetGridPoints() {
                 glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiGridSize),
                 glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiGridSize)
         };
-
-//        glm::ivec2 aiGridPoints[4] = {
-//                glm::ivec2(point1),
-//                glm::ivec2(point2),
-//                glm::ivec2(point3),
-//                glm::ivec2(point4)
-//        };
 
         SetAIGridPoints(aiGridPoints);
     }
@@ -427,13 +408,15 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
     ZoneScopedNC("SAIGP", 0x0339fc);
 #endif
 
+    const int aiGridSize = (int)AIManager::GetInstance()->aiGridSize;
+
     if (points[0] == points[1] &&
         points[1] == points[2] &&
         points[2] == points[3]) {
         int x = points[0].x;
         int y = points[0].y;
 
-        AIManager::GetInstance()->pathfinding->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+        AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         return;
     }
 
@@ -449,9 +432,9 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX - 1; x <= maxX + 1; ++x) {
-        for (int y = minY - 1; y <= maxY + 1; ++y) {
-            AIManager::GetInstance()->pathfinding->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+    for (int x = minX - aiGridSize; x <= maxX + aiGridSize; ++x) {
+        for (int y = minY - aiGridSize; y <= maxY + aiGridSize; ++y) {
+            AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         }
     }
 }
