@@ -104,7 +104,9 @@ bool GloomEngine::MainLoop() {
         }
         ClearDestroyGameObjectBuffer();
 
-        for (const auto& component: components) {
+        componentsCopy = components;
+
+        for (const auto& component: componentsCopy) {
             if (component.second->callOnAwake) {
                 component.second->Awake();
                 component.second->GetParent()->UpdateSelfAndChildren();
@@ -191,8 +193,7 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Component update", 0xFF69B4);
 #endif
-        auto comps = components;
-        for (const auto& component: comps) {
+        for (const auto& component: componentsCopy) {
             if (component.second->enabled) {
                 component.second->Update();
             }
@@ -272,8 +273,7 @@ void GloomEngine::Update() {
 }
 
 void GloomEngine::FixedUpdate() {
-    auto comps = components;
-    for (const auto& component : comps) {
+    for (const auto& component : componentsCopy) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
@@ -283,8 +283,7 @@ void GloomEngine::FixedUpdate() {
 }
 
 void GloomEngine::AIUpdate() {
-    auto comps = components;
-    for (const auto& component : comps) {
+    for (const auto& component : componentsCopy) {
         if (component.second->enabled) component.second->AIUpdate();
     }
 }
