@@ -15,7 +15,7 @@ public:
     unsigned int depthMap;
 
     unsigned int shadowResolution = 4096;
-    float nearPlane = 1.0f, farPlane = 60.0f;
+    float nearPlane = 1.0f, farPlane = 100.0f;
 
 public:
     ShadowManager(ShadowManager &other) = delete;

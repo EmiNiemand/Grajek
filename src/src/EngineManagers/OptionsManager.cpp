@@ -24,7 +24,9 @@ OptionsManager::OptionsManager() {
 }
 
 void OptionsManager::Load() {
-    std::filesystem::path path(std::filesystem::current_path());
+    std::filesystem::path path = std::filesystem::current_path().parent_path().parent_path();
+    path /= "res";
+    path /= "ProjectConfig";
     path /= "config.json";
 
     try {
@@ -44,7 +46,9 @@ void OptionsManager::Load() {
 }
 
 void OptionsManager::Save() {
-    std::filesystem::path path(std::filesystem::current_path());
+    std::filesystem::path path = std::filesystem::current_path().parent_path().parent_path();
+    path /= "res";
+    path /= "ProjectConfig";
     path /= "config.json";
 
     try {

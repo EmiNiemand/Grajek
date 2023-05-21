@@ -38,8 +38,8 @@ void Camera::SetZoomLevel(float newZoom)
 }
 
 void Camera::Start() {
-    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
-    glm::vec3 playerPosition = player->transform->GetLocalPosition();
+    player = GloomEngine::GetInstance()->FindGameObjectWithName("PlayerPivot");
+    glm::vec3 playerPosition = player->transform->GetGlobalPosition();
     parent->transform->SetLocalPosition(playerPosition + cameraOffset * zoomLevel);
     parent->transform->SetLocalRotation(glm::vec3(-45.0f, 0.0f, 0.0f));
     Component::Start();
@@ -50,7 +50,7 @@ void Camera::Update() {
     ZoneScopedNC("Camera", 0x800080);
 #endif
     if (GloomEngine::GetInstance()->timeScale == 1) {
-        glm::vec3 playerPosition = player->transform->GetLocalPosition();
+        glm::vec3 playerPosition = player->transform->GetGlobalPosition();
         glm::vec3 cameraPosition = parent->transform->GetLocalPosition();
         zoomLevel = Utilities::Lerp(zoomLevel, desiredZoomLevel, 0.02f);
         parent->transform->SetLocalPosition(Utilities::Lerp(

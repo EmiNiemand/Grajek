@@ -13,14 +13,21 @@
 
 class Animator : public Drawable {
 private:
-    inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
-    inline static std::unordered_map<int, Animation> animations;
-
     glm::mat4 finalBoneMatrices[BONE_NUMBER];
-    Animation currentAnimation;
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
 	bool isPlaying = false;
+    float blendingTimeInSeconds = 0.5f;
+    float blendingTimeInTicks = 0;
+
+public:
+	float speed = 1;
+    float previousAnimationTime = 0;
+    Animation previousAnimation;
+    Animation currentAnimation;
+
+    inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
+    inline static std::unordered_map<int, Animation> animations;
 
 public:
     Animator(const std::shared_ptr<GameObject> &parent, int id);
@@ -30,6 +37,7 @@ public:
 	static void LoadAnimation(const std::string& path);
     void SetAnimation(const std::string& name);
 
+    void OnDestroy() override;
 	void Update() override;
     void Draw() override;
 

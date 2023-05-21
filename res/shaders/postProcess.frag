@@ -9,15 +9,16 @@ uniform sampler2D texturePosition;
 uniform sampler2D textureNormal;
 uniform sampler2D textureColor;
 
+// prewitt
 mat3 sx = mat3(
-1.0, 2.0, 1.0,
+1.0, 1.0, 1.0,
 0.0, 0.0, 0.0,
--1.0, -2.0, -1.0
+-1.0, -1.0, -1.0
 );
 
 mat3 sy = mat3(
 1.0, 0.0, -1.0,
-2.0, 0.0, -2.0,
+1.0, 0.0, -1.0,
 1.0, 0.0, -1.0
 );
 
@@ -37,8 +38,7 @@ void main()
 
     float g = sqrt(pow(gx, 2.0) + pow(gy, 2.0));
 
-    // Try different values and see what happens
-    g = smoothstep(0.0, 0.5, g);
+    g = smoothstep(0.2, 0.8, g);
 
     vec3 edgeColor = vec3(0.1, 0.1, 0.1);
 
@@ -65,8 +65,8 @@ void main()
 
     float mx = 0.0;
 
-    for (int i = -size; i <= size; ++i) {
-        for (int j = -size; j <= size; ++j) {
+    for (int i = 0; i <= size; ++i) {
+        for (int j = 0; j <= size; ++j) {
             texCoord = (fragCoord + (vec2(i, j) * separation)) / texSize;
 
             vec4 positionTemp = texture(texturePosition, texCoord);

@@ -9,7 +9,6 @@
 #include "EngineManagers/AnimationManager.h"
 #include "EngineManagers/HIDManager.h"
 #include "EngineManagers/SceneManager.h"
-#include "EngineManagers/DebugManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/RandomnessManager.h"
@@ -22,7 +21,7 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "Components/Scripts/PlayerMovement.h"
+#include "Components/Scripts/Player/PlayerMovement.h"
 #include "Other/FrustumCulling.h"
 #include "Components/Renderers/Animator.h"
 
@@ -30,6 +29,7 @@
 #include <stb_image.h>
 
 #ifdef DEBUG
+#include "EngineManagers/DebugManager.h"
 #include <tracy/Tracy.hpp>
 #endif
 
@@ -68,28 +68,6 @@ void GloomEngine::Initialize() {
     lastAIFrameTime = (float)glfwGetTime();
 }
 
-void GloomEngine::Awake() {
-#ifdef DEBUG
-    ZoneScopedNC("Awake", 0xDC143C);
-#endif
-    for (auto&& component : components) {
-        if (component.second->callOnAwake) component.second->Awake();
-    }
-
-    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
-}
-
-void GloomEngine::Start() {
-#ifdef DEBUG
-    ZoneScopedNC("Start", 0xDC143C);
-#endif
-    for (auto&& component : components){
-        if (component.second->enabled && component.second->callOnStart) component.second->Start();
-    }
-
-    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
-}
-
 bool GloomEngine::MainLoop() {
 #ifdef DEBUG
     FrameMarkStart(mainLoop);
@@ -102,6 +80,43 @@ bool GloomEngine::MainLoop() {
     // AI UPDATE
     int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
     int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
+    // FIXED UPDATE
+    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
+    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
+    // UPDATE
+    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
+    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
+
+
+    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        for (int i = 0; i < destroyComponentBufferIterator; ++i) {
+            const auto& component = destroyComponentBuffer[i];
+            component->OnDestroy();
+            component->GetParent()->RemoveComponent((int)component->GetId());
+            RemoveComponent(component);
+        }
+        ClearDestroyComponentBuffer();
+
+        for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
+            const auto& gameObject = destroyGameObjectBuffer[i];
+            gameObject->parent->RemoveChild(gameObject->GetId());
+            RemoveGameObject(gameObject);
+        }
+        ClearDestroyGameObjectBuffer();
+
+        for (const auto& component: components) {
+            if (component.second->callOnAwake) {
+                component.second->Awake();
+                component.second->GetParent()->UpdateSelfAndChildren();
+            }
+            if (component.second->callOnStart && component.second->enabled) {
+                component.second->Start();
+                component.second->GetParent()->UpdateSelfAndChildren();
+            }
+        }
+    }
+
+    // AI UPDATE
     if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
 #ifdef DEBUG
         ZoneScopedNC("AI update", 0x00FF00);
@@ -116,8 +131,6 @@ bool GloomEngine::MainLoop() {
     }
 
     // FIXED UPDATE
-    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
-    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
 #ifdef DEBUG
         ZoneScopedNC("Fixed update", 0x00008B);
@@ -132,8 +145,6 @@ bool GloomEngine::MainLoop() {
     }
 
     // UPDATE
-    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
-    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
 #ifdef DEBUG
         ZoneScopedNC("Update", 0xDC143C);
@@ -158,35 +169,10 @@ bool GloomEngine::MainLoop() {
 
     bool endGame = game->GameLoop();
 
-//  Save game on quit
-    if (glfwWindowShouldClose(window) || endGame) {
-        std::filesystem::path path = std::filesystem::current_path();
-        DataPersistanceManager::GetInstance()->SaveGame(path.string(), "Save1");
-    }
     return glfwWindowShouldClose(window) || endGame;
 }
 
 void GloomEngine::Update() {
-    {
-#ifdef DEBUG
-        ZoneScopedNC("Destroy objects and components", 0xFFD733);
-#endif
-
-        for (int i = 0; i < destroyComponentBufferIterator; ++i) {
-            const auto& component = destroyComponentBuffer[i];
-            component->OnDestroy();
-            component->GetParent()->RemoveComponent((int)component->GetId());
-            RemoveComponent(component);
-        }
-        ClearDestroyComponentBuffer();
-
-        for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
-            const auto& gameObject = destroyGameObjectBuffer[i];
-            gameObject->parent->RemoveChild(gameObject->GetId());
-            RemoveGameObject(gameObject);
-        }
-        ClearDestroyGameObjectBuffer();
-    }
     //Frustum culling
     {
 #ifdef DEBUG
@@ -205,15 +191,8 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Component update", 0xFF69B4);
 #endif
-        for (const auto& component: components) {
-            if (component.second->callOnAwake) {
-                component.second->Awake();
-                component.second->GetParent()->UpdateSelfAndChildren();
-            }
-            if (component.second->callOnStart && component.second->enabled) {
-                component.second->Start();
-                component.second->GetParent()->UpdateSelfAndChildren();
-            }
+        auto comps = components;
+        for (const auto& component: comps) {
             if (component.second->enabled) {
                 component.second->Update();
             }
@@ -293,7 +272,8 @@ void GloomEngine::Update() {
 }
 
 void GloomEngine::FixedUpdate() {
-    for (const auto& component : components) {
+    auto comps = components;
+    for (const auto& component : comps) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
@@ -303,7 +283,8 @@ void GloomEngine::FixedUpdate() {
 }
 
 void GloomEngine::AIUpdate() {
-    for (const auto& component : components) {
+    auto comps = components;
+    for (const auto& component : comps) {
         if (component.second->enabled) component.second->AIUpdate();
     }
 }

@@ -190,7 +190,7 @@ void Button::Update() {
 
 void Button::Draw() {
     // Render text
-    if (this->text != "") {
+    if (!this->text.empty()) {
         UIManager::GetInstance()->shader->Activate();
         UIManager::GetInstance()->shader->SetBool("isText", true);
         UIManager::GetInstance()->shader->SetVec3("textColor", color);
@@ -240,15 +240,22 @@ void Button::Draw() {
     UIManager::GetInstance()->shader->Activate();
     UIManager::GetInstance()->shader->SetBool("isText", false);
     glActiveTexture(GL_TEXTURE0);
+	UIManager::GetInstance()->shader->SetInt("texture1", 0);
     if(isActive) {
-        UIManager::GetInstance()->shader->SetInt("texture1", 0);
         glBindTexture(GL_TEXTURE_2D, textureIsActive);
     } else {
-        UIManager::GetInstance()->shader->SetInt("texture1", 0);
         glBindTexture(GL_TEXTURE_2D, textureID);
     }
     glBindVertexArray(textureMesh->vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);
+}
+
+int Button::GetWidth() {
+	return width;
+}
+
+int Button::GetHeight() {
+	return height;
 }

@@ -28,6 +28,7 @@ std::shared_ptr<GameObject> GameObjectFactory::CreateGameObject(std::string name
         std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>(name, id, parent, tag);
         gameObject->transform = std::make_shared<Transform>(gameObject);
         id++;
+        gameObject->SetParent(gameObject);
         return gameObject;
     }
     if(parent == nullptr) parent = SceneManager::GetInstance()->activeScene;

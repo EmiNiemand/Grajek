@@ -13,12 +13,14 @@
 
 Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
-std::shared_ptr<Mesh> Image::CreateMesh(int x, int y, int width, int height, float z) {
+std::shared_ptr<Mesh> Image::CreateMesh() {
+    UpdateCorners();
+
     std::vector<Vertex> vertices;
     Vertex vertex1{}, vertex2{}, vertex3{}, vertex4{};
 
     // left bottom
-    vertex1.position = glm::vec3((float)x/960-1, (float)y/540-1, z);
+    vertex1.position = glm::vec3((float)leftBottom.x/960-1, (float)leftBottom.y/540-1, z);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
     vertex2.position = glm::vec3((float)x/960-1, (float)y/540-1 + (float)height/540, z);
@@ -41,9 +43,9 @@ std::shared_ptr<Mesh> Image::CreateMesh(int x, int y, int width, int height, flo
 void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
-    int width2, height2, nrChannels;
+    int nrChannels;
     std::string file = BASE_PATH + path;
-    unsigned char* data = stbi_load(file.c_str(), &width2, &height2, &nrChannels, 0);
+    unsigned char* data = stbi_load(file.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
         GLenum format;
@@ -55,27 +57,15 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
             format = GL_RGBA;
 
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width2, height2, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        this->mesh = CreateMesh(x2, y2, width2, height2, z);
-        leftBottom.x = (float)x2;
-        leftBottom.y = (float)y2;
-        leftTop.x = (float)x2;
-        leftTop.y = (float)(y2 + height2);
-        rightBottom.x = (float)(x2 + width2);
-        rightBottom.y = (float)y2;
-        rightTop.x = (float)(x2 + width2);
-        rightTop.y = (float)(y2 + height2);
-        x = x2;
-        y = y2;
-        z = z2;
-        width = width2;
-        height = height2;
+        x = x2; y = y2; z = z2;
+        this->mesh = CreateMesh();
         parent->transform->SetLocalPosition(glm::vec3(x, y, z));
     }
     else
@@ -89,21 +79,17 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
 }
 
 void Image::SetPosition(float x2, float y2) {
-    parent->transform->SetLocalPosition(glm::vec3(x2, y2, z));
-    float width2 = rightBottom.x - leftBottom.x, height2 = leftTop.y - leftBottom.y;
-    leftBottom.x = x2; leftBottom.y = y2;
-    leftTop.x = x2; leftTop.y = y2 + height2;
-    rightBottom.x = x2 + width2; rightBottom.y = y2;
-    rightTop.x = x2 + width2; rightTop.y = y2 + height2;
-    mesh->vertices[0].position = glm::vec3(leftBottom.x/960.0f-1.0f, leftBottom.y/540.0f-1.0f, z);
-    mesh->vertices[1].position = glm::vec3(leftTop.x/960.0f-1.0f, leftTop.y/540.0f-1.0f, z);
-    mesh->vertices[2].position = glm::vec3(rightBottom.x/960.0f-1.0f, rightBottom.y/540.0f-1.0f, z);
-    mesh->vertices[3].position = glm::vec3(rightTop.x/960.0f-1.0f, rightTop.y/540.0f-1.0f, z);
-    mesh->setupMesh();
+    x=x2; y=y2;
+    parent->transform->SetLocalPosition(glm::vec3(x, y, z));
+    UpdateCorners();
+
+    mesh.reset();
+    mesh = CreateMesh();
 }
 
 void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
+    //TODO: replace these with pivot point (and add pivot point)
     float x2 = leftBottom.x, y2 = leftBottom.y;
     float width2 = rightBottom.x - x2, height2 = leftTop.y - y2;
     float p = x2 + width2 / 2, q = y2 + height2 / 2;
@@ -118,6 +104,8 @@ void Image::SetRotation(float angle) {
 
 void Image::SetScale(float scale) {
     parent->transform->SetLocalScale(glm::vec3(scale));
+
+    //TODO: again, try to count in pivot point
     leftBottom.x = (float)x + (float)width / 2 - (float)width * scale / 2;
     leftBottom.y = (float)y + (float)height / 2 - (float)height * scale / 2;
     leftTop.x = leftBottom.x;
@@ -126,11 +114,9 @@ void Image::SetScale(float scale) {
     rightBottom.y = leftBottom.y;
     rightTop.x = rightBottom.x;
     rightTop.y = leftTop.y;
-    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
-    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
-    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
-    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
-    mesh->setupMesh();
+
+    mesh.reset();
+    mesh = CreateMesh();
 }
 
 glm::vec3 Image::GetColor() {
@@ -161,6 +147,8 @@ void Image::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Image", 0x800080);
 #endif
+    if (!mesh) return;
+    if (alpha <= 0.1f) return;
     UIComponent::Update();
 }
 
@@ -177,4 +165,11 @@ void Image::Draw() {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);
+}
+
+void Image::UpdateCorners() {
+    leftBottom = {x, y};
+    leftTop = {x, y + height};
+    rightBottom = {x + width, y};
+    rightTop = {x + width, y + height};
 }
