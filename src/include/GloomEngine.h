@@ -63,6 +63,7 @@ private:
 
     std::map<int, std::shared_ptr<GameObject>> gameObjects = {};
     std::map<int, std::shared_ptr<Component>> components = {};
+    std::map<int, std::shared_ptr<Component>> componentsCopy = {};
 
 public:
     GLFWwindow* window;
