@@ -7,5 +7,5 @@
 GameData::GameData() {
     money = 0;
     reputation = 0;
-    playerPosition = glm::vec3(0, 2, 0);
+    playerPosition = glm::vec3(-5, 2, -5);
 }
