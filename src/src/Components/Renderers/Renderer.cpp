@@ -67,6 +67,7 @@ void Renderer::Draw(std::shared_ptr<Shader> shader) {
  * @param newPath - relative path starting in res/models/
  */
 void Renderer::LoadModel(std::string path) {
+    lastLoadedModelPath = path;
     std::string newPath = "res/models/" + path;
     std::filesystem::path normalizedPath(newPath);
     int hash = Utilities::Hash(newPath);
