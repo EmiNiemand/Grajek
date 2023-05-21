@@ -48,7 +48,7 @@ public:
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedSatisfaction();
-    void RemoveBoxCollider(const glm::vec3& position) const;
+    void RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const;
 
 };
 

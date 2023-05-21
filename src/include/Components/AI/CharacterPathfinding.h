@@ -7,7 +7,7 @@
 #include <vector>
 #include <cmath>
 
-constexpr int AI_GRID_SIZE = 200;
+constexpr int AI_GRID_SIZE = 100;
 constexpr int STRAIGHT_MOVE_COST = 10;
 constexpr int DIAGONAL_MOVE_COST = 14;
 
@@ -43,7 +43,7 @@ struct Node {
 class CharacterPathfinding {
 
 public:
-    const float aiGridSize = 2.0f;
+    const float aiGridSize = 1.0f;
     bool aiGrid[AI_GRID_SIZE][AI_GRID_SIZE] = {};
 
     explicit CharacterPathfinding();

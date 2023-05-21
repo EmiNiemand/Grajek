@@ -38,7 +38,7 @@ void BoxCollider::FixedUpdate() {
 
 void BoxCollider::OnDestroy() {
     CollisionManager::GetInstance()->RemoveBoxCollider(id);
-    AIManager::GetInstance()->RemoveBoxCollider(parent->transform->GetGlobalPosition());
+    AIManager::GetInstance()->RemoveBoxCollider(std::dynamic_pointer_cast<BoxCollider>(shared_from_this()));
 #ifdef DEBUG
     CollisionManager::GetInstance()->OnBoxCollidersChange();
 #endif
@@ -357,11 +357,6 @@ void BoxCollider::SetGridPoints() {
     if (!isTrigger && !parent->GetComponent<Rigidbody>() && std::strcmp(parent->GetName().c_str(), "Ground") != 0) {
         const float aiGridSize = AIManager::GetInstance()->pathfinding->aiGridSize;
 
-//        glm::vec2 point1 = ((pos.x, pos.z) + (xVector + zVector)) / aiGridSize;
-//        glm::vec2 point2 = ((pos.x, pos.z) + (xVector - zVector)) / aiGridSize;
-//        glm::vec2 point3 = ((pos.x, pos.z) + (-xVector + zVector)) / aiGridSize;
-//        glm::vec2 point4 = ((pos.x, pos.z) + (-xVector - zVector)) / aiGridSize;
-//
 //        glm::ivec2 aiGridPoints[4] = {
 //                glm::ivec2(std::copysign(1.0f, point1.x) * std::ceil(std::fabs(point1.x)),
 //                           std::copysign(1.0f, point1.y) * std::ceil(std::fabs(point1.y))),
@@ -379,6 +374,13 @@ void BoxCollider::SetGridPoints() {
                 glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiGridSize),
                 glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiGridSize)
         };
+
+//        glm::ivec2 aiGridPoints[4] = {
+//                glm::ivec2(point1),
+//                glm::ivec2(point2),
+//                glm::ivec2(point3),
+//                glm::ivec2(point4)
+//        };
 
         SetAIGridPoints(aiGridPoints);
     }
@@ -447,8 +449,8 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX; x <= maxX; ++x) {
-        for (int y = minY; y <= maxY; ++y) {
+    for (int x = minX - 1; x <= maxX + 1; ++x) {
+        for (int y = minY - 1; y <= maxY + 1; ++y) {
             AIManager::GetInstance()->pathfinding->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         }
     }

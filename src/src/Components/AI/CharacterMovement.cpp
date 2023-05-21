@@ -21,9 +21,7 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 CharacterMovement::~CharacterMovement() = default;
 
 void CharacterMovement::Start() {
-    SetNewRandomPoint();
-    parent->transform->SetLocalPosition(endTarget);
-    currentPosition = endTarget;
+
     Component::Start();
 }
 
@@ -49,7 +47,7 @@ void CharacterMovement::FixedUpdate() {
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
 
-        if (glm::distance(currentPosition, (*path)[0]) < 0.6f)
+        if (glm::distance(currentPosition, (*path)[0]) < 0.5f)
             path->erase(path->begin());
     }
 
@@ -68,6 +66,9 @@ void CharacterMovement::AIUpdate() {
 
 void CharacterMovement::OnCreate() {
     rigidbody = parent->GetComponent<Rigidbody>();
+    SetNewRandomPoint();
+    parent->transform->SetLocalPosition(endTarget);
+    currentPosition = endTarget;
     path = new std::vector<glm::vec3> (1);
     Component::OnCreate();
 }
@@ -86,7 +87,7 @@ void CharacterMovement::Free() {
 void CharacterMovement::SetNewRandomPoint() {
     speed = 0.0f;
 
-    static glm::ivec2 newEndTarget;
+    glm::ivec2 newEndTarget;
 
     while (true) {
         newEndTarget.x = RandomnessManager::GetInstance()->GetInt(-20, 20);
@@ -95,7 +96,6 @@ void CharacterMovement::SetNewRandomPoint() {
         if (!AIManager::GetInstance()->pathfinding->aiGrid[newEndTarget.x + AI_GRID_SIZE / 2][newEndTarget.y + AI_GRID_SIZE / 2])
             break;
     }
-    spdlog::info("end " + std::to_string(newEndTarget.x) + ", " + std::to_string(newEndTarget.y));
 
     endTarget.x = (float)newEndTarget.x;
     endTarget.z = (float)newEndTarget.y;
