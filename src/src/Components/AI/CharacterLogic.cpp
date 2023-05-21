@@ -68,17 +68,12 @@ void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, cons
 void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) {
     playerPattern = pat;
 
-    if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern) != favPatterns.end()) {
+    if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern) != favPatterns.end())
         currentSatisfaction += 15;
-
-        if (currentSatisfaction > 100)
-            currentSatisfaction = 100;
-    } else {
+    else
         currentSatisfaction -= 5;
 
-        if (currentSatisfaction < 0)
-            currentSatisfaction = 0;
-    }
+    currentSatisfaction = std::clamp(currentSatisfaction, 0.0f, 100.0f);
 
     if (currentSatisfaction >= minSatisfaction && currentState == WalkingOnPath) {
         SetPathToPlayer();

@@ -20,6 +20,13 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 
 CharacterMovement::~CharacterMovement() = default;
 
+void CharacterMovement::Start() {
+    SetNewRandomPoint();
+    parent->transform->SetLocalPosition(endTarget);
+    currentPosition = endTarget;
+    Component::Start();
+}
+
 void CharacterMovement::FixedUpdate() {
 #ifdef DEBUG
     ZoneScopedNC("CharacterMovement", 0xfc0f03);
@@ -42,7 +49,7 @@ void CharacterMovement::FixedUpdate() {
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
 
-        if (glm::distance(currentPosition, (*path)[0]) < 1.0f)
+        if (glm::distance(currentPosition, (*path)[0]) < 0.6f)
             path->erase(path->begin());
     }
 
@@ -50,12 +57,9 @@ void CharacterMovement::FixedUpdate() {
 }
 
 void CharacterMovement::AIUpdate() {
-    currentPosition = parent->transform->GetGlobalPosition();
-
     if (path->empty() && logicState != RunningToPlayer) {
-//        SetNewRandomPoint();
-        parent->transform->SetLocalPosition({3, 0, 2});
-        endTarget = {12, 0, 2};
+        currentPosition = parent->transform->GetGlobalPosition();
+        SetNewRandomPoint();
         CalculateNewPath();
     }
 
@@ -64,11 +68,7 @@ void CharacterMovement::AIUpdate() {
 
 void CharacterMovement::OnCreate() {
     rigidbody = parent->GetComponent<Rigidbody>();
-
-    SetNewRandomPoint();
-    parent->transform->SetLocalPosition(endTarget);
     path = new std::vector<glm::vec3> (1);
-
     Component::OnCreate();
 }
 
@@ -89,12 +89,13 @@ void CharacterMovement::SetNewRandomPoint() {
     static glm::ivec2 newEndTarget;
 
     while (true) {
-        newEndTarget.x = RandomnessManager::GetInstance()->GetInt(-25, 25);
-        newEndTarget.y = RandomnessManager::GetInstance()->GetInt(-25, 25);
+        newEndTarget.x = RandomnessManager::GetInstance()->GetInt(-20, 20);
+        newEndTarget.y = RandomnessManager::GetInstance()->GetInt(-20, 20);
 
         if (!AIManager::GetInstance()->pathfinding->aiGrid[newEndTarget.x + AI_GRID_SIZE / 2][newEndTarget.y + AI_GRID_SIZE / 2])
             break;
     }
+    spdlog::info("end " + std::to_string(newEndTarget.x) + ", " + std::to_string(newEndTarget.y));
 
     endTarget.x = (float)newEndTarget.x;
     endTarget.z = (float)newEndTarget.y;
@@ -121,19 +122,9 @@ void CharacterMovement::CalculateNewPath() {
 #ifdef DEBUG
     ZoneScopedNC("CalculateNewPath", 0xfc0f03);
 #endif
+    
     delete path;
 
-    std::vector<glm::vec3> squares = AIManager::GetInstance()->pathfinding->FindNewPath({
+    path = AIManager::GetInstance()->pathfinding->FindNewPath({
         currentPosition.x, currentPosition.z},{endTarget.x, endTarget.z});
-
-    spdlog::info("square" );
-    for (const auto& sq : squares) {
-        spdlog::info(std::to_string(sq.x) + ", " + std::to_string(sq.z));
-    }
-
-    path = new std::vector<glm::vec3> (squares.size());
-
-    std::move(squares.begin(), squares.end(), path->begin());
-
-
 }

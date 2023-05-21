@@ -33,5 +33,5 @@ void Indicator::Indicate() {
     indicator->LoadTexture((int)x, (int)y, texturePath);
     animator->AddComponent<UIAnimator>()->Setup(indicator, {
             {AnimatedProperty::Position, glm::vec3(x, y + 50.0f, 0.0f)}
-    }, false);
+    });
 }

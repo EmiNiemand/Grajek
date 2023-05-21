@@ -7,7 +7,7 @@
 #include <vector>
 #include <cmath>
 
-constexpr int AI_GRID_SIZE = 100;
+constexpr int AI_GRID_SIZE = 200;
 constexpr int STRAIGHT_MOVE_COST = 10;
 constexpr int DIAGONAL_MOVE_COST = 14;
 
@@ -41,17 +41,17 @@ struct Node {
 };
 
 class CharacterPathfinding {
-    [[nodiscard]] inline const glm::vec3 GridToLocal(const glm::vec2& position) const;
-    [[nodiscard]] inline const glm::ivec2 LocalToGrid(const glm::vec2& position) const;
 
 public:
-    const float aiGridSize = 1.0f;
+    const float aiGridSize = 2.0f;
     bool aiGrid[AI_GRID_SIZE][AI_GRID_SIZE] = {};
 
     explicit CharacterPathfinding();
     virtual ~CharacterPathfinding();
 
-    const std::vector<glm::vec3> FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget);
+    [[nodiscard]] inline const glm::vec3 GridToLocal(const glm::vec2& position) const;
+    [[nodiscard]] inline const glm::ivec2 LocalToGrid(const glm::vec2& position) const;
+    std::vector<glm::vec3>* FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget);
 };
 
 #endif //OPENGLGP_CHARACTERPATHFINDING_H

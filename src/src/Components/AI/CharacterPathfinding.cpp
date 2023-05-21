@@ -12,14 +12,14 @@ CharacterPathfinding::CharacterPathfinding() = default;
 CharacterPathfinding::~CharacterPathfinding() = default;
 
 inline const glm::vec3 CharacterPathfinding::GridToLocal(const glm::vec2& position) const {
-    return {(position.x - AI_GRID_SIZE / 2.0f * aiGridSize), 0, (position.y - AI_GRID_SIZE / 2.0f) * aiGridSize};
+    return {(position.x - AI_GRID_SIZE / 2.0f) * aiGridSize, 0, (position.y - AI_GRID_SIZE / 2.0f) * aiGridSize};
 }
 
 inline const glm::ivec2 CharacterPathfinding::LocalToGrid(const glm::vec2& position) const {
     return {position.x / aiGridSize + AI_GRID_SIZE / 2.0f, position.y / aiGridSize + AI_GRID_SIZE / 2.0f};
 }
 
-const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
+std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
     const glm::ivec2 startGridPos = LocalToGrid(currentPosition);
     const glm::ivec2 endGridPos = LocalToGrid(endTarget);
     glm::ivec2 gridIndex;
@@ -88,15 +88,18 @@ const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2&
         }
     }
 
-    std::vector<glm::vec3> path;
-    path.clear();
+    std::vector<glm::vec3> squares;
 
     while (currentNode != nullptr) {
-        path.push_back(GridToLocal(currentNode->pos));
+        squares.push_back(GridToLocal(currentNode->pos));
         currentNode = currentNode->parent;
     }
 
-    std::reverse(path.begin(), path.end());
+    std::reverse(squares.begin(), squares.end());
+
+    auto* path = new std::vector<glm::vec3>(squares.size());
+
+    std::move(squares.begin(), squares.end(), path->begin());
 
     for (auto &n: openList)
         delete n.second;

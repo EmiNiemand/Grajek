@@ -187,8 +187,13 @@ void Game::InitializeGame() const {
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
-    savePoint1->transform->SetLocalPosition({-15, 0, 10});
-    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+    savePoint1->transform->SetLocalPosition({-20, 0, 10});
+    savePoint1->transform->SetLocalScale({5.0, 5.0, 5.0});
+
+//    auto brama = GameObject::Instantiate("Brama", activeScene);
+//    brama->AddComponent<Renderer>()->LoadModel("Brama.obj");
+//    brama->transform->SetLocalPosition(glm::vec3(0.0, 0.0, 0.0));
+//    brama->transform->SetLocalScale(glm::vec3(0.5f));
 
     // Save Point Menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
@@ -212,37 +217,24 @@ void Game::InitializeGame() const {
     int y = 0;
 
     // Set up animated model
-    for (int i = 0; i < 100; ++i) {
-        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
-        if (i % 25 == 0) {
-            x = 0;
-            y++;
-        }
-        animatedDood->transform->SetLocalPosition({-12 + x, 0, 5 + 2 * y});
-        animatedDood->transform->SetLocalRotation({0, 0, 0});
-        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-        x++;
-    }
-
-    // Setup sklepikarz
-    auto sklepikarz = GameObject::Instantiate("Sklepikarz", activeScene);
-    sklepikarz->AddComponent<Rigidbody>();
-    auto collider = sklepikarz->GetComponent<BoxCollider>();
-    collider->SetOffset({0, 1, 0});
-    collider->SetSize({1, 2, 1});
-    sklepikarz->transform->SetLocalPosition({-10, 2, -10});
-    sklepikarz->transform->SetLocalScale({0.5, 0.5, 0.5});
-    auto animatorObject = GameObject::Instantiate("AnimatorSklepikarz", sklepikarz);
-    auto animator = animatorObject->AddComponent<Animator>();
-    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    animator->SetAnimation("AnimsNew/Walk.dae");
-    animatorObject->transform->SetLocalRotation({0, 90, 0});
-    sklepikarz->AddComponent<GameObjectAnimator>()->Setup(sklepikarz->transform, {
-            {AnimatedProperty::Position, glm::vec3(8.0f, 0.0f, 0.0f), 5.0f}
-    }, false);
+//    for (int i = 0; i < 50; ++i) {
+//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
+//        if (i % 25 == 0) {
+//            x = 0;
+//            y++;
+//        }
+//        animatedDood->transform->SetLocalPosition({-12 + x, 0, -10 + 2 * y});
+//        animatedDood->transform->SetLocalRotation({0, 0, 0});
+//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+//        x++;
+//        animatedDood->AddComponent<GameObjectAnimator>()->Setup(animatedDood->transform, {
+//                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, 30.0f), 15.0f},
+//                {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -30.0f), 0.1f}
+//        }, true);
+//    }
 
 //    // SCENE BUILDINGS
 //	std::map<std::string, int> buildingSizes = {
