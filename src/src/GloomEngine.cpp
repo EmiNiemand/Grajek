@@ -68,28 +68,6 @@ void GloomEngine::Initialize() {
     lastAIFrameTime = (float)glfwGetTime();
 }
 
-void GloomEngine::Awake() {
-#ifdef DEBUG
-    ZoneScopedNC("Awake", 0xDC143C);
-#endif
-    for (auto&& component : components) {
-        if (component.second->callOnAwake) component.second->Awake();
-    }
-
-    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
-}
-
-void GloomEngine::Start() {
-#ifdef DEBUG
-    ZoneScopedNC("Start", 0xDC143C);
-#endif
-    for (auto&& component : components){
-        if (component.second->enabled && component.second->callOnStart) component.second->Start();
-    }
-
-    SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
-}
-
 bool GloomEngine::MainLoop() {
 #ifdef DEBUG
     FrameMarkStart(mainLoop);
@@ -111,6 +89,21 @@ bool GloomEngine::MainLoop() {
 
 
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        for (int i = 0; i < destroyComponentBufferIterator; ++i) {
+            const auto& component = destroyComponentBuffer[i];
+            component->OnDestroy();
+            component->GetParent()->RemoveComponent((int)component->GetId());
+            RemoveComponent(component);
+        }
+        ClearDestroyComponentBuffer();
+
+        for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
+            const auto& gameObject = destroyGameObjectBuffer[i];
+            gameObject->parent->RemoveChild(gameObject->GetId());
+            RemoveGameObject(gameObject);
+        }
+        ClearDestroyGameObjectBuffer();
+
         for (const auto& component: components) {
             if (component.second->callOnAwake) {
                 component.second->Awake();
@@ -180,26 +173,6 @@ bool GloomEngine::MainLoop() {
 }
 
 void GloomEngine::Update() {
-    {
-#ifdef DEBUG
-        ZoneScopedNC("Destroy objects and components", 0xFFD733);
-#endif
-
-        for (int i = 0; i < destroyComponentBufferIterator; ++i) {
-            const auto& component = destroyComponentBuffer[i];
-            component->OnDestroy();
-            component->GetParent()->RemoveComponent((int)component->GetId());
-            RemoveComponent(component);
-        }
-        ClearDestroyComponentBuffer();
-
-        for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
-            const auto& gameObject = destroyGameObjectBuffer[i];
-            gameObject->parent->RemoveChild(gameObject->GetId());
-            RemoveGameObject(gameObject);
-        }
-        ClearDestroyGameObjectBuffer();
-    }
     //Frustum culling
     {
 #ifdef DEBUG
@@ -218,7 +191,8 @@ void GloomEngine::Update() {
 #ifdef DEBUG
         ZoneScopedNC("Component update", 0xFF69B4);
 #endif
-        for (const auto& component: components) {
+        auto comps = components;
+        for (const auto& component: comps) {
             if (component.second->enabled) {
                 component.second->Update();
             }
@@ -298,7 +272,8 @@ void GloomEngine::Update() {
 }
 
 void GloomEngine::FixedUpdate() {
-    for (const auto& component : components) {
+    auto comps = components;
+    for (const auto& component : comps) {
         if (component.second->enabled) component.second->FixedUpdate();
     }
 
@@ -308,7 +283,8 @@ void GloomEngine::FixedUpdate() {
 }
 
 void GloomEngine::AIUpdate() {
-    for (const auto& component : components) {
+    auto comps = components;
+    for (const auto& component : comps) {
         if (component.second->enabled) component.second->AIUpdate();
     }
 }

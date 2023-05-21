@@ -110,10 +110,6 @@ public:
 
     /// Initialize creates all needed variables like factories
     void Initialize();
-    /// Awake calls all the components even when they are no enabled during first frame
-    void Awake();
-    /// Start calls only enabled components during first frame
-    void Start();
     /// Return false if game should not end
     /// Return true to end the update loop and end the game
     bool MainLoop();
