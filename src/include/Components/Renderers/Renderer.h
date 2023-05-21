@@ -11,7 +11,7 @@ private:
 
 public:
     inline static std::unordered_map<int, std::shared_ptr<StaticModel>> models;
-
+    std::string lastLoadedModelPath;
 public:
     Renderer(const std::shared_ptr<GameObject> &parent, int id);
     ~Renderer() override;

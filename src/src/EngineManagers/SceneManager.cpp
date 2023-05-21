@@ -9,6 +9,7 @@
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Renderer.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 
 #include <fstream>
@@ -76,9 +77,12 @@ void SceneManager::Free() {
 void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::map<int,std::shared_ptr<SaveableStaticObject>> saveableStaticPrefabs;
     std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
+    std::shared_ptr<StaticObjectData> newObject;
+
     saveableStaticPrefabs = FindAllStaticSaveablePrefabs();
     for (const auto& object : saveableStaticPrefabs) {
-        staticObjectsData.push_back(object.second->SaveStatic());
+        newObject = object.second->SaveStatic();
+        staticObjectsData.push_back(newObject);
     }
 
     SaveMap(staticObjectsData,dataDirectoryPath,dataFileName);
@@ -97,6 +101,10 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
         newGameObject->transform->SetLocalPosition(object->position);
         newGameObject->transform->SetLocalRotation(object->rotation);
         newGameObject->transform->SetLocalScale(object->scale);
+        std::shared_ptr<Renderer> objectRenderer = newGameObject->GetComponent<Renderer>();
+        //objectRenderer->LoadModel(object->modelPath);
+        std::shared_ptr<BoxCollider> objectColider = newGameObject->GetComponent<BoxCollider>();
+        objectColider->SetSize(object->coliderSize);
     }
 }
 
@@ -163,6 +171,11 @@ void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<Sta
         objectJson["scale.y"] = object->scale.y;
         objectJson["scale.z"] = object->scale.z;
 
+        objectJson["modelPath"] = object->modelPath;
+        objectJson["coliderSize.x"] = object->coliderSize.x;
+        objectJson["coliderSize.y"] = object->coliderSize.y;
+        objectJson["coliderSize.z"] = object->coliderSize.z;
+
         json.push_back(objectJson);
     }
 
@@ -187,6 +200,12 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject->scale.x = object["scale.x"];
         newObject->scale.y = object["scale.y"];
         newObject->scale.z = object["scale.z"];
+
+        newObject->modelPath = object["modelPath"];
+        newObject->coliderSize.x = object["coliderSize.x"];
+        newObject->coliderSize.y = object["coliderSize.y"];
+        newObject->coliderSize.z = object["coliderSize.z"];
+
         mapData.push_back(newObject);
     }
 }

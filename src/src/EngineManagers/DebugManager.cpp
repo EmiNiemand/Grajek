@@ -15,6 +15,7 @@
 DebugManager::DebugManager() {
     displaySelected = false;
     transformExtracted = false;
+    isNewObjectBeingHeld = false;
 }
 DebugManager::~DebugManager() = default;
 
@@ -48,6 +49,7 @@ void DebugManager::Render() {
 
     DisplaySystemInfo();
     SaveMenu();
+    ObjectCreator();
     {
         ImGui::Begin("Debug Window");
 
@@ -206,4 +208,31 @@ void DebugManager::Free() const {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
+
+void DebugManager::ObjectCreator() {
+    ImGui::Begin("Object Creator");
+    if(isNewObjectBeingHeld){
+        if(!gameObjectHolder){
+            spdlog::warn("Failed to create new GameObjectData object. Resetting creator.");
+            isNewObjectBeingHeld = false;
+            gameObjectHolder.reset();
+        }
+        ImGui::Text("GameObject holder is active.");
+        if(ImGui::SmallButton("INJECT")){
+            CreateGameObjectFromData(gameObjectHolder);
+            isNewObjectBeingHeld = false;
+        }
+    } else {
+        ImGui::Text("There is no object in the holder.\nPress button below to create new, empty object to edit.\nAfter you are done, press INJECT to add your object to list of children of the scene");
+        if(ImGui::SmallButton("CREATE")){
+            isNewObjectBeingHeld = true;
+        }
+    }
+    ImGui::End();
+}
+
+void DebugManager::CreateGameObjectFromData(std::shared_ptr<GameObjectData> data) {
+
+}
+
 #endif
