@@ -15,6 +15,7 @@ private:
 	explicit DebugManager();
 
 	bool displaySelected;
+    bool safetySwitch;
 	//flag to check if position of the GameObject was already extracted. 
 	bool transformExtracted;
 	std::shared_ptr<GameObject> selected;
