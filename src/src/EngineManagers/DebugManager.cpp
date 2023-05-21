@@ -188,6 +188,7 @@ void DebugManager::DisplaySystemInfo() {
 
 void DebugManager::SaveMenu()
 {
+    static char inputPath[200] = "";
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
@@ -196,8 +197,13 @@ void DebugManager::SaveMenu()
 
         SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
-    if (ImGui::SmallButton("Add new house")){
+    if (ImGui::SmallButton("Add new default house")){
         SceneManager::GetInstance()->CreatePrefabObject("House");
+    }
+    ImGui::InputText("input text", inputPath, IM_ARRAYSIZE(inputPath));
+    if(ImGui::SmallButton("Add house with model at path")){
+        std::string convertedInputPath = inputPath;
+        SceneManager::GetInstance()->CreatePrefabObject("House",convertedInputPath);
     }
     ImGui::End();
 }
@@ -213,7 +219,7 @@ void DebugManager::ObjectCreator() {
     ImGui::Begin("Object Creator");
     if(isNewObjectBeingHeld){
         if(!gameObjectHolder){
-            spdlog::warn("Failed to create new GameObjectData object. Resetting creator.");
+            //spdlog::warn("Failed to create new GameObjectData object. Resetting creator.");
             isNewObjectBeingHeld = false;
             gameObjectHolder.reset();
         }

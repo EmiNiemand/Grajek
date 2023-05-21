@@ -102,7 +102,7 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
         newGameObject->transform->SetLocalRotation(object->rotation);
         newGameObject->transform->SetLocalScale(object->scale);
         std::shared_ptr<Renderer> objectRenderer = newGameObject->GetComponent<Renderer>();
-        //objectRenderer->LoadModel(object->modelPath);
+        objectRenderer->LoadModel(object->modelPath);
         std::shared_ptr<BoxCollider> objectColider = newGameObject->GetComponent<BoxCollider>();
         objectColider->SetSize(object->coliderSize);
     }
@@ -236,6 +236,18 @@ void SceneManager::CreatePrefabObject(const std::string name) {
     if(name == "House"){
         spdlog::info("Created object from prefab House.");
         newGameObject = Prefab::Instantiate<House>();
+    } else {
+        spdlog::info("Failed to find prefab with name: " + name);
     }
-    spdlog::info("Failed to find prefab with name: " + name);
+}
+void SceneManager::CreatePrefabObject(const std::string name,const std::string modelPath) {
+    std::shared_ptr<GameObject> newGameObject;
+    if(name == "House"){
+        spdlog::info("Created object from prefab House. Using model: " + modelPath);
+        newGameObject = Prefab::Instantiate<House>();
+        std::shared_ptr<Renderer> objectRenderer = newGameObject->GetComponent<Renderer>();
+        objectRenderer->LoadModel(modelPath);
+    } else {
+        spdlog::info("Failed to find prefab with name: " + name);
+    }
 }
