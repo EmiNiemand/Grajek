@@ -19,7 +19,7 @@ class Rigidbody;
 class CharacterMovement : public Component {
     AI_LOGICSTATE logicState = WalkingOnPath;
     std::shared_ptr<Rigidbody> rigidbody;
-    std::vector<glm::vec3> path;
+    std::vector<glm::vec3>* path;
     glm::vec3 newPosition {};
     glm::vec3 endTarget {};
     glm::vec3 previousTarget {};

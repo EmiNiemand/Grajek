@@ -4,40 +4,54 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Components/PhysicsAndColliders/BoxCollider.h"
-#include "EngineManagers/AIManager.h"
 #include <vector>
 #include <cmath>
 
+constexpr int AI_GRID_SIZE = 100;
 constexpr int STRAIGHT_MOVE_COST = 10;
 constexpr int DIAGONAL_MOVE_COST = 14;
 
 struct Node {
-    Node* parent;
-    int index;
-    float gCost, hCost;
-    glm::ivec2 pos;
+    Node* parent = nullptr;
+    float gCost, hCost, fCost;
+    glm::ivec2 pos {};
 
-    [[nodiscard]] const float GetFCost() const {
-        return gCost + hCost;
+    inline void CalculateFCost() {
+        fCost = gCost + hCost;
     }
 
-    void CalculateHCost(const glm::vec2 position, const glm::vec2 targetPosition) {
-        hCost = glm::distance(position, targetPosition);
+    inline void CalculateHCost(const glm::vec2& targetPosition) {
+        hCost = glm::distance({pos.x, pos.y}, targetPosition);
     }
 
-    void CalculateGCost(const glm::vec2 position) {
+    inline void CalculateGCost(const glm::vec2& position) {
         if (position.x == 1 && position.y == 0 || position.x == -1 && position.y == 0 ||
-            position.x == 0 && position.y == 1 || position.x == 0 && position.y == -1)
-            gCost = parent->gCost + STRAIGHT_MOVE_COST;
-        else
-            gCost = parent->gCost + DIAGONAL_MOVE_COST;
+            position.x == 0 && position.y == 1 || position.x == 0 && position.y == -1) {
+            if (parent == nullptr)
+                gCost = STRAIGHT_MOVE_COST;
+            else
+                gCost = parent->gCost + STRAIGHT_MOVE_COST;
+        } else {
+            if (parent == nullptr)
+                gCost = DIAGONAL_MOVE_COST;
+            else
+                gCost = parent->gCost + DIAGONAL_MOVE_COST;
+        }
     }
 };
 
-const std::vector<glm::vec3> FindNewPath(const glm::vec2& currentPosition, const glm::vec2& endTarget);
-inline static int GetIndex(int x, int y);
-inline static glm::vec3 GridToLocal(glm::vec2 position, float gridSize);
-inline static glm::ivec2 LocalToGrid(glm::vec2 position, float gridSize);
+class CharacterPathfinding {
+    [[nodiscard]] inline const glm::vec3 GridToLocal(const glm::vec2& position) const;
+    [[nodiscard]] inline const glm::ivec2 LocalToGrid(const glm::vec2& position) const;
+
+public:
+    const float aiGridSize = 1.0f;
+    bool aiGrid[AI_GRID_SIZE][AI_GRID_SIZE] = {};
+
+    explicit CharacterPathfinding();
+    virtual ~CharacterPathfinding();
+
+    const std::vector<glm::vec3> FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget);
+};
 
 #endif //OPENGLGP_CHARACTERPATHFINDING_H

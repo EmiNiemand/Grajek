@@ -9,7 +9,6 @@
 #include "Components/AI/CharacterStates.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterPathfinding.h"
-#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include <numbers>
 
@@ -28,14 +27,14 @@ void CharacterMovement::FixedUpdate() {
 
     currentPosition = parent->transform->GetLocalPosition();
 
-    if (!path.empty()) {
+    if (!path->empty()) {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
-        newPosition = glm::normalize(path[0] - currentPosition) * speed * speedMultiplier;
+        newPosition = glm::normalize((*path)[0] - currentPosition) * speed * speedMultiplier;
 
         rigidbody->AddForce(newPosition, ForceMode::Force);
 
-        rotationAngle = std::atan2f(-newPosition.x, -newPosition.z) * 180.0f/std::numbers::pi;
+        rotationAngle = std::atan2f(-newPosition.x, -newPosition.z) * 180.0f / std::numbers::pi;
 
         if (rotationAngle < 0.0f) {
             rotationAngle += 360.0f;
@@ -43,16 +42,20 @@ void CharacterMovement::FixedUpdate() {
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
 
-        if (glm::distance(currentPosition, path[0]) < 0.5f)
-            path.erase(path.begin());
+        if (glm::distance(currentPosition, (*path)[0]) < 1.0f)
+            path->erase(path->begin());
     }
 
     Component::FixedUpdate();
 }
 
 void CharacterMovement::AIUpdate() {
-    if (path.empty() && logicState != RunningToPlayer) {
-        SetNewRandomPoint();
+    currentPosition = parent->transform->GetGlobalPosition();
+
+    if (path->empty() && logicState != RunningToPlayer) {
+//        SetNewRandomPoint();
+        parent->transform->SetLocalPosition({3, 0, 2});
+        endTarget = {12, 0, 2};
         CalculateNewPath();
     }
 
@@ -64,25 +67,37 @@ void CharacterMovement::OnCreate() {
 
     SetNewRandomPoint();
     parent->transform->SetLocalPosition(endTarget);
+    path = new std::vector<glm::vec3> (1);
 
     Component::OnCreate();
 }
 
 void CharacterMovement::OnDestroy() {
     rigidbody = nullptr;
-    path.clear();
+    path->clear();
     Component::OnDestroy();
 }
 
 void CharacterMovement::Free() {
     rigidbody = nullptr;
-    path.clear();
+    path->clear();
 }
 
 void CharacterMovement::SetNewRandomPoint() {
     speed = 0.0f;
-    endTarget.x = RandomnessManager::GetInstance()->GetFloat(-15, 15);
-    endTarget.z = RandomnessManager::GetInstance()->GetFloat(-15, 15);
+
+    static glm::ivec2 newEndTarget;
+
+    while (true) {
+        newEndTarget.x = RandomnessManager::GetInstance()->GetInt(-25, 25);
+        newEndTarget.y = RandomnessManager::GetInstance()->GetInt(-25, 25);
+
+        if (!AIManager::GetInstance()->pathfinding->aiGrid[newEndTarget.x + AI_GRID_SIZE / 2][newEndTarget.y + AI_GRID_SIZE / 2])
+            break;
+    }
+
+    endTarget.x = (float)newEndTarget.x;
+    endTarget.z = (float)newEndTarget.y;
 }
 
 void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
@@ -106,10 +121,19 @@ void CharacterMovement::CalculateNewPath() {
 #ifdef DEBUG
     ZoneScopedNC("CalculateNewPath", 0xfc0f03);
 #endif
-    spdlog::info("pos  " + std::to_string(currentPosition.x) + ", " + std::to_string(currentPosition.z));
-    path = FindNewPath({currentPosition.x, currentPosition.z}, {endTarget.x, endTarget.z});
-    spdlog::info("endTarget  " + std::to_string(endTarget.x) + ", " + std::to_string(endTarget.z));
+    delete path;
 
-    for (int i = 0; i < path.size(); i++)
-        spdlog::info("path " + std::to_string(i) + ": " + std::to_string(path[i].x) + ", " + std::to_string(path[i].z));
+    std::vector<glm::vec3> squares = AIManager::GetInstance()->pathfinding->FindNewPath({
+        currentPosition.x, currentPosition.z},{endTarget.x, endTarget.z});
+
+    spdlog::info("square" );
+    for (const auto& sq : squares) {
+        spdlog::info(std::to_string(sq.x) + ", " + std::to_string(sq.z));
+    }
+
+    path = new std::vector<glm::vec3> (squares.size());
+
+    std::move(squares.begin(), squares.end(), path->begin());
+
+
 }

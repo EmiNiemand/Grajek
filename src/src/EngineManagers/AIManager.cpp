@@ -29,6 +29,7 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 #endif
     maxCharacters = max;
     spawnDelay = delay;
+    pathfinding = std::make_shared<CharacterPathfinding>();
 
     int random;
     std::shared_ptr<GameObject> ch;
@@ -61,6 +62,7 @@ void AIManager::Free() {
     characterSpawner.request_stop();
     characterSpawner.join();
     currentCharactersLogics.clear();
+    pathfinding = nullptr;
 }
 
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
@@ -156,14 +158,13 @@ const float AIManager::GetCombinedSatisfaction() {
     return satisfaction;
 }
 
-void AIManager::RemoveDynamicBoxCollider(const glm::vec3& position, int componentId) {
-    glm::ivec2 gridPos = glm::ivec2((int)(position.x / aiGridSize) + AI_GRID_SIZE / 2,
-                                    (int)(position.z / aiGridSize) + AI_GRID_SIZE / 2);
+void AIManager::RemoveBoxCollider(const glm::vec3& position) const {
+    glm::ivec2 gridPos = glm::ivec2((int)(position.x / pathfinding->aiGridSize) + AI_GRID_SIZE / 2,
+                                    (int)(position.z / pathfinding->aiGridSize) + AI_GRID_SIZE / 2);
 
     for (int x = -10; x <= 10; x++) {
         for (int y = -10; y <= 10; y++) {
-            int newGridPos = (gridPos.x + x) + (gridPos.y + y) * AI_GRID_SIZE;
-            aiGrid[newGridPos] = false;
+            pathfinding->aiGrid[gridPos.x + x][gridPos.y + y] = false;
         }
     }
 }
