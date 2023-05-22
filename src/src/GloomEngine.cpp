@@ -102,6 +102,28 @@ bool GloomEngine::MainLoop() {
     // AI UPDATE
     int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
     int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
+    // FIXED UPDATE
+    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
+    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
+    // UPDATE
+    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
+    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
+
+
+    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        for (const auto& component: components) {
+            if (component.second->callOnAwake) {
+                component.second->Awake();
+                component.second->GetParent()->UpdateSelfAndChildren();
+            }
+            if (component.second->callOnStart && component.second->enabled) {
+                component.second->Start();
+                component.second->GetParent()->UpdateSelfAndChildren();
+            }
+        }
+    }
+
+    // AI UPDATE
     if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
 #ifdef DEBUG
         ZoneScopedNC("AI update", 0x00FF00);
@@ -116,8 +138,6 @@ bool GloomEngine::MainLoop() {
     }
 
     // FIXED UPDATE
-    int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
-    int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
 #ifdef DEBUG
         ZoneScopedNC("Fixed update", 0x00008B);
@@ -132,8 +152,6 @@ bool GloomEngine::MainLoop() {
     }
 
     // UPDATE
-    int multiplier60Rate = (int)((currentTime - (float)(int)currentTime) * 60);
-    int multiplier60LastRate = (int)((lastFrameTime - (float)(int)lastFrameTime) * 60);
     if (multiplier60Rate > multiplier60LastRate || (multiplier60Rate == 0 && multiplier60LastRate != 0)) {
 #ifdef DEBUG
         ZoneScopedNC("Update", 0xDC143C);
@@ -201,14 +219,6 @@ void GloomEngine::Update() {
         ZoneScopedNC("Component update", 0xFF69B4);
 #endif
         for (const auto& component: components) {
-            if (component.second->callOnAwake) {
-                component.second->Awake();
-                component.second->GetParent()->UpdateSelfAndChildren();
-            }
-            if (component.second->callOnStart && component.second->enabled) {
-                component.second->Start();
-                component.second->GetParent()->UpdateSelfAndChildren();
-            }
             if (component.second->enabled) {
                 component.second->Update();
             }

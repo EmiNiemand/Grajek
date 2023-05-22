@@ -121,13 +121,8 @@ void PlayerManager::UpdateAnimations() {
 
 #pragma region Movement Events
 void PlayerManager::OnMove(glm::vec2 moveVector) {
-    if(moveVector != glm::vec2(0)) {
+    if(moveVector != glm::vec2(0))
         moveVector = glm::normalize(moveVector);
-        animator->SetAnimation("AnimsNew/Walk.dae");
-    }
-    else {
-        animator->SetAnimation("AnimsNew/Idle1.dae");
-    }
 
 	movement->Move(moveVector);
 }
@@ -265,8 +260,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 
     if (!pat) return;
 
-    //TODO: uncomment when crowd manager gets implemented
-    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
+    //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
     equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
 
     playerUI->UpdateCash(equipment->cash);

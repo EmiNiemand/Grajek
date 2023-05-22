@@ -71,7 +71,19 @@ void Animator::LoadAnimation(const std::string& path)
 }
 
 void Animator::SetAnimation(const std::string &name) {
+    previousAnimation = currentAnimation;
+    previousAnimationTime = currentTime;
+	speed = 1;
+
     currentAnimation = animations.at(Utilities::Hash(name));
+
+    currentTime = -fmod(blendingTimeInSeconds * (float)currentAnimation.GetTicksPerSecond(), currentAnimation.GetDuration());
+    blendingTimeInTicks = currentTime;
+
+    if (previousAnimation.name.empty()) {
+        previousAnimationTime = 0;
+        currentTime = 0;
+    }
 
     currentAnimation.Recalculate(model);
 }
@@ -127,7 +139,10 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
 
 
 void Animator::UpdateAnimation(float deltaTime) {
-    currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime;
+    currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime * speed;
+    if (currentTime == 0) {
+        currentTime = 0.001f;
+    }
     currentTime = fmod(currentTime, currentAnimation.GetDuration());
     CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
 }
@@ -175,7 +190,7 @@ void Animator::CalculateBoneTransform(AssimpNodeData* node, const glm::mat4& par
         bone = currentAnimation.FindBone(*nodeName);
 
         if (bone) {
-            bone->Update(currentTime);
+            bone->Update(currentTime, previousAnimationTime, blendingTimeInTicks, previousAnimation);
             nodeTransform = bone->GetLocalTransform();
         }
 

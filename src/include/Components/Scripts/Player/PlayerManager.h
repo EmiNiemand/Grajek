@@ -13,6 +13,7 @@
 #include <set>
 
 class PlayerMovement;
+class Rigidbody;
 class PlayerUI;
 class PlayerEquipment;
 class Instrument;
@@ -24,7 +25,6 @@ class ShopMenu;
 class SavePointMenu;
 class Menu;
 class Animator;
-class Rigidbody;
 
 
 class PlayerManager : public Component, public IDataPersistance {
