@@ -29,6 +29,7 @@ std::shared_ptr<StaticObjectData> House::SaveStatic() {
     newData->scale = this->transform->GetLocalScale();
     newData->modelPath = objectRenderer->lastLoadedModelPath;
     newData->coliderSize = colider->GetSize();
+    newData->coliderOffset = colider->GetOffset();
 
     return newData;
 }
