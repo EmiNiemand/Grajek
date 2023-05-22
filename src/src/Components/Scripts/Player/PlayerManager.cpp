@@ -286,7 +286,10 @@ void PlayerManager::OnCheatSheetToggle() {
 #pragma endregion
 
 void PlayerManager::PollInput() {
-	if(!inputEnabled) return;
+	if(!inputEnabled) {
+        if(moveInput != glm::vec2(0)) OnMove(glm::vec2(0));
+        return;
+    }
 
 	auto hid = HIDManager::GetInstance();
 	glm::vec2 readMoveVector(0);

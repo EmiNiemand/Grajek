@@ -29,6 +29,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
+#include "Components/Scripts/Menus/Dialogue.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -229,20 +230,24 @@ void Game::InitializeGame() const {
 
     // Setup sklepikarz
     auto sklepikarz = GameObject::Instantiate("Sklepikarz", activeScene);
-    sklepikarz->AddComponent<Rigidbody>();
+    sklepikarz->AddComponent<Rigidbody>()->enabled = false;
     auto collider = sklepikarz->GetComponent<BoxCollider>();
     collider->SetOffset({0, 1, 0});
     collider->SetSize({1, 2, 1});
-    sklepikarz->transform->SetLocalPosition({-10, 2, -10});
+    sklepikarz->transform->SetLocalPosition({-10, 0, -10});
     sklepikarz->transform->SetLocalScale({0.5, 0.5, 0.5});
     auto animatorObject = GameObject::Instantiate("AnimatorSklepikarz", sklepikarz);
     auto animator = animatorObject->AddComponent<Animator>();
     animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    animator->SetAnimation("AnimsNew/Walk.dae");
-    animatorObject->transform->SetLocalRotation({0, 90, 0});
-    sklepikarz->AddComponent<GameObjectAnimator>()->Setup(sklepikarz->transform, {
-            {AnimatedProperty::Position, glm::vec3(8.0f, 2.0f, 0.0f), 5.0f}
-    }, false);
+    animator->SetAnimation("AnimsNew/Idle3.dae");
+    auto sklepikarzDialogue = GameObject::Instantiate("SklepikarzDialogue", sklepikarz);
+    auto dialogue = sklepikarzDialogue->AddComponent<Dialogue>();
+    dialogue->texts.push_back({{"Jestem Sklepu."},
+                              {"Mozesz sie poruszac WSAD"},
+                                    {"Kup instrument."}});
+    dialogue->texts.push_back({{"Graj spacja."},
+                               {"Strzelaj przyciskami RUP"},
+                               {"Rozwalaj wrogow."}});
 
 //    // SCENE BUILDINGS
 //	std::map<std::string, int> buildingSizes = {

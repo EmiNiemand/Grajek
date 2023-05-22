@@ -46,8 +46,7 @@ void SceneManager::InitializeScene() {
 
 void SceneManager::LoadScene(const std::string& scene) {
     if (scene == "Scene") {
-        if (!GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file.empty())
-            file = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file;
+        file = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file;
         ClearScene();
         InitializeScene();
         GloomEngine::GetInstance()->game->activeCamera = Camera::activeCamera;
