@@ -14,7 +14,7 @@ constexpr int STRAIGHT_MOVE_COST = 10;
 constexpr int DIAGONAL_MOVE_COST = 14;
 
 struct Node {
-    std::shared_ptr<Node> parent = nullptr;
+    Node* parent = nullptr;
     float gCost, hCost, fCost;
     glm::ivec2 pos {};
 
@@ -22,11 +22,12 @@ struct Node {
         fCost = gCost + hCost;
     }
 
-    inline void CalculateHCost(const glm::vec2& targetPosition) {
-        hCost = glm::distance({pos.x, pos.y}, targetPosition);
+    // NOTE: Manhattan distance (performs better than Euclidean)
+    inline void CalculateHCost(const glm::ivec2& targetPosition) {
+        hCost = std::fabs(targetPosition.x - pos.x) + std::fabs(targetPosition.y - pos.y);
     }
 
-    inline void CalculateGCost(const glm::vec2& position) {
+    inline void CalculateGCost(const glm::ivec2& position) {
         if ((position.x != 0 && position.y == 0) || (position.x == 0 && position.y != 0))
             gCost = parent->gCost + STRAIGHT_MOVE_COST;
         else
@@ -36,25 +37,25 @@ struct Node {
 
 class CharacterPathfinding {
     const bool (*aiGrid)[100];
-    float aiGridSize;
+    float aiCellSize;
     glm::ivec2 startGridPos {};
     glm::ivec2 endGridPos {};
     glm::ivec2 gridIndex {};
-    std::unordered_map<int, std::shared_ptr<Node>> openList;
-    std::unordered_map<int, std::shared_ptr<Node>> closedList;
-    std::shared_ptr<Node> currentNode = nullptr;
-    std::shared_ptr<Node> node = nullptr;
-    float maxfCost = FLT_MAX;
+    std::unordered_map<int, Node*> openList;
+    std::unordered_map<int, Node*> closedList;
+    Node* currentNode = nullptr;
+    Node* node = nullptr;
+    int size = 0;
+    float maxCost = FLT_MAX;
 
     [[nodiscard]] inline const glm::vec3 GridToLocal(const glm::vec2& position) const;
     [[nodiscard]] inline const glm::ivec2 LocalToGrid(const glm::vec2& position) const;
 
 public:
-
     explicit CharacterPathfinding();
     ~CharacterPathfinding();
 
-    const std::vector<glm::vec3> FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget);
+    std::vector<glm::vec3>* FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget);
 };
 
 #endif //OPENGLGP_CHARACTERPATHFINDING_H

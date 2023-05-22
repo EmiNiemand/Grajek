@@ -354,13 +354,13 @@ void BoxCollider::SetGridPoints() {
     SetCollidersGridPoints(colGridPoints);
 
     if (!isTrigger && !parent->GetComponent<Rigidbody>() && std::strcmp(parent->GetName().c_str(), "Ground") != 0) {
-        const float aiGridSize = AIManager::GetInstance()->aiGridSize;
+        const float aiCellSize = AIManager::GetInstance()->aiCellSize;
 
         glm::ivec2 aiGridPoints[4] = {
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiGridSize),
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiGridSize),
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiGridSize),
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiGridSize)
+                glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiCellSize),
+                glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiCellSize),
+                glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiCellSize),
+                glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiCellSize)
         };
 
         SetAIGridPoints(aiGridPoints);
@@ -408,8 +408,6 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
     ZoneScopedNC("SAIGP", 0x0339fc);
 #endif
 
-    const int aiGridSize = (int)AIManager::GetInstance()->aiGridSize;
-
     if (points[0] == points[1] &&
         points[1] == points[2] &&
         points[2] == points[3]) {
@@ -432,8 +430,8 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX - aiGridSize; x <= maxX + aiGridSize; ++x) {
-        for (int y = minY - aiGridSize; y <= maxY + aiGridSize; ++y) {
+    for (int x = minX - 1; x <= maxX + 1; ++x) {
+        for (int y = minY - 1; y <= maxY + 1; ++y) {
             AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         }
     }
