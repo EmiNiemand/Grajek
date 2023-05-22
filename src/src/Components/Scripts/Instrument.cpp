@@ -98,7 +98,7 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
             // 1    *
             // 0  *
             instrument->GeneratePattern({
-                {0, 0}, {0, 0.5}, {1, 0.5}});
+                {0, 0}, {1, 0.5}});
             break;
         case Drums:
             // 2      *
