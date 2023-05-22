@@ -4,6 +4,8 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "EngineManagers/AIManager.h"
 
+#include <cmath>
+
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
 #endif
@@ -229,18 +231,21 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
 
     if (parent->GetComponent<Rigidbody>() != nullptr) {
         glm::vec3 otherRotation = other->parent->globalRotation;
+
         // Collision handling for not rotated collider
         if (otherRotation == glm::vec3(0.0f)) {
             float value = closestVector.x + closestVector.y + closestVector.z;
             glm::vec3 velocityOffset = closestVector * glm::vec3(0.001);
-
             glm::vec3 velocity = closestVector * parent->GetComponent<Rigidbody>()->velocity;
+
             if (std::round(closestVector.y) == 1) {
                 velocityOffset = glm::vec3(0);
             }
+
             if (value > 0) {
                 velocity = -velocity;
             }
+
             parent->GetComponent<Rigidbody>()->AddForce(velocity + velocityOffset, ForceMode::Impulse);
         }
             // Collision handling for rotated colliders
@@ -248,6 +253,7 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
             glm::vec3 velocity = parent->GetComponent<Rigidbody>()->velocity;
             float velocityLength = glm::length(velocity);
             glm::vec3 vel = closestVector * 0.001f;
+
             if(velocityLength < 0.01f) {
                 vel = closestVector * 0.01f;
             }
@@ -260,9 +266,6 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
 
 std::vector<std::pair<glm::vec3, glm::vec3>>
 BoxCollider::CalculateShiftedPoints(const std::shared_ptr<BoxCollider> &other, glm::vec3 position, glm::vec3 otherPosition) {
-    glm::vec3 minBoxPos = GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
-    glm::vec3 maxBoxPos = GetModelMatrix() * glm::vec4(1, 1, 1, 1);
-
     glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
     glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
 
@@ -305,12 +308,12 @@ glm::vec3 BoxCollider::GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, g
     float minDistance = glm::distance(points[0].first, position);
     glm::vec3 closestVector = glm::vec3(0, 0, 0);
 
-    for (auto point : points) {
+    for (const auto& point : points) {
         float distance = glm::distance(point.first, position);
-        if (distance < minDistance + 0.0001 && distance > minDistance - 0.0001) {
+        if (distance == minDistance) {
             closestVector += point.second;
         }
-        else if (distance < minDistance - 0.0001) {
+        else if (distance < minDistance) {
             minDistance = distance;
             closestVector = point.second;
         }
