@@ -20,6 +20,7 @@ public:
 
     std::string modelPath;
     glm::vec3 coliderSize;
+    glm::vec3 coliderOffset;
 public:
 StaticObjectData();
 };
