@@ -32,7 +32,7 @@ std::shared_ptr<GameObject> Shop::Create() {
     auto secondInstrument = shopMenuComponent->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png", "UI/Sklep/TrabkaZRamka.png");
     auto thirdInstrument = shopMenuComponent->Menu::AddButton("ThirdInstrument", 1525, 250, "UI/Sklep/LaunbhPad.png", "UI/Sklep/LaunbhPadZRamka.png");
     auto fourthInstrument = shopMenuComponent->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png", "UI/Sklep/GitaraZRamka.png");
-    auto exitButton = shopMenuComponent->Menu::AddImage("ExitButton", 1600, 50, "UI/Sklep/Przycisk2.png");
+    auto exitButton = shopMenuComponent->Menu::AddImage("ExitImage", 1600, 50, "UI/Sklep/Przycisk2.png");
     auto shopBackground = shopMenuComponent->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
     firstInstrumentCost->GetParent()->SetParent(firstInstrument->GetParent());
     secondInstrumentCost->GetParent()->SetParent(secondInstrument->GetParent());

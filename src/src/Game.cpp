@@ -26,7 +26,6 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
-#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
@@ -83,80 +82,6 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    // Set up player UI
-    // ---------
-    auto playerUI = GameObject::Instantiate("PlayerUI", activeScene)->AddComponent<Menu>();
-    playerUI->AddText("Money", "Money: 0", 140, 1040, 22);
-    playerUI->AddText("Reputation", "Rep: 0", 140, 1000, 22);
-    playerUI->AddImage("UI", 0, 952, "UI/Player.png");
-
-    // Set up pause menu
-    auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
-    {
-        std::vector<std::string> buttonNames = {
-                "Resume",
-                "Options",
-                "Main Menu",
-                "Exit"
-        };
-
-        int buttonOffset = -100;
-        int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
-
-        std::vector<std::shared_ptr<Button>> buttonBuffer;
-
-        for (int i = 0; i < buttonNames.size(); ++i) {
-            auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
-                                                 "UI/buttonInactive.png", "UI/buttonActive.png",
-                                                 buttonNames[i], 32);
-            optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
-            currentYPos += buttonOffset;
-
-            buttonBuffer.push_back(optionButton);
-        }
-
-        pause->AddImage("Background", 0, 0, "UI/pause.png");
-
-        for(int i=0; i<buttonNames.size(); i++) {
-            auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
-            auto nextIndex = i+1==buttonNames.size() ? 0:i+1;
-            buttonBuffer[i]->previousButton = buttonBuffer[prevIndex];
-            buttonBuffer[i]->nextButton = buttonBuffer[nextIndex];
-        }
-
-        pause->GetParent()->DisableSelfAndChildren();
-    }
-
-    // Set up options menu
-    auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    {
-        auto backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-        auto musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-        auto currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-        auto nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-        auto optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
-
-        backToPauseMenu->previousButton = shadowResolution;
-        backToPauseMenu->nextButton = musicVolume;
-        musicVolume->previousButton = backToPauseMenu;
-        musicVolume->nextButton = windowResolution;
-        windowResolution->previousButton = musicVolume;
-        windowResolution->nextButton = windowFullScreen;
-        windowFullScreen->previousButton = windowResolution;
-        windowFullScreen->nextButton = shadowResolution;
-        shadowResolution->previousButton = windowFullScreen;
-        shadowResolution->nextButton = backToPauseMenu;
-
-        options->GetParent()->DisableSelfAndChildren();
-    }
-
-    // Set up shop menu
-    Prefab::Instantiate<Shop>();
-
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
     bench->transform->SetLocalPosition({0, 0, -10});
     bench->transform->SetLocalRotation({0, -90, 0});
@@ -190,24 +115,6 @@ void Game::InitializeGame() const {
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
     savePoint1->transform->SetLocalPosition({-15, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
-
-    // Save Point Menu
-    auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 5; j++) {
-            savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
-        }
-    }
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>();
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save2")->GetComponent<Button>();
-    for (int i = 2; i <= 9; i++) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i - 1))->GetComponent<Button>();
-        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i + 1))->GetComponent<Button>();
-    }
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save9")->GetComponent<Button>();
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
-    savePointMenu->GetParent()->DisableSelfAndChildren();
-
 
     int x = 0;
     int y = 0;
