@@ -30,7 +30,7 @@ public:
     std::shared_ptr<Shader> colliderDebugShader;
 #endif
 
-    float gridSize = 30.0f;
+    float gridSize = 10.0f;
     std::unordered_map<int, std::shared_ptr<BoxCollider>> grid[GRID_SIZE * GRID_SIZE];
 
 public:

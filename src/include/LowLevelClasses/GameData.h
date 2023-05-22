@@ -16,6 +16,7 @@ public:
     int reputation;
     glm::vec3 playerPosition;
     std::set<InstrumentName> instruments;
+    bool shopkeeperEvent;
 
 public:
     GameData();

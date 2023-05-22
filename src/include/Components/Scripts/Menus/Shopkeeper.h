@@ -3,14 +3,16 @@
 
 #include "Components/Component.h"
 #include "Components/Scripts/Menus/Dialogue.h"
+#include "Interfaces/IDataPersistance.h"
 #include <vector>
 
 class Image;
 class Text;
 class PlayerManager;
 
-class Shopkeeper : public Component {
+class Shopkeeper : public Component, public IDataPersistance {
 private:
+    bool shopkeeperEvent = false;
     bool triggerActive = false;
     bool active = false;
     std::shared_ptr<Image> image;
@@ -18,6 +20,7 @@ private:
     std::shared_ptr<Text> text2;
     std::shared_ptr<Text> text3;
     std::shared_ptr<GameObject> dialogue;
+    std::shared_ptr<GameObject> shopkeeperModel;
     std::shared_ptr<PlayerManager> playerManager;
     short dialogueIndex = 0;
 
@@ -34,6 +37,9 @@ public:
     void Update() override;
     void ShowDialogue();
     void HideDialogue();
+
+    void LoadData(std::shared_ptr<GameData> data) override;
+    void SaveData(std::shared_ptr<GameData> &data) override;
 };
 
 #endif //IMAGE_CPP_SHOPKEEPER_H

@@ -5,6 +5,7 @@
 #include "Components/Scripts/Menus/ShopTrigger.h"
 #include "Components/UI/Button.h"
 #include "Components/UI/Image.h"
+#include "Components/Scripts/Menus/Shopkeeper.h"
 
 Shop::Shop(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
            Prefab(name, id, parent, tag) {
@@ -21,6 +22,8 @@ std::shared_ptr<GameObject> Shop::Create() {
     shop->AddComponent<Renderer>()->LoadModel("Buildings/MAINSHOP.obj");
     shop->AddComponent<BoxCollider>()->SetOffset({-2.5, 3, 2});
     shop->GetComponent<BoxCollider>()->SetSize({2.5, 6, 2});
+    auto shopkeeper = GameObject::Instantiate("Shopkeeper", shop);
+    shopkeeper->AddComponent<Shopkeeper>();
 
     auto shopMenu = GameObject::Instantiate("ShopMenu", shop);
     auto shopMenuComponent = shopMenu->AddComponent<ShopMenu>();

@@ -136,27 +136,6 @@ void Game::InitializeGame() const {
 //        x++;
 //    }
 
-    // Setup sklepikarz
-    auto sklepikarz = GameObject::Instantiate("Sklepikarz", activeScene);
-    sklepikarz->AddComponent<Rigidbody>()->enabled = false;
-    auto collider = sklepikarz->GetComponent<BoxCollider>();
-    collider->SetOffset({0, 1, 0});
-    collider->SetSize({1, 2, 1});
-    sklepikarz->transform->SetLocalPosition({1.5, 0, -2});
-    sklepikarz->transform->SetLocalScale({0.5, 0.5, 0.5});
-    auto animatorObject = GameObject::Instantiate("AnimatorSklepikarz", sklepikarz);
-    auto animator = animatorObject->AddComponent<Animator>();
-    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    animator->SetAnimation("AnimsNew/Idle3.dae");
-    auto sklepikarzDialogue = GameObject::Instantiate("SklepikarzDialogue", sklepikarz);
-    auto dialogue = sklepikarzDialogue->AddComponent<Shopkeeper>();
-    dialogue->texts.push_back({{"Jestem Sklepu."},
-                              {"Mozesz sie poruszac WSAD"},
-                                    {"Kup instrument."}});
-    dialogue->texts.push_back({{"Graj spacja."},
-                               {"Strzelaj przyciskami RUP"},
-                               {"Rozwalaj wrogow."}});
-
     camera->SetTarget(nullptr);
 }
 
