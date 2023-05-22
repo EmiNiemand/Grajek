@@ -81,13 +81,15 @@ const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2&
         closedList.insert({currentNode->pos.x * 100 + currentNode->pos.y, currentNode});
     }
 
+
     std::vector<glm::vec3> squares;
 
-    while (true) {
+    if (currentNode == nullptr)
+        return squares;
+
+    while (currentNode->parent != nullptr) {
         squares.push_back(GridToLocal(currentNode->pos));
         currentNode = currentNode->parent;
-        if (currentNode->parent == nullptr)
-            break;
     }
 
     openList.clear();
