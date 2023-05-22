@@ -9,6 +9,7 @@
 #include "windows.h"
 #include "psapi.h"
 #include "Components/Renderers/Renderer.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include <filesystem>
 
 DebugManager::DebugManager() {
@@ -84,33 +85,56 @@ void DebugManager::Render() {
         static float inputVector1[3] = {0.0f,0.0f,0.0f};
         static float inputVector2[3] = { 0.0f,0.0f,0.0f };
         static float inputVector3[3] = { 0.0f,0.0f,0.0f };
+        static float inputVector4[3] = { 0.0f,0.0f,0.0f };
+        static float inputVector5[3] = { 0.0f,0.0f,0.0f };
         glm::vec3 positionHolder;
         glm::vec3 rotationHolder;
         glm::vec3 scaleHolder;
+        glm::vec3 coliderSizeHolder;
+        glm::vec3 coliderOffsetHolder;
 
 
         positionHolder = selected->transform->GetLocalPosition();
         rotationHolder = selected->transform->GetLocalRotation();
         scaleHolder = selected->transform->GetLocalScale();
+        if(selected->GetComponent<BoxCollider>()){
+            coliderSizeHolder = selected->GetComponent<BoxCollider>()->GetSize();
+            coliderOffsetHolder = selected->GetComponent<BoxCollider>()->GetOffset();
+        }
         if (!transformExtracted) {
             ExtractVec3ToFloat3(positionHolder, inputVector1);
             ExtractVec3ToFloat3(rotationHolder, inputVector2);
             ExtractVec3ToFloat3(scaleHolder, inputVector3);
+            if(selected->GetComponent<BoxCollider>()){
+                ExtractVec3ToFloat3(coliderSizeHolder,inputVector4);
+                ExtractVec3ToFloat3(coliderOffsetHolder,inputVector5);
+            }
             transformExtracted = true;
         }
         positionHolder = InjectFloat3IntoVec3(inputVector1);
         rotationHolder = InjectFloat3IntoVec3(inputVector2);
         scaleHolder = InjectFloat3IntoVec3(inputVector3);
+        coliderSizeHolder = InjectFloat3IntoVec3(inputVector4);
+        coliderOffsetHolder = InjectFloat3IntoVec3(inputVector5);
+
 
         selected->transform->SetLocalPosition(positionHolder);
         selected->transform->SetLocalRotation(rotationHolder);
         selected->transform->SetLocalScale(scaleHolder);
+        if(selected->GetComponent<BoxCollider>()){
+            selected->GetComponent<BoxCollider>()->SetSize(coliderSizeHolder);
+            selected->GetComponent<BoxCollider>()->SetOffset(coliderOffsetHolder);
+        }
 
         ImGui::Begin("Properties");
         ImGui::Text("%s", selected->GetName().c_str());
         ImGui::DragFloat3("Position", inputVector1, 1.0f);
         ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
         ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f,10.0f);
+        if(selected->GetComponent<BoxCollider>()) {
+            ImGui::DragFloat3("Colider Size", inputVector4, 1.0f);
+            ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
+        }
 
         static char newModelPath[200] = "Write new path here";
         if(selected->GetComponent<Renderer>()){
