@@ -32,15 +32,36 @@ void UIAnimator::Update() {
     ZoneScopedNC("UI Animator", 0x800080);
 #endif
     if(paused) return;
+    if(type == Resetable && checkpointIndex >= checkpoints.size()) return;
 
     // Switch checkpoints if current one finished
     // ------------------------------------------
     if(counter > checkpoint.duration) {
         checkpointIndex++;
 
+        // Snap property value to checkpoint value
+        switch (checkpoint.property) {
+            case Position:
+                image->SetPosition(checkpoint.value.x, checkpoint.value.y);
+                break;
+            case Rotation:
+                image->SetRotation(checkpoint.value.z);
+                break;
+            case Scale:
+                image->SetScale(checkpoint.value.x);
+                break;
+            case Color:
+                image->SetColor(checkpoint.value);
+                break;
+            case Alpha:
+                image->SetAlpha(checkpoint.value.x);
+                break;
+        }
+
         // Finish, loop or suspend animation
         // ---------------------------------
         if(checkpointIndex >= checkpoints.size()) {
+            auto imageTransform = image->GetParent()->transform;
             switch(type) {
                 case Resetable:
                     return;

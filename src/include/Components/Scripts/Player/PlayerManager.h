@@ -38,7 +38,6 @@ private:
     std::shared_ptr<PlayerEquipment> equipment;
 	std::shared_ptr<PlayerMovement> movement;
 	// UI
-	std::shared_ptr<Menu> activeMenu;
     std::shared_ptr<PauseMenu> pauseMenu;
     std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<ShopMenu> shopMenu;
@@ -53,6 +52,7 @@ private:
 	float previousVelocity;
 
 public:
+    std::shared_ptr<Menu> activeMenu;
     bool inputEnabled;
 
 //Equipment methods

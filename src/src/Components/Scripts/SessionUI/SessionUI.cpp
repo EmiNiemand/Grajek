@@ -22,38 +22,35 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     // --------------------
     for (const auto& sample: samples)
     {
-        sampleSources.push_back(GameObject::Instantiate("Sample", parent)->AddComponent<AudioSource>());
+        sampleSources.push_back(GameObject::Instantiate("SampleSource", parent)->AddComponent<AudioSource>());
         sampleSources.back()->LoadAudioData(sample->clipPath.c_str(), AudioType::Direct);
-    }
 
-    // Set up cheat sheet
-    // ------------------
-    SetCheatSheet("UI/Sesja/drumPatterns.png");
+        sampleImages.push_back(GameObject::Instantiate("SampleImage", parent)
+                                    ->AddComponent<Image>());
+    }
 }
 
-void SessionUI::SetCheatSheet(std::string cheatSheetPath) {
+void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
     cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -1);
 }
 
 void SessionUI::PlaySound(int index) {
-    //TODO: play some kind of visual confirmation of playing sound
-//    animator.SetTrigger("Sound"+index);
     sampleSources[index]->ForcePlaySound();
-    spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
+    //spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
 }
 
 void SessionUI::ToggleCheatSheet() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
-        GameObject::Instantiate("CheatSheetAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(
-                cheatSheet, {
+        GameObject::Instantiate("CheatSheetAnimator", parent->parent)
+                ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
                 });
     } else {
-        GameObject::Instantiate("CheatSheetAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(
-                cheatSheet, {
+        GameObject::Instantiate("CheatSheetAnimator", parent->parent)
+                ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
                 });
     }
@@ -67,11 +64,9 @@ void SessionUI::UpdateAccuracy(float fraction) {
         else break;
     }
 
-    //TODO: Show accuracy feedback when changing text is implemented
+    accuracyRatingAnimator[index]->Reset();
     //accuracyFeedback->text = accuracyTexts[index];
-    //accuracyFeedback->color = accuracyColors[index];
-    //accuracyRatingAnimator[index]->Reset();
-    spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
+    //spdlog::info("[SUI] Accuracy rating:" + accuracyTexts[index]);
 }
 
 void SessionUI::Update() {
@@ -96,9 +91,6 @@ void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
 }
 
 void SessionUI::AccuracyFeedbackSetup() {
-    int screenWidth, screenHeight;
-    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
-
     accuracyRatingAnimator = {
             GameObject::Instantiate("AccuracyPoorAnimator", parent)->AddComponent<UIAnimator>(),
             GameObject::Instantiate("AccuracyNiceAnimator", parent)->AddComponent<UIAnimator>(),
@@ -109,10 +101,10 @@ void SessionUI::AccuracyFeedbackSetup() {
             "UI/Sesja/accuracyPoor.png", "UI/Sesja/accuracyNice.png",
             "UI/Sesja/accuracyAwesome.png", "UI/Sesja/AccuracyPerfect.png"
     };
-    for (int i = 0; i < accuracyRatingAnimator.size(); ++i) {
-        auto ratingImage = GameObject::Instantiate("AccuracyPoor", parent)->AddComponent<Image>();
-        ratingImage->LoadTexture(0, 0, accuracyImagePaths[i], 1);
-        ratingImage->SetPosition(screenWidth/2 - ratingImage->width/2, screenHeight/2 - ratingImage->height/2);
+    for (int i = 0; i < 4; ++i) {
+        auto ratingImage = GameObject::Instantiate("AccuracyImage", parent)->AddComponent<Image>();
+        ratingImage->LoadTexture(0, 0,accuracyImagePaths[i], 0.7f);
+        ratingImage->SetPosition(960 - ratingImage->width/2, 540 - ratingImage->height/2);
         ratingImage->SetAlpha(0);
         accuracyRatingAnimator[i]->Setup(ratingImage, {
                 {AnimatedProperty::Alpha, glm::vec3(1.0f), 0},
