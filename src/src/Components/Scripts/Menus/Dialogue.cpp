@@ -70,8 +70,8 @@ void Dialogue::Update() {
                 parent->GetComponent<BoxCollider>()->enabled = false;
                 triggerActive = false;
                 sklepikarz->AddComponent<GameObjectAnimator>()->Setup(sklepikarz->transform, {
-                        {AnimatedProperty::Rotation, glm::vec3(0.0f, 90.0f, 0.0f), 0.8f},
-                        {AnimatedProperty::Position, glm::vec3(5.0f, 0.0f, 0.0f), 4.0f}
+                        {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},
+                        {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -2.0f), 2.0f}
                 }, false);
             }
             active = false;

@@ -55,7 +55,7 @@ void GloomEngine::Initialize() {
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
-    AIManager::GetInstance()->InitializeSpawner(1, 10, 100);
+    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 
     game = std::make_shared<Game>();
     game->InitializeGame();
@@ -89,7 +89,7 @@ bool GloomEngine::MainLoop() {
         for (int i = 0; i < destroyComponentBufferIterator; ++i) {
             const auto& component = destroyComponentBuffer[i];
             component->OnDestroy();
-            component->GetParent()->RemoveComponent((int)component->GetId());
+            component->GetParent()->RemoveComponent(component->GetId());
             RemoveComponent(component);
         }
         ClearDestroyComponentBuffer();
@@ -396,8 +396,7 @@ void GloomEngine::RemoveGameObject(const std::shared_ptr<GameObject>& gameObject
 }
 
 void GloomEngine::RemoveComponent(const std::shared_ptr<Component>& component) {
-    int componentId = component->GetId();
-    components.erase(componentId);
+    components.erase(component->GetId());
 }
 
 void GloomEngine::glfwErrorCallback(int error, const char* description)

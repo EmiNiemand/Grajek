@@ -71,9 +71,9 @@ void Game::InitializeGame() const {
     // Set up ground
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
-    ground->transform->SetLocalPosition({0, -4, -10});
-    ground->transform->SetLocalScale({40, 2, 40});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(40, 40);
+    ground->transform->SetLocalPosition({0, -4, 0});
+    ground->transform->SetLocalScale({30, 2, 30});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(30, 30);
 
     // Set up lights
     // -------------
@@ -83,8 +83,8 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -10});
-    bench->transform->SetLocalRotation({0, -90, 0});
+    bench->transform->SetLocalPosition({0, 0, -7});
+    bench->transform->SetLocalRotation({0, 180, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
     bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
@@ -107,8 +107,8 @@ void Game::InitializeGame() const {
     bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
-    hydrant->transform->SetLocalPosition({15, 0, -15});
-    hydrant->transform->SetLocalRotation({0, -65, 0});
+    hydrant->transform->SetLocalPosition({16, 0, 15});
+    hydrant->transform->SetLocalRotation({0, 130, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
@@ -141,7 +141,7 @@ void Game::InitializeGame() const {
     auto collider = sklepikarz->GetComponent<BoxCollider>();
     collider->SetOffset({0, 1, 0});
     collider->SetSize({1, 2, 1});
-    sklepikarz->transform->SetLocalPosition({-10, 0, -10});
+    sklepikarz->transform->SetLocalPosition({1.5, 0, -2});
     sklepikarz->transform->SetLocalScale({0.5, 0.5, 0.5});
     auto animatorObject = GameObject::Instantiate("AnimatorSklepikarz", sklepikarz);
     auto animator = animatorObject->AddComponent<Animator>();
@@ -156,101 +156,6 @@ void Game::InitializeGame() const {
                                {"Strzelaj przyciskami RUP"},
                                {"Rozwalaj wrogow."}});
 
-//    // SCENE BUILDINGS
-//	std::map<std::string, int> buildingSizes = {
-//			{"jazz1", 6},
-//			{"jazz2", 7},
-//			{"jazz3", 10},
-//			{"jazz4", 6},
-//			{"kamienica1", 6},
-//			{"kamienica2", 10},
-//			{"kamienica3", 6},
-//			{"moduê1", 6},
-//			{"moduê2", 6},
-//			{"moduê3", 6},
-//			{"moduê4", 6},
-//			{"moduê5", 10},
-//			{"moduê6", 6}
-//	};
-//	float currentXPos = -25;
-//	float currentYPos = -30;
-//
-//	std::string squareBuildings[] = {
-//			"kamienica1", "kamienica2", "kamienica3",
-//			"moduê1", "moduê2"
-//	};
-//
-//	std::vector<std::string> buildingPaths = {
-//			squareBuildings[0], squareBuildings[2],
-//			squareBuildings[0], squareBuildings[4], squareBuildings[1],
-//			squareBuildings[3], squareBuildings[2],
-//	};
-//
-//	// LEFT CORNER
-//	{
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos - 9.5, 0, currentYPos+4});
-//		test->transform->SetLocalRotation({0, 90, 0});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
-//	}
-//
-//	// FRONT FACE
-//	for(int i=0; i < buildingPaths.size(); i++) {
-//		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
-//
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos, 0, currentYPos});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-//
-//		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
-//	}
-//
-//	// RIGHT CORNER
-//	{
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos + 5, 0, currentYPos});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
-//	}
-//
-//	currentYPos = -20;
-//
-//	// LEFT FACE
-//	for(int i=0; i < buildingPaths.size(); i++) {
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({-35, 0, currentYPos});
-//		test->transform->SetLocalRotation({0, 90, 0});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-//
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//	}
-//
-//	currentYPos = -20;
-//
-//	// RIGHT FACE
-//	for(int i=0; i < buildingPaths.size(); i++) {
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos+10, 0, currentYPos});
-//		test->transform->SetLocalRotation({0, -90, 0});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-//
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//	}
-
-    //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
 }
 

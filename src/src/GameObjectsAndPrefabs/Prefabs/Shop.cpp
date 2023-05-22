@@ -15,12 +15,12 @@ Shop::~Shop() = default;
 
 std::shared_ptr<GameObject> Shop::Create() {
     auto shop = shared_from_this();
-    shop->transform->SetLocalPosition({-10, 0, -5});
-    shop->transform->SetLocalRotation({0, -45, 0});
-    shop->transform->SetLocalScale({0.7, 0.7, 0.7});
-    shop->AddComponent<Renderer>()->LoadModel("texturedModels/stoisko.obj");
-    shop->AddComponent<BoxCollider>()->SetOffset({0, 2, -9});
-    shop->GetComponent<BoxCollider>()->SetSize({1, 3, 3});
+    shop->transform->SetLocalPosition({4, 0, -8});
+    shop->transform->SetLocalRotation({0, 0, 0});
+    shop->transform->SetLocalScale({1, 1, 1});
+    shop->AddComponent<Renderer>()->LoadModel("Buildings/MAINSHOP.obj");
+    shop->AddComponent<BoxCollider>()->SetOffset({-2.5, 3, 2});
+    shop->GetComponent<BoxCollider>()->SetSize({2.5, 6, 2});
 
     auto shopMenu = GameObject::Instantiate("ShopMenu", shop);
     auto shopMenuComponent = shopMenu->AddComponent<ShopMenu>();
@@ -49,8 +49,8 @@ std::shared_ptr<GameObject> Shop::Create() {
     shopMenu->DisableSelfAndChildren();
 
     auto shopTrigger = GameObject::Instantiate("ShopTrigger", shop);
-    shopTrigger->AddComponent<BoxCollider>()->SetOffset({0, 2, -9});
-    shopTrigger->GetComponent<BoxCollider>()->SetSize({4, 6, 6});
+    shopTrigger->AddComponent<BoxCollider>()->SetOffset({-2.5, 1, 4});
+    shopTrigger->GetComponent<BoxCollider>()->SetSize({1.5, 1.5, 1.5});
     shopTrigger->GetComponent<BoxCollider>()->isTrigger = true;
     shopTrigger->AddComponent<ShopTrigger>();
     GameObject::Instantiate("ShopButton", shopTrigger)->AddComponent<Image>()->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
