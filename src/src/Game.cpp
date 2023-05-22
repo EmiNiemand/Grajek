@@ -91,67 +91,67 @@ void Game::InitializeGame() const {
 
     // Set up pause menu
     auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
-	{
-		std::vector<std::string> buttonNames = {
-				"Resume",
-				"Options",
-				"Main Menu",
-				"Exit"
-		};
+    {
+        std::vector<std::string> buttonNames = {
+                "Resume",
+                "Options",
+                "Main Menu",
+                "Exit"
+        };
 
-		int buttonOffset = -100;
-		int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
+        int buttonOffset = -100;
+        int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
 
-		std::vector<std::shared_ptr<Button>> buttonBuffer;
+        std::vector<std::shared_ptr<Button>> buttonBuffer;
 
-		for (int i = 0; i < buttonNames.size(); ++i) {
-			auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
-												 "UI/buttonInactive.png", "UI/buttonActive.png",
-												 buttonNames[i], 32);
-			optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
-			currentYPos += buttonOffset;
+        for (int i = 0; i < buttonNames.size(); ++i) {
+            auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
+                                                 "UI/buttonInactive.png", "UI/buttonActive.png",
+                                                 buttonNames[i], 32);
+            optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
+            currentYPos += buttonOffset;
 
-			buttonBuffer.push_back(optionButton);
-		}
+            buttonBuffer.push_back(optionButton);
+        }
 
-		pause->AddImage("Background", 0, 0, "UI/pause.png");
+        pause->AddImage("Background", 0, 0, "UI/pause.png");
 
-		for(int i=0; i<buttonNames.size(); i++) {
-			auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
-			auto nextIndex = i+1==buttonNames.size() ? 0:i+1;
-			buttonBuffer[i]->previousButton = buttonBuffer[prevIndex];
-			buttonBuffer[i]->nextButton = buttonBuffer[nextIndex];
-		}
+        for(int i=0; i<buttonNames.size(); i++) {
+            auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
+            auto nextIndex = i+1==buttonNames.size() ? 0:i+1;
+            buttonBuffer[i]->previousButton = buttonBuffer[prevIndex];
+            buttonBuffer[i]->nextButton = buttonBuffer[nextIndex];
+        }
 
-		pause->GetParent()->DisableSelfAndChildren();
-	}
+        pause->GetParent()->DisableSelfAndChildren();
+    }
 
     // Set up options menu
     auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-	{
-		auto backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-		auto musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-		auto windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-		auto windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-		auto shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-		auto previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-		auto currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-		auto nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-		auto optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
+    {
+        auto backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
+        auto musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+        auto windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+        auto windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+        auto shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
+        auto previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+        auto currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
+        auto nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
+        auto optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
 
-		backToPauseMenu->previousButton = shadowResolution;
-		backToPauseMenu->nextButton = musicVolume;
-		musicVolume->previousButton = backToPauseMenu;
-		musicVolume->nextButton = windowResolution;
-		windowResolution->previousButton = musicVolume;
-		windowResolution->nextButton = windowFullScreen;
-		windowFullScreen->previousButton = windowResolution;
-		windowFullScreen->nextButton = shadowResolution;
-		shadowResolution->previousButton = windowFullScreen;
-		shadowResolution->nextButton = backToPauseMenu;
+        backToPauseMenu->previousButton = shadowResolution;
+        backToPauseMenu->nextButton = musicVolume;
+        musicVolume->previousButton = backToPauseMenu;
+        musicVolume->nextButton = windowResolution;
+        windowResolution->previousButton = musicVolume;
+        windowResolution->nextButton = windowFullScreen;
+        windowFullScreen->previousButton = windowResolution;
+        windowFullScreen->nextButton = shadowResolution;
+        shadowResolution->previousButton = windowFullScreen;
+        shadowResolution->nextButton = backToPauseMenu;
 
-    	options->GetParent()->DisableSelfAndChildren();
-	}
+        options->GetParent()->DisableSelfAndChildren();
+    }
 
     // Set up shop menu
     Prefab::Instantiate<Shop>();
@@ -212,20 +212,20 @@ void Game::InitializeGame() const {
     int y = 0;
 
     // Set up animated model
-    for (int i = 0; i < 100; ++i) {
-        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
-        if (i % 25 == 0) {
-            x = 0;
-            y++;
-        }
-        animatedDood->transform->SetLocalPosition({-12 + x, 0, 5 + 2 * y});
-        animatedDood->transform->SetLocalRotation({0, 0, 0});
-        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-        x++;
-    }
+//    for (int i = 0; i < 100; ++i) {
+//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
+//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
+//        if (i % 25 == 0) {
+//            x = 0;
+//            y++;
+//        }
+//        animatedDood->transform->SetLocalPosition({-12 + x, 0, 5 + 2 * y});
+//        animatedDood->transform->SetLocalRotation({0, 0, 0});
+//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+//        x++;
+//    }
 
     // Setup sklepikarz
     auto sklepikarz = GameObject::Instantiate("Sklepikarz", activeScene);
@@ -241,7 +241,7 @@ void Game::InitializeGame() const {
     animator->SetAnimation("AnimsNew/Walk.dae");
     animatorObject->transform->SetLocalRotation({0, 90, 0});
     sklepikarz->AddComponent<GameObjectAnimator>()->Setup(sklepikarz->transform, {
-            {AnimatedProperty::Position, glm::vec3(8.0f, 0.0f, 0.0f), 5.0f}
+            {AnimatedProperty::Position, glm::vec3(8.0f, 2.0f, 0.0f), 5.0f}
     }, false);
 
 //    // SCENE BUILDINGS

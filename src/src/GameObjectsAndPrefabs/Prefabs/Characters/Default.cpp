@@ -8,6 +8,8 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
+#include "Components/AI/CharacterPathfinding.h"
+#include "Components/UI/Indicator.h"
 
 Default::Default(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
         Prefab(name, id, parent, tag) {
@@ -27,7 +29,10 @@ std::shared_ptr<GameObject> Default::Create() {
     character->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
 
-    auto characterMovement = character->AddComponent<CharacterMovement>();
+    auto characterIndicator = character->AddComponent<Indicator>();
+    characterIndicator->SetTexturePath("UI/Wykrzyknik.png");
+
+    character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };

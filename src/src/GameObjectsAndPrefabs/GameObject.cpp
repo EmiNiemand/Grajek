@@ -78,6 +78,7 @@ void GameObject::UpdateSelfAndChildren() {
 #ifdef DEBUG
     ZoneScopedNC("SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren()", 0x03fcfc);
 #endif
+
     const int gameObjectsSize = (int)GloomEngine::GetInstance()->gameObjects.size() + 1;
 
     auto toCheck = new std::shared_ptr<GameObject>[gameObjectsSize];
