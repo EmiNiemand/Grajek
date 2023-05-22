@@ -22,6 +22,7 @@
 #include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
@@ -38,11 +39,12 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 
 void PlayerManager::Awake() {
     movement = parent->AddComponent<PlayerMovement>();
+    rb = parent->GetComponent<Rigidbody>();
     equipment = parent->AddComponent<PlayerEquipment>();
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animator = animatorObject->AddComponent<Animator>();
     // TODO: Change model later
-    animator->LoadAnimationModel("AnimsNew/Walk.dae");
+    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle1.dae");
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     equipment->Setup(0, 0);
@@ -83,6 +85,8 @@ void PlayerManager::Update() {
     ZoneScopedNC("Player manager", 0x800080);
 #endif
     PollInput();
+	UpdateAnimations();
+
     Component::Update();
 }
 
@@ -96,6 +100,22 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 
 std::set<InstrumentName> PlayerManager::GetInstruments() {
     return equipment->GetInstrumentNames();
+}
+#pragma endregion
+
+#pragma region AnimationEvents
+void PlayerManager::UpdateAnimations() {
+	if(!rb) return;
+
+	float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
+	if (velocity > 0.01 && previousVelocity <= 0.01) {
+        animator->SetAnimation("AnimsNew/Walk.dae");
+		animator->speed = 3;
+	}
+	else if (velocity <= 0.01 && previousVelocity > 0.01){
+		animator->SetAnimation("AnimsNew/Idle3.dae");
+	}
+    previousVelocity = velocity;
 }
 #pragma endregion
 
