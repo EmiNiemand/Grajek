@@ -29,6 +29,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
+#include "Components/Scripts/Menus/Shopkeeper.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -148,7 +149,7 @@ void Game::InitializeGame() const {
     animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle3.dae");
     auto sklepikarzDialogue = GameObject::Instantiate("SklepikarzDialogue", sklepikarz);
-    auto dialogue = sklepikarzDialogue->AddComponent<Dialogue>();
+    auto dialogue = sklepikarzDialogue->AddComponent<Shopkeeper>();
     dialogue->texts.push_back({{"Jestem Sklepu."},
                               {"Mozesz sie poruszac WSAD"},
                                     {"Kup instrument."}});

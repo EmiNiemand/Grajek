@@ -1,4 +1,4 @@
-#include "Components/Scripts/Menus/Dialogue.h"
+#include "Components/Scripts/Menus/Shopkeeper.h"
 #include "GloomEngine.h"
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -7,12 +7,13 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "Components/Renderers/Animator.h"
+#include "Components/Animations/GameObjectAnimator.h"
 
-Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-Dialogue::~Dialogue() = default;
+Shopkeeper::~Shopkeeper() = default;
 
-void Dialogue::Start() {
+void Shopkeeper::Start() {
     playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
 
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
@@ -35,21 +36,21 @@ void Dialogue::Start() {
     Component::Start();
 }
 
-void Dialogue::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
+void Shopkeeper::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     triggerActive = true;
     image->enabled = true;
     Component::OnTriggerStay(gameObject);
 }
 
-void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
+void Shopkeeper::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     triggerActive = false;
     image->enabled = false;
     Component::OnTriggerExit(gameObject);
 }
 
-void Dialogue::Update() {
+void Shopkeeper::Update() {
     if (!triggerActive) return;
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E)) {
         if (dialogueIndex == 0) {
@@ -63,6 +64,13 @@ void Dialogue::Update() {
         if (!active) return;
         dialogueIndex++;
         if (dialogueIndex == texts.size()) {
+            GloomEngine::GetInstance()->FindGameObjectWithName("AnimatorSklepikarz")->GetComponent<Animator>()->SetAnimation("AnimsNew/Walk.dae");
+            parent->GetComponent<BoxCollider>()->enabled = false;
+            triggerActive = false;
+            parent->parent->AddComponent<GameObjectAnimator>()->Setup(parent->parent->transform, {
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},
+                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -2.0f), 2.0f}
+            }, false);
             active = false;
             dialogueIndex = 0;
             playerManager->inputEnabled = true;
@@ -77,13 +85,13 @@ void Dialogue::Update() {
     Component::Update();
 }
 
-void Dialogue::ShowDialogue() {
+void Shopkeeper::ShowDialogue() {
     text1->text = texts[0].text1;
     text2->text = texts[0].text2;
     text3->text = texts[0].text3;
     dialogue->EnableSelfAndChildren();
 }
 
-void Dialogue::HideDialogue() {
+void Shopkeeper::HideDialogue() {
     dialogue->DisableSelfAndChildren();
 }
