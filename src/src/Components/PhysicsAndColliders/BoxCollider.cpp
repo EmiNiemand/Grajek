@@ -223,10 +223,56 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     glm::vec3 otherPosition = other->GetModelMatrix() * glm::vec4(0,0,0,1);
     glm::vec3 position = GetModelMatrix() * glm::vec4(0,0,0,1);
 
-    std::vector<std::pair<glm::vec3, glm::vec3>> points = CalculateShiftedPoints(other, position, otherPosition);
+    auto points = GetBoxPoints();
 
-    if (points.empty()) return;
-    glm::vec3 closestVector = GetClosestShiftedPoint(points, position);
+    auto boxPoints = points;
+    auto otherModelMatrix = other->GetModelMatrix();
+
+    for (int i = 0; i < points.size(); ++i) {
+        boxPoints[i] = glm::vec3(otherModelMatrix * glm::vec4(boxPoints[i], 1));
+    }
+
+    float minDistance = glm::distance(boxPoints[0], position);
+    auto closestPoint = points[0];
+    auto closestBoxPoint = boxPoints[0];
+
+    for (int i = 0; i < boxPoints.size(); ++i) {
+        float distance = glm::distance(boxPoints[i], position);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestPoint = points[i];
+            closestBoxPoint = boxPoints[i];
+        }
+    }
+
+    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // Y * X * Z
+    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
+
+    glm::vec3 normals[3];
+    normals[0] = rotationMatrix * glm::vec4(closestPoint.x, 0, 0, 1);
+    normals[1] = rotationMatrix * glm::vec4(0, closestPoint.y, 0, 1);
+    normals[2] = rotationMatrix * glm::vec4(0, 0, closestPoint.z, 1);
+
+    glm::vec3 newPoints[3];
+    newPoints[0] = closestBoxPoint + normals[0];
+    newPoints[1] = closestBoxPoint + normals[1];
+    newPoints[2] = closestBoxPoint + normals[2];
+
+    minDistance = glm::distance(newPoints[0], position);
+    auto closestVector = normals[0];
+
+    for (int i = 0; i < 3; ++i) {
+        float distance = glm::distance(newPoints[i], position);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestVector = normals[i];
+        }
+    }
+
     closestVector = glm::normalize(closestVector);
 
     if (parent->GetComponent<Rigidbody>() != nullptr) {
@@ -264,62 +310,6 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     }
 }
 
-std::vector<std::pair<glm::vec3, glm::vec3>>
-BoxCollider::CalculateShiftedPoints(const std::shared_ptr<BoxCollider> &other, glm::vec3 position, glm::vec3 otherPosition) {
-    glm::vec3 minOtherPos = other->GetModelMatrix() * glm::vec4(-1, -1, -1, 1);
-    glm::vec3 maxOtherPos = other->GetModelMatrix() * glm::vec4(1, 1, 1, 1);
-
-    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(other->parent->globalRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // Y * X * Z
-    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-    glm::vec3 diffPos = position - otherPosition;
-    diffPos = glm::vec3(std::abs(diffPos.x), std::abs(diffPos.y), std::abs(diffPos.z));
-
-    // Walls' normal vectors
-    glm::vec3 vectors[6];
-    vectors[0] = glm::vec3(rotationMatrix * glm::vec4(1,0,0,1));
-    vectors[1] = glm::vec3(rotationMatrix * glm::vec4(0,1,0,1));
-    vectors[2] = glm::vec3(rotationMatrix * glm::vec4(0,0,-1,1));
-    vectors[3] = -vectors[0];
-    vectors[4] = -vectors[1];
-    vectors[5] = -vectors[2];
-
-    std::vector<std::pair<glm::vec3, glm::vec3>> points;
-
-    // Calculate shifted point in normal direction to check if it is within the walls of other collider and to look
-    // the closest point to the first collider
-    for (auto vector : vectors) {
-        glm::vec3 point = otherPosition + glm::normalize(vector) * diffPos;
-        if(!(point.x >= minOtherPos.x && point.x <= maxOtherPos.x &&
-             point.y >= minOtherPos.y && point.y <= maxOtherPos.y &&
-             point.z >= minOtherPos.z && point.z <= maxOtherPos.z)) {
-            points.emplace_back(point, vector);
-        }
-    }
-
-    return points;
-}
-
-glm::vec3 BoxCollider::GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, glm::vec3>> points, glm::vec3 position) {
-    float minDistance = glm::distance(points[0].first, position);
-    glm::vec3 closestVector = glm::vec3(0, 0, 0);
-
-    for (const auto& point : points) {
-        float distance = glm::distance(point.first, position);
-        if (distance == minDistance) {
-            closestVector += point.second;
-        }
-        else if (distance < minDistance) {
-            minDistance = distance;
-            closestVector = point.second;
-        }
-    }
-    return closestVector;
-}
 
 void BoxCollider::SetGridPoints() {
 #ifdef DEBUG
