@@ -279,7 +279,8 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
         glm::vec3 otherRotation = other->parent->globalRotation;
 
         // Collision handling for not rotated collider
-        if (otherRotation == glm::vec3(0.0f)) {
+        if ((int)std::round(otherRotation.x) % 90 == 0 && (int)std::round(otherRotation.y) % 90 == 0 &&
+        (int)std::round(otherRotation.z) % 90 == 0) {
             float value = closestVector.x + closestVector.y + closestVector.z;
             glm::vec3 velocityOffset = closestVector * glm::vec3(0.001);
             glm::vec3 velocity = closestVector * parent->GetComponent<Rigidbody>()->velocity;
