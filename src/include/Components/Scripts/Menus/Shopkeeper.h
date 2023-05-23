@@ -4,6 +4,7 @@
 #include "Components/Component.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Interfaces/IDataPersistance.h"
+#include "Components/Audio/AudioSource.h"
 #include <vector>
 
 class Image;
@@ -12,6 +13,7 @@ class PlayerManager;
 
 class Shopkeeper : public Component, public IDataPersistance {
 private:
+    bool sessionActive = false;
     bool shopkeeperEvent = false;
     std::shared_ptr<Image> image;
     std::shared_ptr<Text> text1;
@@ -22,6 +24,12 @@ private:
     std::shared_ptr<PlayerManager> playerManager;
     short dialogueIndex = 0;
 
+    // Session
+    std::shared_ptr<Image> background;
+    std::shared_ptr<Image> circle1;
+    std::shared_ptr<Image> circle2;
+    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+
 public:
     std::vector<Strings> texts;
 
@@ -31,7 +39,7 @@ public:
 
     void Start() override;
     void Update() override;
-
+    void NextDialogue();
     void LoadData(std::shared_ptr<GameData> data) override;
     void SaveData(std::shared_ptr<GameData> &data) override;
 };
