@@ -48,8 +48,8 @@ void UIAnimator::Update() {
                 image->SetRotation(checkpoint.value.z);
                 break;
             case AnimatedProperty::Scale:
-                spdlog::info("AAAAAAAAAAAAAAA");
                 image->SetScale(checkpoint.value.x);
+                spdlog::info(image->GetParent()->transform->GetLocalScale().x);
                 break;
             case AnimatedProperty::Color:
                 image->SetColor(checkpoint.value);

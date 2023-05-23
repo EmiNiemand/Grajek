@@ -13,9 +13,10 @@ class Image : public UIComponent {
 private:
     unsigned int textureID{};
     std::shared_ptr<Mesh> mesh;
+    glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
     int x = 0, y = 0;
     float z = 0.0f;
-    glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
+    float scale = 1;
     glm::vec3 color = glm::vec3(1.0f);
     float alpha = 1.0f;
 
@@ -30,8 +31,10 @@ public:
     * y from 0 to 1080
     */
     void LoadTexture(int x, int y, const std::string& path, float z = 0);
+
     glm::vec3 GetColor();
     float GetAlpha();
+
     void SetPosition(float x2, float y2);
     void SetRotation(float angle);
     void SetScale(float scale);
