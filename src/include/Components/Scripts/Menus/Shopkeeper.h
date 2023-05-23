@@ -13,8 +13,6 @@ class PlayerManager;
 class Shopkeeper : public Component, public IDataPersistance {
 private:
     bool shopkeeperEvent = false;
-    bool triggerActive = false;
-    bool active = false;
     std::shared_ptr<Image> image;
     std::shared_ptr<Text> text1;
     std::shared_ptr<Text> text2;
@@ -32,11 +30,7 @@ public:
     ~Shopkeeper() override;
 
     void Start() override;
-    void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
-    void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
     void Update() override;
-    void ShowDialogue();
-    void HideDialogue();
 
     void LoadData(std::shared_ptr<GameData> data) override;
     void SaveData(std::shared_ptr<GameData> &data) override;

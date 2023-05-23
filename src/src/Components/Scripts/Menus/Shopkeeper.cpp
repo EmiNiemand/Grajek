@@ -57,50 +57,24 @@ void Shopkeeper::Start() {
     text3->LoadFont(texts[0].text3, 250, 100, 32);
     GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png");
     image->enabled = false;
-    HideDialogue();
+    playerManager->inputEnabled = false;
     Component::Start();
 }
 
-void Shopkeeper::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
-    if (gameObject->GetName() != "Player") return;
-    triggerActive = true;
-    image->enabled = true;
-    Component::OnTriggerStay(gameObject);
-}
-
-void Shopkeeper::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
-    if (gameObject->GetName() != "Player") return;
-    triggerActive = false;
-    image->enabled = false;
-    Component::OnTriggerExit(gameObject);
-}
-
 void Shopkeeper::Update() {
-    if (!triggerActive) return;
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E)) {
-        if (dialogueIndex == 0) {
-            active = true;
-            playerManager->inputEnabled = false;
-            image->enabled = false;
-            ShowDialogue();
-        }
-    }
+    if (shopkeeperEvent) return;
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
-        if (!active) return;
         dialogueIndex++;
         if (dialogueIndex == texts.size()) {
             GloomEngine::GetInstance()->FindGameObjectWithName("ShopkeeperAnimator")->GetComponent<Animator>()->SetAnimation("AnimsNew/Walk.dae");
             parent->GetComponent<BoxCollider>()->enabled = false;
-            triggerActive = false;
             shopkeeperModel->AddComponent<GameObjectAnimator>()->Setup(shopkeeperModel->transform, {
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},
                     {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -2.0f), 2.0f}
             }, false);
-            image->enabled = false;
             shopkeeperEvent = true;
-            active = false;
             playerManager->inputEnabled = true;
-            HideDialogue();
+            dialogue->DisableSelfAndChildren();
             return;
         }
         text1->text = texts[dialogueIndex].text1;
@@ -108,17 +82,6 @@ void Shopkeeper::Update() {
         text3->text = texts[dialogueIndex].text3;
     }
     Component::Update();
-}
-
-void Shopkeeper::ShowDialogue() {
-    text1->text = texts[0].text1;
-    text2->text = texts[0].text2;
-    text3->text = texts[0].text3;
-    dialogue->EnableSelfAndChildren();
-}
-
-void Shopkeeper::HideDialogue() {
-    dialogue->DisableSelfAndChildren();
 }
 
 void Shopkeeper::LoadData(std::shared_ptr<GameData> data) {
