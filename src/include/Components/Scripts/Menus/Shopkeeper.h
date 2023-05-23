@@ -21,6 +21,7 @@ private:
     std::shared_ptr<Text> text3;
     std::shared_ptr<GameObject> dialogue;
     std::shared_ptr<GameObject> shopkeeperModel;
+    std::shared_ptr<GameObject> door;
     std::shared_ptr<PlayerManager> playerManager;
     short dialogueIndex = 0;
 

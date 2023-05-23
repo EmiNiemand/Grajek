@@ -18,6 +18,17 @@ Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Comp
 Shopkeeper::~Shopkeeper() = default;
 
 void Shopkeeper::Start() {
+
+
+
+
+    // TODO delete
+    return;
+
+
+
+
+
     if (shopkeeperEvent) return;
 
     // create shopkeeper
@@ -72,11 +83,28 @@ void Shopkeeper::Start() {
     sampleSources.back()->LoadAudioData("res/sounds/direct/clap/clapWeak.wav", AudioType::Direct);
     sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", dialogue)->AddComponent<AudioSource>());
     sampleSources.back()->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
+    door = GloomEngine::GetInstance()->FindGameObjectWithName("Door");
     Component::Start();
 }
 
 void Shopkeeper::Update() {
+
+
+
+
+
+    // TODO delete
+    return;
+
+
+
+
+
     if (shopkeeperEvent) return;
+    if (parent->children.empty()) {
+        shopkeeperEvent = true;
+        playerManager->inputEnabled = true;
+    }
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_SPACE)) {
         if (dialogueIndex != 1 && dialogueIndex != 4) return;
         sessionActive = !sessionActive;
@@ -95,11 +123,16 @@ void Shopkeeper::Update() {
             parent->GetComponent<BoxCollider>()->enabled = false;
             shopkeeperModel->AddComponent<GameObjectAnimator>()->Setup(shopkeeperModel->transform, {
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},
-                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -2.0f), 2.0f}
+                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -5.0f), 4.2f}
             }, false);
-            shopkeeperEvent = true;
-            playerManager->inputEnabled = true;
             dialogue->DisableSelfAndChildren();
+            auto animation = GameObject::Instantiate("DoorAnimation", door);
+            animation->AddComponent<GameObjectAnimator>()->Setup(door->transform, {
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f},
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 90.0f, 0.0f), 2.0f},
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 0.5f},
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, -90.0f, 0.0f), 2.0f}
+            }, false);
             return;
         }
         text1->text = texts[dialogueIndex].text1;
