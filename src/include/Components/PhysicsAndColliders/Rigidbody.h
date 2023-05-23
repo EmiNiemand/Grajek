@@ -27,8 +27,9 @@ public:
 
     void FixedUpdate() override;
 
-    void AddForce(glm::vec3 vector, ForceMode forceMode);
-    void AddTorque(float angle, ForceMode forceMode);
+    void AddForce(const glm::vec3 &vector, ForceMode forceMode);
+    void AddTorque(float targetRotation, ForceMode forceMode);
+
 };
 
 

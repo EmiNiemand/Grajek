@@ -3,8 +3,6 @@
 int main(int, char**)
 {
     GloomEngine::GetInstance()->Initialize();
-    GloomEngine::GetInstance()->Awake();
-    GloomEngine::GetInstance()->Start();
 
     bool endGame = false;
 

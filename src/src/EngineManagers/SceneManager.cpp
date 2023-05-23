@@ -5,10 +5,12 @@
 #include "Interfaces/SaveableStaticObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
+#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Renderer.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 
 #include <fstream>
@@ -45,8 +47,7 @@ void SceneManager::InitializeScene() {
 
 void SceneManager::LoadScene(const std::string& scene) {
     if (scene == "Scene") {
-        if (!GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file.empty())
-            file = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file;
+        file = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>()->file;
         ClearScene();
         InitializeScene();
         GloomEngine::GetInstance()->game->activeCamera = Camera::activeCamera;
@@ -76,9 +77,12 @@ void SceneManager::Free() {
 void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::map<int,std::shared_ptr<SaveableStaticObject>> saveableStaticPrefabs;
     std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
+    std::shared_ptr<StaticObjectData> newObject;
+
     saveableStaticPrefabs = FindAllStaticSaveablePrefabs();
     for (const auto& object : saveableStaticPrefabs) {
-        staticObjectsData.push_back(object.second->SaveStatic());
+        newObject = object.second->SaveStatic();
+        staticObjectsData.push_back(newObject);
     }
 
     SaveMap(staticObjectsData,dataDirectoryPath,dataFileName);
@@ -91,12 +95,27 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
 
     std::shared_ptr<GameObject> newGameObject;
     for (const auto &object: staticObjectsData) {
+        newGameObject.reset();
         if(object->name == "House"){
             newGameObject = Prefab::Instantiate<House>();
         }
-        newGameObject->transform->SetLocalPosition(object->position);
-        newGameObject->transform->SetLocalRotation(object->rotation);
-        newGameObject->transform->SetLocalScale(object->scale);
+        /*if(object->name == "Shop"){
+            newGameObject = Prefab::Instantiate<Shop>();
+        }*/
+        if(newGameObject) {
+            newGameObject->transform->SetLocalPosition(object->position);
+            newGameObject->transform->SetLocalRotation(object->rotation);
+            newGameObject->transform->SetLocalScale(object->scale);
+            if (newGameObject->GetComponent<Renderer>()) {
+                std::shared_ptr<Renderer> objectRenderer = newGameObject->GetComponent<Renderer>();
+                objectRenderer->LoadModel(object->modelPath);
+            }
+            if (newGameObject->GetComponent<BoxCollider>()) {
+                std::shared_ptr<BoxCollider> objectColider = newGameObject->GetComponent<BoxCollider>();
+                objectColider->SetSize(object->coliderSize);
+                objectColider->SetOffset(object->coliderOffset);
+            }
+        }
     }
 }
 
@@ -163,6 +182,16 @@ void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<Sta
         objectJson["scale.y"] = object->scale.y;
         objectJson["scale.z"] = object->scale.z;
 
+        objectJson["modelPath"] = object->modelPath;
+
+        objectJson["coliderSize.x"] = object->coliderSize.x;
+        objectJson["coliderSize.y"] = object->coliderSize.y;
+        objectJson["coliderSize.z"] = object->coliderSize.z;
+
+        objectJson["coliderOffset.x"] = object->coliderOffset.x;
+        objectJson["coliderOffset.y"] = object->coliderOffset.y;
+        objectJson["coliderOffset.z"] = object->coliderOffset.z;
+
         json.push_back(objectJson);
     }
 
@@ -187,6 +216,23 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject->scale.x = object["scale.x"];
         newObject->scale.y = object["scale.y"];
         newObject->scale.z = object["scale.z"];
+
+        if(object.contains("modelPath"))
+        newObject->modelPath = object["modelPath"];
+        if(object.contains("coliderSize.x"))
+        newObject->coliderSize.x = object["coliderSize.x"];
+        if(object.contains("coliderSize.y"))
+        newObject->coliderSize.y = object["coliderSize.y"];
+        if(object.contains("coliderSize.z"))
+        newObject->coliderSize.z = object["coliderSize.z"];
+
+        if(object.contains("coliderOffset.x"))
+        newObject->coliderOffset.x = object["coliderOffset.x"];
+        if(object.contains("coliderOffset.y"))
+        newObject->coliderOffset.y = object["coliderOffset.y"];
+        if(object.contains("coliderOffset.z"))
+        newObject->coliderOffset.z = object["coliderOffset.z"];
+        
         mapData.push_back(newObject);
     }
 }
@@ -206,7 +252,6 @@ std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStatic
 
 void SceneManager::ClearAllStaticObjects() {
     std::map<int, std::shared_ptr<SaveableStaticObject>> StaticObjects = FindAllStaticSaveablePrefabs();
-;
     for(const auto& staticObject : StaticObjects){
         SceneManager::GetInstance()->activeScene->children.erase(staticObject.first);
     }
@@ -217,6 +262,18 @@ void SceneManager::CreatePrefabObject(const std::string name) {
     if(name == "House"){
         spdlog::info("Created object from prefab House.");
         newGameObject = Prefab::Instantiate<House>();
+    } else {
+        spdlog::info("Failed to find prefab with name: " + name);
     }
-    spdlog::info("Failed to find prefab with name: " + name);
+}
+void SceneManager::CreatePrefabObject(const std::string name,const std::string modelPath) {
+    std::shared_ptr<GameObject> newGameObject;
+    if(name == "House"){
+        spdlog::info("Created object from prefab House. Using model: " + modelPath);
+        newGameObject = Prefab::Instantiate<House>();
+        std::shared_ptr<Renderer> objectRenderer = newGameObject->GetComponent<Renderer>();
+        objectRenderer->LoadModel(modelPath);
+    } else {
+        spdlog::info("Failed to find prefab with name: " + name);
+    }
 }

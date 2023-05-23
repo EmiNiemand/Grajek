@@ -8,13 +8,15 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "windows.h"
 #include "psapi.h"
-#include <string.h>
-#include <glm/gtc/type_ptr.hpp>
+#include "Components/Renderers/Renderer.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include <filesystem>
 
 DebugManager::DebugManager() {
     displaySelected = false;
     transformExtracted = false;
+    isNewObjectBeingHeld = false;
+    safetySwitch = false;
 }
 DebugManager::~DebugManager() = default;
 
@@ -48,6 +50,7 @@ void DebugManager::Render() {
 
     DisplaySystemInfo();
     SaveMenu();
+    ObjectCreator();
     {
         ImGui::Begin("Debug Window");
 
@@ -56,6 +59,7 @@ void DebugManager::Render() {
         ImGui::SameLine();
         if (ImGui::SmallButton("Open")) {
             displaySelected = true;
+            safetySwitch = false;
             selected = SceneManager::GetInstance()->activeScene;
         }
         ImGui::Indent();
@@ -68,6 +72,7 @@ void DebugManager::Render() {
                 displaySelected = true;
                 transformExtracted = false;
                 selected = child.second;
+                safetySwitch = false;
             }
             ProcessChildren(child.second);
         }
@@ -80,37 +85,80 @@ void DebugManager::Render() {
         static float inputVector1[3] = {0.0f,0.0f,0.0f};
         static float inputVector2[3] = { 0.0f,0.0f,0.0f };
         static float inputVector3[3] = { 0.0f,0.0f,0.0f };
+        static float inputVector4[3] = { 0.0f,0.0f,0.0f };
+        static float inputVector5[3] = { 0.0f,0.0f,0.0f };
         glm::vec3 positionHolder;
         glm::vec3 rotationHolder;
         glm::vec3 scaleHolder;
+        glm::vec3 coliderSizeHolder;
+        glm::vec3 coliderOffsetHolder;
 
 
         positionHolder = selected->transform->GetLocalPosition();
         rotationHolder = selected->transform->GetLocalRotation();
         scaleHolder = selected->transform->GetLocalScale();
+        if(selected->GetComponent<BoxCollider>()){
+            coliderSizeHolder = selected->GetComponent<BoxCollider>()->GetSize();
+            coliderOffsetHolder = selected->GetComponent<BoxCollider>()->GetOffset();
+        }
         if (!transformExtracted) {
             ExtractVec3ToFloat3(positionHolder, inputVector1);
             ExtractVec3ToFloat3(rotationHolder, inputVector2);
             ExtractVec3ToFloat3(scaleHolder, inputVector3);
+            if(selected->GetComponent<BoxCollider>()){
+                ExtractVec3ToFloat3(coliderSizeHolder,inputVector4);
+                ExtractVec3ToFloat3(coliderOffsetHolder,inputVector5);
+            }
             transformExtracted = true;
         }
         positionHolder = InjectFloat3IntoVec3(inputVector1);
         rotationHolder = InjectFloat3IntoVec3(inputVector2);
         scaleHolder = InjectFloat3IntoVec3(inputVector3);
+        coliderSizeHolder = InjectFloat3IntoVec3(inputVector4);
+        coliderOffsetHolder = InjectFloat3IntoVec3(inputVector5);
+
 
         selected->transform->SetLocalPosition(positionHolder);
         selected->transform->SetLocalRotation(rotationHolder);
         selected->transform->SetLocalScale(scaleHolder);
-
+        if(selected->GetComponent<BoxCollider>()){
+            selected->GetComponent<BoxCollider>()->SetSize(coliderSizeHolder);
+            selected->GetComponent<BoxCollider>()->SetOffset(coliderOffsetHolder);
+        }
 
         ImGui::Begin("Properties");
-        ImGui::Text(selected->GetName().c_str());
+        ImGui::Text("%s", selected->GetName().c_str());
         ImGui::DragFloat3("Position", inputVector1, 1.0f);
         ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
         ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f,10.0f);
-        ImGui::Checkbox("inputBool", &inputBool);
+        if(selected->GetComponent<BoxCollider>()) {
+            ImGui::DragFloat3("Colider Size", inputVector4, 1.0f);
+            ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
+        }
+
+        static char newModelPath[200] = "Write new path here";
+        if(selected->GetComponent<Renderer>()){
+            ImGui::Text("Path of model: %s", selected->GetComponent<Renderer>()->lastLoadedModelPath.c_str());
+            ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
+            if(ImGui::SmallButton("Set new model")){
+                std::string convertedModelPath = newModelPath;
+                selected->GetComponent<Renderer>()->LoadModel(convertedModelPath);
+            }
+        } else {
+            ImGui::Text("This object doesnt have a Renderer");
+        }
+        ImGui::Checkbox("Safety checkbox (check if you want to remove the object)", &safetySwitch);
+        if(safetySwitch) {
+            if (ImGui::Button("REMOVE")){
+                GameObject::Destroy(selected);
+                safetySwitch = false;
+                displaySelected = false;
+                transformExtracted = false;
+            }
+        }
         if (ImGui::Button("Close"))
         {
+            safetySwitch = false;
             displaySelected = false;
             transformExtracted = false;
         }
@@ -132,6 +180,7 @@ void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
         ImGui::SameLine();
         if (ImGui::SmallButton(label.c_str())) {
             displaySelected = true;
+            safetySwitch = false;
             transformExtracted = false;
             selected = child.second;
         }
@@ -186,6 +235,7 @@ void DebugManager::DisplaySystemInfo() {
 
 void DebugManager::SaveMenu()
 {
+    static char inputPath[200] = "";
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
@@ -194,8 +244,13 @@ void DebugManager::SaveMenu()
 
         SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
-    if (ImGui::SmallButton("Add new house")){
+    if (ImGui::SmallButton("Add new default house")){
         SceneManager::GetInstance()->CreatePrefabObject("House");
+    }
+    ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+    if(ImGui::SmallButton("Add house with model at path")){
+        std::string convertedInputPath = inputPath;
+        SceneManager::GetInstance()->CreatePrefabObject("House",convertedInputPath);
     }
     ImGui::End();
 }
@@ -206,4 +261,31 @@ void DebugManager::Free() const {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
+
+void DebugManager::ObjectCreator() {
+    ImGui::Begin("Object Creator");
+    if(isNewObjectBeingHeld){
+        if(!gameObjectHolder){
+            //spdlog::warn("Failed to create new GameObjectData object. Resetting creator.");
+            isNewObjectBeingHeld = false;
+            gameObjectHolder.reset();
+        }
+        ImGui::Text("GameObject holder is active.");
+        if(ImGui::SmallButton("INJECT")){
+            CreateGameObjectFromData(gameObjectHolder);
+            isNewObjectBeingHeld = false;
+        }
+    } else {
+        ImGui::Text("There is no object in the holder.\nPress button below to create new, empty object to edit.\nAfter you are done, press INJECT to add your object to list of children of the scene");
+        if(ImGui::SmallButton("CREATE")){
+            isNewObjectBeingHeld = true;
+        }
+    }
+    ImGui::End();
+}
+
+void DebugManager::CreateGameObjectFromData(std::shared_ptr<GameObjectData> data) {
+
+}
+
 #endif

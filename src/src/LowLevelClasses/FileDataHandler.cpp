@@ -65,6 +65,7 @@ void FileDataHandler::to_json(nlohmann::json &json, const std::shared_ptr<GameDa
     json["playerPosition.x"] = gameData->playerPosition.x;
     json["playerPosition.y"] = gameData->playerPosition.y;
     json["playerPosition.z"] = gameData->playerPosition.z;
+    json["shopkeeperEvent"] = gameData->shopkeeperEvent;
     if(gameData->instruments.contains(InstrumentName::Drums)) json["instrument.Drums"] = 0;
     if(gameData->instruments.contains(InstrumentName::Trumpet)) json["instrument.Trumpet"] = 0;
     if(gameData->instruments.contains(InstrumentName::Launchpad)) json["instrument.Launchpad"] = 0;
@@ -77,6 +78,7 @@ void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_pt
     json.at("playerPosition.x").get_to(gameData->playerPosition.x);
     json.at("playerPosition.y").get_to(gameData->playerPosition.y);
     json.at("playerPosition.z").get_to(gameData->playerPosition.z);
+    json.at("shopkeeperEvent").get_to(gameData->shopkeeperEvent);
     if(json.contains("instrument.Drums")) gameData->instruments.insert(InstrumentName::Drums);
     if(json.contains("instrument.Trumpet")) gameData->instruments.insert(InstrumentName::Trumpet);
     if(json.contains("instrument.Launchpad")) gameData->instruments.insert(InstrumentName::Launchpad);

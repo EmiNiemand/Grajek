@@ -20,10 +20,17 @@ std::shared_ptr<GameObject> House::Create() {
 
 std::shared_ptr<StaticObjectData> House::SaveStatic() {
     std::shared_ptr<StaticObjectData> newData = std::make_shared<StaticObjectData>();
+    std::shared_ptr<Renderer> objectRenderer = GetComponent<Renderer>();
+    std::shared_ptr<BoxCollider> colider = GetComponent<BoxCollider>();
+
     newData->name = this->GetPrefabName();
     newData->position = this->transform->GetLocalPosition();
     newData->rotation = this->transform->GetLocalRotation();
     newData->scale = this->transform->GetLocalScale();
+    newData->modelPath = objectRenderer->lastLoadedModelPath;
+    newData->coliderSize = colider->GetSize();
+    newData->coliderOffset = colider->GetOffset();
+
     return newData;
 }
 

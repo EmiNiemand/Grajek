@@ -2,6 +2,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/SceneManager.h"
+//#include <filesystem>
 
 LoadGameMenu::LoadGameMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -28,6 +29,13 @@ void LoadGameMenu::ChangeActiveButton(glm::vec2 moveVector) {
 
 void LoadGameMenu::OnClick() {
     if (!activeButton) return;
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "ProjectConfig";
+    path /= "Saves";
+    path /= activeButton->text;
+    if (!std::filesystem::exists(path.string() + ".json")) return;
+
     file = activeButton->text;
     GloomEngine::GetInstance()->timeScale = 1;
     SceneManager::GetInstance()->LoadScene("Scene");

@@ -18,13 +18,15 @@
 class GameObject;
 class CharacterMovement;
 class Animator;
+class Indicator;
 
 class CharacterLogic : public Component {
+    AI_LOGICSTATE currentState = WalkingOnPath;
     std::shared_ptr<CharacterMovement> characterMovement;
     std::shared_ptr<Animator> characterAnimation;
+    std::shared_ptr<Indicator> characterIndicator;
     float minSatisfaction = 0;
     float currentSatisfaction = 0;
-    AI_LOGICSTATE currentState = WalkingOnPath;
 
     InstrumentName playerInstrumentName;
     MusicGenre playerGenre;

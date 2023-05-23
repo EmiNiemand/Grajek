@@ -115,6 +115,9 @@ void Image::SetScale(float scale) {
     rightTop.x = rightBottom.x;
     rightTop.y = leftTop.y;
 
+    width *= scale;
+    height *= scale;
+
     mesh.reset();
     mesh = CreateMesh();
 }

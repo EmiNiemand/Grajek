@@ -28,7 +28,10 @@ void Rigidbody::FixedUpdate() {
     Component::FixedUpdate();
 }
 
-void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
+void Rigidbody::AddForce(const glm::vec3& vector, ForceMode forceMode) {
+    if (std::isnan(vector.x) || std::isnan(vector.y) || std::isnan(vector.z))
+        return;
+
     if (forceMode == ForceMode::Force) {
         velocity += vector / mass * GloomEngine::GetInstance()->fixedDeltaTime;
     }
@@ -38,6 +41,9 @@ void Rigidbody::AddForce(glm::vec3 vector, ForceMode forceMode) {
 }
 
 void Rigidbody::AddTorque(float targetRotation, ForceMode forceMode) {
+    if (std::isnan(targetRotation))
+        return;
+
     if (targetRotation == 0.0f && rotation.y > 180.0f) {
         targetRotation = 360.0f;
     }

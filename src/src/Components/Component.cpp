@@ -10,7 +10,7 @@ void Component::Destroy(const std::shared_ptr<Component>& component) {
     GloomEngine::GetInstance()->AddComponentToDestroyBuffer(component);
 }
 
-uint32_t Component::GetId() const {
+int Component::GetId() const {
     return id;
 }
 

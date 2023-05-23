@@ -11,7 +11,7 @@ public:
     SavePointTrigger(const std::shared_ptr<GameObject> &parent, int id);
     ~SavePointTrigger() override;
 
-    void OnTriggerStay(const std::shared_ptr<GameObject>& gameObject) override;
+    void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
     void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
 };
 

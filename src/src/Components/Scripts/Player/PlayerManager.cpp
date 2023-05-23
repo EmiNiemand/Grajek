@@ -176,9 +176,10 @@ void PlayerManager::OnMenuToggle() {
     if(activeMenu &&
         !(activeMenu == pauseMenu ||
           activeMenu == optionsMenu ||
-          activeMenu == shopMenu)) return;
+          activeMenu == shopMenu ||
+          activeMenu == savePointMenu)) return;
 
-    if (activeMenu != shopMenu && activeMenu != pauseMenu) {
+    if (activeMenu != shopMenu && activeMenu != pauseMenu && activeMenu != savePointMenu) {
         GloomEngine::GetInstance()->timeScale = 0;
         if(activeMenu == optionsMenu) {
             OptionsManager::GetInstance()->Save();
@@ -197,6 +198,11 @@ void PlayerManager::OnMenuToggle() {
     else if(activeMenu == shopMenu) {
         GloomEngine::GetInstance()->timeScale = 1;
         shopMenu->HideMenu();
+        activeMenu.reset();
+    }
+    else if(activeMenu == savePointMenu) {
+        GloomEngine::GetInstance()->timeScale = 1;
+        savePointMenu->HideMenu();
         activeMenu.reset();
     }
     else {
@@ -287,7 +293,10 @@ void PlayerManager::OnCheatSheetToggle() {
 #pragma endregion
 
 void PlayerManager::PollInput() {
-	if(!inputEnabled) return;
+	if(!inputEnabled) {
+        if(moveInput != glm::vec2(0)) OnMove(glm::vec2(0));
+        return;
+    }
 
 	auto hid = HIDManager::GetInstance();
 	glm::vec2 readMoveVector(0);
