@@ -88,8 +88,8 @@ void Game::InitializeGame() const {
     bench->transform->SetLocalRotation({0, 180, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+    bench->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
+    bench->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
     auto portalRadioSound = bench->AddComponent<AudioSource>();
     portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
     portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
@@ -104,8 +104,8 @@ void Game::InitializeGame() const {
     bench2->transform->SetLocalRotation({0, 180, 0});
     bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+    bench2->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
+    bench2->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
     hydrant->transform->SetLocalPosition({16, 0, 15});
@@ -119,22 +119,6 @@ void Game::InitializeGame() const {
 
     int x = 0;
     int y = 0;
-
-    // Set up animated model
-//    for (int i = 0; i < 100; ++i) {
-//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
-//        if (i % 25 == 0) {
-//            x = 0;
-//            y++;
-//        }
-//        animatedDood->transform->SetLocalPosition({-12 + x, 0, 5 + 2 * y});
-//        animatedDood->transform->SetLocalRotation({0, 0, 0});
-//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-//        x++;
-//    }
 
     camera->SetTarget(nullptr);
 }

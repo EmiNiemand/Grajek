@@ -55,10 +55,11 @@ void GloomEngine::Initialize() {
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
-    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 
     game = std::make_shared<Game>();
     game->InitializeGame();
+
+    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();

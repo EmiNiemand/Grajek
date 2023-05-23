@@ -20,13 +20,11 @@ Default::~Default() = default;
 
 std::shared_ptr<GameObject> Default::Create() {
     auto character = shared_from_this();
-    // Adding components
-    auto characterRenderer = character->AddComponent<Renderer>();
-    characterRenderer->LoadModel("domek/domek.obj");
-    characterRenderer->material.reflection = 0.3f;
     auto cubeRigidbody = character->AddComponent<Rigidbody>();
     // Setting values
-    character->GetComponent<BoxCollider>()->SetOffset({0, 1, 0});
+    auto collider = character->GetComponent<BoxCollider>();
+    collider->SetOffset({0, 1.5, 0});
+    collider->SetSize({1, 2, 1});
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
 
     auto characterIndicator = character->AddComponent<Indicator>();
@@ -47,15 +45,6 @@ std::shared_ptr<GameObject> Default::Create() {
     characterLogic->favInstrumentsNames.push_back(Trumpet);
     characterLogic->favInstrumentsNames.push_back(Launchpad);
     characterLogic->favInstrumentsNames.push_back(Guitar);
-
-//    auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-//    animatedDoodAnimator->LoadAnimation("Animacje/Idle.dae");
-//
-//    animatedDoodAnimator2->LoadAnimationModel("Animacje/Idle.dae");
-//    animatedDoodAnimator2->SetAnimation("Animacje/Idle.dae");
-//    animatedDood2->transform->SetLocalPosition({6, 1, -10});
-//    animatedDood2->transform->SetLocalRotation({0, -90, 0});
-//    animatedDood2->transform->SetLocalScale({0.25, 0.25, 0.25});
 
     return character;
 }
