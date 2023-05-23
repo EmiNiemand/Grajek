@@ -5,7 +5,7 @@ SavePointTrigger::SavePointTrigger(const std::shared_ptr<GameObject> &parent, in
 
 SavePointTrigger::~SavePointTrigger() = default;
 
-void SavePointTrigger::OnTriggerStay(const std::shared_ptr<GameObject> &gameObject) {
+void SavePointTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     active = true;
     parent->children.begin()->second->EnableSelfAndChildren();

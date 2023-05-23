@@ -17,6 +17,8 @@ class GameObject;
 class Rigidbody;
 
 class CharacterMovement : public Component {
+private:
+    friend class CharacterLogic;
     AI_LOGICSTATE logicState = WalkingOnPath;
     std::shared_ptr<Rigidbody> rigidbody = nullptr;
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;

@@ -44,10 +44,6 @@ private:
     bool GetOBBCollision(const std::shared_ptr<BoxCollider>& other);
     void HandleCollision(const std::shared_ptr<BoxCollider>& other);
 
-    std::vector<std::pair<glm::vec3, glm::vec3>> CalculateShiftedPoints(const std::shared_ptr<BoxCollider>& other,
-                                                                      glm::vec3 position, glm::vec3 otherPosition);
-    glm::vec3 GetClosestShiftedPoint(std::vector<std::pair<glm::vec3, glm::vec3>> points, glm::vec3 position);
-
     void SetGridPoints();
     void SetCollidersGridPoints(const glm::ivec2* points);
     void SetAIGridPoints(const glm::ivec2* points);

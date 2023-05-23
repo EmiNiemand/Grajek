@@ -49,7 +49,7 @@ public:
     inline virtual void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject){};
 
     // Getters
-    [[nodiscard]] uint32_t GetId() const;
+    [[nodiscard]] int GetId() const;
     [[nodiscard]] const std::shared_ptr<GameObject> &GetParent() const;
 };
 

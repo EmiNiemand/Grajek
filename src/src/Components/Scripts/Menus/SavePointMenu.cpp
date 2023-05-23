@@ -10,7 +10,8 @@ SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) 
 
 SavePointMenu::~SavePointMenu() = default;
 
-void SavePointMenu::Start() {
+void SavePointMenu::Awake() {
+    // TODO add savepoints
     triggers.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("SavePointTrigger")->GetComponent<SavePointTrigger>());
     Component::Start();
 }

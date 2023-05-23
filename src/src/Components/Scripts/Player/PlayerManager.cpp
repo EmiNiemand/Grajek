@@ -42,11 +42,11 @@ void PlayerManager::Awake() {
     rb = parent->GetComponent<Rigidbody>();
     equipment = parent->AddComponent<PlayerEquipment>();
     auto animatorObject = GameObject::Instantiate("Animator", parent);
+    animatorObject->transform->SetLocalRotation({0, 180, 0});
     animator = animatorObject->AddComponent<Animator>();
     // TODO: Change model later
     animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle1.dae");
-    animatorObject->transform->SetLocalRotation({0, 180, 0});
     equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
@@ -286,7 +286,10 @@ void PlayerManager::OnCheatSheetToggle() {
 #pragma endregion
 
 void PlayerManager::PollInput() {
-	if(!inputEnabled) return;
+	if(!inputEnabled) {
+        if(moveInput != glm::vec2(0)) OnMove(glm::vec2(0));
+        return;
+    }
 
 	auto hid = HIDManager::GetInstance();
 	glm::vec2 readMoveVector(0);
