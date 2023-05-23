@@ -66,45 +66,38 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
 }
 
 void DrumsSessionUI::PlaySound(int index) {
-    auto animator = GameObject::Instantiate("NutaAnimator", parent->parent);
-    auto nuta = GameObject::Instantiate("Nuta", animator)->AddComponent<Image>();
+    // Set up animated notes
+    // ---------------------
+    auto animator = GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>();
+    auto nuta = GameObject::Instantiate("Nuta", animator->GetParent())->AddComponent<Image>();
+    auto generator = RandomnessManager::GetInstance();
     if (index == 0) {
-        int random = RandomnessManager::GetInstance()->GetInt(500, 700);
+        int random = generator->GetInt(500, 700);
         nuta->LoadTexture(random, 675, "UI/Sesja/Nuta1.png", -0.1f);
-        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-                {AnimatedProperty::Scale, glm::vec3(0.5f)}
-        });
-        animator->AddComponent<UIAnimator>()->Setup(nuta, {
+        animator->Setup(nuta, {
                 {AnimatedProperty::Position, glm::vec3(random, 750.0f, 0.0f)}
         });
-        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-                {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, RandomnessManager::GetInstance()->GetFloat(-45.0f, 45.0f))}
-        });
     } else if (index == 1) {
-        int random = RandomnessManager::GetInstance()->GetInt(150, 450);
+        int random = generator->GetInt(150, 450);
         nuta->LoadTexture(625, random, "UI/Sesja/Nuta2.png", -0.1f);
-        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-                {AnimatedProperty::Scale, glm::vec3(0.5f)}
-        });
-        animator->AddComponent<UIAnimator>()->Setup(nuta, {
+        animator->Setup(nuta, {
                 {AnimatedProperty::Position, glm::vec3(700.0f, random, 0.0f)}
         });
-        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-                {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, RandomnessManager::GetInstance()->GetFloat(-45.0f, 45.0f))}
-        });
     } else if (index == 2) {
-        int random = RandomnessManager::GetInstance()->GetInt(250, 450);
+        int random = generator->GetInt(250, 450);
         nuta->LoadTexture(random, 475, "UI/Sesja/Nuta3.png", -0.1f);
-        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-                {AnimatedProperty::Scale, glm::vec3(0.5f)}
-        });
-        animator->AddComponent<UIAnimator>()->Setup(nuta, {
+        animator->Setup(nuta, {
                 {AnimatedProperty::Position, glm::vec3(random, 550.0f, 0.0f)}
         });
-        GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-                {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, RandomnessManager::GetInstance()->GetFloat(-45.0f, 45.0f))}
-        });
     }
+    GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+            {AnimatedProperty::Rotation,
+                glm::vec3(0.0f, 0.0f, generator->GetFloat(-45.0f, 45.0f))}
+    });
+    GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+            {AnimatedProperty::Scale, glm::vec3(0.5f)}
+    });
+    nuta->SetScale(generator->GetFloat(1, 3));
 
     for (int i = 0; i < sampleAnimators[index].size(); ++i) {
         sampleAnimators[index][i]->Reset();

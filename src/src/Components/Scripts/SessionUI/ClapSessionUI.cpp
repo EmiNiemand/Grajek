@@ -27,12 +27,12 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
         GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
     });
     sampleAnimators[0][0]->Setup(sampleImages[0], {
-        {AnimatedProperty::Scale, glm::vec3(3.0f), 1},
-        {AnimatedProperty::Scale, glm::vec3(1.0f), 1}
+        {AnimatedProperty::Scale, glm::vec3(3.0f), 0},
+        {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
     }, AnimationBehaviour::Resetable);
     sampleAnimators[0][1]->Setup(sampleImages[0], {
-        {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.1f},
-        {AnimatedProperty::Color, glm::vec3(1.0f), 0.3f}
+        {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0},
+        {AnimatedProperty::Color, glm::vec3(1.0f), 0.2f}
     }, AnimationBehaviour::Resetable);
     // Clap
     sampleImages[1]->LoadTexture(1150, 800, "UI/Sesja/circle.png");
@@ -41,12 +41,12 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
             GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
     });
     sampleAnimators[1][0]->Setup(sampleImages[1], {
-            {AnimatedProperty::Scale, glm::vec3(3.0f), 0.125f},
-            {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+            {AnimatedProperty::Scale, glm::vec3(3.0f), 0},
+            {AnimatedProperty::Scale, glm::vec3(1.0f), 0.1f}
     }, AnimationBehaviour::Resetable);
     sampleAnimators[1][1]->Setup(sampleImages[1], {
-            {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
-            {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+            {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0},
+            {AnimatedProperty::Color, glm::vec3(1.0f), 0.1f}
     }, AnimationBehaviour::Resetable);
 }
 

@@ -27,6 +27,7 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
 
         sampleImages.push_back(GameObject::Instantiate("SampleImage", parent)
                                     ->AddComponent<Image>());
+        sampleImages.back()->pivot = {0.5, 0.5};
     }
 }
 
@@ -104,7 +105,7 @@ void SessionUI::AccuracyFeedbackSetup() {
     for (int i = 0; i < 4; ++i) {
         auto ratingImage = GameObject::Instantiate("AccuracyImage", parent)->AddComponent<Image>();
         ratingImage->LoadTexture(0, 0,accuracyImagePaths[i], 0.7f);
-        ratingImage->SetPosition(960 - ratingImage->width/2, 540 - ratingImage->height/2);
+        ratingImage->SetPosition(960 - ratingImage->GetWidth()/2, 540 - ratingImage->GetHeight()/2);
         ratingImage->SetAlpha(0);
         accuracyRatingAnimator[i]->Setup(ratingImage, {
                 {AnimatedProperty::Alpha, glm::vec3(1.0f), 0},

@@ -88,6 +88,7 @@ void Image::SetPosition(float x2, float y2) {
     mesh = CreateMesh();
 }
 
+//TODO: I actually have no idea what'd happen after using this method, probably best to avoid using it
 void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
     //TODO: replace these with pivot point (and add pivot point)
@@ -112,10 +113,6 @@ void Image::SetScale(float newScale) {
     mesh.reset();
     mesh = CreateMesh();
 }
-
-glm::vec3 Image::GetColor() { return color; }
-
-float Image::GetAlpha() { return alpha; }
 
 void Image::SetColor(glm::vec3 newColor) {
     color = newColor;
@@ -158,8 +155,16 @@ void Image::Draw() {
 }
 
 void Image::UpdateCorners() {
-    leftBottom = {x, y};
-    leftTop = {x, y + height * scale};
-    rightBottom = {x + width * scale, y};
-    rightTop = {x + width * scale, y + height * scale};
+    // Calculate two opposite vertices
+    leftBottom = {x - width*pivot.x*scale, y - height*pivot.y*scale};
+    rightTop = {x + width*(1-pivot.x)*scale, y + height*(1-pivot.y)*scale};
+
+    leftTop = {leftBottom.x, rightTop.y};
+    rightBottom = {rightTop.x, leftBottom.y};
 }
+
+glm::vec3 Image::GetColor() { return color; }
+float Image::GetAlpha() { return alpha; }
+
+float Image::GetWidth() { return width*scale; }
+float Image::GetHeight() { return height*scale; }
