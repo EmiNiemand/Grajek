@@ -63,8 +63,8 @@ void CharacterMovement::FixedUpdate() {
         std::unordered_map<int, std::shared_ptr<BoxCollider>> *gridPtr = &collisionGrid[gridPos.x +
                                                                                         gridPos.y * GRID_SIZE];
 
-        if (!gridPtr->empty()) {
-            glm::vec3 currDir = currentPosition;
+        if (!gridPtr->empty() && pathIterator >= 0) {
+            glm::vec3 currDir = (*path)[pathIterator] - currentPosition;
 
             for (const auto &box: *gridPtr) {
                 if (box.first == parent->GetComponent<BoxCollider>()->GetId())
@@ -72,16 +72,20 @@ void CharacterMovement::FixedUpdate() {
 
                 if (box.second->isDynamic) {
                     std::shared_ptr<Transform> obstacle = box.second->GetParent()->transform;
-                    glm::vec3 obstaclePos = obstacle->GetGlobalPosition();
-                    float dist = glm::distance(currDir, obstaclePos);
+                    glm::vec3 obstacleDist = obstacle->GetGlobalPosition() - currentPosition;
+                    float dist = glm::distance(currDir, obstacle->GetGlobalPosition());
 
                     if (dist < 2.0f) {
-                        obstaclePos = {obstaclePos.x * std::numbers::pi / 4, 0.0f,
-                                       obstaclePos.z * std::numbers::pi / 4};
+                        obstacleDist *= -1;
 
-                        newPosition = glm::normalize(currentPosition - obstaclePos) * speed * speedMultiplier;
+                        float angle = std::acos(glm::dot(glm::normalize(currentPosition), glm::normalize( obstacleDist)));
 
-                        rigidbody->AddForce(newPosition * dist, ForceMode::Force);
+                        angle /= 2;
+                        auto mat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
+
+                        obstacleDist = glm::vec3(mat * glm::vec4(obstacleDist, 1));
+                        spdlog::info("ob " + std::to_string(obstacleDist.x) + ", " + std::to_string(obstacleDist.z));
+                        rigidbody->AddForce(obstacleDist * speed, ForceMode::Force);
                     }
                 }
             }
