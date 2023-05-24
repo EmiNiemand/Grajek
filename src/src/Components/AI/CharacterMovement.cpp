@@ -52,7 +52,7 @@ void CharacterMovement::FixedUpdate() {
 
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
 
-        if (glm::distance(currentPosition, (*path)[pathIterator]) < 0.75f * AIManager::GetInstance()->aiCellSize)
+        if (glm::distance(currentPosition, (*path)[pathIterator]) < 1.0f * AIManager::GetInstance()->aiCellSize)
             --pathIterator;
     }
 
@@ -64,7 +64,7 @@ void CharacterMovement::FixedUpdate() {
                                                                                         gridPos.y * GRID_SIZE];
 
         if (!gridPtr->empty() && pathIterator >= 0) {
-            glm::vec3 currDir = (*path)[pathIterator] - currentPosition;
+            glm::vec3 currDir = glm::normalize((*path)[pathIterator] - currentPosition);
 
             for (const auto &box: *gridPtr) {
                 if (box.first == parent->GetComponent<BoxCollider>()->GetId())
@@ -72,20 +72,28 @@ void CharacterMovement::FixedUpdate() {
 
                 if (box.second->isDynamic) {
                     std::shared_ptr<Transform> obstacle = box.second->GetParent()->transform;
-                    glm::vec3 obstacleDist = obstacle->GetGlobalPosition() - currentPosition;
-                    float dist = glm::distance(currDir, obstacle->GetGlobalPosition());
+                    glm::vec3 obstacleDist = glm::normalize(obstacle->GetGlobalPosition() - currentPosition);
+                    float dist = glm::distance(currentPosition, obstacle->GetGlobalPosition());
 
                     if (dist < 2.0f) {
                         obstacleDist *= -1;
 
-                        float angle = std::acos(glm::dot(glm::normalize(currentPosition), glm::normalize( obstacleDist)));
+                        float angle = std::acos(glm::dot(currDir, obstacleDist));
 
                         angle /= 2;
                         auto mat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
 
-                        obstacleDist = glm::vec3(mat * glm::vec4(obstacleDist, 1));
+                        obstacleDist = glm::vec3(mat * glm::vec4(obstacleDist, 1)) * speed;
                         spdlog::info("ob " + std::to_string(obstacleDist.x) + ", " + std::to_string(obstacleDist.z));
-                        rigidbody->AddForce(obstacleDist * speed, ForceMode::Force);
+                        rigidbody->AddForce(obstacleDist, ForceMode::Force);
+
+                        rotationAngle = std::atan2f(-obstacleDist.x, -obstacleDist.z) * 180.0f / std::numbers::pi;
+
+                        if (rotationAngle < 0.0f) {
+                            rotationAngle += 360.0f;
+                        }
+
+                        rigidbody->AddTorque(rotationAngle, ForceMode::Force);
                     }
                 }
             }
