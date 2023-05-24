@@ -8,6 +8,8 @@
 #include "Components/AI/CharacterMovement.h"
 #include "Components/UI/Indicator.h"
 #include "Components/Renderers/Animator.h"
+#include "Components/AI/CharacterAnimations.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -17,36 +19,39 @@ CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id
 
 CharacterLogic::~CharacterLogic() = default;
 
-//void CharacterLogic::Update() {
-////    characterAnimation->PlayAnimation()
-//    Component::Update();
-//}
+void CharacterLogic::Update() {
+    if (characterMovement->rigidbody->velocity == glm::vec3(0)) {
+        characterAnimations->SetNewState(AI_ANIMATIONSTATE::Idle);
+    }
+    else {
+        characterAnimations->SetNewState(AI_ANIMATIONSTATE::Walking);
+    }
+
+    Component::Update();
+}
 
 void CharacterLogic::OnCreate() {
     characterMovement = parent->GetComponent<CharacterMovement>();
     characterIndicator = parent->GetComponent<Indicator>();
-//    characterAnimation = parent->GetComponent<Animator>();
+    auto animatorObject = GameObject::Instantiate("Animator", parent);
+    animatorObject->transform->SetLocalRotation({0, 180, 0});
+    characterAnimator = animatorObject->AddComponent<Animator>();
+    characterAnimator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
+    characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
+    characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
     Component::OnCreate();
 }
 
 void CharacterLogic::OnDestroy() {
+    characterAnimations.reset();
     characterMovement = nullptr;
     characterIndicator = nullptr;
-    characterAnimation = nullptr;
+    characterAnimator = nullptr;
     favInstrumentsNames.clear();
     favGenres.clear();
     favPatterns.clear();
     Component::OnDestroy();
-}
-
-void CharacterLogic::Free() {
-    characterMovement = nullptr;
-    characterIndicator = nullptr;
-    characterAnimation = nullptr;
-    favInstrumentsNames.clear();
-    favGenres.clear();
-    favPatterns.clear();
 }
 
 void CharacterLogic::SetPathToPlayer() {
@@ -85,6 +90,7 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) 
 void CharacterLogic::SetPlayerPlayingStatus(bool state) {
     if (state) {
         currentState = AlertedByPlayer;
+        characterAnimations->SetNewState(AI_ANIMATIONSTATE::Running);
         CalculateSatisfaction();
     } else {
         ReturnToPreviousPath();

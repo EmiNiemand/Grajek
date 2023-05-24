@@ -11,12 +11,24 @@
 #include "LowLevelClasses/GameData.h"
 #include "EngineManagers/SceneManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/Animations/UIAnimator.h"
 
 Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Shopkeeper::~Shopkeeper() = default;
 
 void Shopkeeper::Start() {
+
+
+
+
+    // TODO delete
+    return;
+
+
+
+
+
     if (shopkeeperEvent) return;
 
     // create shopkeeper
@@ -32,11 +44,20 @@ void Shopkeeper::Start() {
     animator->SetAnimation("AnimsNew/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
     texts.push_back({{"Jestem Sklepu."},
-                               {"Mozesz sie poruszac WSAD"},
-                               {"Kup instrument."}});
+                               {"Mozesz sie poruszac WSAD."},
+                               {"Kupuj instrumenty."}});
     texts.push_back({{"Graj spacja."},
-                               {"Strzelaj przyciskami RUP"},
-                               {"Rozwalaj wrogow."}});
+                               {"Rozwalaj wrogow."},
+                               {""}});
+    texts.push_back({{"Wybierz instrument."},
+                     {""},
+                     {""}});
+    texts.push_back({{"Klaszcz klawiszami R i U."},
+                     {""},
+                     {""}});
+    texts.push_back({{"Zniszcz krola muzyki."},
+                     {"Nacisnij spacje, zeby wyjsc."},
+                     {""}});
 
     playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
 
@@ -57,68 +78,116 @@ void Shopkeeper::Start() {
     text3->LoadFont(texts[0].text3, 250, 100, 32);
     GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png");
     image->enabled = false;
-    HideDialogue();
+    playerManager->inputEnabled = false;
+    sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", dialogue)->AddComponent<AudioSource>());
+    sampleSources.back()->LoadAudioData("res/sounds/direct/clap/clapWeak.wav", AudioType::Direct);
+    sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", dialogue)->AddComponent<AudioSource>());
+    sampleSources.back()->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
+    door = GloomEngine::GetInstance()->FindGameObjectWithName("Door");
     Component::Start();
 }
 
-void Shopkeeper::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
-    if (gameObject->GetName() != "Player") return;
-    triggerActive = true;
-    image->enabled = true;
-    Component::OnTriggerStay(gameObject);
-}
-
-void Shopkeeper::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
-    if (gameObject->GetName() != "Player") return;
-    triggerActive = false;
-    image->enabled = false;
-    Component::OnTriggerExit(gameObject);
-}
-
 void Shopkeeper::Update() {
-    if (!triggerActive) return;
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E)) {
-        if (dialogueIndex == 0) {
-            active = true;
-            playerManager->inputEnabled = false;
-            image->enabled = false;
-            ShowDialogue();
-        }
+
+
+
+
+
+    // TODO delete
+    return;
+
+
+
+
+
+    if (shopkeeperEvent) return;
+    if (parent->children.empty()) {
+        shopkeeperEvent = true;
+        playerManager->inputEnabled = true;
     }
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
-        if (!active) return;
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_SPACE)) {
+        if (dialogueIndex != 1 && dialogueIndex != 4) return;
+        sessionActive = !sessionActive;
+        if (dialogueIndex == 1) {
+            background = GameObject::Instantiate("ShopkeeperBackground", image->GetParent()->parent)->AddComponent<Image>();
+            background->LoadTexture(0, 0, "UI/backgroundOpacity90.png", 0.5f);
+            GameObject::Instantiate("ShopkeeperClapImage", background->GetParent())->AddComponent<Image>()->LoadTexture(832, 558, "UI/Icons/small/iconClap.png");
+        } else {
+            GameObject::Destroy(background->GetParent());
+        }
+
         dialogueIndex++;
+        // Load shopkeeper animation
         if (dialogueIndex == texts.size()) {
             GloomEngine::GetInstance()->FindGameObjectWithName("ShopkeeperAnimator")->GetComponent<Animator>()->SetAnimation("AnimsNew/Walk.dae");
             parent->GetComponent<BoxCollider>()->enabled = false;
-            triggerActive = false;
             shopkeeperModel->AddComponent<GameObjectAnimator>()->Setup(shopkeeperModel->transform, {
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},
-                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -2.0f), 2.0f}
+                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -5.0f), 4.2f}
             }, false);
-            image->enabled = false;
-            shopkeeperEvent = true;
-            active = false;
-            playerManager->inputEnabled = true;
-            HideDialogue();
+            dialogue->DisableSelfAndChildren();
+            auto animation = GameObject::Instantiate("DoorAnimation", door);
+            animation->AddComponent<GameObjectAnimator>()->Setup(door->transform, {
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f},
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 90.0f, 0.0f), 2.0f},
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 0.5f},
+                    {AnimatedProperty::Rotation, glm::vec3(0.0f, -90.0f, 0.0f), 2.0f}
+            }, false);
             return;
         }
         text1->text = texts[dialogueIndex].text1;
         text2->text = texts[dialogueIndex].text2;
         text3->text = texts[dialogueIndex].text3;
     }
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_R)) {
+        if (dialogueIndex != 3 && dialogueIndex != 4) return;
+        if (dialogueIndex == 3) NextDialogue();
+        sampleSources[0]->ForcePlaySound();
+        auto circleAnimator = GameObject::Instantiate("CircleAnimator", background->GetParent());
+        auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", background->GetParent());
+        circleAnimator->AddComponent<UIAnimator>()->Setup(circle1, {
+                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+        });
+        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle1, {
+                {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
+                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+        });
+    }
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_U)) {
+        if (dialogueIndex != 3 && dialogueIndex != 4) return;
+        if (dialogueIndex == 3) NextDialogue();
+        sampleSources[1]->ForcePlaySound();
+        auto circleAnimator = GameObject::Instantiate("CircleAnimator", background->GetParent());
+        auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", background->GetParent());
+        circleAnimator->AddComponent<UIAnimator>()->Setup(circle2, {
+                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+        });
+        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle2, {
+                {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
+                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+        });
+    }
+    if (dialogueIndex == 1 || dialogueIndex == 3 || dialogueIndex == 4) return;
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
+        if (dialogueIndex == 2) {
+            GameObject::Destroy(background->GetParent()->children.begin()->second);
+            circle1 = GameObject::Instantiate("ShopkeeperCircle1", background->GetParent())->AddComponent<Image>();
+            circle1->LoadTexture(650, 600, "UI/Sesja/circle.png");
+            circle2 = GameObject::Instantiate("ShopkeeperCircle2", background->GetParent())->AddComponent<Image>();
+            circle2->LoadTexture(1150, 600, "UI/Sesja/circle.png");
+        }
+        NextDialogue();
+    }
     Component::Update();
 }
 
-void Shopkeeper::ShowDialogue() {
-    text1->text = texts[0].text1;
-    text2->text = texts[0].text2;
-    text3->text = texts[0].text3;
-    dialogue->EnableSelfAndChildren();
-}
-
-void Shopkeeper::HideDialogue() {
-    dialogue->DisableSelfAndChildren();
+void Shopkeeper::NextDialogue() {
+    dialogueIndex++;
+    text1->text = texts[dialogueIndex].text1;
+    text2->text = texts[dialogueIndex].text2;
+    text3->text = texts[dialogueIndex].text3;
 }
 
 void Shopkeeper::LoadData(std::shared_ptr<GameData> data) {

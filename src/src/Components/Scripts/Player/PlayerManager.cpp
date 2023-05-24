@@ -42,11 +42,11 @@ void PlayerManager::Awake() {
     rb = parent->GetComponent<Rigidbody>();
     equipment = parent->AddComponent<PlayerEquipment>();
     auto animatorObject = GameObject::Instantiate("Animator", parent);
+    animatorObject->transform->SetLocalRotation({0, 180, 0});
     animator = animatorObject->AddComponent<Animator>();
     // TODO: Change model later
     animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle1.dae");
-    animatorObject->transform->SetLocalRotation({0, 180, 0});
     equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());

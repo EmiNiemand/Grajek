@@ -24,6 +24,9 @@ std::shared_ptr<GameObject> Shop::Create() {
     shop->GetComponent<BoxCollider>()->SetSize({2.5, 6, 2});
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", shop);
     shopkeeper->AddComponent<Shopkeeper>();
+    auto door = GameObject::Instantiate("Door", shop);
+    door->AddComponent<Renderer>()->LoadModel("Buildings/drzwi.obj");
+    door->transform->SetLocalPosition(glm::vec3(-3, 0, 3.5f));
 
     auto shopMenu = GameObject::Instantiate("ShopMenu", shop);
     auto shopMenuComponent = shopMenu->AddComponent<ShopMenu>();

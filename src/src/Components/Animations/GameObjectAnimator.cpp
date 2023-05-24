@@ -26,19 +26,19 @@ void GameObjectAnimator::Setup(std::shared_ptr<Transform> animatedTransform,
     counter = 0;
 
     switch(checkpoint.property) {
-        case Position:
+        case AnimatedProperty::Position:
             valueDelta = (checkpoint.value
                           - transform->GetLocalPosition()
                             * (float)useAbsoluteValues)
                                 /checkpoint.duration;
             break;
-        case Rotation:
+        case AnimatedProperty::Rotation:
             valueDelta = (checkpoint.value
                           - transform->GetLocalRotation()
                             * (float)useAbsoluteValues)
                                 /checkpoint.duration;
             break;
-        case Scale:
+        case AnimatedProperty::Scale:
             valueDelta = (checkpoint.value * transform->GetLocalScale()
                         - transform->GetLocalScale())
                                 /checkpoint.duration;
@@ -68,19 +68,19 @@ void GameObjectAnimator::Update() {
         }
         checkpoint = checkpoints[checkpointIndex];
         switch(checkpoint.property) {
-            case Position:
+            case AnimatedProperty::Position:
                 valueDelta = (checkpoint.value
                               - transform->GetLocalPosition()
                                 * (float)useAbsoluteValues)
                              /checkpoint.duration;
                 break;
-            case Rotation:
+            case AnimatedProperty::Rotation:
                 valueDelta = (checkpoint.value
                               - transform->GetLocalRotation()
                                 * (float)useAbsoluteValues)
                              /checkpoint.duration;
                 break;
-            case Scale:
+            case AnimatedProperty::Scale:
                 valueDelta = (checkpoint.value * transform->GetLocalScale()
                               - transform->GetLocalScale())
                              /checkpoint.duration;
@@ -89,17 +89,17 @@ void GameObjectAnimator::Update() {
     }
 
     switch (checkpoint.property) {
-        case Position:
+        case AnimatedProperty::Position:
             transform->SetLocalPosition(
                     transform->GetLocalPosition()
                     + valueDelta * GloomEngine::GetInstance()->deltaTime);
             break;
-        case Rotation:
+        case AnimatedProperty::Rotation:
             transform->SetLocalRotation(
                     transform->GetLocalRotation()
                     + valueDelta * GloomEngine::GetInstance()->deltaTime);
             break;
-        case Scale:
+        case AnimatedProperty::Scale:
             transform->SetLocalScale(
                     transform->GetLocalScale()
                     + valueDelta * GloomEngine::GetInstance()->deltaTime);
