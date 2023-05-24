@@ -41,11 +41,11 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
               GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
               GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
     });
-    sampleAnimators[1][0]->Setup(sampleImages[0], {
+    sampleAnimators[1][0]->Setup(sampleImages[1], {
             {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
             {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
-    sampleAnimators[1][1]->Setup(sampleImages[0], {
+    sampleAnimators[1][1]->Setup(sampleImages[1], {
             {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
             {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
@@ -55,11 +55,11 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
           GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
           GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
     });
-    sampleAnimators[2][0]->Setup(sampleImages[0], {
+    sampleAnimators[2][0]->Setup(sampleImages[2], {
         {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
         {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
-    sampleAnimators[2][1]->Setup(sampleImages[0], {
+    sampleAnimators[2][1]->Setup(sampleImages[2], {
         {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
         {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
