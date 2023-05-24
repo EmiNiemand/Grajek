@@ -31,6 +31,9 @@
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/AIManager.h"
+#include "GameObjectsAndPrefabs/Prefabs/OpponentPrefab.h"
+#include "Components/Scripts/Opponent.h"
+#include "Components/Scripts/Instrument.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -117,6 +120,14 @@ void Game::InitializeGame() const {
     auto savePoint1 = Prefab::Instantiate<SavePoint>();
     savePoint1->transform->SetLocalPosition({-15, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
+
+    auto opponent = Prefab::Instantiate<OpponentPrefab>();
+    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
+    // 2      *   *
+    // 1    *   *
+    // 0  *
+    opponent->children.begin()->second->AddComponent<Opponent>()->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
 
     int x = 0;
     int y = 0;

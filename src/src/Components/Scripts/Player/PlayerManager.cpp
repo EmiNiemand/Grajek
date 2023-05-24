@@ -27,6 +27,7 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
 #include "Components/Renderers/Animator.h"
+#include "EngineManagers/OpponentManager.h"
 
 #include <filesystem>
 
@@ -233,6 +234,7 @@ void PlayerManager::OnSessionToggle() {
         session->Stop();
         session.reset();
         AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+        OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
         return;
     }
     if (sessionStarter) {
@@ -263,6 +265,7 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
+     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedSatisfaction());
 
     if (!pat) return;
 
