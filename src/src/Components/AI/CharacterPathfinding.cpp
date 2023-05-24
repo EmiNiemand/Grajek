@@ -2,9 +2,8 @@
 // Created by Adrian on 13.05.2023.
 //
 
-#include <algorithm>
 #include "Components/AI/CharacterPathfinding.h"
-#include "spdlog/spdlog.h"
+#include "Components/AI/Node.h"
 
 CharacterPathfinding::CharacterPathfinding()  {
     aiGrid = AIManager::GetInstance()->aiGrid;

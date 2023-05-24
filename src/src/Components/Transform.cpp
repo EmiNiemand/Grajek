@@ -16,7 +16,7 @@ glm::mat4 Transform::GetLocalModelMatrix()
     // Y * X * Z
     const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
 
-    // translation * rotation * scale (also know as TRS matrix)
+    // translation * rotation * scale (also known as TRS matrix)
     return glm::translate(glm::mat4(1.0f), mPos) * rotationMatrix * glm::scale(glm::mat4(1.0f), mScale);
 }
 

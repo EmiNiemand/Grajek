@@ -28,7 +28,7 @@ void BoxCollider::FixedUpdate() {
 //    ZoneScopedNC("BoxCollider", 0xf0fc03);
 //#endif
 
-    if (!parent->GetComponent<Rigidbody>())
+    if (!isDynamic)
         return;
 
     CollisionManager::GetInstance()->RemoveDynamicBoxCollider(parent->transform->GetGlobalPosition(), id);
@@ -347,7 +347,7 @@ void BoxCollider::SetGridPoints() {
 
     SetCollidersGridPoints(colGridPoints);
 
-    if (!isTrigger && !parent->GetComponent<Rigidbody>() && std::strcmp(parent->GetName().c_str(), "Ground") != 0) {
+    if (!isTrigger && !isDynamic && parent->GetName() != "Player" && parent->GetName() != "Ground") {
         const float aiCellSize = AIManager::GetInstance()->aiCellSize;
 
         glm::ivec2 aiGridPoints[4] = {

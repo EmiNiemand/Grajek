@@ -11,40 +11,37 @@
 #include "Components/Component.h"
 #include "Components/AI/CharacterStates.h"
 #include "Components/Scripts/MusicPattern.h"
-
 #include <vector>
-#include <unordered_map>
 
 class GameObject;
+class CharacterAnimations;
 class CharacterMovement;
 class Animator;
 class Indicator;
-class CharacterAnimations;
 
 class CharacterLogic : public Component {
     AI_LOGICSTATE currentState = WalkingOnPath;
-    std::shared_ptr<CharacterAnimations> characterAnimations;
-    std::shared_ptr<Animator> characterAnimator;
-    std::shared_ptr<CharacterMovement> characterMovement;
-    std::shared_ptr<Indicator> characterIndicator;
+    std::shared_ptr<CharacterAnimations> characterAnimations = nullptr;
+    std::shared_ptr<CharacterMovement> characterMovement = nullptr;
+    std::shared_ptr<Animator> characterAnimator = nullptr;
+    std::shared_ptr<Indicator> characterIndicator = nullptr;
     float minSatisfaction = 0;
     float currentSatisfaction = 0;
 
-    InstrumentName playerInstrumentName;
-    MusicGenre playerGenre;
-    std::shared_ptr<MusicPattern> playerPattern;
+    InstrumentName playerInstrumentName {};
+    MusicGenre playerGenre {};
+    std::shared_ptr<MusicPattern> playerPattern = nullptr;
 
 public:
-    std::vector<InstrumentName> favInstrumentsNames;
-    std::vector<MusicGenre> favGenres;
-    std::vector<std::shared_ptr<MusicPattern>> favPatterns;
+    std::vector<InstrumentName> favInstrumentsNames {};
+    std::vector<MusicGenre> favGenres {};
+    std::vector<std::shared_ptr<MusicPattern>> favPatterns {};
 
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;
 
+    void Start() override;
     void Update() override;
-
-    void OnCreate() override;
     void OnDestroy() override;
 
     void SetPathToPlayer();

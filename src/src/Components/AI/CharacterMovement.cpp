@@ -3,10 +3,14 @@
 //
 
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
+#include "EngineManagers/CollisionManager.h"
 #include "Components/AI/CharacterStates.h"
 #include "Components/AI/CharacterMovement.h"
+#include "Components/AI/CharacterPathfinding.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include <numbers>
 
 #ifdef DEBUG
@@ -16,6 +20,15 @@
 CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
 
 CharacterMovement::~CharacterMovement() = default;
+
+void CharacterMovement::Start() {
+    collisionGrid = CollisionManager::GetInstance()->grid;
+    collisionGridSize = CollisionManager::GetInstance()->gridSize;
+    rigidbody = parent->GetComponent<Rigidbody>();
+    pathfinding = AIManager::GetInstance()->pathfinding;
+    parent->transform->SetLocalPosition(GetNewSpawnPoint());
+    Component::Start();
+}
 
 void CharacterMovement::FixedUpdate() {
 #ifdef DEBUG
@@ -43,34 +56,61 @@ void CharacterMovement::FixedUpdate() {
             --pathIterator;
     }
 
+    if (logicState != RunningToPlayer) {
+        glm::ivec2 gridPos = glm::ivec2((int) (currentPosition.x / collisionGridSize) + GRID_SIZE / 2,
+                                        (int) (currentPosition.z / collisionGridSize) + GRID_SIZE / 2);
+
+        std::unordered_map<int, std::shared_ptr<BoxCollider>> *gridPtr = &collisionGrid[gridPos.x +
+                                                                                        gridPos.y * GRID_SIZE];
+
+        if (!gridPtr->empty()) {
+            glm::vec3 currDir = currentPosition;
+
+            for (const auto &box: *gridPtr) {
+                if (box.first == parent->GetComponent<BoxCollider>()->GetId())
+                    continue;
+
+                if (box.second->isDynamic) {
+                    std::shared_ptr<Transform> obstacle = box.second->GetParent()->transform;
+                    glm::vec3 obstaclePos = obstacle->GetGlobalPosition();
+                    float dist = glm::distance(currDir, obstaclePos);
+
+                    if (dist < 2.0f) {
+                        obstaclePos = {obstaclePos.x * std::numbers::pi / 4, 0.0f,
+                                       obstaclePos.z * std::numbers::pi / 4};
+
+                        newPosition = glm::normalize(currentPosition - obstaclePos) * speed * speedMultiplier;
+
+                        rigidbody->AddForce(newPosition * dist, ForceMode::Force);
+                    }
+                }
+            }
+        }
+    }
+
     Component::FixedUpdate();
 }
 
 void CharacterMovement::AIUpdate() {
-    currentPosition = parent->transform->GetGlobalPosition();
+    if (logicState != RunningToPlayer) {
+        ReturnToPreviousPath();
 
-    if (endPointsIterator < 0 && logicState != RunningToPlayer) {
-        SetRandomEndPoint();
-    }
+        if (endPointsIterator < 0) {
+            SetRandomEndPoint();
+        }
 
-//    if (pathIterator < 1 && logicState != RunningToPlayer) {
-//        CalculatePath();
-//        --endPointsIterator;
-//    }
+        if (pathIterator < 0) {
+            CalculatePath();
+            --endPointsIterator;
+        }
 
-    if (pathIterator < 0 && logicState != RunningToPlayer) {
-        CalculatePath();
-        --endPointsIterator;
+        alreadyCalled = false;
+    } else if (logicState == RunningToPlayer && !alreadyCalled) {
+        SetNewPathToPlayer();
+        alreadyCalled = true;
     }
 
     Component::AIUpdate();
-}
-
-void CharacterMovement::OnCreate() {
-    rigidbody = parent->GetComponent<Rigidbody>();
-    pathfinding = AIManager::GetInstance()->pathfinding;
-    parent->transform->SetLocalPosition(GetNewSpawnPoint());
-    Component::OnCreate();
 }
 
 void CharacterMovement::OnDestroy() {
@@ -80,16 +120,11 @@ void CharacterMovement::OnDestroy() {
     Component::OnDestroy();
 }
 
-void CharacterMovement::Free() {
-    path->clear();
-    rigidbody = nullptr;
-    pathfinding = nullptr;
-}
-
 void CharacterMovement::SetRandomEndPoint() {
+    currentPosition = parent->transform->GetGlobalPosition();
     speed = 0.0f;
 
-    static glm::ivec2 newEndPoint;
+    glm::ivec2 newEndPoint;
 
     const int aiCellSize = (int)std::ceil(AIManager::GetInstance()->aiCellSize);
     const int aiGridSize = AI_GRID_SIZE / 4 - 1;
@@ -108,7 +143,7 @@ void CharacterMovement::SetRandomEndPoint() {
 }
 
 const glm::vec3 CharacterMovement::GetNewSpawnPoint() {
-    static int x, z;
+    int x, z;
 
     const int aiCellSize = (int)std::ceil(AIManager::GetInstance()->aiCellSize);
     const int aiGridSize = AI_GRID_SIZE / 4 - 1;
@@ -124,50 +159,46 @@ const glm::vec3 CharacterMovement::GetNewSpawnPoint() {
     return glm::vec3(x, 0, z);
 }
 
-void CharacterMovement::SetNewPath(AI_LOGICSTATE state) {
-    logicState = state;
+void CharacterMovement::SetNewPathToPlayer() {
+    previousEndPoint = endPoint;
+    speedMultiplier = 2.0f;
 
-    if (state == RunningToPlayer) {
-        previousEndPoint = endPoint;
+    glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
+    int x = (int) playerPos.x, z = (int) playerPos.z;
+    bool isAvailable = false;
 
-        static glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
-        static int x = (int)playerPos.x, z = (int)playerPos.z;
-        static bool isAvailable = false;
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            if (i == 0 && j == 0)
+                continue;
 
-        for (int i = -2; i <= 2; ++i) {
-            for (int j = -2; j <= 2; ++j) {
-                if (i == 0 && j == 0)
-                    continue;
-
-                if (!AIManager::GetInstance()->aiGrid[x + i + AI_GRID_SIZE / 2][z + j + AI_GRID_SIZE / 2]) {
-                    endPoint = {x + i, 0, z + j};
-                    isAvailable = true;
-                    break;
-                }
-            }
-
-            if (isAvailable)
+            if (!AIManager::GetInstance()->aiGrid[x + i + AI_GRID_SIZE / 2][z + j + AI_GRID_SIZE / 2]) {
+                endPoint = {x + i, 0, z + j};
+                isAvailable = true;
                 break;
+            }
         }
 
-        SetSubEndPoints();
-
-        speedMultiplier = 2.0f;
-    } else if (state == WalkingOnPath) {
-        endPoint = previousEndPoint;
-        speedMultiplier = 1.0f;
+        if (isAvailable)
+            break;
     }
 
+    SetSubEndPoints();
     CalculatePath();
+}
+
+void CharacterMovement::ReturnToPreviousPath() {
+    endPoint = previousEndPoint;
+    speedMultiplier = 1.0f;
 }
 
 void CharacterMovement::SetSubEndPoints() {
     subEndPoints.clear();
     subEndPoints.reserve(4);
 
-    static glm::ivec2 newEndPoint;
-    static float multiplier = 0.25f;
-    static bool isAvailable = false;
+    glm::ivec2 newEndPoint;
+    float multiplier = 0.25f;
+    bool isAvailable = false;
 
     while (multiplier < 0.9f) {
         newEndPoint = {endPoint.x, endPoint.y};
@@ -207,6 +238,7 @@ void CharacterMovement::CalculatePath() {
     ZoneScopedNC("CalculatePath", 0xfc0f03);
 #endif
 
+    currentPosition = parent->transform->GetGlobalPosition();
     delete path;
 
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},

@@ -3,37 +3,14 @@
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "spdlog/spdlog.h"
 
 #include "EngineManagers/AIManager.h"
-#include "Components/Component.h"
-#include <vector>
 #include <cmath>
 #include <unordered_map>
+#include <algorithm>
 
-constexpr int STRAIGHT_MOVE_COST = 10;
-constexpr int DIAGONAL_MOVE_COST = 14;
-
-struct Node {
-    Node* parent = nullptr;
-    float gCost, hCost, fCost;
-    glm::ivec2 pos {};
-
-    inline void CalculateFCost() {
-        fCost = gCost + hCost;
-    }
-
-    // NOTE: Manhattan distance (performs better than Euclidean)
-    inline void CalculateHCost(const glm::ivec2& targetPosition) {
-        hCost = std::fabs(targetPosition.x - pos.x) + std::fabs(targetPosition.y - pos.y);
-    }
-
-    inline void CalculateGCost(const glm::ivec2& position) {
-        if ((position.x != 0 && position.y == 0) || (position.x == 0 && position.y != 0))
-            gCost = parent->gCost + STRAIGHT_MOVE_COST;
-        else
-            gCost = parent->gCost + DIAGONAL_MOVE_COST;
-    }
-};
+struct Node;
 
 class CharacterPathfinding {
     const bool (*aiGrid)[100];
