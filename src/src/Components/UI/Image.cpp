@@ -14,22 +14,22 @@
 Image::Image(const std::shared_ptr<GameObject> &parent, int id) : UIComponent(parent, id) {}
 
 std::shared_ptr<Mesh> Image::CreateMesh() {
-    UpdateCorners();
+    //UpdateCorners();
 
     std::vector<Vertex> vertices;
     Vertex vertex1{}, vertex2{}, vertex3{}, vertex4{};
 
     // left bottom
-    vertex1.position = glm::vec3((float)leftBottom.x/960-1, (float)leftBottom.y/540-1, z);
+    vertex1.position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
-    vertex2.position = glm::vec3((float)x/960-1, (float)y/540-1 + (float)height/540, z);
+    vertex2.position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
     vertex2.texCoords = glm::vec2(0.0f, 1.0f);
     // right bottom
-    vertex3.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1, z);
+    vertex3.position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
     vertex3.texCoords = glm::vec2(1.0f, 0.0f);
     // right top
-    vertex4.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1 + (float)height/540, z);
+    vertex4.position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
     vertex4.texCoords = glm::vec2(1.0f, 1.0f);
 
     vertices.push_back(vertex1);
@@ -65,6 +65,7 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         x = x2; y = y2; z = z2;
+        UpdateCorners();
         this->mesh = CreateMesh();
         parent->transform->SetLocalPosition(glm::vec3(x, y, z));
     }
@@ -87,6 +88,7 @@ void Image::SetPosition(float x2, float y2) {
     mesh = CreateMesh();
 }
 
+//TODO: I actually have no idea what'd happen after using this method, probably best to avoid using it
 void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
     //TODO: replace these with pivot point (and add pivot point)
@@ -102,29 +104,14 @@ void Image::SetRotation(float angle) {
     mesh->setupMesh();
 }
 
-void Image::SetScale(float scale) {
+void Image::SetScale(float newScale) {
+    scale = newScale;
     parent->transform->SetLocalScale(glm::vec3(scale));
 
-    //TODO: again, try to count in pivot point
-    leftBottom.x = (float)x + (float)width / 2 - (float)width * scale / 2;
-    leftBottom.y = (float)y + (float)height / 2 - (float)height * scale / 2;
-    leftTop.x = leftBottom.x;
-    leftTop.y = leftBottom.y + (float)height * scale;
-    rightBottom.x = leftBottom.x + (float)width * scale;
-    rightBottom.y = leftBottom.y;
-    rightTop.x = rightBottom.x;
-    rightTop.y = leftTop.y;
+    UpdateCorners();
 
     mesh.reset();
     mesh = CreateMesh();
-}
-
-glm::vec3 Image::GetColor() {
-    return color;
-}
-
-float Image::GetAlpha() {
-    return alpha;
 }
 
 void Image::SetColor(glm::vec3 newColor) {
@@ -168,8 +155,16 @@ void Image::Draw() {
 }
 
 void Image::UpdateCorners() {
-    leftBottom = {x, y};
-    leftTop = {x, y + height};
-    rightBottom = {x + width, y};
-    rightTop = {x + width, y + height};
+    // Calculate two opposite vertices
+    leftBottom = {x - width*pivot.x*scale, y - height*pivot.y*scale};
+    rightTop = {x + width*(1-pivot.x)*scale, y + height*(1-pivot.y)*scale};
+
+    leftTop = {leftBottom.x, rightTop.y};
+    rightBottom = {rightTop.x, leftBottom.y};
 }
+
+glm::vec3 Image::GetColor() { return color; }
+float Image::GetAlpha() { return alpha; }
+
+float Image::GetWidth() { return width*scale; }
+float Image::GetHeight() { return height*scale; }

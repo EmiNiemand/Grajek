@@ -32,22 +32,44 @@ void UIAnimator::Update() {
     ZoneScopedNC("UI Animator", 0x800080);
 #endif
     if(paused) return;
+    if(type == AnimationBehaviour::Resetable && checkpointIndex >= checkpoints.size()) return;
 
     // Switch checkpoints if current one finished
     // ------------------------------------------
     if(counter > checkpoint.duration) {
         checkpointIndex++;
 
+        // Snap property value to checkpoint value
+        switch (checkpoint.property) {
+            case AnimatedProperty::Position:
+                image->SetPosition(checkpoint.value.x, checkpoint.value.y);
+                break;
+            case AnimatedProperty::Rotation:
+                image->SetRotation(checkpoint.value.z);
+                break;
+            case AnimatedProperty::Scale:
+                image->SetScale(checkpoint.value.x);
+                spdlog::info(image->GetParent()->transform->GetLocalScale().x);
+                break;
+            case AnimatedProperty::Color:
+                image->SetColor(checkpoint.value);
+                break;
+            case AnimatedProperty::Alpha:
+                image->SetAlpha(checkpoint.value.x);
+                break;
+        }
+
         // Finish, loop or suspend animation
         // ---------------------------------
         if(checkpointIndex >= checkpoints.size()) {
+            auto imageTransform = image->GetParent()->transform;
             switch(type) {
-                case Resetable:
+                case AnimationBehaviour::Resetable:
                     return;
-                case OneTime:
+                case AnimationBehaviour::OneTime:
                     GameObject::Destroy(parent);
                     return;
-                case Looping:
+                case AnimationBehaviour::Looping:
                     checkpointIndex = 0;
                     break;
             }
@@ -60,20 +82,21 @@ void UIAnimator::Update() {
     float deltaTime = GloomEngine::GetInstance()->deltaTime;
     auto imageTransform = image->GetParent()->transform;
     switch (checkpoint.property) {
-        case Position:
+        case AnimatedProperty::Position:
             image->SetPosition(imageTransform->GetLocalPosition().x + valueDelta.x * deltaTime,
                                imageTransform->GetLocalPosition().y + valueDelta.y * deltaTime);
             break;
-        case Rotation:
+        case AnimatedProperty::Rotation:
             image->SetRotation(imageTransform->GetLocalRotation().z + valueDelta.z * deltaTime);
             break;
-        case Scale:
+        case AnimatedProperty::Scale:
             image->SetScale(imageTransform->GetLocalScale().x + valueDelta.x * deltaTime);
+            spdlog::info(imageTransform->GetLocalScale().x);
             break;
-        case Color:
+        case AnimatedProperty::Color:
             image->SetColor(image->GetColor() + valueDelta * deltaTime);
             break;
-        case Alpha:
+        case AnimatedProperty::Alpha:
             image->SetAlpha(image->GetAlpha() + valueDelta.x * deltaTime);
             break;
     }
@@ -93,27 +116,28 @@ void UIAnimator::Reset() {
 void UIAnimator::CalcValueDelta() {
     auto imageTransform = image->GetParent()->transform;
     switch(checkpoint.property) {
-        case Position:
+        case AnimatedProperty::Position:
             valueDelta = (checkpoint.value
                           - imageTransform->GetLocalPosition())
                          / checkpoint.duration;
             break;
-        case Rotation:
+        case AnimatedProperty::Rotation:
             valueDelta = (checkpoint.value
                           - imageTransform->GetLocalRotation())
                          / checkpoint.duration;
             break;
-        case Scale:
-            valueDelta = (checkpoint.value
-                          - imageTransform->GetLocalScale())
+        case AnimatedProperty::Scale:
+            valueDelta = glm::vec3(checkpoint.value
+                        - imageTransform->GetLocalScale())
                          / checkpoint.duration;
+            //spdlog::info("SCALE: "+std::to_string(imageTransform->GetLocalScale().x)+"\tVALUE DELTA: "+std::to_string(valueDelta.x));
             break;
-        case Color:
+        case AnimatedProperty::Color:
             valueDelta = (checkpoint.value
                           - image->GetColor())
                          / checkpoint.duration;
             break;
-        case Alpha:
+        case AnimatedProperty::Alpha:
             valueDelta = (checkpoint.value
                           - image->GetAlpha())
                          / checkpoint.duration;

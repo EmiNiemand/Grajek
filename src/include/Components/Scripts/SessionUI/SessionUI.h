@@ -22,27 +22,33 @@ class UIAnimator;
 
 class SessionUI : public Component {
 private:
-    std::shared_ptr<Text> accuracyFeedback;
-    inline static glm::vec3 accuracyColors[]  { Color::Red, Color::Cyan, Color::Green, Color::Yellow };
-    inline static std::string accuracyTexts[] { "Poor", "Nice", "Great!", "PERFECT" };
-    inline static float accuracyThresholds[] { 0.5f, 0.8f, 0.95f };
+    // Accuracy rating
     std::vector<std::shared_ptr<Image>> accuracyRating;
     std::vector<std::shared_ptr<UIAnimator>> accuracyRatingAnimator;
+    inline static std::string accuracyTexts[] { "Poor", "Nice", "Great!", "PERFECT" };
+    inline static float accuracyThresholds[] { 0.5f, 0.8f, 0.95f };
 
-    bool metronomeSoundEnabled;
-    bool metronomeVisualEnabled;
+    // Metronome
     std::shared_ptr<Image> metronomeImage;
     std::shared_ptr<AudioSource> tickSound;
+    bool metronomeSoundEnabled;
+    bool metronomeVisualEnabled;
 
+protected:
+    // Samples
+    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::vector<std::shared_ptr<Image>> sampleImages;
+    std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
+
+    // Cheat sheet
     std::shared_ptr<Image> cheatSheet;
     bool cheatSheetActive = false;
-    std::vector<std::shared_ptr<AudioSource>> sampleSources;
 
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
-    void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath);
-    void SetCheatSheet(std::string cheatSheetPath);
+    virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath);
+    void SetCheatSheet(const std::string& cheatSheetPath);
 
     inline virtual void PlaySound(int index);
     void ToggleCheatSheet();

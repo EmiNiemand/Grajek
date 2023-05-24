@@ -30,6 +30,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
+#include "EngineManagers/AIManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -121,6 +122,8 @@ void Game::InitializeGame() const {
     int y = 0;
 
     camera->SetTarget(nullptr);
+
+    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 }
 
 bool Game::GameLoop() {
