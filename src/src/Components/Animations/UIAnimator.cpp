@@ -49,7 +49,6 @@ void UIAnimator::Update() {
                 break;
             case AnimatedProperty::Scale:
                 image->SetScale(checkpoint.value.x);
-                spdlog::info(image->GetParent()->transform->GetLocalScale().x);
                 break;
             case AnimatedProperty::Color:
                 image->SetColor(checkpoint.value);
@@ -91,7 +90,6 @@ void UIAnimator::Update() {
             break;
         case AnimatedProperty::Scale:
             image->SetScale(imageTransform->GetLocalScale().x + valueDelta.x * deltaTime);
-            spdlog::info(imageTransform->GetLocalScale().x);
             break;
         case AnimatedProperty::Color:
             image->SetColor(image->GetColor() + valueDelta * deltaTime);
@@ -130,7 +128,6 @@ void UIAnimator::CalcValueDelta() {
             valueDelta = glm::vec3(checkpoint.value
                         - imageTransform->GetLocalScale())
                          / checkpoint.duration;
-            //spdlog::info("SCALE: "+std::to_string(imageTransform->GetLocalScale().x)+"\tVALUE DELTA: "+std::to_string(valueDelta.x));
             break;
         case AnimatedProperty::Color:
             valueDelta = (checkpoint.value
