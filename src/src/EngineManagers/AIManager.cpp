@@ -60,7 +60,7 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 
 void AIManager::Free() {
     characterSpawner.request_stop();
-    characterSpawner.join();
+    if (characterSpawner.joinable()) characterSpawner.join();
     currentCharactersLogics.clear();
 }
 
