@@ -147,9 +147,6 @@ void Game::InitializeGame() const {
                                                        {"Walcz ze mna."},
                                                        {""}});
 
-    int x = 0;
-    int y = 0;
-
     camera->SetTarget(nullptr);
 
     AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
