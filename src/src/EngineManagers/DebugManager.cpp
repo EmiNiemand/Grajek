@@ -54,7 +54,6 @@ void DebugManager::Render() {
     DisplaySystemInfo();
     SaveMenu();
     ObjectCreator();
-    ImGui::ShowDemoWindow();
     {
         ImGui::Begin("Debug Window");
 
