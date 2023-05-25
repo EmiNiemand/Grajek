@@ -6,9 +6,20 @@
 #define GLOOMENGINE_CHARACTERSTATES_H
 
 enum AI_LOGICSTATE {
-    RunningToPlayer,
-    WalkingOnPath,
-    AlertedByPlayer
+    None,
+    AlertedByPlayer,
+    MovingToPlayer,
+    ListeningToPlayer,
+};
+
+enum AI_MOVEMENTSTATE {
+    GettingPlayerPosition,
+    OnPathToPlayer,
+    NearPlayerSubPoint,
+    NearPlayer,
+    OnPathToTarget,
+    NearTargetSubPoint,
+    ReturningToPreviousPath,
 };
 
 enum AI_ANIMATIONSTATE {

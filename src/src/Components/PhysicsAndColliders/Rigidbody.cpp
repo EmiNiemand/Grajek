@@ -44,11 +44,13 @@ void Rigidbody::AddTorque(float targetRotation, ForceMode forceMode) {
     if (std::isnan(targetRotation))
         return;
 
-    if (targetRotation == 0.0f && rotation.y > 180.0f) {
-        targetRotation = 360.0f;
+    if (targetRotation < 0.0f) {
+        targetRotation += 360.0f;
     }
 
-    if (rotation.y > 360.0f) {
+    if (targetRotation == 0.0f && rotation.y > 180.0f) {
+        targetRotation = 360.0f;
+    } else if (rotation.y > 360.0f) {
         rotation.y -= 360.0f;
         targetRotation -= 360.f;
     }

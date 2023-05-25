@@ -6,9 +6,8 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "EngineManagers/CollisionManager.h"
-#include "Components/AI/CharacterStates.h"
 #include "Components/AI/CharacterMovement.h"
-#include "Components/AI/CharacterPathfinding.h"
+#include "Components/AI/CharacterLogic.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include <numbers>
@@ -24,9 +23,11 @@ CharacterMovement::~CharacterMovement() = default;
 void CharacterMovement::Start() {
     collisionGrid = CollisionManager::GetInstance()->grid;
     collisionGridSize = CollisionManager::GetInstance()->gridSize;
-    rigidbody = parent->GetComponent<Rigidbody>();
     pathfinding = AIManager::GetInstance()->pathfinding;
-    parent->transform->SetLocalPosition(GetNewSpawnPoint());
+    rigidbody = parent->GetComponent<Rigidbody>();
+    glm::ivec2 newSpawnPoint = GetRandomPoint();
+    parent->transform->SetLocalPosition(glm::vec3(newSpawnPoint.x, 0, newSpawnPoint.y));
+    subEndPoints.reserve(4);
     Component::Start();
 }
 
@@ -40,63 +41,38 @@ void CharacterMovement::FixedUpdate() {
     if (pathIterator >= 0) {
         speed = std::lerp(speed, maxSpeed, smoothingParam);
 
-        newPosition = glm::normalize((*path)[pathIterator] - currentPosition) * speed * speedMultiplier;
+        ApplyForces(glm::normalize((*path)[pathIterator] - currentPosition));
 
-        rigidbody->AddForce(newPosition, ForceMode::Force);
+        cellPos = glm::ivec2((int) (currentPosition.x / collisionGridSize) + GRID_SIZE / 2,
+                             (int) (currentPosition.z / collisionGridSize) + GRID_SIZE / 2);
 
-        rotationAngle = std::atan2f(-newPosition.x, -newPosition.z) * 180.0f / std::numbers::pi;
+        cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
 
-        if (rotationAngle < 0.0f) {
-            rotationAngle += 360.0f;
-        }
-
-        rigidbody->AddTorque(rotationAngle, ForceMode::Force);
-
-        if (glm::distance(currentPosition, (*path)[pathIterator]) < 1.0f * AIManager::GetInstance()->aiCellSize)
-            --pathIterator;
-    }
-
-    if (logicState != RunningToPlayer) {
-        glm::ivec2 gridPos = glm::ivec2((int) (currentPosition.x / collisionGridSize) + GRID_SIZE / 2,
-                                        (int) (currentPosition.z / collisionGridSize) + GRID_SIZE / 2);
-
-        std::unordered_map<int, std::shared_ptr<BoxCollider>> *gridPtr = &collisionGrid[gridPos.x +
-                                                                                        gridPos.y * GRID_SIZE];
-
-        if (!gridPtr->empty() && pathIterator >= 0) {
-            glm::vec3 currDir = glm::normalize((*path)[pathIterator] - currentPosition);
-
-            for (const auto &box: *gridPtr) {
+        if (!cellPtr->empty()) {
+            for (const auto &box: *cellPtr) {
                 if (box.first == parent->GetComponent<BoxCollider>()->GetId())
                     continue;
 
                 if (box.second->isDynamic) {
                     std::shared_ptr<Transform> obstacle = box.second->GetParent()->transform;
-                    glm::vec3 obstacleDist = glm::normalize(obstacle->GetGlobalPosition() - currentPosition);
-                    float dist = glm::distance(currentPosition, obstacle->GetGlobalPosition());
 
-                    if (dist < 2.0f) {
-                        obstacleDist *= -1;
+                    if (glm::distance(currentPosition, obstacle->GetGlobalPosition()) < DISTANCE_TO_COLLISION) {
+                        glm::vec3 obstacleDir = glm::normalize(obstacle->GetGlobalPosition() - currentPosition) * -1.0f;
 
-                        float angle = std::acos(glm::dot(currDir, obstacleDist));
+                        rotationAngle = std::acos(glm::dot(glm::normalize(
+                                (*path)[pathIterator] - currentPosition), obstacleDir)) / 2.0f;
 
-                        angle /= 2;
-                        auto mat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
+                        auto mat = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
 
-                        obstacleDist = glm::vec3(mat * glm::vec4(obstacleDist, 1)) * speed;
-                        spdlog::info("ob " + std::to_string(obstacleDist.x) + ", " + std::to_string(obstacleDist.z));
-                        rigidbody->AddForce(obstacleDist, ForceMode::Force);
-
-                        rotationAngle = std::atan2f(-obstacleDist.x, -obstacleDist.z) * 180.0f / std::numbers::pi;
-
-                        if (rotationAngle < 0.0f) {
-                            rotationAngle += 360.0f;
-                        }
-
-                        rigidbody->AddTorque(rotationAngle, ForceMode::Force);
+                        ApplyForces(glm::vec3(mat * glm::vec4(obstacleDir, 1)));
                     }
                 }
             }
+        }
+
+        if (glm::distance(currentPosition, (*path)[pathIterator]) <
+            DISTANCE_TO_POINT * AIManager::GetInstance()->aiCellSize) {
+            --pathIterator;
         }
     }
 
@@ -104,22 +80,52 @@ void CharacterMovement::FixedUpdate() {
 }
 
 void CharacterMovement::AIUpdate() {
-    if (logicState != RunningToPlayer) {
-        ReturnToPreviousPath();
+    switch (movementState) {
+        case NearTargetSubPoint:
+            if (subEndPointsIterator >= 0) {
+                endPoint = subEndPoints[subEndPointsIterator];
+            } else {
+                SetRandomEndPoint();
+            }
 
-        if (endPointsIterator < 0) {
-            SetRandomEndPoint();
-        }
-
-        if (pathIterator < 0) {
             CalculatePath();
-            --endPointsIterator;
-        }
+            movementState = OnPathToTarget;
+            break;
+        case OnPathToTarget:
+            if (pathIterator < 0) {
+                --subEndPointsIterator;
+                movementState = NearTargetSubPoint;
+            }
+            break;
+        case GettingPlayerPosition:
+            CalculatePath();
+            movementState = OnPathToPlayer;
+            break;
+        case NearPlayerSubPoint:
+            if (subEndPointsIterator >= 0) {
+                endPoint = subEndPoints[subEndPointsIterator];
+            }
 
-        alreadyCalled = false;
-    } else if (logicState == RunningToPlayer && !alreadyCalled) {
-        SetNewPathToPlayer();
-        alreadyCalled = true;
+            CalculatePath();
+            movementState = OnPathToPlayer;
+            break;
+        case OnPathToPlayer:
+            if (pathIterator < 0) {
+                --subEndPointsIterator;
+
+                if (subEndPointsIterator < 0) {
+                    movementState = NearPlayer;
+                } else {
+                    movementState = NearPlayerSubPoint;
+                }
+            }
+            break;
+        case ReturningToPreviousPath:
+            CalculatePath();
+            movementState = OnPathToTarget;
+            break;
+        default:
+            break;
     }
 
     Component::AIUpdate();
@@ -132,10 +138,23 @@ void CharacterMovement::OnDestroy() {
     Component::OnDestroy();
 }
 
+void CharacterMovement::ApplyForces(const glm::vec3& velocity) {
+    rigidbody->AddForce(velocity * speed * speedMultiplier, ForceMode::Force);
+
+    rotationAngle = std::atan2f(-velocity.x, -velocity.z) * 180.0f / std::numbers::pi;
+
+    rigidbody->AddTorque(rotationAngle, ForceMode::Force);
+}
+
 void CharacterMovement::SetRandomEndPoint() {
-    currentPosition = parent->transform->GetGlobalPosition();
     speed = 0.0f;
 
+    glm::ivec2 newEndPoint = GetRandomPoint();
+
+    endPoint = {newEndPoint.x, 0, newEndPoint.y};
+}
+
+const glm::ivec2 CharacterMovement::GetRandomPoint() {
     glm::ivec2 newEndPoint;
 
     const int aiCellSize = (int)std::ceil(AIManager::GetInstance()->aiCellSize);
@@ -149,29 +168,11 @@ void CharacterMovement::SetRandomEndPoint() {
             break;
     }
 
-    endPoint = {newEndPoint.x, 0, newEndPoint.y};
-
-    SetSubEndPoints();
-}
-
-const glm::vec3 CharacterMovement::GetNewSpawnPoint() {
-    int x, z;
-
-    const int aiCellSize = (int)std::ceil(AIManager::GetInstance()->aiCellSize);
-    const int aiGridSize = AI_GRID_SIZE / 4 - 1;
-
-    while (true) {
-        x = RandomnessManager::GetInstance()->GetInt(-aiGridSize / aiCellSize, aiGridSize / aiCellSize);
-        z = RandomnessManager::GetInstance()->GetInt(-aiGridSize / aiCellSize, aiGridSize / aiCellSize);
-
-        if (!AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][z + AI_GRID_SIZE / 2])
-            break;
-    }
-
-    return glm::vec3(x, 0, z);
+    return newEndPoint;
 }
 
 void CharacterMovement::SetNewPathToPlayer() {
+    movementState = GettingPlayerPosition;
     previousEndPoint = endPoint;
     speedMultiplier = 2.0f;
 
@@ -179,8 +180,8 @@ void CharacterMovement::SetNewPathToPlayer() {
     int x = (int) playerPos.x, z = (int) playerPos.z;
     bool isAvailable = false;
 
-    for (int i = -2; i <= 2; ++i) {
-        for (int j = -2; j <= 2; ++j) {
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
             if (i == 0 && j == 0)
                 continue;
 
@@ -194,19 +195,16 @@ void CharacterMovement::SetNewPathToPlayer() {
         if (isAvailable)
             break;
     }
-
-    SetSubEndPoints();
-    CalculatePath();
 }
 
 void CharacterMovement::ReturnToPreviousPath() {
+    movementState = ReturningToPreviousPath;
     endPoint = previousEndPoint;
     speedMultiplier = 1.0f;
 }
 
 void CharacterMovement::SetSubEndPoints() {
     subEndPoints.clear();
-    subEndPoints.reserve(4);
 
     glm::ivec2 newEndPoint;
     float multiplier = 0.25f;
@@ -242,13 +240,21 @@ void CharacterMovement::SetSubEndPoints() {
 
     subEndPoints.push_back(endPoint);
 
-    endPointsIterator = 3;
+    std::reverse(subEndPoints.begin(), subEndPoints.end());
+
+    subEndPointsIterator = 3;
+}
+
+const AI_MOVEMENTSTATE CharacterMovement::GetCurrentStatus() const {
+    return movementState;
 }
 
 void CharacterMovement::CalculatePath() {
 #ifdef DEBUG
     ZoneScopedNC("CalculatePath", 0xfc0f03);
 #endif
+
+    SetSubEndPoints();
 
     currentPosition = parent->transform->GetGlobalPosition();
     delete path;
@@ -261,5 +267,7 @@ void CharacterMovement::CalculatePath() {
         return;
     }
 
-    pathIterator = path->size() - 1;
+    pathIterator = (int)path->size() - 1;
 }
+
+
