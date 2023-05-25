@@ -152,6 +152,8 @@ void CharacterMovement::SetRandomEndPoint() {
     glm::ivec2 newEndPoint = GetRandomPoint();
 
     endPoint = {newEndPoint.x, 0, newEndPoint.y};
+
+    SetSubEndPoints();
 }
 
 const glm::ivec2 CharacterMovement::GetRandomPoint() {
@@ -180,8 +182,8 @@ void CharacterMovement::SetNewPathToPlayer() {
     int x = (int) playerPos.x, z = (int) playerPos.z;
     bool isAvailable = false;
 
-    for (int i = -1; i <= 1; ++i) {
-        for (int j = -1; j <= 1; ++j) {
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
             if (i == 0 && j == 0)
                 continue;
 
@@ -195,12 +197,15 @@ void CharacterMovement::SetNewPathToPlayer() {
         if (isAvailable)
             break;
     }
+
+    SetSubEndPoints();
 }
 
 void CharacterMovement::ReturnToPreviousPath() {
     movementState = ReturningToPreviousPath;
     endPoint = previousEndPoint;
     speedMultiplier = 1.0f;
+    SetSubEndPoints();
 }
 
 void CharacterMovement::SetSubEndPoints() {
@@ -254,9 +259,8 @@ void CharacterMovement::CalculatePath() {
     ZoneScopedNC("CalculatePath", 0xfc0f03);
 #endif
 
-    SetSubEndPoints();
-
     currentPosition = parent->transform->GetGlobalPosition();
+
     delete path;
 
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},

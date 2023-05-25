@@ -13,8 +13,8 @@
 #include <vector>
 #include <unordered_map>
 
-constexpr float DISTANCE_TO_POINT = 1.0f;
-constexpr float DISTANCE_TO_COLLISION = 3.0f;
+constexpr float DISTANCE_TO_POINT = 2.0f;
+constexpr float DISTANCE_TO_COLLISION = 2.0f;
 
 class GameObject;
 class Rigidbody;
