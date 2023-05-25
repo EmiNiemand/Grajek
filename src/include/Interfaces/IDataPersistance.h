@@ -5,8 +5,7 @@
 
 class GameData;
 
-//TODO: Implement this in player script where DataGame variables are implemented (money, reputation and set position)
-// in LoadData https://www.youtube.com/watch?v=aUi9aijvpgs&t=903s
+// https://www.youtube.com/watch?v=aUi9aijvpgs&t=903s
 class IDataPersistance {
 public:
     virtual void LoadData(std::shared_ptr<GameData> data) = 0;

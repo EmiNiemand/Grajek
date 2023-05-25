@@ -181,12 +181,11 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
     auto zVector = glm::vec2(zVec.x, zVec.z);
 
     glm::ivec2 points[4] = {
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiGridSize)
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiCellSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiCellSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiCellSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiCellSize)
     };
-
 
     if (points[0] == points[1] &&
         points[1] == points[2] &&
@@ -210,10 +209,8 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    const int size = (int)aiGridSize;
-
-    for (int x = minX - size; x <= maxX + size; ++x) {
-        for (int y = minY - size; y <= maxY + size; ++y) {
+    for (int x = minX - 1; x <= maxX + 1; ++x) {
+        for (int y = minY - 1; y <= maxY + 1; ++y) {
             AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         }
     }

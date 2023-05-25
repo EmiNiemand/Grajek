@@ -6,7 +6,6 @@
 #include "glm/vec3.hpp"
 #include "Components/UI/Image.h"
 
-//TODO: change these to enum classes
 enum class AnimationBehaviour {OneTime, Looping, Resetable};
 enum class AnimatedProperty { Position, Rotation, Scale, Color, Alpha };
 struct AnimationCheckpoint { AnimatedProperty property; glm::vec3 value; float duration=1; };

@@ -30,7 +30,6 @@ public:
 
     static DataPersistanceManager* GetInstance();
 
-    //TODO: call this functions somewhere in the code
     void NewGame();
     void LoadGame(const std::string &dataDirectoryPath, const std::string &dataFileName);
     void SaveGame(const std::string &dataDirectoryPath, const std::string &dataFileName);

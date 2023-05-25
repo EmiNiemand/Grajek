@@ -6,9 +6,10 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
+#include "Components/AI/CharacterPathfinding.h"
+#include "Components/AI/CharacterAnimations.h"
 #include "Components/UI/Indicator.h"
 #include "Components/Renderers/Animator.h"
-#include "Components/AI/CharacterAnimations.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 
 #ifdef DEBUG
@@ -19,6 +20,20 @@ CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id
 
 CharacterLogic::~CharacterLogic() = default;
 
+void CharacterLogic::Start() {
+    characterMovement = parent->GetComponent<CharacterMovement>();
+    characterIndicator = parent->GetComponent<Indicator>();
+    auto animatorObject = GameObject::Instantiate("Animator", parent);
+    animatorObject->transform->SetLocalRotation({0, 180, 0});
+    characterAnimator = animatorObject->AddComponent<Animator>();
+    characterAnimator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
+    characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
+    characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
+
+    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
+    Component::Start();
+}
+
 void CharacterLogic::Update() {
     if (characterMovement->rigidbody->velocity == glm::vec3(0)) {
         characterAnimations->SetNewState(AI_ANIMATIONSTATE::Idle);
@@ -28,19 +43,6 @@ void CharacterLogic::Update() {
     }
 
     Component::Update();
-}
-
-void CharacterLogic::OnCreate() {
-    characterMovement = parent->GetComponent<CharacterMovement>();
-    characterIndicator = parent->GetComponent<Indicator>();
-    auto animatorObject = GameObject::Instantiate("Animator", parent);
-    animatorObject->transform->SetLocalRotation({0, 180, 0});
-    characterAnimator = animatorObject->AddComponent<Animator>();
-    characterAnimator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
-    characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
-    Component::OnCreate();
 }
 
 void CharacterLogic::OnDestroy() {
@@ -56,13 +58,13 @@ void CharacterLogic::OnDestroy() {
 
 void CharacterLogic::SetPathToPlayer() {
     currentState = RunningToPlayer;
+    characterMovement->logicState = RunningToPlayer;
     characterIndicator->Indicate();
-    characterMovement->SetNewPath(currentState);
 }
 
 void CharacterLogic::ReturnToPreviousPath() {
     currentState = WalkingOnPath;
-    characterMovement->SetNewPath(currentState);
+    characterMovement->logicState = WalkingOnPath;
 }
 
 void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, const MusicGenre& gen) {
