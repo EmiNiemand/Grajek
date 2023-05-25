@@ -30,6 +30,10 @@
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
+#include "EngineManagers/AIManager.h"
+#include "GameObjectsAndPrefabs/Prefabs/OpponentPrefab.h"
+#include "Components/Scripts/Opponent.h"
+#include "Components/Scripts/Instrument.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -117,20 +121,47 @@ void Game::InitializeGame() const {
     savePoint1->transform->SetLocalPosition({-15, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
 
-    int x = 0;
-    int y = 0;
+    auto opponent = Prefab::Instantiate<OpponentPrefab>();
+    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
+    // 2      *   *
+    // 1    *   *
+    // 0  *
+    opponent->children.begin()->second->AddComponent<Opponent>()->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
+    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Pokonales mnie."},
+                             {"Masz tu moja odznake Jazz Badge."},
+                             {""}});
+    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
+                             {"Pokonaj kolejnego lidera w Electro Gymie."},
+                             {""}});
+
+    auto dialog = GameObject::Instantiate("Dialog", activeScene);
+    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
+    dialog->AddComponent<Renderer>()->LoadModel("texturedModels/przeciwnik.obj");
+    dialog->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
+    dialog->AddComponent<Dialogue>();
+    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+                                                       {"Tak to ja."},
+                                                       {""}});
+    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+                                                       {"Walcz ze mna."},
+                                                       {""}});
 
     camera->SetTarget(nullptr);
+
+    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 }
 
 bool Game::GameLoop() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>())
-            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+    auto pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause");
+    if (pauseMenu)
+        if (pauseMenu->GetComponent<PauseMenu>())
+            shouldQuit = pauseMenu->GetComponent<PauseMenu>()->gameShouldExit;
 
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>())
-            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+    auto mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu");
+    if (mainMenu)
+        if (mainMenu->GetComponent<MainMenu>())
+            shouldQuit = mainMenu->GetComponent<MainMenu>()->gameShouldExit;
 
 
     return shouldQuit;

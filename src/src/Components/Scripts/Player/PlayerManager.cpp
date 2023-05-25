@@ -27,6 +27,8 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
 #include "Components/Renderers/Animator.h"
+#include "EngineManagers/OpponentManager.h"
+#include "EngineManagers/DialogueManager.h"
 
 #include <filesystem>
 
@@ -66,7 +68,10 @@ void PlayerManager::Awake() {
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Load game
-    std::filesystem::path path = std::filesystem::current_path() / "res" / "ProjectConfig" / "Saves";
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "ProjectConfig";
+    path /= "Saves";
 
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), SceneManager::GetInstance()->file);
 
@@ -82,19 +87,8 @@ void PlayerManager::Update() {
     ZoneScopedNC("Player manager", 0x800080);
 #endif
     PollInput();
+	UpdateAnimations();
 
-	//TODO: move this to a separate method
-    float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
-    if (rb) {
-        if (velocity > 0.01 && previousVelocity <= 0.01) {
-            animator->SetAnimation("AnimsNew/Walk.dae");
-			animator->speed = 3;
-        }
-        else if (velocity <= 0.01 && previousVelocity > 0.01){
-            animator->SetAnimation("AnimsNew/Idle3.dae");
-        }
-    }
-    previousVelocity = velocity;
     Component::Update();
 }
 
@@ -108,6 +102,22 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 
 std::set<InstrumentName> PlayerManager::GetInstruments() {
     return equipment->GetInstrumentNames();
+}
+#pragma endregion
+
+#pragma region AnimationEvents
+void PlayerManager::UpdateAnimations() {
+	if(!rb) return;
+
+	float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
+	if (velocity > 0.01 && previousVelocity <= 0.01) {
+        animator->SetAnimation("AnimsNew/Walk.dae");
+		animator->speed = 3;
+	}
+	else if (velocity <= 0.01 && previousVelocity > 0.01){
+		animator->SetAnimation("AnimsNew/Idle3.dae");
+	}
+    previousVelocity = velocity;
 }
 #pragma endregion
 
@@ -171,6 +181,7 @@ void PlayerManager::OnMenuToggle() {
           activeMenu == shopMenu ||
           activeMenu == savePointMenu)) return;
 
+    DialogueManager::GetInstance()->NotifyMenuIsActive();
     if (activeMenu != shopMenu && activeMenu != pauseMenu && activeMenu != savePointMenu) {
         GloomEngine::GetInstance()->timeScale = 0;
         if(activeMenu == optionsMenu) {
@@ -201,6 +212,7 @@ void PlayerManager::OnMenuToggle() {
         GloomEngine::GetInstance()->timeScale = 1;
         pauseMenu->HideMenu();
         activeMenu.reset();
+        DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     }
 }
 
@@ -220,11 +232,13 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 
 void PlayerManager::OnSessionToggle() {
     if(activeMenu && activeMenu != sessionStarter) return;
+    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
         AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+        OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
         return;
     }
     if (sessionStarter) {
@@ -235,6 +249,7 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
 
+    DialogueManager::GetInstance()->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
@@ -255,11 +270,11 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
+     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedSatisfaction());
 
     if (!pat) return;
 
-    //TODO: uncomment when crowd manager gets implemented
-    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
+    //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
     equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
 
     playerUI->UpdateCash(equipment->cash);
@@ -281,6 +296,16 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
 void PlayerManager::OnCheatSheetToggle() {
     if (!session) return;
     session->ToggleCheatSheet();
+}
+
+void PlayerManager::OnPlayerLoseDuel() {
+    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
+    session->Stop();
+    session.reset();
+    AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+    OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
+    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+    // TODO add sound when player beat boss
 }
 
 #pragma endregion

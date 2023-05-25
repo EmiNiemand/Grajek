@@ -4,6 +4,8 @@
 #include "EngineManagers/DataPersistanceManager.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "Components/Scripts/Menus/SavePointTrigger.h"
+#include "Components/UI/Image.h"
+#include "Components/Animations/UIAnimator.h"
 #include <filesystem>
 
 SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
@@ -41,6 +43,13 @@ void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
 
 void SavePointMenu::OnClick() {
     if (!activeButton) return;
+    auto animator = GameObject::Instantiate("SavePointMenuAnimator", parent->parent);
+    auto image = GameObject::Instantiate("SavePointMenuImage", animator)->AddComponent<Image>();
+    image->LoadTexture(1000, 700, "UI/ZapisGry.png");
+    animator->AddComponent<UIAnimator>()->Setup(image, {
+            {AnimatedProperty::Alpha, glm::vec3(0.0f), 2.0f}
+    }, AnimationBehaviour::OneTime);
+
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "ProjectConfig";
