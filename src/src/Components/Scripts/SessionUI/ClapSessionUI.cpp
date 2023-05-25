@@ -11,17 +11,17 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
 
     // Set up cheat sheet
     // ------------------
-    //SetCheatSheet("UI/Sesja/clapPatterns.png");
+    SetCheatSheet("UI/Sesja/clapPatterns.png");
 
     // Load theme
     // ----------
-    //GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
-    // ->LoadTexture(0, 0, "UI/Sesja/widokKlaskanie.png");
+    GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
+     ->LoadTexture(0, 0, "UI/Sesja/widokKlaskanie.png");
 
     // Set up samples
     // --------------
     // Stomp
-    sampleImages[0]->LoadTexture(650, 800, "UI/Sesja/circle.png");
+    sampleImages[0]->LoadTexture(960 - 200, 800, "UI/Sesja/circle.png");
     sampleAnimators.push_back({
         GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
         GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
@@ -35,7 +35,7 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
         {AnimatedProperty::Color, glm::vec3(1.0f), 0.2f}
     }, AnimationBehaviour::Resetable);
     // Clap
-    sampleImages[1]->LoadTexture(1150, 800, "UI/Sesja/circle.png");
+    sampleImages[1]->LoadTexture(960 + 200, 800, "UI/Sesja/circle.png");
     sampleAnimators.push_back({
             GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
             GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()

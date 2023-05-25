@@ -138,13 +138,15 @@ void Game::InitializeGame() const {
 }
 
 bool Game::GameLoop() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>())
-            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+    auto pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause");
+    if (pauseMenu)
+        if (pauseMenu->GetComponent<PauseMenu>())
+            shouldQuit = pauseMenu->GetComponent<PauseMenu>()->gameShouldExit;
 
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>())
-            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+    auto mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu");
+    if (mainMenu)
+        if (mainMenu->GetComponent<MainMenu>())
+            shouldQuit = mainMenu->GetComponent<MainMenu>()->gameShouldExit;
 
 
     return shouldQuit;
