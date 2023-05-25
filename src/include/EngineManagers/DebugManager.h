@@ -7,7 +7,9 @@
 #include <GloomEngine.h>
 #include <GameObjectsAndPrefabs/GameObject.h>
 #include "LowLevelClasses/GameObjectData.h"
+#include <filesystem>
 
+namespace fs = std::filesystem;
 
 class DebugManager {
 private:
@@ -21,6 +23,9 @@ private:
 	std::shared_ptr<GameObject> selected;
     bool isNewObjectBeingHeld;
     std::shared_ptr<GameObjectData> gameObjectHolder;
+
+    std::vector<fs::directory_entry> modelPaths = FindModelPaths();
+
 
 	void ProcessChildren(std::shared_ptr<GameObject> gameObject);
 	//Conversion from vec3 to float[3] for use in imgui.
@@ -43,6 +48,8 @@ public:
     void Free() const;
 
     void CreateGameObjectFromData(std::shared_ptr<GameObjectData>);
+
+    std::vector<std::filesystem::directory_entry> FindModelPaths();
 };
 
 #endif //GLOOMENGINE_DEBUGMANAGER_H

@@ -12,11 +12,14 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 DebugManager::DebugManager() {
     displaySelected = false;
     transformExtracted = false;
     isNewObjectBeingHeld = false;
     safetySwitch = false;
+    modelPaths = FindModelPaths();
 }
 DebugManager::~DebugManager() = default;
 
@@ -51,6 +54,7 @@ void DebugManager::Render() {
     DisplaySystemInfo();
     SaveMenu();
     ObjectCreator();
+    ImGui::ShowDemoWindow();
     {
         ImGui::Begin("Debug Window");
 
@@ -236,6 +240,7 @@ void DebugManager::DisplaySystemInfo() {
 void DebugManager::SaveMenu()
 {
     static char inputPath[200] = "";
+    static int selectedObjectId = 0;
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
@@ -247,10 +252,29 @@ void DebugManager::SaveMenu()
     if (ImGui::SmallButton("Add new default house")){
         SceneManager::GetInstance()->CreatePrefabObject("House");
     }
-    ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+    //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+    static int selectedModelId = 0;
+    std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
+    const char * charModelName = stringModelName.c_str();
+    if(ImGui::BeginCombo("Models", charModelName))
+    {
+        for (int n = 0; n < modelPaths.size(); n++)
+        {
+            const bool is_selected = (selectedModelId == n);
+            if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                selectedModelId = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
     if(ImGui::SmallButton("Add house with model at path")){
-        std::string convertedInputPath = inputPath;
-        SceneManager::GetInstance()->CreatePrefabObject("House",convertedInputPath);
+        //TODO/INFO I assume all house models picked from the picker are in models/buildings
+        fs::path path = "Buildings";
+        path /= modelPaths[selectedModelId].path().filename();
+        SceneManager::GetInstance()->CreatePrefabObject("House",path.string());
     }
     ImGui::End();
 }
@@ -286,6 +310,20 @@ void DebugManager::ObjectCreator() {
 
 void DebugManager::CreateGameObjectFromData(std::shared_ptr<GameObjectData> data) {
 
+}
+
+std::vector<std::filesystem::directory_entry> DebugManager::FindModelPaths() {
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "models";
+    path /= "Buildings";
+    std::vector<std::filesystem::directory_entry> scannedEntries;
+    for(const auto& entry : fs::directory_iterator(path)){
+        if(entry.path().string().ends_with(".obj"))
+        scannedEntries.push_back(entry);
+    }
+
+    return scannedEntries;
 }
 
 #endif
