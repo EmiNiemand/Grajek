@@ -118,9 +118,6 @@ void Game::InitializeGame() const {
     savePoint1->transform->SetLocalPosition({-15, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
 
-    int x = 0;
-    int y = 0;
-
     camera->SetTarget(nullptr);
 
     AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
