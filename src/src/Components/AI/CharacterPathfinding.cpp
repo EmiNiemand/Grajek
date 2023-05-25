@@ -2,34 +2,41 @@
 // Created by Adrian on 13.05.2023.
 //
 
-#include <algorithm>
 #include "Components/AI/CharacterPathfinding.h"
+#include "Components/AI/Node.h"
 
 CharacterPathfinding::CharacterPathfinding()  {
     aiGrid = AIManager::GetInstance()->aiGrid;
-    aiGridSize = AIManager::GetInstance()->aiGridSize;
+    aiCellSize = AIManager::GetInstance()->aiCellSize;
+    openList.reserve(1000);
+    closedList.reserve(5000);
 }
 
 CharacterPathfinding::~CharacterPathfinding() = default;
 
 inline const glm::vec3 CharacterPathfinding::GridToLocal(const glm::vec2& position) const {
-    return {(position.x - AI_GRID_SIZE / 2.0f) * aiGridSize, 0, (position.y - AI_GRID_SIZE / 2.0f) * aiGridSize};
+    return {(position.x - AI_GRID_SIZE / 2.0f) * aiCellSize, 0, (position.y - AI_GRID_SIZE / 2.0f) * aiCellSize};
 }
 
 inline const glm::ivec2 CharacterPathfinding::LocalToGrid(const glm::vec2& position) const {
-    return {position.x / aiGridSize + AI_GRID_SIZE / 2.0f, position.y / aiGridSize + AI_GRID_SIZE / 2.0f};
+    return {position.x / aiCellSize + AI_GRID_SIZE / 2.0f, position.y / aiCellSize + AI_GRID_SIZE / 2.0f};
 }
 
-const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
+std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
     startGridPos = LocalToGrid(currentPosition);
     endGridPos = LocalToGrid(endTarget);
 
-    currentNode = std::make_shared<Node>();
+    // Possible implementation of limiting grid size by distance from start grid point to end
+    // grid point, not implemented due to no/low performance gain
+//    int distance = std::clamp((int)glm::distance(glm::vec2{startGridPos.x + 5, startGridPos.y + 5},
+//                                             {endGridPos.x + 5, endGridPos.y + 5}), 0, AI_GRID_SIZE);
+
+    currentNode = new Node();
     currentNode->pos = startGridPos;
     currentNode->gCost = 0;
     currentNode->CalculateHCost(endGridPos);
 
-    openList.insert({startGridPos.x * 100 + startGridPos.y, currentNode});
+    openList[currentNode->pos.x * 100 + currentNode->pos.y] = currentNode;
 
     while (!openList.empty()) {
         if (currentNode->pos == endGridPos)
@@ -40,6 +47,10 @@ const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2&
                 if (i == 0 && j == 0)
                     continue;
 
+                // Same as the comment before
+//                gridIndex = {std::clamp(currentNode->pos.x + i, AI_GRID_SIZE / 2 - distance, AI_GRID_SIZE / 2 + distance),
+//                             std::clamp(currentNode->pos.y + j, AI_GRID_SIZE / 2 - distance, AI_GRID_SIZE / 2 + distance)};
+
                 gridIndex = {std::clamp(currentNode->pos.x + i, 0, AI_GRID_SIZE),
                              std::clamp(currentNode->pos.y + j, 0, AI_GRID_SIZE)};
 
@@ -47,7 +58,7 @@ const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2&
                     continue;
 
                 if (openList.contains(gridIndex.x * 100 + gridIndex.y)) {
-                    node = openList.at(gridIndex.x * 100 + gridIndex.y);
+                    node = openList[gridIndex.x * 100 + gridIndex.y];
 
                     if (node->gCost < currentNode->gCost) {
                         node->parent = currentNode;
@@ -56,43 +67,57 @@ const std::vector<glm::vec3> CharacterPathfinding::FindNewPath(const glm::ivec2&
                         node->CalculateFCost();
                     }
                 } else {
-                    node = std::make_shared<Node>();
+                    node = new Node();
                     node->parent = currentNode;
                     node->pos = gridIndex;
                     node->CalculateHCost(endGridPos);
                     node->CalculateGCost({i, j});
                     node->CalculateFCost();
-                    openList.insert({gridIndex.x * 100 + gridIndex.y, node});
+                    openList[gridIndex.x * 100 + gridIndex.y] = node;
                 }
             }
         }
 
-        maxfCost = FLT_MAX;
+        maxCost = FLT_MAX;
 
         for (const auto &n: openList) {
-            if (n.second->fCost < maxfCost) {
+            if (n.second->fCost < maxCost) {
                 currentNode = n.second;
-                maxfCost = n.second->fCost;
+                maxCost = n.second->fCost;
             }
         }
 
         openList.erase(currentNode->pos.x * 100 + currentNode->pos.y);
 
-        closedList.insert({currentNode->pos.x * 100 + currentNode->pos.y, currentNode});
+        closedList[currentNode->pos.x * 100 + currentNode->pos.y] = currentNode;
     }
 
-
-    std::vector<glm::vec3> squares;
-
     if (currentNode == nullptr)
-        return squares;
+        return nullptr;
+
+    size = 0;
+    node = currentNode;
+
+    while (node->parent != nullptr) {
+        node = node->parent;
+        ++size;
+    }
+
+    auto* squares = new std::vector<glm::vec3>;
+    squares->reserve(size);
 
     while (currentNode->parent != nullptr) {
-        squares.push_back(GridToLocal(currentNode->pos));
+        squares->push_back(GridToLocal(currentNode->pos));
         currentNode = currentNode->parent;
     }
 
+    for (const auto& n : openList)
+        delete n.second;
+
     openList.clear();
+
+    for (const auto& n : closedList)
+        delete n.second;
 
     closedList.clear();
 
