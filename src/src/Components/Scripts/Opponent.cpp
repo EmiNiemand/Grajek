@@ -3,12 +3,13 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "EngineManagers/OpponentManager.h"
 #include "Components/Scripts/Instrument.h"
+#include "Components/UI/Image.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Opponent::~Opponent() = default;
 
-void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float accuracy1) {
+void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1) {
     instrument = std::move(instrument1);
     instrument->GeneratePattern(musicPattern);
     pattern = instrument->patterns.back();
@@ -19,7 +20,19 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         sample->LoadAudioData(sound->sample->clipPath.c_str(), AudioType::Positional);
         sample->SetPositionOffset(parent->parent->transform->GetLocalPosition());
     }
-    accuracy = accuracy1;
+    satisfaction = satisfaction1;
+
+    ui = GameObject::Instantiate("OpponentUI", parent);
+    auto indicator = GameObject::Instantiate("OpponentSatisfaction", ui)->AddComponent<Image>();
+    indicator->LoadTexture(700 + (int)satisfaction * 5, 1000, "UI/satysfakcjaPrzeciwnika.png");
+    indicator->SetScale(0.5);
+    auto belt1 = GameObject::Instantiate("OpponentAverageSatisfaction", ui);
+    for (int i = 0; i < 20; i++) {
+        belt.push_back(GameObject::Instantiate("OpponentAverageSatisfaction", belt1)->AddComponent<Image>());
+        belt.back()->LoadTexture(700 + i * 25, 1000, "UI/satysfakcjaGracza.png");
+        belt.back()->SetScale(0.5f);
+    }
+    ui->DisableSelfAndChildren();
 }
 
 void Opponent::Update() {
@@ -44,24 +57,38 @@ void Opponent::Update() {
 void Opponent::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     triggerActive = true;
+    ui->EnableSelfAndChildren();
+    for (const auto & i : belt) {
+        i->enabled = false;
+    }
     Component::OnTriggerEnter(gameObject);
 }
 
 void Opponent::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     triggerActive = false;
+    ui->DisableSelfAndChildren();
     Component::OnTriggerExit(gameObject);
 }
 
-void Opponent::UpdateSatisfaction(float satisfaction) {
+void Opponent::UpdateSatisfaction(float satisfaction1) {
     if (triggerActive) {
-        if (satisfaction >= accuracy) wellPlayedPatternCount++;
+        for (const auto & i : belt) {
+            i->enabled = false;
+        }
+        if (satisfaction1 >= satisfaction) wellPlayedPatternCount++;
         if (satisfactionAverage == 0.0f) {
-            satisfactionAverage = satisfaction;
+            satisfactionAverage = satisfaction1;
+            for (int i = 0; i < (int)satisfactionAverage / 5; i++) {
+                belt[i]->enabled = true;
+            }
             return;
         }
-        satisfactionAverage += satisfaction;
+        satisfactionAverage += satisfaction1;
         satisfactionAverage /= 2;
+        for (int i = 0; i < (int)satisfactionAverage / 5; i++) {
+            belt[i]->enabled = true;
+        }
     }
 }
 
