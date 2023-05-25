@@ -138,13 +138,31 @@ void DebugManager::Render() {
             ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
         }
 
-        static char newModelPath[200] = "Write new path here";
+        //static char newModelPath[200] = "Write new path here";
         if(selected->GetComponent<Renderer>()){
             ImGui::Text("Path of model: %s", selected->GetComponent<Renderer>()->lastLoadedModelPath.c_str());
-            ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
+            //ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
+            static int selectedModelId = 0;
+            std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
+            const char * charModelName = stringModelName.c_str();
+            if(ImGui::BeginCombo("Models", charModelName))
+            {
+                for (int n = 0; n < modelPaths.size(); n++)
+                {
+                    const bool is_selected = (selectedModelId == n);
+                    if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                        selectedModelId = n;
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
             if(ImGui::SmallButton("Set new model")){
-                std::string convertedModelPath = newModelPath;
-                selected->GetComponent<Renderer>()->LoadModel(convertedModelPath);
+                std::string path = "Buildings/";
+                path += modelPaths[selectedModelId].path().filename().string();
+                selected->GetComponent<Renderer>()->LoadModel(path);
             }
         } else {
             ImGui::Text("This object doesnt have a Renderer");
