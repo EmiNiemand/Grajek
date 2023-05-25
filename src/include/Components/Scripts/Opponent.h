@@ -10,6 +10,7 @@ class OpponentManager;
 class AudioSource;
 struct RawSample;
 class Image;
+class Dialogue;
 
 class Opponent : public Component {
 private:
@@ -27,6 +28,7 @@ public:
     float satisfactionAverage = 0.0f;
     short wellPlayedPatternCount = 0;
     std::vector<std::shared_ptr<Image>> belt;
+    std::shared_ptr<Dialogue> dialogue;
 
 public:
     Opponent(const std::shared_ptr<GameObject> &parent, int id);

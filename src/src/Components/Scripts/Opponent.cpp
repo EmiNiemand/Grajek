@@ -4,12 +4,15 @@
 #include "EngineManagers/OpponentManager.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
+#include "Components/Scripts/Menus/Dialogue.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Opponent::~Opponent() = default;
 
 void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1) {
+    // Setup pattern
     instrument = std::move(instrument1);
     instrument->GeneratePattern(musicPattern);
     pattern = instrument->patterns.back();
@@ -22,6 +25,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     }
     satisfaction = satisfaction1;
 
+    // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
     auto indicator = GameObject::Instantiate("OpponentSatisfaction", ui)->AddComponent<Image>();
     indicator->LoadTexture(700 + (int)satisfaction * 5, 1000, "UI/satysfakcjaPrzeciwnika.png");
@@ -33,6 +37,9 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         belt.back()->SetScale(0.5f);
     }
     ui->DisableSelfAndChildren();
+
+    dialogue = GameObject::Instantiate("OpponentDialogue", parent)->AddComponent<Dialogue>();
+    dialogue->forced = true;
 }
 
 void Opponent::Update() {
@@ -49,6 +56,8 @@ void Opponent::Update() {
 
     if (wellPlayedPatternCount >= 10) {
         defeated = true;
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->OnPlayerLoseDuel();
+        dialogue->ShowDialogue();
     }
 
     Component::Update();

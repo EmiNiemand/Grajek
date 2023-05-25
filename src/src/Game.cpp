@@ -128,6 +128,24 @@ void Game::InitializeGame() const {
     // 0  *
     opponent->children.begin()->second->AddComponent<Opponent>()->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                               {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
+    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Pokonales mnie."},
+                             {"Masz tu moja odznake Jazz Badge."},
+                             {""}});
+    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
+                             {"Pokonaj kolejnego lidera w Electro Gymie."},
+                             {""}});
+
+    auto dialog = GameObject::Instantiate("Dialog", activeScene);
+    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
+    dialog->AddComponent<Renderer>()->LoadModel("texturedModels/przeciwnik.obj");
+    dialog->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
+    dialog->AddComponent<Dialogue>();
+    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+                                                       {"Tak to ja."},
+                                                       {""}});
+    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+                                                       {"Walcz ze mna."},
+                                                       {""}});
 
     int x = 0;
     int y = 0;

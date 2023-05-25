@@ -28,6 +28,7 @@
 #include "EngineManagers/DataPersistanceManager.h"
 #include "Components/Renderers/Animator.h"
 #include "EngineManagers/OpponentManager.h"
+#include "EngineManagers/DialogueManager.h"
 
 #include <filesystem>
 
@@ -180,6 +181,7 @@ void PlayerManager::OnMenuToggle() {
           activeMenu == shopMenu ||
           activeMenu == savePointMenu)) return;
 
+    DialogueManager::GetInstance()->NotifyMenuIsActive();
     if (activeMenu != shopMenu && activeMenu != pauseMenu && activeMenu != savePointMenu) {
         GloomEngine::GetInstance()->timeScale = 0;
         if(activeMenu == optionsMenu) {
@@ -210,6 +212,7 @@ void PlayerManager::OnMenuToggle() {
         GloomEngine::GetInstance()->timeScale = 1;
         pauseMenu->HideMenu();
         activeMenu.reset();
+        DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     }
 }
 
@@ -229,6 +232,7 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 
 void PlayerManager::OnSessionToggle() {
     if(activeMenu && activeMenu != sessionStarter) return;
+    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
@@ -245,6 +249,7 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
 
+    DialogueManager::GetInstance()->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
@@ -291,6 +296,16 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
 void PlayerManager::OnCheatSheetToggle() {
     if (!session) return;
     session->ToggleCheatSheet();
+}
+
+void PlayerManager::OnPlayerLoseDuel() {
+    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
+    session->Stop();
+    session.reset();
+    AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+    OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
+    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+    // TODO add sound when player beat boss
 }
 
 #pragma endregion
