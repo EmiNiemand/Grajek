@@ -19,7 +19,7 @@ public:
     Menu(const std::shared_ptr<GameObject> &parent, int id);
     ~Menu() override;
 
-    void HideMenu();
+    virtual void HideMenu();
     inline virtual void ChangeActiveButton(glm::vec2 moveVector);
     std::shared_ptr<Image> AddImage(std::string name, int x, int y, const std::string &path);
     std::shared_ptr<Text> AddText(std::string name, std::string text, int x, int y, FT_UInt fontSize = 18, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), const std::string& path = "Kanit-Light.ttf");

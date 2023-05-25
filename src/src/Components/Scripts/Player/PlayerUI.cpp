@@ -122,6 +122,8 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         GloomEngine::GetInstance()->FindGameObjectWithName(
                 "Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
                 "Save1")->GetComponent<Button>();
+        savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
+        savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/Sklep/Przycisk.png");
         savePointMenu->GetParent()->DisableSelfAndChildren();
     }
 }
