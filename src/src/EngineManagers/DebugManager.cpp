@@ -58,7 +58,7 @@ void DebugManager::Render() {
         ImGui::Begin("Debug Window");
 
         ImGui::Text("Hierarchy Tree");
-        ImGui::Text(SceneManager::GetInstance()->activeScene->GetName().c_str());
+        ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton("Open")) {
             displaySelected = true;
@@ -69,7 +69,7 @@ void DebugManager::Render() {
         std::string label;
         for (const auto& child : SceneManager::GetInstance()->activeScene->children) {
             label = "Open##" + std::to_string(child.first);
-            ImGui::Text(child.second->GetName().c_str());
+            ImGui::Text("%s", child.second->GetName().c_str());
             ImGui::SameLine();
             if (ImGui::SmallButton(label.c_str())) {
                 displaySelected = true;
@@ -84,7 +84,6 @@ void DebugManager::Render() {
     }
 
     if (displaySelected) {
-        static bool inputBool;
         static float inputVector1[3] = {0.0f,0.0f,0.0f};
         static float inputVector2[3] = { 0.0f,0.0f,0.0f };
         static float inputVector3[3] = { 0.0f,0.0f,0.0f };
@@ -179,7 +178,7 @@ void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
     for (const auto& child : gameObject->children)
     {
         label = "Open##" + std::to_string(child.first);
-        ImGui::Text(child.second->GetName().c_str());
+        ImGui::Text("%s", child.second->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton(label.c_str())) {
             displaySelected = true;
@@ -271,9 +270,9 @@ void DebugManager::SaveMenu()
     }
     if(ImGui::SmallButton("Add house with model at path")){
         //TODO/INFO I assume all house models picked from the picker are in models/buildings
-        fs::path path = "Buildings";
-        path /= modelPaths[selectedModelId].path().filename();
-        SceneManager::GetInstance()->CreatePrefabObject("House",path.string());
+        std::string path = "Buildings/";
+        path += modelPaths[selectedModelId].path().filename().string();
+        SceneManager::GetInstance()->CreatePrefabObject("House",path);
     }
     ImGui::End();
 }
