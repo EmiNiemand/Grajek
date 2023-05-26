@@ -17,7 +17,9 @@
 
 AIManager::AIManager() = default;
 
-AIManager::~AIManager() = default;
+AIManager::~AIManager() {
+    delete aiManager;
+}
 
 AIManager* AIManager::GetInstance() {
     return (aiManager == nullptr) ? aiManager = new AIManager() : aiManager;

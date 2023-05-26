@@ -8,7 +8,9 @@
 
 FrustumCulling::FrustumCulling() = default;
 
-FrustumCulling::~FrustumCulling() = default;
+FrustumCulling::~FrustumCulling() {
+    delete frustumCulling;
+}
 
 FrustumCulling *FrustumCulling::GetInstance() {
     if (frustumCulling == nullptr) {

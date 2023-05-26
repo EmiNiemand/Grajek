@@ -35,7 +35,9 @@
 
 GloomEngine::GloomEngine() {}
 
-GloomEngine::~GloomEngine() = default;
+GloomEngine::~GloomEngine() {
+    delete gloomEngine;
+}
 
 GloomEngine* GloomEngine::GetInstance() {
     if (gloomEngine == nullptr) {

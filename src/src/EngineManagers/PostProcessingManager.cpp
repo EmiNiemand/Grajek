@@ -77,7 +77,9 @@ PostProcessingManager::PostProcessingManager() {
     postProcessingShader->SetInt("textureColor", 3);
 };
 
-PostProcessingManager::~PostProcessingManager() = default;
+PostProcessingManager::~PostProcessingManager() {
+    delete postProcessingManager;
+}
 
 PostProcessingManager *PostProcessingManager::GetInstance() {
     if (postProcessingManager == nullptr) {

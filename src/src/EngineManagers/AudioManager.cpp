@@ -22,7 +22,9 @@
 
 AudioManager::AudioManager() = default;
 
-AudioManager::~AudioManager() = default;
+AudioManager::~AudioManager() {
+    delete audioManager;
+}
 
 AudioManager* AudioManager::GetInstance() {
     return (audioManager == nullptr) ? audioManager = new AudioManager() : audioManager;

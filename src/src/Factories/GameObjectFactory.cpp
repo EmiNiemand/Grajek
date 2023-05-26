@@ -6,6 +6,10 @@
 
 GameObjectFactory::GameObjectFactory() = default;
 
+GameObjectFactory::~GameObjectFactory() {
+    delete gameObjectFactory;
+}
+
 GameObjectFactory* GameObjectFactory::GetInstance() {
     if (gameObjectFactory == nullptr) {
         gameObjectFactory = new GameObjectFactory();
