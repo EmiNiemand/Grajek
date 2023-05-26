@@ -261,17 +261,17 @@ void CharacterMovement::CalculatePath() {
 
     currentPosition = parent->transform->GetGlobalPosition();
 
+    if (path != nullptr)
+        path->clear();
     delete path;
 
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},
                                     {endPoint.x, endPoint.z});
 
-    if (path == nullptr) {
+    if (path == nullptr)
         pathIterator = -1;
-        return;
-    }
-
-    pathIterator = (int)path->size() - 1;
+    else
+        pathIterator = (int)path->size() - 1;
 }
 
 

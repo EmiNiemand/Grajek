@@ -117,6 +117,8 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
             }
         }
     }
+
+    staticObjectsData.clear();
 }
 
 std::vector<std::shared_ptr<StaticObjectData>> SceneManager::LoadMap(std::string dataDirectoryPath, std::string dataFileName) {
