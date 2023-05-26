@@ -12,10 +12,13 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 DebugManager::DebugManager() {
     displaySelected = false;
     transformExtracted = false;
     safetySwitch = false;
+    modelPaths = FindModelPaths();
 }
 DebugManager::~DebugManager() = default;
 
@@ -53,7 +56,7 @@ void DebugManager::Render() {
         ImGui::Begin("Debug Window");
 
         ImGui::Text("Hierarchy Tree");
-        ImGui::Text(SceneManager::GetInstance()->activeScene->GetName().c_str());
+        ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton("Open")) {
             displaySelected = true;
@@ -64,7 +67,7 @@ void DebugManager::Render() {
         std::string label;
         for (const auto& child : SceneManager::GetInstance()->activeScene->children) {
             label = "Open##" + std::to_string(child.first);
-            ImGui::Text(child.second->GetName().c_str());
+            ImGui::Text("%s", child.second->GetName().c_str());
             ImGui::SameLine();
             if (ImGui::SmallButton(label.c_str())) {
                 displaySelected = true;
@@ -79,7 +82,6 @@ void DebugManager::Render() {
     }
 
     if (displaySelected) {
-        static bool inputBool;
         static float inputVector1[3] = {0.0f,0.0f,0.0f};
         static float inputVector2[3] = { 0.0f,0.0f,0.0f };
         static float inputVector3[3] = { 0.0f,0.0f,0.0f };
@@ -134,13 +136,31 @@ void DebugManager::Render() {
             ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
         }
 
-        static char newModelPath[200] = "Write new path here";
+        //static char newModelPath[200] = "Write new path here";
         if(selected->GetComponent<Renderer>()){
             ImGui::Text("Path of model: %s", selected->GetComponent<Renderer>()->lastLoadedModelPath.c_str());
-            ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
+            //ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
+            static int selectedModelId = 0;
+            std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
+            const char * charModelName = stringModelName.c_str();
+            if(ImGui::BeginCombo("Models", charModelName))
+            {
+                for (int n = 0; n < modelPaths.size(); n++)
+                {
+                    const bool is_selected = (selectedModelId == n);
+                    if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                        selectedModelId = n;
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
             if(ImGui::SmallButton("Set new model")){
-                std::string convertedModelPath = newModelPath;
-                selected->GetComponent<Renderer>()->LoadModel(convertedModelPath);
+                std::string path = "Buildings/";
+                path += modelPaths[selectedModelId].path().filename().string();
+                selected->GetComponent<Renderer>()->LoadModel(path);
             }
         } else {
             ImGui::Text("This object doesnt have a Renderer");
@@ -174,7 +194,7 @@ void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
     for (const auto& child : gameObject->children)
     {
         label = "Open##" + std::to_string(child.first);
-        ImGui::Text(child.second->GetName().c_str());
+        ImGui::Text("%s", child.second->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton(label.c_str())) {
             displaySelected = true;
@@ -234,6 +254,7 @@ void DebugManager::DisplaySystemInfo() {
 void DebugManager::SaveMenu()
 {
     static char inputPath[200] = "";
+    static int selectedObjectId = 0;
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
@@ -245,10 +266,29 @@ void DebugManager::SaveMenu()
     if (ImGui::SmallButton("Add new default house")){
         SceneManager::GetInstance()->CreatePrefabObject("House");
     }
-    ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+    //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+    static int selectedModelId = 0;
+    std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
+    const char * charModelName = stringModelName.c_str();
+    if(ImGui::BeginCombo("Models", charModelName))
+    {
+        for (int n = 0; n < modelPaths.size(); n++)
+        {
+            const bool is_selected = (selectedModelId == n);
+            if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                selectedModelId = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
     if(ImGui::SmallButton("Add house with model at path")){
-        std::string convertedInputPath = inputPath;
-        SceneManager::GetInstance()->CreatePrefabObject("House",convertedInputPath);
+        //TODO/INFO I assume all house models picked from the picker are in models/buildings
+        std::string path = "Buildings/";
+        path += modelPaths[selectedModelId].path().filename().string();
+        SceneManager::GetInstance()->CreatePrefabObject("House",path);
     }
     ImGui::End();
 }
@@ -258,6 +298,20 @@ void DebugManager::Free() const {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+std::vector<std::filesystem::directory_entry> DebugManager::FindModelPaths() {
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "models";
+    path /= "Buildings";
+    std::vector<std::filesystem::directory_entry> scannedEntries;
+    for(const auto& entry : fs::directory_iterator(path)){
+        if(entry.path().string().ends_with(".obj"))
+        scannedEntries.push_back(entry);
+    }
+
+    return scannedEntries;
 }
 
 #endif

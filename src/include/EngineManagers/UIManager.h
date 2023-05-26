@@ -12,7 +12,7 @@ private:
     unsigned int bufferIterator = 0;
 
     inline static UIManager* uiManager;
-    std::shared_ptr<UIComponent> drawBuffer[1000];
+    std::shared_ptr<UIComponent> drawBuffer[5000];
 
 public:
     std::shared_ptr<Shader> shader;

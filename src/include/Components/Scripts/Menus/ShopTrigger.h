@@ -11,7 +11,7 @@ public:
     ShopTrigger(const std::shared_ptr<GameObject> &parent, int id);
     ~ShopTrigger() override;
 
-    void OnTriggerStay(const std::shared_ptr<GameObject>& gameObject) override;
+    void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
     void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
 };
 

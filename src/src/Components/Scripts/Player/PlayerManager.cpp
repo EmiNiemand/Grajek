@@ -42,11 +42,11 @@ void PlayerManager::Awake() {
     rb = parent->GetComponent<Rigidbody>();
     equipment = parent->AddComponent<PlayerEquipment>();
     auto animatorObject = GameObject::Instantiate("Animator", parent);
+    animatorObject->transform->SetLocalRotation({0, 180, 0});
     animator = animatorObject->AddComponent<Animator>();
     // TODO: Change model later
     animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle1.dae");
-    animatorObject->transform->SetLocalRotation({0, 180, 0});
     equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
@@ -66,7 +66,10 @@ void PlayerManager::Awake() {
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Load game
-    std::filesystem::path path = std::filesystem::current_path() / "res" / "ProjectConfig" / "Saves";
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "ProjectConfig";
+    path /= "Saves";
 
     DataPersistanceManager::GetInstance()->LoadGame(path.string(), SceneManager::GetInstance()->file);
 
@@ -82,19 +85,8 @@ void PlayerManager::Update() {
     ZoneScopedNC("Player manager", 0x800080);
 #endif
     PollInput();
+	UpdateAnimations();
 
-	//TODO: move this to a separate method
-    float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
-    if (rb) {
-        if (velocity > 0.01 && previousVelocity <= 0.01) {
-            animator->SetAnimation("AnimsNew/Walk.dae");
-			animator->speed = 3;
-        }
-        else if (velocity <= 0.01 && previousVelocity > 0.01){
-            animator->SetAnimation("AnimsNew/Idle3.dae");
-        }
-    }
-    previousVelocity = velocity;
     Component::Update();
 }
 
@@ -108,6 +100,22 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 
 std::set<InstrumentName> PlayerManager::GetInstruments() {
     return equipment->GetInstrumentNames();
+}
+#pragma endregion
+
+#pragma region AnimationEvents
+void PlayerManager::UpdateAnimations() {
+	if(!rb) return;
+
+	float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
+	if (velocity > 0.01 && previousVelocity <= 0.01) {
+        animator->SetAnimation("AnimsNew/Walk.dae");
+		animator->speed = 3;
+	}
+	else if (velocity <= 0.01 && previousVelocity > 0.01){
+		animator->SetAnimation("AnimsNew/Idle3.dae");
+	}
+    previousVelocity = velocity;
 }
 #pragma endregion
 
@@ -258,8 +266,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 
     if (!pat) return;
 
-    //TODO: uncomment when crowd manager gets implemented
-    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
+    //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
     equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
 
     playerUI->UpdateCash(equipment->cash);
@@ -286,7 +293,10 @@ void PlayerManager::OnCheatSheetToggle() {
 #pragma endregion
 
 void PlayerManager::PollInput() {
-	if(!inputEnabled) return;
+	if(!inputEnabled) {
+        if(moveInput != glm::vec2(0)) OnMove(glm::vec2(0));
+        return;
+    }
 
 	auto hid = HIDManager::GetInstance();
 	glm::vec2 readMoveVector(0);

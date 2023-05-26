@@ -30,6 +30,9 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
     auto sessionUIInstance = GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI");
     sessionUIInstance = GameObject::Instantiate("Session", sessionUIInstance);
 
+    GameObject::Instantiate("Background", sessionUIInstance)
+            ->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity60.png", 0.8);
+
     switch (instrument->name) {
         case Clap:      sessionUI = sessionUIInstance->AddComponent<ClapSessionUI>(); break;
         case Drums:     sessionUI = sessionUIInstance->AddComponent<DrumsSessionUI>(); break;
@@ -38,35 +41,6 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
         case Guitar:    sessionUI = sessionUIInstance->AddComponent<GuitarSessionUI>(); break;
     }
     sessionUI->Setup(bpm, instrument->samples, "UI/Sesja/Ramka.png");
-
-    //TODO: these should be moved to session ui
-    std::shared_ptr<GameObject> theme = GameObject::Instantiate("Theme", sessionUI->GetParent());
-    if (instrument->NameToString() == "Drums") {
-        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokPerkusja.png");
-    } else if (instrument->NameToString() == "Trumpet") {
-        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokTrabka.png");
-    } else if (instrument->NameToString() == "Launchpad") {
-        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokLaunchpad.png");
-    } else if (instrument->NameToString() == "Guitar") {
-        theme->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/widokGitara.png");
-    }
-
-    if (instrument->NameToString() == "Clap") {
-        GameObject::Instantiate("Circle1", sessionUIInstance)
-        ->AddComponent<Image>()->LoadTexture(650, 600, "UI/Sesja/circle.png");
-        GameObject::Instantiate("Circle2", sessionUIInstance)
-        ->AddComponent<Image>()->LoadTexture(1150, 600, "UI/Sesja/circle.png");
-    } else if (instrument->NameToString() == "Drums") {
-        GameObject::Instantiate("Circle1", sessionUIInstance)
-                ->AddComponent<Image>()->LoadTexture(950, 800, "UI/Sesja/circle.png");
-        GameObject::Instantiate("Circle2", sessionUIInstance)
-                ->AddComponent<Image>()->LoadTexture(1250, 800, "UI/Sesja/circle.png");
-        GameObject::Instantiate("Circle3", sessionUIInstance)
-                ->AddComponent<Image>()->LoadTexture(1550, 800, "UI/Sesja/circle.png");
-    }
-
-    GameObject::Instantiate("Background", sessionUIInstance)
-                    ->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity60.png");
 }
 
 void MusicSession::Update() {

@@ -9,9 +9,7 @@
 #include "Components/Component.h"
 #include "glm/vec3.hpp"
 #include "Components/Transform.h"
-
-enum AnimatedProperty { Position, Rotation, Scale };
-struct AnimationCheckpoint { AnimatedProperty property; glm::vec3 value; float duration=1; };
+#include "Components/Animations/UIAnimator.h"
 
 /**
  * @attention GameObjectAnimator has to be on separate GameObject

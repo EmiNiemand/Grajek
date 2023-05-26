@@ -173,7 +173,7 @@ void main()
     shadowResult = shadowResult + shadowResult * celColor;
 
     //     rim light
-    float rimLight = pow(max(0, (1 - dot(normalize(-directionalLights[0].direction), N))), 0.5);
+    float rimLight = pow(max(0, (1 - dot(normalize(-directionalLights[0].direction), N))), 0.75);
 
     result = result + result * rimLight;
     shadowResult = shadowResult + shadowResult * rimLight;

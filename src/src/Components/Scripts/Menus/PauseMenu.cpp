@@ -20,6 +20,7 @@ void PauseMenu::OnClick() {
     if (activeButton->GetParent()->GetName() == "ResumeButton") {
         GloomEngine::GetInstance()->timeScale = 1;
         HideMenu();
+        //TODO: fix this
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->activeMenu.reset();
     } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();

@@ -13,7 +13,7 @@ public:
     SavePointMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~SavePointMenu() override;
 
-    void Start() override;
+    void Awake() override;
     bool ShowMenu();
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;

@@ -26,9 +26,11 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
-#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
+#include "Components/Scripts/Menus/Dialogue.h"
+#include "Components/Scripts/Menus/Shopkeeper.h"
+#include "EngineManagers/AIManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -71,9 +73,9 @@ void Game::InitializeGame() const {
     // Set up ground
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
-    ground->transform->SetLocalPosition({0, -4, -10});
-    ground->transform->SetLocalScale({40, 2, 40});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(40, 40);
+    ground->transform->SetLocalPosition({0, -4, 0});
+    ground->transform->SetLocalScale({30, 2, 30});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(30, 30);
 
     // Set up lights
     // -------------
@@ -82,87 +84,13 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    // Set up player UI
-    // ---------
-    auto playerUI = GameObject::Instantiate("PlayerUI", activeScene)->AddComponent<Menu>();
-    playerUI->AddText("Money", "Money: 0", 140, 1040, 22);
-    playerUI->AddText("Reputation", "Rep: 0", 140, 1000, 22);
-    playerUI->AddImage("UI", 0, 952, "UI/Player.png");
-
-    // Set up pause menu
-    auto pause = GameObject::Instantiate("Pause", activeScene)->AddComponent<PauseMenu>();
-    {
-        std::vector<std::string> buttonNames = {
-                "Resume",
-                "Options",
-                "Main Menu",
-                "Exit"
-        };
-
-        int buttonOffset = -100;
-        int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
-
-        std::vector<std::shared_ptr<Button>> buttonBuffer;
-
-        for (int i = 0; i < buttonNames.size(); ++i) {
-            auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
-                                                 "UI/buttonInactive.png", "UI/buttonActive.png",
-                                                 buttonNames[i], 32);
-            optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
-            currentYPos += buttonOffset;
-
-            buttonBuffer.push_back(optionButton);
-        }
-
-        pause->AddImage("Background", 0, 0, "UI/pause.png");
-
-        for(int i=0; i<buttonNames.size(); i++) {
-            auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
-            auto nextIndex = i+1==buttonNames.size() ? 0:i+1;
-            buttonBuffer[i]->previousButton = buttonBuffer[prevIndex];
-            buttonBuffer[i]->nextButton = buttonBuffer[nextIndex];
-        }
-
-        pause->GetParent()->DisableSelfAndChildren();
-    }
-
-    // Set up options menu
-    auto options = GameObject::Instantiate("Options", activeScene)->AddComponent<OptionsMenu>();
-    {
-        auto backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-        auto musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-        auto currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-        auto nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-        auto optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
-
-        backToPauseMenu->previousButton = shadowResolution;
-        backToPauseMenu->nextButton = musicVolume;
-        musicVolume->previousButton = backToPauseMenu;
-        musicVolume->nextButton = windowResolution;
-        windowResolution->previousButton = musicVolume;
-        windowResolution->nextButton = windowFullScreen;
-        windowFullScreen->previousButton = windowResolution;
-        windowFullScreen->nextButton = shadowResolution;
-        shadowResolution->previousButton = windowFullScreen;
-        shadowResolution->nextButton = backToPauseMenu;
-
-        options->GetParent()->DisableSelfAndChildren();
-    }
-
-    // Set up shop menu
-    Prefab::Instantiate<Shop>();
-
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -10});
-    bench->transform->SetLocalRotation({0, -90, 0});
+    bench->transform->SetLocalPosition({0, 0, -7});
+    bench->transform->SetLocalRotation({0, 180, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+    bench->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
+    bench->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
     auto portalRadioSound = bench->AddComponent<AudioSource>();
     portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
     portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
@@ -177,12 +105,12 @@ void Game::InitializeGame() const {
     bench2->transform->SetLocalRotation({0, 180, 0});
     bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench2->AddComponent<BoxCollider>()->SetOffset({5, 1, -2.5});
-    bench2->GetComponent<BoxCollider>()->SetSize({2, 2, 3});
+    bench2->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
+    bench2->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
 
     std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
-    hydrant->transform->SetLocalPosition({15, 0, -15});
-    hydrant->transform->SetLocalRotation({0, -65, 0});
+    hydrant->transform->SetLocalPosition({16, 0, 15});
+    hydrant->transform->SetLocalRotation({0, 130, 0});
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
@@ -190,166 +118,24 @@ void Game::InitializeGame() const {
     savePoint1->transform->SetLocalPosition({-15, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
 
-    // Save Point Menu
-    auto savePointMenu = GameObject::Instantiate("SavePointMenu", activeScene)->AddComponent<SavePointMenu>();
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 5; j++) {
-            savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1), i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png", "Save " +std::to_string(i * 5 + j + 1), 32);
-        }
-    }
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>();
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save2")->GetComponent<Button>();
-    for (int i = 2; i <= 9; i++) {
-        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i - 1))->GetComponent<Button>();
-        GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(i + 1))->GetComponent<Button>();
-    }
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save9")->GetComponent<Button>();
-    GloomEngine::GetInstance()->FindGameObjectWithName("Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
-    savePointMenu->GetParent()->DisableSelfAndChildren();
-
-
     int x = 0;
     int y = 0;
 
-    // Set up animated model
-//    for (int i = 0; i < 100; ++i) {
-//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene, Tags::DEFAULT);
-//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
-//        if (i % 25 == 0) {
-//            x = 0;
-//            y++;
-//        }
-//        animatedDood->transform->SetLocalPosition({-12 + x, 0, 5 + 2 * y});
-//        animatedDood->transform->SetLocalRotation({0, 0, 0});
-//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-//        x++;
-//    }
-
-    // Setup sklepikarz
-    auto sklepikarz = GameObject::Instantiate("Sklepikarz", activeScene);
-    sklepikarz->AddComponent<Rigidbody>();
-    auto collider = sklepikarz->GetComponent<BoxCollider>();
-    collider->SetOffset({0, 1, 0});
-    collider->SetSize({1, 2, 1});
-    sklepikarz->transform->SetLocalPosition({-10, 2, -10});
-    sklepikarz->transform->SetLocalScale({0.5, 0.5, 0.5});
-    auto animatorObject = GameObject::Instantiate("AnimatorSklepikarz", sklepikarz);
-    auto animator = animatorObject->AddComponent<Animator>();
-    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    animator->SetAnimation("AnimsNew/Walk.dae");
-    animatorObject->transform->SetLocalRotation({0, 90, 0});
-    sklepikarz->AddComponent<GameObjectAnimator>()->Setup(sklepikarz->transform, {
-            {AnimatedProperty::Position, glm::vec3(8.0f, 2.0f, 0.0f), 5.0f}
-    }, false);
-
-//    // SCENE BUILDINGS
-//	std::map<std::string, int> buildingSizes = {
-//			{"jazz1", 6},
-//			{"jazz2", 7},
-//			{"jazz3", 10},
-//			{"jazz4", 6},
-//			{"kamienica1", 6},
-//			{"kamienica2", 10},
-//			{"kamienica3", 6},
-//			{"moduê1", 6},
-//			{"moduê2", 6},
-//			{"moduê3", 6},
-//			{"moduê4", 6},
-//			{"moduê5", 10},
-//			{"moduê6", 6}
-//	};
-//	float currentXPos = -25;
-//	float currentYPos = -30;
-//
-//	std::string squareBuildings[] = {
-//			"kamienica1", "kamienica2", "kamienica3",
-//			"moduê1", "moduê2"
-//	};
-//
-//	std::vector<std::string> buildingPaths = {
-//			squareBuildings[0], squareBuildings[2],
-//			squareBuildings[0], squareBuildings[4], squareBuildings[1],
-//			squareBuildings[3], squareBuildings[2],
-//	};
-//
-//	// LEFT CORNER
-//	{
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos - 9.5, 0, currentYPos+4});
-//		test->transform->SetLocalRotation({0, 90, 0});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
-//	}
-//
-//	// FRONT FACE
-//	for(int i=0; i < buildingPaths.size(); i++) {
-//		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
-//
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos, 0, currentYPos});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-//
-//		currentXPos += buildingSizes[buildingPaths[i]]/2.0f;
-//	}
-//
-//	// RIGHT CORNER
-//	{
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos + 5, 0, currentYPos});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/moduê5.obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes["moduê5"], 6, 3});
-//	}
-//
-//	currentYPos = -20;
-//
-//	// LEFT FACE
-//	for(int i=0; i < buildingPaths.size(); i++) {
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({-35, 0, currentYPos});
-//		test->transform->SetLocalRotation({0, 90, 0});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-//
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//	}
-//
-//	currentYPos = -20;
-//
-//	// RIGHT FACE
-//	for(int i=0; i < buildingPaths.size(); i++) {
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//
-//		std::shared_ptr<GameObject> test = GameObject::Instantiate("TestHouse", activeScene);
-//		test->transform->SetLocalPosition({currentXPos+10, 0, currentYPos});
-//		test->transform->SetLocalRotation({0, -90, 0});
-//		test->AddComponent<Renderer>()->LoadModel("Budynki/modele/"+buildingPaths[i]+".obj");
-//		test->AddComponent<BoxCollider>()->SetOffset({0, 3, 0});
-//		test->GetComponent<BoxCollider>()->SetSize({buildingSizes[buildingPaths[i]], 6, 3});
-//
-//		currentYPos += buildingSizes[buildingPaths[i]]/2.0f;
-//	}
-
-    //camera->SetTarget(pivot);
     camera->SetTarget(nullptr);
+
+    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 }
 
 bool Game::GameLoop() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause"))
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>())
-            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+    auto pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause");
+    if (pauseMenu)
+        if (pauseMenu->GetComponent<PauseMenu>())
+            shouldQuit = pauseMenu->GetComponent<PauseMenu>()->gameShouldExit;
 
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu"))
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>())
-            shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>()->gameShouldExit;
+    auto mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu");
+    if (mainMenu)
+        if (mainMenu->GetComponent<MainMenu>())
+            shouldQuit = mainMenu->GetComponent<MainMenu>()->gameShouldExit;
 
 
     return shouldQuit;
