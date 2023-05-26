@@ -20,6 +20,7 @@ void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) 
 
 void ShopTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
+    // TODO/URGENT don't search for object by name, replace with pointer
     auto door = GloomEngine::GetInstance()->FindGameObjectWithName("Door");
     auto animation = GameObject::Instantiate("DoorAnimation", door);
     animation->AddComponent<GameObjectAnimator>()->Setup(door->transform, {

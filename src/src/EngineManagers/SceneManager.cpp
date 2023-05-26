@@ -6,6 +6,7 @@
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "GameObjectsAndPrefabs/Prefabs/House.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
+#include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
@@ -104,6 +105,9 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
         /*if(object->name == "Shop"){
             newGameObject = Prefab::Instantiate<Shop>();
         }*/
+        if(object->name == "SavePoint"){
+            newGameObject = Prefab::Instantiate<SavePoint>();
+        }
         if(newGameObject) {
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);
@@ -250,13 +254,6 @@ std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStatic
     }
 
     return objects;
-}
-
-void SceneManager::ClearAllStaticObjects() {
-    std::map<int, std::shared_ptr<SaveableStaticObject>> StaticObjects = FindAllStaticSaveablePrefabs();
-    for(const auto& staticObject : StaticObjects){
-        SceneManager::GetInstance()->activeScene->children.erase(staticObject.first);
-    }
 }
 
 void SceneManager::CreatePrefabObject(const std::string name) {
