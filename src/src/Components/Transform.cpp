@@ -122,4 +122,6 @@ void Transform::SetDirtyFlag() {
             checkIterator++;
         }
     }
+
+    delete[] toSet;
 }
