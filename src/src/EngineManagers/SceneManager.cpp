@@ -257,10 +257,15 @@ std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStatic
 }
 
 void SceneManager::CreatePrefabObject(const std::string name) {
-    std::shared_ptr<GameObject> newGameObject;
     if(name == "House"){
         spdlog::info("Created object from prefab House.");
-        newGameObject = Prefab::Instantiate<House>();
+        Prefab::Instantiate<House>();
+    } else if(name == "Shop"){
+        spdlog::info("Created object from prefab Shop");
+        Prefab::Instantiate<Shop>();
+    } else if(name == "SavePoint"){
+        spdlog::info("Created object from prefab SavePoint");
+        Prefab::Instantiate<SavePoint>();
     } else {
         spdlog::info("Failed to find prefab with name: " + name);
     }

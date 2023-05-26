@@ -290,6 +290,11 @@ void DebugManager::SaveMenu()
         path += modelPaths[selectedModelId].path().filename().string();
         SceneManager::GetInstance()->CreatePrefabObject("House",path);
     }
+    if (ImGui::SmallButton("Add new default shop - NOT IMPLEMENTED")){
+        SceneManager::GetInstance()->CreatePrefabObject("Shop");
+    }if (ImGui::SmallButton("Add new default savePoint")){
+        SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
+    }
     ImGui::End();
 }
 
