@@ -13,6 +13,8 @@ private:
     inline static GameObjectFactory* gameObjectFactory = nullptr;
 
 public:
+    virtual ~GameObjectFactory();
+
     GameObjectFactory(GameObjectFactory &other) = delete;
     void operator=(const GameObjectFactory&) = delete;
     std::shared_ptr<GameObject> CreateGameObject(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);

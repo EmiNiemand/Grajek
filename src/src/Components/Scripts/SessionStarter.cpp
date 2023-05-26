@@ -27,13 +27,20 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
             // of the screen
             (buttonOffset/2.0f) * ((instruments.size()+1)%2);
 
-    for (const auto& instrument : instruments)
+    // Sort instrument names
+    std::map<InstrumentName, std::string> instrumentNames;
+
+    for(const auto& instrument : instruments) {
+        instrumentNames.insert({instrument->name, instrument->NameToString()});
+    }
+
+    for (const auto& instrument : instrumentNames)
     {
         auto button = Menu::AddButton(
-                std::to_string((int)instrument->name),
+                std::to_string((int)instrument.first),
                 xPosBegin + buttonOffset * buttons.size(), screenHeight/2,
-                "UI/Icons/small/icon"+instrument->NameToString()+"Inactive.png",
-                "UI/Icons/small/icon"+instrument->NameToString()+".png");
+                "UI/Icons/small/icon"+instrument.second+"Inactive.png",
+                "UI/Icons/small/icon"+instrument.second+".png");
         buttons.push_back(button);
     }
     if (buttons.size() > 1) {

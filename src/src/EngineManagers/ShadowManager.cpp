@@ -35,7 +35,9 @@ ShadowManager::ShadowManager() {
     RendererManager::GetInstance()->shader->SetInt("shadowMap", depthMap);
 }
 
-ShadowManager::~ShadowManager() = default;
+ShadowManager::~ShadowManager() {
+    delete shadowManager;
+}
 
 ShadowManager *ShadowManager::GetInstance() {
     if (shadowManager == nullptr) {

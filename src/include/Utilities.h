@@ -24,7 +24,7 @@ public:
 
 class Utilities {
 private:
-    static Utilities* utilities;
+    inline static Utilities* utilities = nullptr;
 
 public:
     Utilities(Utilities &other) = delete;

@@ -17,7 +17,9 @@
 
 AIManager::AIManager() = default;
 
-AIManager::~AIManager() = default;
+AIManager::~AIManager() {
+    delete aiManager;
+}
 
 AIManager* AIManager::GetInstance() {
     return (aiManager == nullptr) ? aiManager = new AIManager() : aiManager;
@@ -32,36 +34,33 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     pathfinding = std::make_shared<CharacterPathfinding>();
 
     int random;
-    std::shared_ptr<GameObject> ch;
 
     for (int i = 0; i < min; i++) {
         random = RandomnessManager::GetInstance()->GetInt(0, 2);
 
         switch (random) {
             case 0:
-                ch = Prefab::Instantiate<RockDrums>();
-                currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                Prefab::Instantiate<RockDrums>();
                 break;
             case 1:
-                ch = Prefab::Instantiate<JazzClap>();
-                currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                Prefab::Instantiate<JazzClap>();
                 break;
             default:
-                ch = Prefab::Instantiate<Default>();
-                currentCharactersLogics.insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
+                Prefab::Instantiate<Default>();
                 break;
-
         }
     }
 
     characterSpawner = std::jthread(SpawnCharacters, std::ref(mutex), playerIsPlaying, maxCharacters, spawnDelay,
-                                    &currentCharactersLogics);
+                                    &charactersLogics);
 }
 
 void AIManager::Free() {
-    characterSpawner.request_stop();
-    if (characterSpawner.joinable()) characterSpawner.join();
-    currentCharactersLogics.clear();
+    if (characterSpawner.joinable()) {
+        characterSpawner.request_stop();
+        characterSpawner.join();
+    }
+    charactersLogics.clear();
 }
 
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
@@ -69,7 +68,7 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
 
     playerIsPlaying = true;
 
-    for (auto&& ch : currentCharactersLogics) {
+    for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerInstrumentAndGenre(ins, gen);
         ch.second->SetPlayerPlayingStatus(true);
     }
@@ -82,7 +81,7 @@ void AIManager::NotifyPlayerStopsPlaying() {
 
     playerIsPlaying = false;
 
-    for (auto&& ch : currentCharactersLogics) {
+    for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerPlayingStatus(false);
     }
 
@@ -92,11 +91,32 @@ void AIManager::NotifyPlayerStopsPlaying() {
 void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
     mutex.lock();
 
-    for (auto&& ch : currentCharactersLogics) {
+    for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerPattern(pat);
     }
 
     mutex.unlock();
+}
+
+const float AIManager::GetCombinedSatisfaction() {
+    float satisfaction = 0.0f;
+
+    mutex.lock();
+
+    for (auto&& ch : charactersLogics) {
+        satisfaction += ch.second->GetCurrentSatisfaction();
+    }
+
+    satisfaction /= (float)charactersLogics.size();
+
+    mutex.unlock();
+
+    return satisfaction;
+}
+
+void AIManager::RemoveCharacterLogic(const int& componentId) {
+    if (charactersLogics.contains(componentId))
+        charactersLogics.erase(componentId);
 }
 
 void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
@@ -116,15 +136,12 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
             switch (random) {
                 case 0:
                     ch = Prefab::Instantiate<RockDrums>();
-                    currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
                 case 1:
                     ch = Prefab::Instantiate<JazzClap>();
-                    currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
                 default:
                     ch = Prefab::Instantiate<Default>();
-                    currentCharactersLogics->insert({ch->GetId(), ch->GetComponent<CharacterLogic>()});
                     break;
 
             }
@@ -139,22 +156,6 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
 
         std::this_thread::sleep_for(delay);
     }
-}
-
-const float AIManager::GetCombinedSatisfaction() {
-    float satisfaction = 0.0f;
-
-    mutex.lock();
-
-    for (auto&& ch : currentCharactersLogics) {
-        satisfaction += ch.second->GetCurrentSatisfaction();
-    }
-
-    satisfaction /= (float)currentCharactersLogics.size();
-
-    mutex.unlock();
-
-    return satisfaction;
 }
 
 void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const {
@@ -181,12 +182,11 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
     auto zVector = glm::vec2(zVec.x, zVec.z);
 
     glm::ivec2 points[4] = {
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiGridSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiGridSize)
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiCellSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiCellSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiCellSize),
+            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiCellSize)
     };
-
 
     if (points[0] == points[1] &&
         points[1] == points[2] &&
@@ -210,10 +210,8 @@ void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    const int size = (int)aiGridSize;
-
-    for (int x = minX - size; x <= maxX + size; ++x) {
-        for (int y = minY - size; y <= maxY + size; ++y) {
+    for (int x = minX - 1; x <= maxX + 1; ++x) {
+        for (int y = minY - 1; y <= maxY + 1; ++y) {
             AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
         }
     }

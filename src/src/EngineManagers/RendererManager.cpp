@@ -22,7 +22,9 @@ RendererManager::RendererManager() {
                                   0.1f, 100.0f);
 }
 
-RendererManager::~RendererManager() = default;
+RendererManager::~RendererManager() {
+    delete rendererManager;
+}
 
 RendererManager* RendererManager::GetInstance() {
     if (rendererManager == nullptr) {

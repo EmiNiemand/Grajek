@@ -7,6 +7,7 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "Components/Renderers/Animator.h"
+#include "EngineManagers/DialogueManager.h"
 
 Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -31,14 +32,15 @@ void Dialogue::Start() {
     text3->LoadFont(texts[0].text3, 250, 100, 32);
     GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png");
     image->enabled = false;
-    HideDialogue();
+    dialogue->DisableSelfAndChildren();
     Component::Start();
 }
 
 void Dialogue::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     triggerActive = true;
-    image->enabled = true;
+    if (!forced)
+        image->enabled = true;
     Component::OnTriggerStay(gameObject);
 }
 
@@ -50,29 +52,18 @@ void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 }
 
 void Dialogue::Update() {
-    if (!triggerActive) return;
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E)) {
-        if (dialogueIndex == 0) {
-            active = true;
-            playerManager->inputEnabled = false;
-            image->enabled = false;
+    if (!triggerActive || menuActive) return;
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E) && !forced) {
+        if (dialogueIndex == 0)
             ShowDialogue();
-        }
     }
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
         if (!active) return;
-        dialogueIndex++;
-        if (dialogueIndex == texts.size()) {
-            active = false;
-            dialogueIndex = 0;
-            playerManager->inputEnabled = true;
-            image->enabled = true;
+        if (dialogueIndex == texts.size() - 1) {
             HideDialogue();
             return;
         }
-        text1->text = texts[dialogueIndex].text1;
-        text2->text = texts[dialogueIndex].text2;
-        text3->text = texts[dialogueIndex].text3;
+        NextDialogue();
     }
     Component::Update();
 }
@@ -81,9 +72,34 @@ void Dialogue::ShowDialogue() {
     text1->text = texts[0].text1;
     text2->text = texts[0].text2;
     text3->text = texts[0].text3;
+    active = true;
+    playerManager->inputEnabled = false;
     dialogue->EnableSelfAndChildren();
+    image->enabled = false;
 }
 
 void Dialogue::HideDialogue() {
+    active = false;
+    dialogueIndex = 0;
+    playerManager->inputEnabled = true;
     dialogue->DisableSelfAndChildren();
+    if (!forced)
+        image->enabled = true;
+}
+
+void Dialogue::NextDialogue() {
+    dialogueIndex++;
+    text1->text = texts[dialogueIndex].text1;
+    text2->text = texts[dialogueIndex].text2;
+    text3->text = texts[dialogueIndex].text3;
+}
+
+void Dialogue::OnCreate() {
+    DialogueManager::GetInstance()->dialogues.push_back(std::dynamic_pointer_cast<Dialogue>(shared_from_this()));
+    Component::OnCreate();
+}
+
+void Dialogue::OnDestroy() {
+    std::remove(DialogueManager::GetInstance()->dialogues.begin(), DialogueManager::GetInstance()->dialogues.end(), shared_from_this());
+    Component::OnDestroy();
 }

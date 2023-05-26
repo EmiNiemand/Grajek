@@ -8,47 +8,61 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "EngineManagers/AIManager.h"
 #include "Components/Component.h"
+#include "Components/AI/CharacterStates.h"
 #include <vector>
 #include <unordered_map>
 
+constexpr float DISTANCE_TO_POINT = 2.0f;
+constexpr float DISTANCE_TO_COLLISION = 2.0f;
+
 class GameObject;
 class Rigidbody;
+class CharacterLogic;
+class CharacterPathfinding;
 
 class CharacterMovement : public Component {
-private:
-    friend class CharacterLogic;
-    AI_LOGICSTATE logicState = WalkingOnPath;
-    std::shared_ptr<Rigidbody> rigidbody = nullptr;
+    AI_MOVEMENTSTATE movementState = NearTargetSubPoint;
+    // Collisions
+    float collisionGridSize = 0.0f;
+    std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
+    glm::ivec2 cellPos {};
+    std::unordered_map<int, std::shared_ptr<BoxCollider>>* cellPtr = nullptr;
+    // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
-    std::vector<glm::vec3> path;
+    std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
-    glm::vec3 newPosition {};
-    glm::vec3 endTarget {};
-    glm::vec3 previousTarget {};
     glm::vec3 currentPosition {};
+    glm::vec3 endPoint {};
+    glm::vec3 previousEndPoint {};
+    std::vector<glm::vec3> subEndPoints {};
+    int subEndPointsIterator = -1;
+    // Parameters for Rigidbody
+    std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
-    float maxSpeed = 0.5f;
+    float maxSpeed = 0.05f;
     float speedMultiplier = 1.0f;
     float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
 
-    static const glm::vec3 GetNewSpawnPoint();
-    void SetNewRandomEndPoint();
-    void CalculateNewPath();
+    void ApplyForces(const glm::vec3 &velocity);
+    static const glm::ivec2 GetRandomPoint();
+    void SetRandomEndPoint();
+    void SetSubEndPoints();
+    void CalculatePath();
 
 public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
+    void Start() override;
     void FixedUpdate() override;
     void AIUpdate() override;
-    void OnCreate() override;
     void OnDestroy() override;
-    void Free();
 
-    void SetNewPath(AI_LOGICSTATE state);
+    void SetNewPathToPlayer();
+    void ReturnToPreviousPath();
+    const AI_MOVEMENTSTATE GetCurrentStatus() const;
 
 };
 

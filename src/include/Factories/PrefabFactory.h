@@ -24,6 +24,8 @@ private:
     inline static PrefabFactory* prefabFactory = nullptr;
 
 public:
+    virtual ~PrefabFactory();
+
     PrefabFactory(PrefabFactory &other) = delete;
     void operator=(const PrefabFactory&) = delete;
 
