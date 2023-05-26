@@ -12,7 +12,9 @@
 
 RandomnessManager::RandomnessManager() = default;
 
-RandomnessManager::~RandomnessManager() = default;
+RandomnessManager::~RandomnessManager() {
+    delete randomnessManager;
+}
 
 RandomnessManager* RandomnessManager::GetInstance() {
     return (randomnessManager == nullptr) ? randomnessManager = new RandomnessManager() : randomnessManager;

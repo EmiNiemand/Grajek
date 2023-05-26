@@ -22,7 +22,9 @@
 
 SceneManager::SceneManager() = default;
 
-SceneManager::~SceneManager() = default;
+SceneManager::~SceneManager() {
+    delete sceneManager;
+}
 
 SceneManager* SceneManager::GetInstance() {
     if (sceneManager == nullptr) {

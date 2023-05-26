@@ -12,7 +12,9 @@
 
 DataPersistanceManager::DataPersistanceManager() = default;
 
-DataPersistanceManager::~DataPersistanceManager() = default;
+DataPersistanceManager::~DataPersistanceManager() {
+    delete dataPersistanceManager;
+}
 
 DataPersistanceManager* DataPersistanceManager::GetInstance() {
     if (dataPersistanceManager == nullptr) {

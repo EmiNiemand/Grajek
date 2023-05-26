@@ -4,7 +4,9 @@
 
 OpponentManager::OpponentManager() = default;
 
-OpponentManager::~OpponentManager() = default;
+OpponentManager::~OpponentManager() {
+    delete opponentManager;
+}
 
 OpponentManager *OpponentManager::GetInstance() {
     if (opponentManager == nullptr) {

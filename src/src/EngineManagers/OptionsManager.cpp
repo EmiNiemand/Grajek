@@ -6,7 +6,9 @@
 #include "nlohmann/json.hpp"
 #include <spdlog/spdlog.h>
 
-OptionsManager::~OptionsManager() = default;
+OptionsManager::~OptionsManager() {
+    delete optionsManager;
+}
 
 OptionsManager *OptionsManager::GetInstance() {
     if (optionsManager == nullptr) {
