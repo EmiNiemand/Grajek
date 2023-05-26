@@ -12,7 +12,6 @@
 #include "LowLevelClasses/Mesh.h"
 #include "Components/Renderers/Drawable.h"
 
-//TODO: this should probably be at least partially moved to low-level classes
 class CubeMap : public Drawable {
 private:
     unsigned int textureID;

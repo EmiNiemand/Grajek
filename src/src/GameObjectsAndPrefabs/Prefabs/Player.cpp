@@ -1,5 +1,4 @@
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
-#include "EngineManagers/SceneManager.h"
 #include "Components/Audio/AudioListener.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
@@ -24,6 +23,7 @@ std::shared_ptr<GameObject> Player::Create() {
     auto collider = player->GetComponent<BoxCollider>();
     collider->SetOffset({0, 1.5, 0});
     collider->SetSize({1, 2, 1});
+    collider->isDynamic = true;
     player->transform->SetLocalScale({0.5, 0.5, 0.5});
     std::shared_ptr<GameObject> pivot = GameObject::Instantiate("PlayerPivot", player);
     pivot->transform->SetLocalPosition({0, 1, 0});

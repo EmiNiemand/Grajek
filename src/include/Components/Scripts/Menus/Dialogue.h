@@ -16,9 +16,7 @@ struct Strings {
 
 class Dialogue : public Component {
 private:
-    bool triggerActive = false;
     bool active = false;
-    std::shared_ptr<Image> image;
     std::shared_ptr<Text> text1;
     std::shared_ptr<Text> text2;
     std::shared_ptr<Text> text3;
@@ -27,18 +25,25 @@ private:
     short dialogueIndex = 0;
 
 public:
+    bool triggerActive = false;
+    bool menuActive = false;
+    bool forced = false;
     std::vector<Strings> texts;
+    std::shared_ptr<Image> image;
 
 public:
     Dialogue(const std::shared_ptr<GameObject> &parent, int id);
     ~Dialogue() override;
 
+    void OnCreate() override;
+    void OnDestroy() override;
     void Start() override;
     void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
     void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
     void Update() override;
     void ShowDialogue();
     void HideDialogue();
+    void NextDialogue();
 };
 
 #endif //IMAGE_CPP_DIALOGUE_H

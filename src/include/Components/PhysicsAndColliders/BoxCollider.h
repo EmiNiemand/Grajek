@@ -21,6 +21,7 @@ private:
 
 public:
     bool isTrigger = false;
+    bool isDynamic = false;
 
 public:
     BoxCollider(const std::shared_ptr<GameObject> &parent, int id);

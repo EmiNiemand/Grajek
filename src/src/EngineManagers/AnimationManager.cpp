@@ -4,7 +4,9 @@
 
 AnimationManager::AnimationManager() = default;
 
-AnimationManager::~AnimationManager() = default;
+AnimationManager::~AnimationManager(){
+    delete animationManager;
+}
 
 AnimationManager *AnimationManager::GetInstance() {
     if (animationManager == nullptr) {

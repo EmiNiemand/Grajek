@@ -3,7 +3,6 @@
 //
 
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
-#include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/AI/CharacterLogic.h"
@@ -25,6 +24,7 @@ std::shared_ptr<GameObject> Default::Create() {
     auto collider = character->GetComponent<BoxCollider>();
     collider->SetOffset({0, 1.5, 0});
     collider->SetSize({1, 2, 1});
+    collider->isDynamic = true;
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
 
     auto characterIndicator = character->AddComponent<Indicator>();

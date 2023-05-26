@@ -169,7 +169,7 @@ void Shopkeeper::Update() {
                 {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
         });
     }
-    if (dialogueIndex == 1 || dialogueIndex == 3 || dialogueIndex == 4) return;
+    if (dialogueIndex == 1 || dialogueIndex == 3 || dialogueIndex == 4 || dialogueIndex == 5) return;
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
         if (dialogueIndex == 2) {
             GameObject::Destroy(background->GetParent()->children.begin()->second);

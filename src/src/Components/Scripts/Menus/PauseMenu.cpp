@@ -5,6 +5,7 @@
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "EngineManagers/SceneManager.h"
+#include "EngineManagers/DialogueManager.h"
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -22,6 +23,7 @@ void PauseMenu::OnClick() {
         HideMenu();
         //TODO: fix this
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->activeMenu.reset();
+        DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
         HideMenu();
