@@ -6,6 +6,7 @@
 #include "Components/Scripts/Menus/SavePointTrigger.h"
 #include "Components/UI/Image.h"
 #include "Components/Animations/UIAnimator.h"
+#include "EngineManagers/SavePointManager.h"
 #include <filesystem>
 
 SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
@@ -38,7 +39,7 @@ void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
 void SavePointMenu::OnClick() {
     if (!activeButton) return;
     buttonImage->enabled = true;
-    auto animator = GameObject::Instantiate("SavePointMenuAnimator", parent->parent);
+    auto animator = GameObject::Instantiate("SavePointMenuAnimator", SavePointManager::GetInstance()->activeSavePoint->GetParent());
     auto image = GameObject::Instantiate("SavePointMenuImage", animator)->AddComponent<Image>();
     image->LoadTexture(1000, 700, "UI/ZapisGry.png");
     animator->AddComponent<UIAnimator>()->Setup(image, {
