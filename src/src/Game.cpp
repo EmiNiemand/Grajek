@@ -68,6 +68,9 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("AnimsNew/Angry.dae");
     Animator::LoadAnimation("AnimsNew/Idle1.dae");
     Animator::LoadAnimation("AnimsNew/Idle3.dae");
+    Animator::LoadAnimation("MainHero/MainHeroIdle.dae");
+    Animator::LoadAnimation("MainHero/MainHeroRun.dae");
+    Animator::LoadAnimation("MainHero/MainHeroTrumpet.dae");
 
     // Set up player
     // -------------
