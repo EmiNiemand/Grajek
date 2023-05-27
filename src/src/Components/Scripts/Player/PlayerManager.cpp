@@ -232,7 +232,8 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 
 void PlayerManager::OnSessionToggle() {
     if(activeMenu && activeMenu != sessionStarter) return;
-    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+    auto dialogueManager = DialogueManager::GetInstance();
+     if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
@@ -249,7 +250,8 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
 
-    DialogueManager::GetInstance()->NotifyMenuIsActive();
+    if(dialogueManager) DialogueManager::GetInstance()->NotifyMenuIsActive();
+
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
