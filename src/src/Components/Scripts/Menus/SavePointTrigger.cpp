@@ -8,8 +8,8 @@ SavePointTrigger::SavePointTrigger(const std::shared_ptr<GameObject> &parent, in
 SavePointTrigger::~SavePointTrigger() = default;
 
 void SavePointTrigger::Start() {
-    buttonImage = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenuButtonImage")->GetComponent<Image>();
     savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
+    buttonImage = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenuButtonImage")->GetComponent<Image>();
     Component::Start();
 }
 
