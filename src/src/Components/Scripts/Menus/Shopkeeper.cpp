@@ -61,7 +61,6 @@ void Shopkeeper::Start() {
 
     playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
 
-    parent->transform->SetLocalPosition({-2.5, 0, 6});
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     parent->GetComponent<BoxCollider>()->SetSize({2.5, 2.5, 2.5});
     parent->GetComponent<BoxCollider>()->isTrigger = true;

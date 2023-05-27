@@ -12,23 +12,14 @@ SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) 
 
 SavePointMenu::~SavePointMenu() = default;
 
-void SavePointMenu::Awake() {
-    // TODO add savepoints
-    triggers.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("SavePointTrigger")->GetComponent<SavePointTrigger>());
-    Component::Start();
-}
-
 bool SavePointMenu::ShowMenu() {
-    for (const auto & trigger : triggers) {
-        if (trigger->active) {
-            parent->EnableSelfAndChildren();
-            buttonImage->enabled = false;
-            activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
-            activeButton->isActive = true;
-            return true;
-        }
-    }
-    return false;
+    if (!triggerActive) return false;
+
+    parent->EnableSelfAndChildren();
+    buttonImage->enabled = false;
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
+    activeButton->isActive = true;
+    return true;
 }
 
 void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
