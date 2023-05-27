@@ -16,6 +16,7 @@
 #include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/Scripts/MusicSession.h"
 #include "Components/Scripts/SessionStarter.h"
+#include "Components/Scripts/Instrument.h"
 #include "Components/Scripts/Menus/PauseMenu.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
