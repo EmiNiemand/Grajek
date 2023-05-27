@@ -4,10 +4,11 @@
 #include "Components/Component.h"
 
 class Image;
+class SavePointMenu;
 
 class SavePointTrigger : public Component {
 public:
-    bool active = false;
+    std::shared_ptr<SavePointMenu> savePointMenu;
     std::shared_ptr<Image> buttonImage;
 
 public:
