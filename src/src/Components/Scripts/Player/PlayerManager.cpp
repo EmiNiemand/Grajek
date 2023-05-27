@@ -150,12 +150,12 @@ void PlayerManager::OnInteract() {
             return;
         }
     }
-    if (shopMenu->GetParent()->GetEnabled() || savePointMenu->GetParent()->GetEnabled()) {
-        GloomEngine::GetInstance()->timeScale = 1;
+    GloomEngine::GetInstance()->timeScale = 1;
+    if (shopMenu->GetParent()->GetEnabled())
         shopMenu->HideMenu();
+    if (savePointMenu->GetParent()->GetEnabled())
         savePointMenu->HideMenu();
-        activeMenu.reset();
-    }
+    activeMenu.reset();
 }
 #pragma endregion
 
