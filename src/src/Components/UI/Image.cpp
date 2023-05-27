@@ -105,8 +105,18 @@ void Image::SetRotation(float angle) {
 }
 
 void Image::SetScale(float newScale) {
+    scale = {newScale, newScale};
+    parent->transform->SetLocalScale(glm::vec3(scale.x, scale.y, 1));
+
+    UpdateCorners();
+
+    mesh.reset();
+    mesh = CreateMesh();
+}
+
+void Image::SetScale(glm::vec2 newScale) {
     scale = newScale;
-    parent->transform->SetLocalScale(glm::vec3(scale));
+    parent->transform->SetLocalScale(glm::vec3(scale.x, scale.y, 1));
 
     UpdateCorners();
 
@@ -156,8 +166,8 @@ void Image::Draw() {
 
 void Image::UpdateCorners() {
     // Calculate two opposite vertices
-    leftBottom = {x - width*pivot.x*scale, y - height*pivot.y*scale};
-    rightTop = {x + width*(1-pivot.x)*scale, y + height*(1-pivot.y)*scale};
+    leftBottom = {x - width*pivot.x*scale.x, y - height*pivot.y*scale.y};
+    rightTop = {x + width*(1-pivot.x)*scale.x, y + height*(1-pivot.y)*scale.y};
 
     leftTop = {leftBottom.x, rightTop.y};
     rightBottom = {rightTop.x, leftBottom.y};
@@ -166,5 +176,5 @@ void Image::UpdateCorners() {
 glm::vec3 Image::GetColor() { return color; }
 float Image::GetAlpha() { return alpha; }
 
-float Image::GetWidth() { return width*scale; }
-float Image::GetHeight() { return height*scale; }
+float Image::GetWidth() { return width*scale.x; }
+float Image::GetHeight() { return height*scale.y; }

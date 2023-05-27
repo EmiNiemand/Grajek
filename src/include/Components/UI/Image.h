@@ -18,7 +18,7 @@ private:
     int width = 1920, height = 1080;
     int x = 0, y = 0;
     float z = 0.0f;
-    float scale = 1;
+    glm::vec2 scale = glm::vec2(1);
 
     glm::vec3 color = glm::vec3(1.0f);
     float alpha = 1.0f;
@@ -42,6 +42,7 @@ public:
     void SetPosition(float x2, float y2);
     void SetRotation(float angle);
     void SetScale(float scale);
+    void SetScale(glm::vec2 newScale);
     void SetColor(glm::vec3 newColor);
     void SetAlpha(float newAlpha);
 
