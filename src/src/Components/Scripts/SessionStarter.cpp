@@ -8,20 +8,17 @@ SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, int id
 SessionStarter::~SessionStarter() {}
 
 void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instruments) {
-
-    int screenWidth, screenHeight;
     int buttonWidth = 256;
+    int buttonHeight = 300;
     int margin = 50;
-
-    glfwGetWindowSize(GloomEngine::GetInstance()->window, &screenWidth, &screenHeight);
 
     int buttonOffset = buttonWidth + margin;
                     // We start from the middle of a screen...
-    int xPosBegin = screenWidth/2 +
+    int xPosBegin = 960 +
             // Offset pivot to button's middle point...
             buttonWidth/2 -
             // Try to distribute this nicely around the screen's middle...
-            (instruments.size()/2) * buttonOffset +
+            (instruments.size()/2 + 1) * buttonOffset +
             // And - if there's uneven amount of instruments - move
             // all buttons so that middle instruments is in the middle
             // of the screen
@@ -38,7 +35,8 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
     {
         auto button = Menu::AddButton(
                 std::to_string((int)instrument.first),
-                xPosBegin + buttonOffset * buttons.size(), screenHeight/2,
+                xPosBegin + buttonOffset * buttons.size(),
+                540 - buttonHeight/2,
                 "UI/Icons/small/icon"+instrument.second+"Inactive.png",
                 "UI/Icons/small/icon"+instrument.second+".png");
         buttons.push_back(button);

@@ -13,6 +13,7 @@
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
+#include "EngineManagers/SavePointManager.h"
 
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
@@ -150,6 +151,7 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
         savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/Sklep/Przycisk.png");
         savePointMenu->GetParent()->DisableSelfAndChildren();
+        SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;
     }
 }
 

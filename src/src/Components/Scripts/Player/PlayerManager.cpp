@@ -29,6 +29,7 @@
 #include "Components/Renderers/Animator.h"
 #include "EngineManagers/OpponentManager.h"
 #include "EngineManagers/DialogueManager.h"
+#include "EngineManagers/SavePointManager.h"
 
 #include <filesystem>
 
@@ -233,7 +234,9 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 void PlayerManager::OnSessionToggle() {
     if(activeMenu && activeMenu != sessionStarter) return;
     auto dialogueManager = DialogueManager::GetInstance();
-     if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
+    if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
+    auto savePointManager = SavePointManager::GetInstance();
+    if(savePointManager) savePointManager->NotifyMenuIsNotActive();
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
@@ -251,7 +254,7 @@ void PlayerManager::OnSessionToggle() {
     }
 
     if(dialogueManager) DialogueManager::GetInstance()->NotifyMenuIsActive();
-
+    if(savePointManager) savePointManager->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
