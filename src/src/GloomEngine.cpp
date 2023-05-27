@@ -112,6 +112,9 @@ bool GloomEngine::MainLoop() {
                 component.second->Awake();
                 component.second->GetParent()->UpdateSelfAndChildren();
             }
+        }
+
+        for (const auto& component: componentsCopy) {
             if (component.second->callOnStart && component.second->enabled) {
                 component.second->Start();
                 component.second->GetParent()->UpdateSelfAndChildren();

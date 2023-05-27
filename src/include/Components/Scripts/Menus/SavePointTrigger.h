@@ -3,14 +3,22 @@
 
 #include "Components/Component.h"
 
+class Image;
+class SavePointMenu;
+
 class SavePointTrigger : public Component {
 public:
-    bool active = false;
+    bool triggerActive = false;
+    std::shared_ptr<SavePointMenu> savePointMenu;
+    std::shared_ptr<Image> buttonImage;
 
 public:
     SavePointTrigger(const std::shared_ptr<GameObject> &parent, int id);
     ~SavePointTrigger() override;
 
+    void OnCreate() override;
+    void OnDestroy() override;
+    void Start() override;
     void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
     void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
 };

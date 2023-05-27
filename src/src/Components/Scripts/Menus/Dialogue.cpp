@@ -95,11 +95,11 @@ void Dialogue::NextDialogue() {
 }
 
 void Dialogue::OnCreate() {
-    DialogueManager::GetInstance()->dialogues.push_back(std::dynamic_pointer_cast<Dialogue>(shared_from_this()));
+    DialogueManager::GetInstance()->dialogues.insert({id, std::dynamic_pointer_cast<Dialogue>(shared_from_this())});
     Component::OnCreate();
 }
 
 void Dialogue::OnDestroy() {
-    std::remove(DialogueManager::GetInstance()->dialogues.begin(), DialogueManager::GetInstance()->dialogues.end(), shared_from_this());
+    DialogueManager::GetInstance()->dialogues.erase(id);
     Component::OnDestroy();
 }

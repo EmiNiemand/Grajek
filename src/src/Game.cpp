@@ -26,7 +26,7 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
-#include "GameObjectsAndPrefabs/Prefabs/House.h"
+#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
@@ -68,6 +68,9 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("AnimsNew/Angry.dae");
     Animator::LoadAnimation("AnimsNew/Idle1.dae");
     Animator::LoadAnimation("AnimsNew/Idle3.dae");
+    Animator::LoadAnimation("MainHero/MainHeroIdle.dae");
+    Animator::LoadAnimation("MainHero/MainHeroRun.dae");
+    Animator::LoadAnimation("MainHero/MainHeroTrumpet.dae");
 
     // Set up player
     // -------------
@@ -146,6 +149,26 @@ void Game::InitializeGame() const {
     dialog->GetComponent<Dialogue>()->texts.push_back({{""},
                                                        {"Walcz ze mna."},
                                                        {""}});
+
+    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
+    shop->transform->SetLocalPosition({4, 0, -8});
+
+    auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
+    shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
+    shopkeeper->AddComponent<Shopkeeper>();
+
+
+//    int x=0;
+////     Set up animated model
+//    for (int i = 0; i < 50; ++i) {
+//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene);
+//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
+//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
+//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
+//        animatedDood->transform->SetLocalPosition({-30 + x, 0, 0});
+//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
+//        x++;
+//    }
 
     camera->SetTarget(nullptr);
 }

@@ -15,7 +15,7 @@ public:
     //Create shared pointer to object holding data of this object in format suitable for conversion into json
     virtual std::shared_ptr<StaticObjectData> SaveStatic() = 0;
     //Prefabs are will NOT load in data themselves to modify their state
-    virtual void LoadStatic() = 0;
+    //virtual void LoadStatic() = 0;
     //They will instead be modified during creation by SceneManager
 };
 

@@ -2,7 +2,6 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/SavePointTrigger.h"
-#include "Components/UI/Image.h"
 #include "Components/Animations/GameObjectAnimator.h"
 
 SavePoint::SavePoint(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) : Prefab(
@@ -28,8 +27,22 @@ std::shared_ptr<GameObject> SavePoint::Create() {
     savePointTrigger->GetComponent<BoxCollider>()->SetSize({1, 1, 1});
     savePointTrigger->GetComponent<BoxCollider>()->isTrigger = true;
     savePointTrigger->AddComponent<SavePointTrigger>();
-    GameObject::Instantiate("SavePointButton", savePointTrigger)->AddComponent<Image>()->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
-    savePointTrigger->children.begin()->second->DisableSelfAndChildren();
 
     return savePoint;
+}
+
+std::shared_ptr<StaticObjectData> SavePoint::SaveStatic() {
+    std::shared_ptr<StaticObjectData> newData = std::make_shared<StaticObjectData>();
+    std::shared_ptr<Renderer> objectRenderer = GetComponent<Renderer>();
+    std::shared_ptr<BoxCollider> colider = GetComponent<BoxCollider>();
+
+    newData->name = this->GetPrefabName();
+    newData->position = this->transform->GetLocalPosition();
+    newData->rotation = this->transform->GetLocalRotation();
+    newData->scale = this->transform->GetLocalScale();
+    newData->modelPath = objectRenderer->lastLoadedModelPath;
+    newData->coliderSize = colider->GetSize();
+    newData->coliderOffset = colider->GetOffset();
+
+    return newData;
 }

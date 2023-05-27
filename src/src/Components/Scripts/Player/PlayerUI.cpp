@@ -11,9 +11,9 @@
 #include "Components/UI/Button.h"
 #include "Components/UI/Image.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
-#include "GameObjectsAndPrefabs/Prefab.h"
-#include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "Components/Scripts/Menus/SavePointMenu.h"
+#include "Components/Scripts/Menus/ShopMenu.h"
+#include "EngineManagers/SavePointManager.h"
 
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
@@ -90,7 +90,33 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     }
 
     // Set up shop menu
-    Prefab::Instantiate<Shop>();
+    auto shopMenu = GameObject::Instantiate("ShopMenu", menus);
+    {
+        auto shopMenuComponent = shopMenu->AddComponent<ShopMenu>();
+        auto firstInstrumentCost = shopMenuComponent->Menu::AddText("FirstInstrumentCost", "Cost: 100", 320, 220, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto secondInstrumentCost = shopMenuComponent->Menu::AddText("SecondInstrumentCost", "Cost: 500", 1600, 620, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto thirdInstrumentCost = shopMenuComponent->Menu::AddText("ThirdInstrumentCost", "Cost: 1500", 1770, 350, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto fourthInstrumentCost = shopMenuComponent->Menu::AddText("FourthInstrumentCost", "Cost: 5000", 1040, 900,32, glm::vec3(1.0f, 1.0f, 1.0f));
+        auto firstInstrument = shopMenuComponent->Menu::AddButton("FirstInstrument", 10, 0, "UI/Sklep/Perkusja.png","UI/Sklep/PerkusjaZRamka.png");
+        auto secondInstrument = shopMenuComponent->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png","UI/Sklep/TrabkaZRamka.png");
+        auto thirdInstrument = shopMenuComponent->Menu::AddButton("ThirdInstrument", 1525, 250,"UI/Sklep/LaunbhPad.png","UI/Sklep/LaunbhPadZRamka.png");
+        auto fourthInstrument = shopMenuComponent->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png","UI/Sklep/GitaraZRamka.png");
+        auto exitButton = shopMenuComponent->Menu::AddImage("ExitImage", 1600, 50, "UI/Sklep/Przycisk2.png");
+        auto shopBackground = shopMenuComponent->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
+        firstInstrumentCost->GetParent()->SetParent(firstInstrument->GetParent());
+        secondInstrumentCost->GetParent()->SetParent(secondInstrument->GetParent());
+        thirdInstrumentCost->GetParent()->SetParent(thirdInstrument->GetParent());
+        fourthInstrumentCost->GetParent()->SetParent(fourthInstrument->GetParent());
+        firstInstrument->previousButton = thirdInstrument;
+        firstInstrument->nextButton = fourthInstrument;
+        secondInstrument->previousButton = fourthInstrument;
+        secondInstrument->nextButton = thirdInstrument;
+        thirdInstrument->previousButton = secondInstrument;
+        thirdInstrument->nextButton = firstInstrument;
+        fourthInstrument->previousButton = firstInstrument;
+        fourthInstrument->nextButton = secondInstrument;
+        shopMenu->DisableSelfAndChildren();
+    }
 
     // Set up save point menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", menus)->AddComponent<SavePointMenu>();
@@ -122,7 +148,10 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         GloomEngine::GetInstance()->FindGameObjectWithName(
                 "Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
                 "Save1")->GetComponent<Button>();
+        savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
+        savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/Sklep/Przycisk.png");
         savePointMenu->GetParent()->DisableSelfAndChildren();
+        SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;
     }
 }
 

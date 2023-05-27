@@ -29,6 +29,7 @@
 #include "Components/Renderers/Animator.h"
 #include "EngineManagers/OpponentManager.h"
 #include "EngineManagers/DialogueManager.h"
+#include "EngineManagers/SavePointManager.h"
 
 #include <filesystem>
 
@@ -47,8 +48,8 @@ void PlayerManager::Awake() {
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     animator = animatorObject->AddComponent<Animator>();
     // TODO: Change model later
-    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    animator->SetAnimation("AnimsNew/Idle1.dae");
+    animator->LoadAnimationModel("MainHero/MainHeroIdle.dae");
+    animator->SetAnimation("MainHero/MainHeroIdle.dae");
     equipment->Setup(0, 0);
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
     playerUI->UpdateCash(equipment->GetCash());
@@ -111,11 +112,11 @@ void PlayerManager::UpdateAnimations() {
 
 	float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
-        animator->SetAnimation("AnimsNew/Walk.dae");
+        animator->SetAnimation("MainHero/MainHeroRun.dae");
 		animator->speed = 3;
 	}
 	else if (velocity <= 0.01 && previousVelocity > 0.01){
-		animator->SetAnimation("AnimsNew/Idle3.dae");
+		animator->SetAnimation("MainHero/MainHeroIdle.dae");
 	}
     previousVelocity = velocity;
 }
@@ -150,12 +151,12 @@ void PlayerManager::OnInteract() {
             return;
         }
     }
-    if (shopMenu->GetParent()->GetEnabled() || savePointMenu->GetParent()->GetEnabled()) {
-        GloomEngine::GetInstance()->timeScale = 1;
+    GloomEngine::GetInstance()->timeScale = 1;
+    if (shopMenu->GetParent()->GetEnabled())
         shopMenu->HideMenu();
+    if (savePointMenu->GetParent()->GetEnabled())
         savePointMenu->HideMenu();
-        activeMenu.reset();
-    }
+    activeMenu.reset();
 }
 #pragma endregion
 
@@ -232,7 +233,10 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 
 void PlayerManager::OnSessionToggle() {
     if(activeMenu && activeMenu != sessionStarter) return;
-    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+    auto dialogueManager = DialogueManager::GetInstance();
+    if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
+    auto savePointManager = SavePointManager::GetInstance();
+    if(savePointManager) savePointManager->NotifyMenuIsNotActive();
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
@@ -249,7 +253,8 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
 
-    DialogueManager::GetInstance()->NotifyMenuIsActive();
+    if(dialogueManager) DialogueManager::GetInstance()->NotifyMenuIsActive();
+    if(savePointManager) savePointManager->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;

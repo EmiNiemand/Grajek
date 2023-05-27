@@ -6,8 +6,9 @@
 #define GLOOMENGINE_DEBUGMANAGER_H
 #include <GloomEngine.h>
 #include <GameObjectsAndPrefabs/GameObject.h>
-#include "LowLevelClasses/GameObjectData.h"
+#include <filesystem>
 
+namespace fs = std::filesystem;
 
 class DebugManager {
 private:
@@ -19,8 +20,9 @@ private:
 	//flag to check if position of the GameObject was already extracted. 
 	bool transformExtracted;
 	std::shared_ptr<GameObject> selected;
-    bool isNewObjectBeingHeld;
-    std::shared_ptr<GameObjectData> gameObjectHolder;
+
+    std::vector<fs::directory_entry> modelPaths = FindModelPaths();
+
 
 	void ProcessChildren(std::shared_ptr<GameObject> gameObject);
 	//Conversion from vec3 to float[3] for use in imgui.
@@ -30,7 +32,7 @@ private:
 	//Function to display RAM and CPU usage.
 	void DisplaySystemInfo();
 	void SaveMenu();
-    void ObjectCreator();
+
 public:
 	DebugManager(DebugManager& other) = delete;
 	void operator=(const DebugManager&) = delete;
@@ -42,7 +44,7 @@ public:
 	void Render();
     void Free() const;
 
-    void CreateGameObjectFromData(std::shared_ptr<GameObjectData>);
+    std::vector<std::filesystem::directory_entry> FindModelPaths();
 };
 
 #endif //GLOOMENGINE_DEBUGMANAGER_H
