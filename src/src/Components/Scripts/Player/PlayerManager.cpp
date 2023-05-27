@@ -119,7 +119,7 @@ void PlayerManager::Update() {
     Component::Update();
 }
 
-#pragma region Equipment events
+#pragma region Equipment Events
 bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &instrument) {
     if(!equipment->BuyInstrument(price, instrument)) return false;
 
@@ -132,7 +132,7 @@ std::set<InstrumentName> PlayerManager::GetInstruments() {
 }
 #pragma endregion
 
-#pragma region AnimationEvents
+#pragma region Animation Events
 void PlayerManager::UpdateAnimations() {
 	if(!rb) return;
 
@@ -187,7 +187,6 @@ void PlayerManager::OnInteract() {
 #pragma endregion
 
 //TODO: rewrite these monstrosities
-// (maybe some kind of UIManager should be used?)
 #pragma region UI Events
 void PlayerManager::ToggleOptionsMenu() {
     //TODO: this should be simply controlled by pauseMenu
@@ -207,7 +206,7 @@ void PlayerManager::ToggleOptionsMenu() {
 
 void PlayerManager::OnMenuToggle() {
     //TODO: this all should be simply controlled by activeMenu alone
-    if(session) return;
+    //if(session) return;
     if(activeMenu &&
         !(activeMenu == pauseMenu ||
           activeMenu == optionsMenu ||
@@ -215,23 +214,21 @@ void PlayerManager::OnMenuToggle() {
           activeMenu == savePointMenu)) return;
 
     DialogueManager::GetInstance()->NotifyMenuIsActive();
-    if (activeMenu != shopMenu && activeMenu != pauseMenu && activeMenu != savePointMenu) {
+    // Pause menu
+    if(!activeMenu) {
         GloomEngine::GetInstance()->timeScale = 0;
-        if(activeMenu == optionsMenu) {
-            OptionsManager::GetInstance()->Save();
-            optionsMenu->HideMenu();
-        }
-        pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
+        pauseMenu->ShowMenu();
     }
-    // TODO/INFO: this code isn't reached
-    else if(activeMenu == optionsMenu)
-    {
+    // Options -> Pause menu
+    else if (activeMenu == optionsMenu) {
+        OptionsManager::GetInstance()->Save();
         optionsMenu->HideMenu();
         pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
     }
-    else {
+    // Disable any active menu
+    else if(activeMenu) {
         GloomEngine::GetInstance()->timeScale = 1;
         activeMenu->HideMenu();
         activeMenu.reset();
@@ -240,8 +237,10 @@ void PlayerManager::OnMenuToggle() {
 }
 
 void PlayerManager::OnApply() {
-    if(!activeMenu) return;
-    activeMenu->OnClick();
+    if(!(activeMenu || sessionStarter)) return;
+
+    if(activeMenu) { activeMenu->OnClick(); return; }
+    sessionStarter->OnClick();
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
@@ -254,11 +253,12 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 #pragma region Music Session Events
 void PlayerManager::OnSessionToggle() {
     //TODO: this method implementation just seems wrong
-    if(activeMenu && activeMenu != sessionStarter) return;
+    //if(activeMenu && activeMenu != sessionStarter) return;
     auto dialogueManager = DialogueManager::GetInstance();
-    if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
     auto savePointManager = SavePointManager::GetInstance();
+    if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
     if(savePointManager) savePointManager->NotifyMenuIsNotActive();
+
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
@@ -270,7 +270,7 @@ void PlayerManager::OnSessionToggle() {
     if (sessionStarter) {
         sessionStarter->Stop();
         sessionStarter.reset();
-        activeMenu.reset();
+        //activeMenu.reset();
         GloomEngine::GetInstance()->timeScale = 1;
         return;
     }
@@ -279,7 +279,7 @@ void PlayerManager::OnSessionToggle() {
     if(savePointManager) savePointManager->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
-    activeMenu = sessionStarter;
+    //activeMenu = sessionStarter;
     sessionStarter->Setup(equipment->instruments);
 }
 
@@ -357,7 +357,7 @@ void PlayerManager::PollInput() {
     for (auto key: PlayerInput::StartSession)
         if (hid->IsKeyDown(key.first)) OnSessionToggle();
 
-	if(activeMenu) {
+	if(activeMenu || sessionStarter) {
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
 				readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;

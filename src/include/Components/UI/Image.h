@@ -2,12 +2,12 @@
 #define GLOOMENGINE_IMAGE_H
 
 #include "Components/UI/UIComponent.h"
-#include "LowLevelClasses/Shader.h"
-#include "LowLevelClasses/Mesh.h"
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
 #include <memory>
+
+class Mesh;
 
 class Image : public UIComponent {
 private:

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Components/UI/Image.h"
+#include "LowLevelClasses/Shader.h"
 #include "LowLevelClasses/Mesh.h"
 #include "stb_image.h"
 #include "EngineManagers/UIManager.h"
