@@ -18,7 +18,7 @@ public:
     float mass = 1;
     /// if drag > gravity bug that launches player into space can occur
     float linearDrag = 5;
-    float turnSpeed = 5.0f;
+    float turnSpeed = 4.0f;
     float gravityScale = 5;
 
 public:

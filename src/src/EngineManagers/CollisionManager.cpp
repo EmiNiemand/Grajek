@@ -21,7 +21,9 @@ CollisionManager::CollisionManager() {
     glGenBuffers(1, &ebo);
 }
 
-CollisionManager::~CollisionManager() = default;
+CollisionManager::~CollisionManager() {
+    delete colliderManager;
+}
 
 CollisionManager* CollisionManager::GetInstance() {
     if (colliderManager == nullptr) {

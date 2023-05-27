@@ -36,10 +36,6 @@ void PlayerMovement::FixedUpdate() {
         // Calculate rotation angles by using tangent function
         rotationAngle = std::atan2f(-moveVector.x, -moveVector.y) * 180.0f/std::numbers::pi;
 
-        if (rotationAngle < 0.0f) {
-            rotationAngle += 360.0f;
-        }
-
         rb->AddTorque(rotationAngle, ForceMode::Force);
     }
 

@@ -4,7 +4,9 @@
 
 DialogueManager::DialogueManager() = default;
 
-DialogueManager::~DialogueManager() = default;
+DialogueManager::~DialogueManager() {
+    delete dialogueManager;
+}
 
 DialogueManager *DialogueManager::GetInstance() {
     if (dialogueManager == nullptr) {

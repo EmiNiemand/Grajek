@@ -36,7 +36,7 @@ class AIManager {
 public:
     //TODO: Implement!
     //std::vector<std::shared_ptr<GameObject>> buildings;
-    std::unordered_map<int, std::shared_ptr<CharacterLogic>> currentCharactersLogics;
+    std::unordered_map<int, std::shared_ptr<CharacterLogic>> charactersLogics;
     std::shared_ptr<CharacterPathfinding> pathfinding;
     const float aiCellSize = 1.0f;
     bool aiGrid[AI_GRID_SIZE][AI_GRID_SIZE] = {};
@@ -53,6 +53,7 @@ public:
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedSatisfaction();
+    void RemoveCharacterLogic(const int& componentId);
     void RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const;
 
 };

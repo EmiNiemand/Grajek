@@ -7,7 +7,9 @@ UIManager::UIManager() {
     shader = std::make_shared<Shader>("UI.vert", "UI.frag");
 }
 
-UIManager::~UIManager() = default;
+UIManager::~UIManager() {
+    delete uiManager;
+}
 
 UIManager* UIManager::GetInstance() {
     if (uiManager == nullptr) {

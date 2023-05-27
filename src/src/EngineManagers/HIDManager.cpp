@@ -5,7 +5,9 @@ HIDManager::HIDManager() {
     glfwSetKeyCallback(GloomEngine::GetInstance()->window, HIDManager::KeyActionCallback);
 }
 
-HIDManager::~HIDManager() = default;
+HIDManager::~HIDManager() {
+    delete hidManager;
+}
 
 
 HIDManager* HIDManager::GetInstance() {
