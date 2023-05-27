@@ -34,8 +34,4 @@ std::shared_ptr<StaticObjectData> House::SaveStatic() {
     return newData;
 }
 
-void House::LoadStatic() {
-
-}
-
 
