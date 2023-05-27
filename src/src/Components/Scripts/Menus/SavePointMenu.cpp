@@ -21,12 +21,15 @@ void SavePointMenu::Awake() {
 
 bool SavePointMenu::ShowMenu() {
     for (const auto & trigger : triggers) {
-        if (!trigger->active) return false;
+        if (trigger->active) {
+            parent->EnableSelfAndChildren();
+            buttonImage->enabled = false;
+            activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
+            activeButton->isActive = true;
+            return true;
+        }
     }
-    parent->EnableSelfAndChildren();
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
-    activeButton->isActive = true;
-    return true;
+    return false;
 }
 
 void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
@@ -44,6 +47,7 @@ void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
 
 void SavePointMenu::OnClick() {
     if (!activeButton) return;
+    buttonImage->enabled = true;
     auto animator = GameObject::Instantiate("SavePointMenuAnimator", parent->parent);
     auto image = GameObject::Instantiate("SavePointMenuImage", animator)->AddComponent<Image>();
     image->LoadTexture(1000, 700, "UI/ZapisGry.png");
@@ -60,4 +64,9 @@ void SavePointMenu::OnClick() {
     HideMenu();
     GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->activeMenu.reset();
     Menu::OnClick();
+}
+
+void SavePointMenu::HideMenu() {
+    Menu::HideMenu();
+    buttonImage->enabled = true;
 }
