@@ -244,7 +244,9 @@ void PlayerManager::OnApply() {
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
-    if(!activeMenu) return;
+    if(!(activeMenu || sessionStarter)) return;
+
+    if(sessionStarter) { sessionStarter->ChangeActiveButton(moveVector); return; }
     activeMenu->ChangeActiveButton(moveVector);
 }
 
