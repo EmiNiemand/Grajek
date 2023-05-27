@@ -1,8 +1,8 @@
 #ifndef GAME_CPP_SAVEPOINTMANAGER_H
 #define GAME_CPP_SAVEPOINTMANAGER_H
 
-#include <vector>
 #include <memory>
+#include <unordered_map>
 
 class SavePointTrigger;
 class Image;
@@ -14,7 +14,7 @@ private:
 public:
     std::shared_ptr<Image> buttonImage;
     std::shared_ptr<SavePointTrigger> activeSavePoint;
-    std::vector<std::shared_ptr<SavePointTrigger>> savePoints;
+    std::unordered_map<int, std::shared_ptr<SavePointTrigger>> savePoints;
 
 private:
     explicit SavePointManager();

@@ -17,17 +17,17 @@ DialogueManager *DialogueManager::GetInstance() {
 
 void DialogueManager::NotifyMenuIsActive() {
     for (const auto & dialogue : dialogues) {
-        if (!dialogue->triggerActive) continue;
-        dialogue->image->enabled = false;
-        dialogue->menuActive = true;
+        if (!dialogue.second->triggerActive) continue;
+        dialogue.second->image->enabled = false;
+        dialogue.second->menuActive = true;
     }
 }
 
 void DialogueManager::NotifyMenuIsNotActive() {
     for (const auto & dialogue : dialogues) {
-        if (!dialogue->triggerActive) continue;
-        if (!dialogue->forced)
-            dialogue->image->enabled = true;
-        dialogue->menuActive = false;
+        if (!dialogue.second->triggerActive) continue;
+        if (!dialogue.second->forced)
+            dialogue.second->image->enabled = true;
+        dialogue.second->menuActive = false;
     }
 }

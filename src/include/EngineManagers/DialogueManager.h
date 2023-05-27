@@ -1,8 +1,8 @@
 #ifndef IMAGE_CPP_DIALOGUEMANAGER_H
 #define IMAGE_CPP_DIALOGUEMANAGER_H
 
-#include <vector>
 #include <memory>
+#include <unordered_map>
 
 class Dialogue;
 
@@ -11,7 +11,7 @@ private:
     inline static DialogueManager* dialogueManager;
 
 public:
-    std::vector<std::shared_ptr<Dialogue>> dialogues;
+    std::unordered_map<int, std::shared_ptr<Dialogue>> dialogues;
 
 private:
     explicit DialogueManager();

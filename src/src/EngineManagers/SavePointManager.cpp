@@ -21,7 +21,7 @@ void SavePointManager::NotifyMenuIsActive() {
     if (!activeSavePoint->GetParent()->children.empty())
         GameObject::Destroy(activeSavePoint->GetParent()->children.begin()->second);
     for (const auto & savePoint : savePoints) {
-        if (savePoint->triggerActive) {
+        if (savePoint.second->triggerActive) {
             buttonImage->enabled = false;
             return;
         }
@@ -30,7 +30,7 @@ void SavePointManager::NotifyMenuIsActive() {
 
 void SavePointManager::NotifyMenuIsNotActive() {
     for (const auto & savePoint : savePoints) {
-        if (savePoint->triggerActive) {
+        if (savePoint.second->triggerActive) {
             buttonImage->enabled = true;
             return;
         }
