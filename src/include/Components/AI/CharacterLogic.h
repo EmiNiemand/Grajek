@@ -20,17 +20,23 @@ class Indicator;
 
 class CharacterLogic : public Component {
     AI_LOGICSTATE logicState = None;
+    // Animations
     std::shared_ptr<CharacterAnimations> characterAnimations = nullptr;
+    std::string modelPath {};
+    // Movement and indicators
     std::shared_ptr<CharacterMovement> characterMovement = nullptr;
     std::shared_ptr<Indicator> characterIndicator = nullptr;
-    float minSatisfaction = 0;
-    float currentSatisfaction = 0;
-
+    // Player instruments and satisfaction
     InstrumentName playerInstrumentName {};
     MusicGenre playerGenre {};
     std::shared_ptr<MusicPattern> playerPattern = nullptr;
+    float minSatisfaction = 0;
+    float currentSatisfaction = 0;
+
+    void CalculateSatisfaction();
 
 public:
+    // Favorite instruments and patterns
     std::vector<InstrumentName> favInstrumentsNames {};
     std::vector<MusicGenre> favGenres {};
     std::vector<std::shared_ptr<MusicPattern>> favPatterns {};
@@ -47,7 +53,7 @@ public:
     void SetPlayerInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
     void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pat);
     void SetPlayerPlayingStatus(bool state);
-    void CalculateSatisfaction();
+    void SetAnimationModelToLoad(const std::string& model);
     const float GetCurrentSatisfaction() const;
 
 };

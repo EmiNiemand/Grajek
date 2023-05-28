@@ -9,7 +9,7 @@ CharacterPathfinding::CharacterPathfinding()  {
     aiGrid = AIManager::GetInstance()->aiGrid;
     aiCellSize = AIManager::GetInstance()->aiCellSize;
     openList.reserve(1000);
-    closedList.reserve(5000);
+    closedList.reserve(10000);
 }
 
 CharacterPathfinding::~CharacterPathfinding() = default;
@@ -110,6 +110,9 @@ std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& curr
         squares->push_back(GridToLocal(currentNode->pos));
         currentNode = currentNode->parent;
     }
+
+    spdlog::info("ol size: " + std::to_string(openList.size()));
+    spdlog::info("cl size: " + std::to_string(closedList.size()));
 
     for (const auto& n : openList)
         delete n.second;
