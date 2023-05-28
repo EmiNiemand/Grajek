@@ -130,7 +130,7 @@ void DebugManager::Render() {
         ImGui::Text("%s", selected->GetName().c_str());
         ImGui::DragFloat3("Position", inputVector1, 1.0f);
         ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
-        ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f,10.0f);
+        ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f);
         if(selected->GetComponent<BoxCollider>()) {
             ImGui::DragFloat3("Colider Size", inputVector4, 1.0f);
             ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
@@ -290,10 +290,12 @@ void DebugManager::SaveMenu()
         path += modelPaths[selectedModelId].path().filename().string();
         SceneManager::GetInstance()->CreatePrefabObject("House",path);
     }
-    if (ImGui::SmallButton("Add new default shop - NOT IMPLEMENTED")){
+    if (ImGui::SmallButton("Add new default shop")){
         SceneManager::GetInstance()->CreatePrefabObject("Shop");
     }if (ImGui::SmallButton("Add new default savePoint")){
         SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
+    }if (ImGui::SmallButton("Add new Die")) {
+        SceneManager::GetInstance()->CreatePrefabObject("Die");
     }
     ImGui::End();
 }

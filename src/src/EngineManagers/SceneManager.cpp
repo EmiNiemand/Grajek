@@ -102,9 +102,9 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
         if(object->name == "House"){
             newGameObject = Prefab::Instantiate<House>();
         }
-        /*if(object->name == "Shop"){
+        if(object->name == "Shop"){
             newGameObject = Prefab::Instantiate<Shop>();
-        }*/
+        }
         if(object->name == "SavePoint"){
             newGameObject = Prefab::Instantiate<SavePoint>();
         }
@@ -112,15 +112,18 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);
             newGameObject->transform->SetLocalScale(object->scale);
+
             if (newGameObject->GetComponent<Renderer>()) {
                 std::shared_ptr<Renderer> objectRenderer = newGameObject->GetComponent<Renderer>();
                 objectRenderer->LoadModel(object->modelPath);
             }
+
             if (newGameObject->GetComponent<BoxCollider>()) {
                 std::shared_ptr<BoxCollider> objectColider = newGameObject->GetComponent<BoxCollider>();
                 objectColider->SetSize(object->coliderSize);
                 objectColider->SetOffset(object->coliderOffset);
             }
+
         }
     }
 }
