@@ -87,17 +87,19 @@ bool GloomEngine::MainLoop() {
 
 
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        componentsCopy.clear();
         for (int i = 0; i < destroyComponentBufferIterator; ++i) {
             const auto& component = destroyComponentBuffer[i];
+            if (!component) continue;
             component->OnDestroy();
-            component->GetParent()->RemoveComponent(component->GetId());
             RemoveComponent(component);
         }
         ClearDestroyComponentBuffer();
 
         for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
             const auto& gameObject = destroyGameObjectBuffer[i];
-            gameObject->parent->RemoveChild(gameObject->GetId());
+            if (!gameObject) continue;
+            gameObject->Destroy();
             RemoveGameObject(gameObject);
         }
         ClearDestroyGameObjectBuffer();

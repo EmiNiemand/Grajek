@@ -32,14 +32,13 @@ void GameObject::OnTransformUpdateComponents() {
 void GameObject::RemoveComponent(int componentId) {
     if (!components.contains(componentId)) return;
     Component::Destroy(components.find(componentId)->second);
-    components.erase(componentId);
 }
 
 void GameObject::RemoveAllComponents() {
+    if (components.empty()) return;
     for (auto&& component : components) {
         Component::Destroy(component.second);
     }
-    components.clear();
 }
 
 void GameObject::SetParent(const std::shared_ptr<GameObject> &newParent) {
@@ -59,19 +58,14 @@ void GameObject::AddChild(const std::shared_ptr<GameObject> &child) {
 
 void GameObject::RemoveChild(int childId) {
     if (!children.contains(childId)) return;
-    children.find(childId)->second->RemoveAllChildren();
-    children.find(childId)->second->RemoveAllComponents();
     Destroy(children.find(childId)->second);
-    children.erase(childId);
 }
 
 void GameObject::RemoveAllChildren() {
+    if (children.empty()) return;
     for (auto&& child : children) {
-        child.second->RemoveAllComponents();
-        child.second->RemoveAllChildren();
         Destroy(child.second);
     }
-    children.clear();
 }
 
 void GameObject::UpdateSelfAndChildren() {
@@ -89,14 +83,18 @@ void GameObject::UpdateSelfAndChildren() {
 
     if (dirtyFlag) ForceUpdateSelfAndChildren();
 
-    for (int i = 0; i < checkIterator; i++) {
+    for (int i = 0; i < checkIterator; ++i) {
         for (const auto& child : toCheck[i]->children) {
             if (child.second->dirtyFlag) {
                 child.second->ForceUpdateSelfAndChildren();
             }
             toCheck[checkIterator] = child.second;
-            checkIterator++;
+            ++checkIterator;
         }
+    }
+
+    for (int i = 0; i < checkIterator; ++i) {
+        toCheck[i].reset();
     }
 
     delete[] toCheck;
@@ -158,5 +156,48 @@ void GameObject::RecalculateGlobalRotation() {
 
     for (auto&& child : children) {
         child.second->RecalculateGlobalRotation();
+    }
+}
+
+void GameObject::Destroy() {
+    DestroyAllChildren();
+    DestroyAllComponents();
+    parent->children.erase(id);
+    children.clear();
+}
+
+void GameObject::DestroyAllComponents() {
+    if (components.empty()) return;
+    for (const auto& component : components) {
+        component.second->OnDestroy();
+        GloomEngine::GetInstance()->RemoveComponent(component.second);
+    }
+    components.clear();
+}
+
+void GameObject::DestroyAllChildren() {
+    if (children.empty()) return;
+
+    std::vector<std::shared_ptr<GameObject>> toDestroy;
+
+    toDestroy.reserve(20);
+
+    for (const auto& child : children) {
+        toDestroy.push_back(child.second);
+    }
+
+    for (int i = 0; i < toDestroy.size(); ++i) {
+        auto ch = toDestroy[i];
+        if (ch->children.empty()) continue;
+        for (const auto& child : ch->children) {
+            toDestroy.push_back(child.second);
+        }
+    }
+
+    for (int i = 0; i < toDestroy.size(); ++i) {
+        toDestroy[i]->DestroyAllComponents();
+        toDestroy[i]->children.clear();
+        GloomEngine::GetInstance()->RemoveGameObject(toDestroy[i]);
+        toDestroy[i].reset();
     }
 }
