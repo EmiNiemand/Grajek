@@ -22,6 +22,8 @@ protected:
 public:
     Model(std::string const &path, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES, bool gamma = false);
     Model(const Mesh& mesh, std::shared_ptr<Shader> &shader, int type = GL_TRIANGLES);
+    virtual ~Model();
+
     virtual void Draw();
     virtual void Draw(std::shared_ptr<Shader> useShader);
     inline std::vector<Mesh> GetMeshes() { return meshes; }

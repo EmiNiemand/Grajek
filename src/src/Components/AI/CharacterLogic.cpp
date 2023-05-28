@@ -90,9 +90,10 @@ void CharacterLogic::OnCreate() {
 
 void CharacterLogic::OnDestroy() {
     AIManager::GetInstance()->RemoveCharacterLogic(id);
-    characterAnimations = nullptr;
-    characterMovement = nullptr;
-    characterIndicator = nullptr;
+    characterAnimations.reset();
+    characterMovement.reset();
+    characterIndicator.reset();
+    playerPattern.reset();
     favInstrumentsNames.clear();
     favGenres.clear();
     favPatterns.clear();

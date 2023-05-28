@@ -108,5 +108,11 @@ void Opponent::OnCreate() {
 
 void Opponent::OnDestroy() {
     std::remove(OpponentManager::GetInstance()->opponents.begin(), OpponentManager::GetInstance()->opponents.end(), shared_from_this());
+    ui.reset();
+    instrument.reset();
+    pattern.reset();
+    sampleSources.clear();
+    belt.clear();
+    dialogue.reset();
     Component::OnDestroy();
 }

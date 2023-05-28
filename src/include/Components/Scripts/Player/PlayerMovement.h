@@ -25,6 +25,9 @@ public:
     ~PlayerMovement() override;
 
     void Start() override;
+
+    void OnDestroy() override;
+
     void FixedUpdate() override;
     void Move(glm::vec2 moveVector);
 };

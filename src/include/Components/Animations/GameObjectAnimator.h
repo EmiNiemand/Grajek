@@ -32,6 +32,7 @@ public:
                std::vector<AnimationCheckpoint> animation,
                bool looping = false, bool absoluteValues = false);
     void Update() override;
+    void OnDestroy() override;
 };
 
 

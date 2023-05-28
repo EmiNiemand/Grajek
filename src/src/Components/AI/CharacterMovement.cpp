@@ -133,8 +133,9 @@ void CharacterMovement::AIUpdate() {
 
 void CharacterMovement::OnDestroy() {
     path->clear();
-    rigidbody = nullptr;
-    pathfinding = nullptr;
+    delete path;
+    rigidbody.reset();
+    pathfinding.reset();
     Component::OnDestroy();
 }
 

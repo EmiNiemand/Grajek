@@ -101,5 +101,12 @@ void Dialogue::OnCreate() {
 
 void Dialogue::OnDestroy() {
     DialogueManager::GetInstance()->dialogues.erase(id);
+    text1.reset();
+    text2.reset();
+    text3.reset();
+    dialogue.reset();
+    playerManager.reset();
+    texts.clear();
+    image.reset();
     Component::OnDestroy();
 }

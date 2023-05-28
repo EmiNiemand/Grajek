@@ -156,6 +156,12 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     }
 }
 
+void PlayerUI::OnDestroy() {
+    cashText.reset();
+    repText.reset();
+    Component::OnDestroy();
+}
+
 void PlayerUI::UpdateCash(int newAmount) {
 	cashText->text = "Money: " + std::to_string(newAmount);
 }

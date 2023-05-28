@@ -37,6 +37,8 @@ public:
 
     void Update() override;
 
+    void OnDestroy() override;
+
     void Draw() override;
 };
 

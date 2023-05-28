@@ -145,3 +145,11 @@ void Text::Draw() {
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void Text::OnDestroy() {
+    mesh.reset();
+    for (auto&& character : Characters) {
+        glDeleteTextures(1, &character.second.TextureID);
+    }
+    Component::OnDestroy();
+}

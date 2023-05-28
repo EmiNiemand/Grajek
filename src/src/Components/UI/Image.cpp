@@ -139,6 +139,12 @@ void Image::Update() {
     UIComponent::Update();
 }
 
+void Image::OnDestroy() {
+    glDeleteTextures(1, &textureID);
+    mesh.reset();
+    Component::OnDestroy();
+}
+
 void Image::Draw() {
     if (!mesh) return;
     UIManager::GetInstance()->shader->Activate();
@@ -168,3 +174,4 @@ float Image::GetAlpha() { return alpha; }
 
 float Image::GetWidth() { return width*scale; }
 float Image::GetHeight() { return height*scale; }
+

@@ -15,10 +15,10 @@ class CharacterAnimations {
 private:
     AI_ANIMATIONSTATE currentState = Idle;
 
-    std::shared_ptr<Animator> animator;
+    std::weak_ptr<Animator> animator;
 
 public:
-    explicit CharacterAnimations(const std::shared_ptr<Animator> &animator);
+    explicit CharacterAnimations(const std::weak_ptr<Animator> &animator);
     virtual ~CharacterAnimations();
 
     void SetNewState(AI_ANIMATIONSTATE state);

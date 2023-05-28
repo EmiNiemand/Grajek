@@ -113,4 +113,17 @@ void SessionUI::AccuracyFeedbackSetup() {
         }, AnimationBehaviour::Resetable);
     }
 }
+
+void SessionUI::OnDestroy() {
+    accuracyRating.clear();
+    accuracyRatingAnimator.clear();
+    metronomeImage.reset();
+    tickSound.reset();
+    sampleSources.clear();
+    sampleImages.clear();
+    sampleAnimators.clear();
+    cheatSheet.reset();
+    Component::OnDestroy();
+}
+
 #pragma endregion

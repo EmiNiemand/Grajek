@@ -183,3 +183,11 @@ void MusicSession::ToggleMetronomeVisuals() {
 void MusicSession::ToggleMetronomeSound() {
 
 }
+
+void MusicSession::OnDestroy() {
+    sessionUI.reset();
+    playerManager.reset();
+    potentialPatterns.clear();
+    instrument.reset();
+    Component::OnDestroy();
+}

@@ -22,6 +22,9 @@ public:
     ~Indicator() override;
 
     void OnCreate() override;
+
+    void OnDestroy() override;
+
     void SetTexturePath(const char* path);
     void Indicate();
 

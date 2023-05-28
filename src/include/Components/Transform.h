@@ -8,6 +8,9 @@
 class GameObject;
 
 class Transform  {
+public:
+    std::shared_ptr<GameObject> parent;
+
 protected:
     //Local space information
     glm::vec3 mPos = {0.0f, 0.0f, 0.0f };
@@ -40,7 +43,6 @@ public:
     [[nodiscard]] glm::vec3 GetForward() const;
     [[nodiscard]] glm::vec3 GetGlobalScale() const;
 
-    std::shared_ptr<GameObject> parent;
 private:
     void SetDirtyFlag();
 };

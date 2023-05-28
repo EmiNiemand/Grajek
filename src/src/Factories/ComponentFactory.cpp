@@ -1,12 +1,14 @@
 #include "Factories/ComponentFactory.h"
 
-ComponentFactory::ComponentFactory() {
-    delete componentFactory;
-}
+ComponentFactory::ComponentFactory() = default;
 
 ComponentFactory* ComponentFactory::GetInstance() {
     if (componentFactory == nullptr) {
         componentFactory = new ComponentFactory();
     }
     return componentFactory;
+}
+
+ComponentFactory::~ComponentFactory() {
+    delete componentFactory;
 }

@@ -51,6 +51,7 @@ void AudioSource::OnCreate() {
 
 void AudioSource::OnDestroy() {
     AudioManager::GetInstance()->RemoveAudioSource(id);
+    playerPos.reset();
     Component::OnDestroy();
 }
 

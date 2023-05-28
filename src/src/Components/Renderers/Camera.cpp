@@ -65,3 +65,9 @@ void Camera::OnUpdate() {
     RendererManager::GetInstance()->UpdateCamera();
     Component::OnUpdate();
 }
+
+void Camera::OnDestroy() {
+    player.reset();
+    target.reset();
+    Component::OnDestroy();
+}
