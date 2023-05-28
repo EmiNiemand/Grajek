@@ -171,8 +171,6 @@ void Game::InitializeGame() const {
 //    }
 
     camera->SetTarget(nullptr);
-
-    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
 }
 
 bool Game::GameLoop() {
