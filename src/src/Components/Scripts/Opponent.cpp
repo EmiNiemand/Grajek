@@ -102,11 +102,11 @@ void Opponent::UpdateSatisfaction(float satisfaction1) {
 }
 
 void Opponent::OnCreate() {
-    OpponentManager::GetInstance()->opponents.push_back(std::dynamic_pointer_cast<Opponent>(shared_from_this()));
+    OpponentManager::GetInstance()->opponents.insert({id, std::dynamic_pointer_cast<Opponent>(shared_from_this())});
     Component::OnCreate();
 }
 
 void Opponent::OnDestroy() {
-    std::remove(OpponentManager::GetInstance()->opponents.begin(), OpponentManager::GetInstance()->opponents.end(), shared_from_this());
+    OpponentManager::GetInstance()->opponents.erase(id);
     Component::OnDestroy();
 }
