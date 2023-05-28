@@ -82,10 +82,14 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
 void Image::SetPosition(float x2, float y2) {
     x=x2; y=y2;
     parent->transform->SetLocalPosition(glm::vec3(x, y, z));
+
     UpdateCorners();
 
-    mesh.reset();
-    mesh = CreateMesh();
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    mesh->setupMesh();
 }
 
 //TODO: I actually have no idea what'd happen after using this method, probably best to avoid using it
@@ -110,8 +114,11 @@ void Image::SetScale(float newScale) {
 
     UpdateCorners();
 
-    mesh.reset();
-    mesh = CreateMesh();
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    mesh->setupMesh();
 }
 
 void Image::SetColor(glm::vec3 newColor) {
