@@ -163,7 +163,8 @@ void GameObject::Destroy() {
     DestroyAllChildren();
     DestroyAllComponents();
     parent->children.erase(id);
-    transform->parent.reset();
+    if (transform)
+        transform->parent.reset();
     transform.reset();
     bounds.reset();
     children.clear();
