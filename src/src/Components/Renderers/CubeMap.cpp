@@ -20,7 +20,9 @@ CubeMap::CubeMap(const std::shared_ptr<GameObject> &parent, int id) : Drawable(p
     skyboxMesh = Shape::Cube::GetWithNormals(std::vector<Texture>());
 }
 
-CubeMap::~CubeMap() = default;
+CubeMap::~CubeMap() {
+    glDeleteTextures(1, &textureID);
+}
 
 /**
  * Loads cubemap's source textures.
@@ -103,3 +105,8 @@ void CubeMap::Draw() {
 
 // leave it empty or else it's gonna be drawn in shadow map
 void CubeMap::Draw(std::shared_ptr<Shader> shader) {}
+
+void CubeMap::OnDestroy() {
+    skyboxMesh.reset();
+    Component::OnDestroy();
+}

@@ -51,6 +51,13 @@ Model::Model(std::string const &path, std::shared_ptr<Shader> &shader,
 Model::Model(const Mesh& mesh, std::shared_ptr<Shader> &shader,
              int type) : shader(shader), type(type), gammaCorrection(false) {}
 
+
+Model::~Model() {
+    for (int i = 0; i < texturesLoaded.size(); ++i) {
+        glDeleteTextures(1, &texturesLoaded[i].id);
+    }
+}
+
 void Model::Draw() {
     for(auto & mesh : meshes) mesh.Draw(shader, type);
 }
@@ -90,4 +97,3 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType 
     }
     return textures;
 }
-

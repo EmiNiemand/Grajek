@@ -27,6 +27,13 @@ void MainMenuManager::Update() {
     Component::Update();
 }
 
+void MainMenuManager::OnDestroy() {
+    activeMenu.reset();
+    mainMenu.reset();
+    loadGameMenu.reset();
+    Component::OnDestroy();
+}
+
 void MainMenuManager::OnMenuToggle() {
     if (!activeMenu) return;
     if (activeMenu == mainMenu) return;

@@ -19,6 +19,8 @@ public:
     ~ShopTrigger() override;
 
     void Start() override;
+    void OnDestroy() override;
+
     void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
     void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
 };

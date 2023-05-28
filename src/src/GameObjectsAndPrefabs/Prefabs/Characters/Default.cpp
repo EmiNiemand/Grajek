@@ -9,6 +9,7 @@
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterPathfinding.h"
 #include "Components/UI/Indicator.h"
+#include "EngineManagers/RandomnessManager.h"
 
 Default::Default(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
         Prefab(name, id, parent, tag) {
@@ -32,6 +33,15 @@ std::shared_ptr<GameObject> Default::Create() {
 
     character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();
+
+    int i = RandomnessManager::GetInstance()->GetInt(0, 1);
+
+    if (i > 9)
+        std::string model = "Models/JazzMan00" + std::to_string(i);
+    else
+        std::string model = "Models/JazzMan0" + std::to_string(i);
+
+    characterLogic->SetAnimationModelToLoad("JazzMan001/JazzMan001.dae");
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
     characterLogic->favGenres.push_back(Jazz);

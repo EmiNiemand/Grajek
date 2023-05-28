@@ -109,3 +109,8 @@ void GameObjectAnimator::Update() {
     counter += GloomEngine::GetInstance()->deltaTime;
     Component::Update();
 }
+
+void GameObjectAnimator::OnDestroy() {
+    transform.reset();
+    Component::OnDestroy();
+}

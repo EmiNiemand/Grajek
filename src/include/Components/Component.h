@@ -19,9 +19,6 @@ public:
     bool enabled = true;
 
     Component(const std::shared_ptr<GameObject> &parent, int id);
-
-    Component();
-
     virtual ~Component() = 0;
 
     static void Destroy(const std::shared_ptr<Component>& component);

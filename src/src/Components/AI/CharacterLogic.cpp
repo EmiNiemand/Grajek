@@ -26,7 +26,7 @@ void CharacterLogic::Start() {
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
-    characterAnimator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
+    characterAnimator->LoadAnimationModel(modelPath);
     characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
@@ -35,7 +35,7 @@ void CharacterLogic::Start() {
 
 void CharacterLogic::Update() {
     if (logicState != ListeningToPlayer) {
-        switch (characterMovement->GetCurrentStatus()) {
+        switch (characterMovement->GetState()) {
             case OnPathToPlayer:
                 characterAnimations->SetNewState(Running);
                 break;
@@ -45,7 +45,7 @@ void CharacterLogic::Update() {
             case NearTargetSubPoint:
                 characterAnimations->SetNewState(Idle);
                 break;
-            case NearPlayer:
+            case NearPlayerPosition:
                 logicState = ListeningToPlayer;
                 break;
             default:
@@ -60,7 +60,7 @@ void CharacterLogic::Update() {
             characterAnimations->SetNewState(Booing);
         } else if (currentSatisfaction < 30.0f) {
             logicState = AlertedByPlayer;
-            characterMovement->ReturnToPreviousPath();
+            characterMovement->SetState(ReturnToPreviousTarget);
         } else {
             characterAnimations->SetNewState(Idle);
         }
@@ -74,9 +74,9 @@ void CharacterLogic::AIUpdate() {
         CalculateSatisfaction();
 
         if (currentSatisfaction > minSatisfaction) {
-            characterMovement->SetNewPathToPlayer();
             characterIndicator->Indicate();
             logicState = MovingToPlayer;
+            characterMovement->SetState(SetPathToPlayer);
         }
     }
 
@@ -90,12 +90,14 @@ void CharacterLogic::OnCreate() {
 
 void CharacterLogic::OnDestroy() {
     AIManager::GetInstance()->RemoveCharacterLogic(id);
-    characterAnimations = nullptr;
-    characterMovement = nullptr;
-    characterIndicator = nullptr;
+    characterAnimations.reset();
+    characterMovement.reset();
+    characterIndicator.reset();
+    playerPattern.reset();
     favInstrumentsNames.clear();
     favGenres.clear();
     favPatterns.clear();
+    playerPattern = nullptr;
     Component::OnDestroy();
 }
 
@@ -119,9 +121,8 @@ void CharacterLogic::SetPlayerPlayingStatus(bool isPlayerPlaying) {
     if (isPlayerPlaying) {
         logicState = AlertedByPlayer;
     } else {
-        if (logicState != None) {
-            characterMovement->ReturnToPreviousPath();
-        }
+        if (logicState != None)
+            characterMovement->SetState(ReturnToPreviousTarget);
 
         logicState = None;
     }
@@ -134,8 +135,12 @@ void CharacterLogic::CalculateSatisfaction() {
         currentSatisfaction += 30;
 
     if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName)
-    != favInstrumentsNames.end())
+        != favInstrumentsNames.end())
         currentSatisfaction += 20;
+}
+
+void CharacterLogic::SetAnimationModelToLoad(const std::string& model) {
+    modelPath = model;
 }
 
 const float CharacterLogic::GetCurrentSatisfaction() const {

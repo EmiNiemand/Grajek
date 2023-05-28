@@ -11,7 +11,7 @@
 
 class Image : public UIComponent {
 private:
-    unsigned int textureID{};
+    unsigned int textureID;
     std::shared_ptr<Mesh> mesh;
     glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
     // Original dimensions of the image
@@ -36,7 +36,10 @@ public:
     * y from 0 to 1080
     */
     void LoadTexture(int x, int y, const std::string& path, float z = 0);
+
     void Update() override;
+    void OnDestroy() override;
+
     void Draw() override;
 
     void SetPosition(float x2, float y2);

@@ -20,9 +20,10 @@ struct Node {
         fCost = gCost + hCost;
     }
 
-// NOTE: Manhattan distance (performs better than Euclidean)
+    // NOTE: octile distance (similar to Chebyshev, performs better than Manhattan or Euclidean)
     inline void CalculateHCost(const glm::ivec2& targetPosition) {
-        hCost = std::fabs(targetPosition.x - pos.x) + std::fabs(targetPosition.y - pos.y);
+        int dx = std::fabs(targetPosition.x - pos.x), dy = std::fabs(targetPosition.y - pos.y);
+        hCost = STRAIGHT_MOVE_COST * (dx + dy) + (DIAGONAL_MOVE_COST - 2 * STRAIGHT_MOVE_COST) * std::min(dx, dy);
     }
 
     inline void CalculateGCost(const glm::ivec2& position) {

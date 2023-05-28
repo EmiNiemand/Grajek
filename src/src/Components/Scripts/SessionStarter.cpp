@@ -79,3 +79,8 @@ void SessionStarter::OnClick() {
 void SessionStarter::Stop() {
     parent->parent->RemoveAllChildren();
 }
+
+void SessionStarter::OnDestroy() {
+    buttons.clear();
+    Menu::OnDestroy();
+}

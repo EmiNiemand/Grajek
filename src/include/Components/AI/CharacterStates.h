@@ -13,13 +13,14 @@ enum AI_LOGICSTATE {
 };
 
 enum AI_MOVEMENTSTATE {
-    GettingPlayerPosition,
+    SetPathToPlayer,
     OnPathToPlayer,
     NearPlayerSubPoint,
-    NearPlayer,
+    NearPlayerPosition,
     OnPathToTarget,
     NearTargetSubPoint,
-    ReturningToPreviousPath,
+    NearTargetPosition,
+    ReturnToPreviousTarget,
 };
 
 enum AI_ANIMATIONSTATE {
@@ -27,7 +28,7 @@ enum AI_ANIMATIONSTATE {
     Walking,
     Running,
     Cheering,
-    Booing
+    Booing,
 };
 
 #endif //GLOOMENGINE_CHARACTERSTATES_H

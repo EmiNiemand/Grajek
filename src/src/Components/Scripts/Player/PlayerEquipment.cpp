@@ -45,3 +45,8 @@ void PlayerEquipment::AddReward(float crowdSatisfaction) {
 int PlayerEquipment::GetCash() const { return cash; }
 
 int PlayerEquipment::GetRep() const { return rep; }
+
+void PlayerEquipment::OnDestroy() {
+    instruments.clear();
+    Component::OnDestroy();
+}

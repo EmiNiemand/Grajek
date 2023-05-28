@@ -335,6 +335,23 @@ void PlayerManager::OnPlayerLoseDuel() {
     // TODO add sound when player beat boss
 }
 
+void PlayerManager::OnDestroy() {
+    session.reset();
+    sessionStarter.reset();
+    sessionStarterUI.reset();
+    playerUI.reset();
+    equipment.reset();
+    movement.reset();
+    pauseMenu.reset();
+    optionsMenu.reset();
+    shopMenu.reset();
+    savePointMenu.reset();
+    animator.reset();
+    rb.reset();
+    activeMenu.reset();
+    Component::OnDestroy();
+}
+
 #pragma endregion
 
 void PlayerManager::PollInput() {

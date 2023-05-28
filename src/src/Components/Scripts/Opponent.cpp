@@ -108,5 +108,11 @@ void Opponent::OnCreate() {
 
 void Opponent::OnDestroy() {
     OpponentManager::GetInstance()->opponents.erase(id);
+    ui.reset();
+    instrument.reset();
+    pattern.reset();
+    sampleSources.clear();
+    belt.clear();
+    dialogue.reset();
     Component::OnDestroy();
 }

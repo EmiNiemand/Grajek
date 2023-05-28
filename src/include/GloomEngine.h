@@ -139,9 +139,6 @@ private:
     GloomEngine();
     void InitializeWindow();
     static void glfwErrorCallback(int error, const char* description);
-
-    void ClearDestroyGameObjectBuffer();
-    void ClearDestroyComponentBuffer();
 };
 
 

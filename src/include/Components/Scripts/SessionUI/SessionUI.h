@@ -57,6 +57,8 @@ public:
 
     void Update() override;
 
+    void OnDestroy() override;
+
 private:
     void MetronomeSetup(const std::string& metronomePath, int bpm);
     void AccuracyFeedbackSetup();

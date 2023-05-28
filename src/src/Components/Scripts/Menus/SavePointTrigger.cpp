@@ -38,5 +38,7 @@ void SavePointTrigger::OnCreate() {
 
 void SavePointTrigger::OnDestroy() {
     SavePointManager::GetInstance()->savePoints.erase(id);
+    savePointMenu.reset();
+    buttonImage.reset();
     Component::OnDestroy();
 }

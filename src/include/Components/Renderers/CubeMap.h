@@ -23,6 +23,7 @@ public:
     void LoadTextures(const std::string& basePath);
 
     void Update() override;
+    void OnDestroy() override;
 
     void Draw() override;
     void Draw(std::shared_ptr<Shader> shader) override;
