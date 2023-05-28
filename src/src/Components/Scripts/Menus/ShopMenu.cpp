@@ -43,6 +43,11 @@ void ShopMenu::Awake() {
     Component::Awake();
 }
 
+void ShopMenu::OnDestroy() {
+    instruments.clear();
+    Menu::OnDestroy();
+}
+
 void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
     activeButton->GetParent()->children.begin()->second->DisableSelfAndChildren();
     if (moveVector.y == 1.0f) {
@@ -120,3 +125,4 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
     button->nextButton->previousButton = temp;
     GameObject::Destroy(button->GetParent());
 }
+

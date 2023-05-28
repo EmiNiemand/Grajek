@@ -38,6 +38,8 @@ public:
     void Stop();
     void Update() override;
 
+    void OnDestroy() override;
+
     void PlaySample(int index);
     void StopSample(int index);
     void ToggleCheatSheet();

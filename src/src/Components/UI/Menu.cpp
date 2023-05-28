@@ -47,3 +47,8 @@ std::shared_ptr<Button> Menu::AddButton(std::string name, int x, int y, const st
     button->LoadFont(std::move(text), fontSize, color, fontPath);
     return button;
 }
+
+void Menu::OnDestroy() {
+    activeButton.reset();
+    Component::OnDestroy();
+}

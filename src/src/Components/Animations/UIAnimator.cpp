@@ -141,3 +141,8 @@ void UIAnimator::CalcValueDelta() {
             break;
     }
 }
+
+void UIAnimator::OnDestroy() {
+    image.reset();
+    Component::OnDestroy();
+}

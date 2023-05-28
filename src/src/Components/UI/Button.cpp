@@ -259,3 +259,15 @@ int Button::GetWidth() {
 int Button::GetHeight() {
 	return height;
 }
+
+void Button::OnDestroy() {
+    glDeleteTextures(1, &textureID);
+    for (auto&& character : Characters) {
+        glDeleteTextures(1, &character.second.TextureID);
+    }
+    textureMesh.reset();
+    textMesh.reset();
+    previousButton.reset();
+    nextButton.reset();
+    Component::OnDestroy();
+}

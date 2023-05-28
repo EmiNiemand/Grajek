@@ -182,6 +182,22 @@ void Shopkeeper::Update() {
     Component::Update();
 }
 
+void Shopkeeper::OnDestroy() {
+    image.reset();
+    text1.reset();
+    text2.reset();
+    text3.reset();
+    dialogue.reset();
+    shopkeeperModel.reset();
+    door.reset();
+    playerManager.reset();
+    background.reset();
+    circle1.reset();
+    circle2.reset();
+    sampleSources.clear();
+    Component::OnDestroy();
+}
+
 void Shopkeeper::NextDialogue() {
     dialogueIndex++;
     text1->text = texts[dialogueIndex].text1;

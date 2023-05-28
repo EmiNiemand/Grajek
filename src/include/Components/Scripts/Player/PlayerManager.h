@@ -55,35 +55,37 @@ public:
     std::shared_ptr<Menu> activeMenu;
     bool inputEnabled;
 
-//Equipment methods
-bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
-
-private:
+public:
     void Start() override;
     void Awake() override;
     void Update() override;
+    void OnDestroy() override;
 
+private:
     void PollInput();
 
-    //Session methods
+    // Session methods
     void OnSessionToggle();
     void OnSoundPlay(int index);
     void OnCheatSheetToggle();
 
-	//Animation methods
+	// Animation methods
 	void UpdateAnimations();
 
-    //Movement methods
+    // ovement methods
     void OnMove(glm::vec2 moveVector);
     void OnInteract();
 
-    //UI methods
+    // UI methods
     void OnUIMove(glm::vec2 moveVector);
 	void OnMenuToggle();
 	void OnApply();
 
 public:
     PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
+
+    // Equipment methods
+    bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
     // Session methods
     // Argument pat is null when player failed playing pattern

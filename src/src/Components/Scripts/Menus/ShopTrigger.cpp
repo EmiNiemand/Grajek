@@ -14,6 +14,12 @@ void ShopTrigger::Start() {
     Component::Start();
 }
 
+void ShopTrigger::OnDestroy() {
+    door.reset();
+    buttonImage.reset();
+    Component::OnDestroy();
+}
+
 void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     auto animation = GameObject::Instantiate("DoorAnimation", door);

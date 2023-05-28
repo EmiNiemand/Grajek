@@ -33,6 +33,8 @@ public:
 
     void Update() override;
 
+    void OnDestroy() override;
+
 private:
     void CalcValueDelta();
 };

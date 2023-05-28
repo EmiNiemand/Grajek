@@ -38,6 +38,7 @@ void BoxCollider::FixedUpdate() {
 
 
 void BoxCollider::OnDestroy() {
+    collisionsBuffer.clear();
     CollisionManager::GetInstance()->RemoveBoxCollider(id);
 //    AIManager::GetInstance()->RemoveBoxCollider(std::dynamic_pointer_cast<BoxCollider>(shared_from_this()));
 #ifdef DEBUG

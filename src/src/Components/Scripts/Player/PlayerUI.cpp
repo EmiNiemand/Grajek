@@ -15,6 +15,7 @@
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "EngineManagers/SavePointManager.h"
 
+//TODO: what the hell happened here o.0
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
@@ -153,6 +154,12 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         savePointMenu->GetParent()->DisableSelfAndChildren();
         SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;
     }
+}
+
+void PlayerUI::OnDestroy() {
+    cashText.reset();
+    repText.reset();
+    Component::OnDestroy();
 }
 
 void PlayerUI::UpdateCash(int newAmount) {

@@ -145,7 +145,7 @@ void CharacterMovement::AIUpdate() {
 
 void CharacterMovement::OnDestroy() {
     path->clear();
-    path = nullptr;
+    delete path;
     rigidbody = nullptr;
     pathfinding = nullptr;
     collisionGrid = nullptr;

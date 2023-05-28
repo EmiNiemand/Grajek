@@ -16,9 +16,7 @@
  */
 Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Drawable(parent, id) {}
 
-Renderer::~Renderer() {
-    model.reset();
-}
+Renderer::~Renderer() = default;
 
 void Renderer::Update() {
 #ifdef DEBUG
@@ -28,6 +26,12 @@ void Renderer::Update() {
         return;
     }
     Drawable::Update();
+}
+
+
+void Renderer::OnDestroy() {
+    model.reset();
+    Component::OnDestroy();
 }
 
 void Renderer::Draw() {

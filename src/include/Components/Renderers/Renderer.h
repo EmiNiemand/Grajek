@@ -16,8 +16,9 @@ public:
     Renderer(const std::shared_ptr<GameObject> &parent, int id);
     ~Renderer() override;
 
-
     void Update() override;
+    void OnDestroy() override;
+
     void Draw() override;
     void Draw(std::shared_ptr<Shader> shader) override;
 

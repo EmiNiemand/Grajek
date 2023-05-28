@@ -1,7 +1,8 @@
 #include "Components/Scripts/SessionStarter.h"
+#include "Components/Scripts/Instrument.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
-#include "Components/Scripts/Player/PlayerManager.h"
 
 SessionStarter::SessionStarter(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -10,19 +11,19 @@ SessionStarter::~SessionStarter() {}
 void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instruments) {
     int buttonWidth = 256;
     int buttonHeight = 300;
-    int margin = 50;
+    int margin = 100;
 
     int buttonOffset = buttonWidth + margin;
                     // We start from the middle of a screen...
-    int xPosBegin = 960 +
+    int xPosBegin = 960 -
             // Offset pivot to button's middle point...
-            buttonWidth/2 -
+            buttonWidth/2.0f -
             // Try to distribute this nicely around the screen's middle...
-            (instruments.size()/2 + 1) * buttonOffset +
+            (instruments.size()/2) * buttonOffset -
             // And - if there's uneven amount of instruments - move
             // all buttons so that middle instruments is in the middle
             // of the screen
-            (buttonOffset/2.0f) * ((instruments.size()+1)%2);
+            (buttonOffset/2.0f) * ((instruments.size()+1) % 2);
 
     // Sort instrument names
     std::map<InstrumentName, std::string> instrumentNames;
@@ -36,7 +37,7 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
         auto button = Menu::AddButton(
                 std::to_string((int)instrument.first),
                 xPosBegin + buttonOffset * buttons.size(),
-                540 - buttonHeight/2,
+                540 - buttonHeight/2.0f,
                 "UI/Icons/small/icon"+instrument.second+"Inactive.png",
                 "UI/Icons/small/icon"+instrument.second+".png");
         buttons.push_back(button);
@@ -77,4 +78,9 @@ void SessionStarter::OnClick() {
 
 void SessionStarter::Stop() {
     parent->parent->RemoveAllChildren();
+}
+
+void SessionStarter::OnDestroy() {
+    buttons.clear();
+    Menu::OnDestroy();
 }

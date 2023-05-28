@@ -50,6 +50,7 @@ public:
 
     // constructor
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+    virtual ~Mesh();
 
     // render the mesh
     // "textured" is a temporary workaround for cubemap problem

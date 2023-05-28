@@ -2,11 +2,12 @@
 #define GLOOMENGINE_SESSIONSTARTER_H
 
 #include "Components/UI/Menu.h"
-#include "Components/Scripts/Instrument.h"
 #include "glm/vec2.hpp"
 #include <set>
+#include <vector>
 
 class Button;
+class Instrument;
 
 class SessionStarter : public Menu {
 private:
@@ -15,6 +16,8 @@ private:
 public:
     SessionStarter(const std::shared_ptr<GameObject> &parent, int id);
     ~SessionStarter() override;
+
+    void OnDestroy() override;
 
     void Setup(const std::set<std::shared_ptr<Instrument>>& instruments);
     void ChangeActiveButton(glm::vec2 moveVector) override;

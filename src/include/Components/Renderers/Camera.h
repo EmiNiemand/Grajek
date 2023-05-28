@@ -26,6 +26,7 @@ public:
     void Start() override;
     void Update() override;
     void OnUpdate() override;
+    void OnDestroy() override;
 
     void SetTarget(const std::shared_ptr<GameObject> &target);
     void SetZoomLevel(float newZoom);
