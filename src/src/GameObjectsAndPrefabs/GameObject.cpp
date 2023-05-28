@@ -163,6 +163,9 @@ void GameObject::Destroy() {
     DestroyAllChildren();
     DestroyAllComponents();
     parent->children.erase(id);
+    transform->parent.reset();
+    transform.reset();
+    bounds.reset();
     children.clear();
 }
 
@@ -197,6 +200,9 @@ void GameObject::DestroyAllChildren() {
     for (int i = 0; i < toDestroy.size(); ++i) {
         toDestroy[i]->DestroyAllComponents();
         toDestroy[i]->children.clear();
+        toDestroy[i]->transform->parent.reset();
+        toDestroy[i]->transform.reset();
+        toDestroy[i]->bounds.reset();
         GloomEngine::GetInstance()->RemoveGameObject(toDestroy[i]);
         toDestroy[i].reset();
     }

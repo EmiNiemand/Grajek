@@ -181,6 +181,7 @@ bool GloomEngine::MainLoop() {
 
 void GloomEngine::Update() {
     //Frustum culling
+    if (!FindGameObjectWithName("MainMenu"))
     {
 #ifdef DEBUG
         ZoneScopedNC("Frustum Culling", 0xFFD733);
