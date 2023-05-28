@@ -15,6 +15,7 @@
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "EngineManagers/SavePointManager.h"
 
+//TODO: what the hell happened here o.0
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();

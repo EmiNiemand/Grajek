@@ -29,7 +29,7 @@ public:
     /// Called one when Component is created by GameObject class
     inline virtual void OnCreate(){};
     /// Called one when Component is removed by GameObject class
-    inline virtual void OnDestroy(){};
+    inline virtual void OnDestroy(){parent.reset();};
 
     /// Called once on creation even if disabled
     inline virtual void Awake(){callOnAwake = false;};

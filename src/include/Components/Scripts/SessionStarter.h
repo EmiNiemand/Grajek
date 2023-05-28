@@ -2,11 +2,12 @@
 #define GLOOMENGINE_SESSIONSTARTER_H
 
 #include "Components/UI/Menu.h"
-#include "Components/Scripts/Instrument.h"
 #include "glm/vec2.hpp"
 #include <set>
+#include <vector>
 
 class Button;
+class Instrument;
 
 class SessionStarter : public Menu {
 private:

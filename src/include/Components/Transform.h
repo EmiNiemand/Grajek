@@ -9,7 +9,6 @@ class GameObject;
 
 class Transform  {
 protected:
-    std::shared_ptr<GameObject> parent;
     //Local space information
     glm::vec3 mPos = {0.0f, 0.0f, 0.0f };
     glm::vec3 mEulerRot = {0.0f, 0.0f, 0.0f }; //In degrees
@@ -40,6 +39,8 @@ public:
     [[nodiscard]] glm::vec3 GetBackward() const;
     [[nodiscard]] glm::vec3 GetForward() const;
     [[nodiscard]] glm::vec3 GetGlobalScale() const;
+
+    std::shared_ptr<GameObject> parent;
 private:
     void SetDirtyFlag();
 };

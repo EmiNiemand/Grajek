@@ -90,13 +90,13 @@ void DrumsSessionUI::PlaySound(int index) {
                 {AnimatedProperty::Position, glm::vec3(random, 550.0f, 0.0f)}
         });
     }
-    GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-            {AnimatedProperty::Rotation,
-                glm::vec3(0.0f, 0.0f, generator->GetFloat(-45.0f, 45.0f))}
-    });
-    GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
-            {AnimatedProperty::Scale, glm::vec3(0.5f)}
-    });
+    //GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+    //        {AnimatedProperty::Rotation,
+    //            glm::vec3(0.0f, 0.0f, generator->GetFloat(-45.0f, 45.0f))}
+    //});
+    //GameObject::Instantiate("NutaAnimator", parent->parent)->AddComponent<UIAnimator>()->Setup(nuta, {
+    //        {AnimatedProperty::Scale, glm::vec3(0.5f)}
+    //});
     nuta->SetScale(generator->GetFloat(1, 3));
 
     for (int i = 0; i < sampleAnimators[index].size(); ++i) {
