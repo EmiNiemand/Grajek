@@ -16,9 +16,12 @@ public:
 //    std::shared_ptr<MainMenuOptionsMenu> optionsMenu;
 //    std::shared_ptr<CreditsMenu> creditsMenu;
 
-private:
+public:
     void Start() override;
     void Update() override;
+    void OnDestroy() override;
+
+private:
 
     void PollInput();
 

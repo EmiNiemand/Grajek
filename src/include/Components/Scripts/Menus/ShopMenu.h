@@ -13,10 +13,15 @@ private:
     short secondInstrumentIndex = 0, thirdInstrumentIndex = 0, fourthInstrumentIndex = 0;
 
 public:
+    bool triggerActive = false;
+
+public:
     ShopMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~ShopMenu() override;
 
     void Awake() override;
+    void OnDestroy() override;
+
     void ChangeActiveButton(glm::vec2 moveVector) override;
     bool ShowMenu();
     void OnClick() override;

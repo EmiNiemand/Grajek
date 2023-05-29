@@ -16,6 +16,8 @@ private:
 public:
     PlayerUI(const std::shared_ptr<GameObject> &parent, int id);
 
+    void OnDestroy() override;
+
     void UpdateCash(int newAmount);
     void UpdateRep(int newAmount);
 };

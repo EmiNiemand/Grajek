@@ -38,6 +38,8 @@ private:
     inline static ComponentFactory* componentFactory;
 
 public:
+    virtual ~ComponentFactory();
+
     ComponentFactory(ComponentFactory &other) = delete;
     void operator=(const ComponentFactory&) = delete;
 

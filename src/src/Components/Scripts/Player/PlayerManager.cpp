@@ -3,32 +3,36 @@
 //
 
 #include "Components/Scripts/Player/PlayerManager.h"
-#include "GloomEngine.h"
-#include "Components/Renderers/Camera.h"
-#include "LowLevelClasses/GameData.h"
-#include "EngineManagers/HIDManager.h"
-#include "GameObjectsAndPrefabs/GameObject.h"
-#include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Scripts/Player/PlayerInput.h"
 #include "Components/Scripts/Player/PlayerMovement.h"
 #include "Components/Scripts/Player/PlayerEquipment.h"
 #include "Components/Scripts/Player/PlayerUI.h"
-#include "Components/Scripts/SessionUI/SessionUI.h"
-#include "Components/Scripts/MusicSession.h"
-#include "Components/Scripts/SessionStarter.h"
 #include "Components/Scripts/Menus/PauseMenu.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "Components/Scripts/Menus/SavePointMenu.h"
+#include "Components/Scripts/SessionUI/SessionUI.h"
+#include "Components/Scripts/MusicSession.h"
+#include "Components/Scripts/SessionStarter.h"
+#include "Components/Scripts/Instrument.h"
+#include "Components/Renderers/Camera.h"
+#include "Components/Renderers/Animator.h"
 #include "Components/UI/Button.h"
+#include "Components/Audio/AudioListener.h"
 #include "Components/Animations/UIAnimator.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
+#include "EngineManagers/HIDManager.h"
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
-#include "Components/Renderers/Animator.h"
 #include "EngineManagers/OpponentManager.h"
 #include "EngineManagers/DialogueManager.h"
+#include "EngineManagers/SavePointManager.h"
+#include "LowLevelClasses/GameData.h"
+#include "GloomEngine.h"
 
 #include <filesystem>
 
@@ -40,24 +44,47 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
                             : Component(parent, id) {}
 
 void PlayerManager::Awake() {
+    moveInput = glm::vec2(0);
+    inputEnabled = true;
+
+    // Add Components
+    // --------------
+    parent->AddComponent<AudioListener>();
+    rb = parent->AddComponent<Rigidbody>();
+
+    // Add Player scripts
+    // ------------------sssss
     movement = parent->AddComponent<PlayerMovement>();
-    rb = parent->GetComponent<Rigidbody>();
     equipment = parent->AddComponent<PlayerEquipment>();
+    playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
+
+    // Set up Model Animator
+    //----------------------
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     animator = animatorObject->AddComponent<Animator>();
-    // TODO: Change model later
     animator->LoadAnimationModel("MainHero/MainHeroIdle.dae");
     animator->SetAnimation("MainHero/MainHeroIdle.dae");
-    equipment->Setup(0, 0);
-    playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
-    playerUI->UpdateCash(equipment->GetCash());
-    playerUI->UpdateRep(equipment->GetRep());
-    sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
-    GameObject::Instantiate("SessionUI", parent);
 
-    moveInput = glm::vec2(0);
-    inputEnabled = true;
+    // Set up Collider
+    //----------------
+    auto collider = parent->GetComponent<BoxCollider>();
+    collider->SetOffset({0, 1.5, 0});
+    collider->SetSize({1, 2, 1});
+    collider->isDynamic = true;
+
+    // Set up Equipment
+    // ----------------
+    equipment->Setup(0, 0);
+    BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
+
+    // Set up Player's UI
+    // ------------------
+    playerUI->UpdateCash(equipment->GetCash());
+
+    // Set up Music Session
+    // --------------------
+    sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
@@ -65,9 +92,8 @@ void PlayerManager::Awake() {
     savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
     activeMenu = nullptr;
 
-    BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
-
     // Load game
+    // ---------
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "ProjectConfig";
@@ -159,8 +185,13 @@ void PlayerManager::OnInteract() {
 }
 #pragma endregion
 
+//TODO: rewrite these monstrosities
+// (maybe some kind of UIManager should be used?)
 #pragma region UI Events
 void PlayerManager::ToggleOptionsMenu() {
+    //TODO: this should be simply controlled by pauseMenu
+    // (which means that PlayerManager here only calls method)
+    // in PauseMenu (or even activeMenu)
     if (activeMenu == pauseMenu) {
         pauseMenu->HideMenu();
         activeMenu = optionsMenu;
@@ -174,6 +205,7 @@ void PlayerManager::ToggleOptionsMenu() {
 }
 
 void PlayerManager::OnMenuToggle() {
+    //TODO: this all should be simply controlled by activeMenu alone
     if(session) return;
     if(activeMenu &&
         !(activeMenu == pauseMenu ||
@@ -198,19 +230,9 @@ void PlayerManager::OnMenuToggle() {
         pauseMenu->ShowMenu();
         activeMenu = pauseMenu;
     }
-    else if(activeMenu == shopMenu) {
-        GloomEngine::GetInstance()->timeScale = 1;
-        shopMenu->HideMenu();
-        activeMenu.reset();
-    }
-    else if(activeMenu == savePointMenu) {
-        GloomEngine::GetInstance()->timeScale = 1;
-        savePointMenu->HideMenu();
-        activeMenu.reset();
-    }
     else {
         GloomEngine::GetInstance()->timeScale = 1;
-        pauseMenu->HideMenu();
+        activeMenu->HideMenu();
         activeMenu.reset();
         DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     }
@@ -229,10 +251,13 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 #pragma endregion
 
 #pragma region Music Session Events
-
 void PlayerManager::OnSessionToggle() {
+    //TODO: this method implementation just seems wrong
     if(activeMenu && activeMenu != sessionStarter) return;
-    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+    auto dialogueManager = DialogueManager::GetInstance();
+    if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
+    auto savePointManager = SavePointManager::GetInstance();
+    if(savePointManager) savePointManager->NotifyMenuIsNotActive();
     if (session) {
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
@@ -249,7 +274,8 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
 
-    DialogueManager::GetInstance()->NotifyMenuIsActive();
+    if(dialogueManager) DialogueManager::GetInstance()->NotifyMenuIsActive();
+    if(savePointManager) savePointManager->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     activeMenu = sessionStarter;
@@ -270,12 +296,12 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
-     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedSatisfaction());
+     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedPlayerSatisfaction());
 
     if (!pat) return;
 
     //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
-    equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
+    equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
 
     playerUI->UpdateCash(equipment->cash);
     playerUI->UpdateRep(equipment->rep);
@@ -288,7 +314,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     sessionStarter->Stop();
     sessionStarter.reset();
     activeMenu.reset();
-    session = parent->AddComponent<MusicSession>();
+    session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
     session->Setup(equipment->GetInstrumentWithName(instrument));
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 }
@@ -306,6 +332,23 @@ void PlayerManager::OnPlayerLoseDuel() {
     OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
     DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     // TODO add sound when player beat boss
+}
+
+void PlayerManager::OnDestroy() {
+    session.reset();
+    sessionStarter.reset();
+    sessionStarterUI.reset();
+    playerUI.reset();
+    equipment.reset();
+    movement.reset();
+    pauseMenu.reset();
+    optionsMenu.reset();
+    shopMenu.reset();
+    savePointMenu.reset();
+    animator.reset();
+    rb.reset();
+    activeMenu.reset();
+    Component::OnDestroy();
 }
 
 #pragma endregion

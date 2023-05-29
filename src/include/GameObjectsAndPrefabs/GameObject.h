@@ -25,7 +25,7 @@ public:
     std::map<int, std::shared_ptr<Component>> components;
     std::map<int, std::shared_ptr<GameObject>> children;
 
-    std::shared_ptr<GameObject> parent = nullptr;
+    std::shared_ptr<GameObject> parent;
     std::shared_ptr<AABB> bounds = nullptr;
 
     Tags tag;
@@ -36,7 +36,7 @@ public:
     bool isOnFrustum = false;
 
 public:
-    GameObject(std::string name, int id, const std::shared_ptr <GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
+    GameObject(std::string name, int id, const std::shared_ptr<GameObject> &parent = nullptr, Tags tag = Tags::DEFAULT);
     virtual ~GameObject();
 
     static std::shared_ptr<GameObject> Instantiate(std::string name, std::shared_ptr<GameObject> parent = nullptr, Tags tag = Tags::DEFAULT);
@@ -82,7 +82,11 @@ public:
 
     void RecalculateGlobalRotation();
 private:
+    friend class GloomEngine;
     void ForceUpdateSelfAndChildren();
+    void Destroy();
+    void DestroyAllComponents();
+    void DestroyAllChildren();
 
     inline void SetId(int newId) {id = newId;}
 };

@@ -9,7 +9,7 @@ file(GLOB_RECURSE HEADER_FILES
 	 *.hpp)
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/GameObjectsAndPrefabs/Prefabs/Player.cpp include/GameObjectsAndPrefabs/Prefabs/Player.h src/GameObjectsAndPrefabs/Prefabs/Die.cpp include/GameObjectsAndPrefabs/Prefabs/Die.h src/Factories/PrefabFactory.cpp include/Factories/PrefabFactory.h src/GameObjectsAndPrefabs/Prefabs/Shop.cpp include/GameObjectsAndPrefabs/Prefabs/Shop.h src/GameObjectsAndPrefabs/Prefabs/House.cpp include/GameObjectsAndPrefabs/Prefabs/House.h src/EngineManagers/AnimationManager.cpp include/EngineManagers/AnimationManager.h src/Components/AI/CharacterAnimations.cpp include/Components/AI/CharacterAnimations.h)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

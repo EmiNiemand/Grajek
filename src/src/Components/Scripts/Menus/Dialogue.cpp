@@ -13,12 +13,15 @@ Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Componen
 
 Dialogue::~Dialogue() = default;
 
-void Dialogue::Start() {
-    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
-
+void Dialogue::Awake() {
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     parent->GetComponent<BoxCollider>()->SetSize({5, 5, 5});
     parent->GetComponent<BoxCollider>()->isTrigger = true;
+    Component::Awake();
+}
+
+void Dialogue::Start() {
+    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
 
     image = GameObject::Instantiate("ButtonImage", parent)->AddComponent<Image>();
     image->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
@@ -95,11 +98,18 @@ void Dialogue::NextDialogue() {
 }
 
 void Dialogue::OnCreate() {
-    DialogueManager::GetInstance()->dialogues.push_back(std::dynamic_pointer_cast<Dialogue>(shared_from_this()));
+    DialogueManager::GetInstance()->dialogues.insert({id, std::dynamic_pointer_cast<Dialogue>(shared_from_this())});
     Component::OnCreate();
 }
 
 void Dialogue::OnDestroy() {
-    std::remove(DialogueManager::GetInstance()->dialogues.begin(), DialogueManager::GetInstance()->dialogues.end(), shared_from_this());
+    DialogueManager::GetInstance()->dialogues.erase(id);
+    text1.reset();
+    text2.reset();
+    text3.reset();
+    dialogue.reset();
+    playerManager.reset();
+    texts.clear();
+    image.reset();
     Component::OnDestroy();
 }

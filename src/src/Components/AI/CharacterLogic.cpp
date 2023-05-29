@@ -26,7 +26,7 @@ void CharacterLogic::Start() {
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
-    characterAnimator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
+    characterAnimator->LoadAnimationModel(modelPath);
     characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
@@ -35,7 +35,7 @@ void CharacterLogic::Start() {
 
 void CharacterLogic::Update() {
     if (logicState != ListeningToPlayer) {
-        switch (characterMovement->GetCurrentStatus()) {
+        switch (characterMovement->GetState()) {
             case OnPathToPlayer:
                 characterAnimations->SetNewState(Running);
                 break;
@@ -45,7 +45,7 @@ void CharacterLogic::Update() {
             case NearTargetSubPoint:
                 characterAnimations->SetNewState(Idle);
                 break;
-            case NearPlayer:
+            case NearPlayerPosition:
                 logicState = ListeningToPlayer;
                 break;
             default:
@@ -54,13 +54,13 @@ void CharacterLogic::Update() {
     }
 
     if (logicState == ListeningToPlayer) {
-        if (currentSatisfaction > 70.0f) {
+        if (playerSatisfaction > 70.0f) {
             characterAnimations->SetNewState(Cheering);
-        } else if (currentSatisfaction < 40.0f && currentSatisfaction >= 30.0f) {
+        } else if (playerSatisfaction < 40.0f && playerSatisfaction >= 30.0f) {
             characterAnimations->SetNewState(Booing);
-        } else if (currentSatisfaction < 30.0f) {
+        } else if (playerSatisfaction < 30.0f) {
             logicState = AlertedByPlayer;
-            characterMovement->ReturnToPreviousPath();
+            characterMovement->SetState(ReturnToPreviousTarget);
         } else {
             characterAnimations->SetNewState(Idle);
         }
@@ -73,10 +73,10 @@ void CharacterLogic::AIUpdate() {
     if (logicState == AlertedByPlayer) {
         CalculateSatisfaction();
 
-        if (currentSatisfaction > minSatisfaction) {
-            characterMovement->SetNewPathToPlayer();
+        if (playerSatisfaction > minSatisfaction) {
             characterIndicator->Indicate();
             logicState = MovingToPlayer;
+            characterMovement->SetState(SetPathToPlayer);
         }
     }
 
@@ -90,12 +90,14 @@ void CharacterLogic::OnCreate() {
 
 void CharacterLogic::OnDestroy() {
     AIManager::GetInstance()->RemoveCharacterLogic(id);
-    characterAnimations = nullptr;
-    characterMovement = nullptr;
-    characterIndicator = nullptr;
+    characterAnimations.reset();
+    characterMovement.reset();
+    characterIndicator.reset();
+    playerPattern.reset();
     favInstrumentsNames.clear();
     favGenres.clear();
     favPatterns.clear();
+    playerPattern = nullptr;
     Component::OnDestroy();
 }
 
@@ -108,36 +110,83 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) 
     playerPattern = pat;
 
     if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern) != favPatterns.end())
-        currentSatisfaction += 15;
+        playerSatisfaction += 15;
     else
-        currentSatisfaction -= 5;
+        playerSatisfaction -= 5;
 
-    currentSatisfaction = std::clamp(currentSatisfaction, 0.0f, 100.0f);
+    playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
 }
 
 void CharacterLogic::SetPlayerPlayingStatus(bool isPlayerPlaying) {
     if (isPlayerPlaying) {
         logicState = AlertedByPlayer;
     } else {
-        if (logicState != None) {
-            characterMovement->ReturnToPreviousPath();
-        }
+        if (logicState != None)
+            characterMovement->SetState(ReturnToPreviousTarget);
+
+        logicState = None;
+    }
+}
+
+void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen) {
+    enemyInstrumentName = ins;
+    enemyGenre = gen;
+}
+
+void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat) {
+    enemyPattern = pat;
+
+    if (std::find(favPatterns.begin(), favPatterns.end(), enemyPattern) != favPatterns.end())
+        enemySatisfaction += 15;
+    else
+        enemySatisfaction -= 5;
+
+    enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
+}
+
+void CharacterLogic::SetEnemyPlayingStatus(bool isEnemyPlaying) {
+    if (isEnemyPlaying) {
+        logicState = AlertedByPlayer;
+    } else {
+        if (logicState != None)
+            characterMovement->SetState(ReturnToPreviousTarget);
 
         logicState = None;
     }
 }
 
 void CharacterLogic::CalculateSatisfaction() {
-    currentSatisfaction = 100;
+    playerSatisfaction = 100;
 
     if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
-        currentSatisfaction += 30;
+        playerSatisfaction += 30;
 
     if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName)
-    != favInstrumentsNames.end())
-        currentSatisfaction += 20;
+        != favInstrumentsNames.end())
+        playerSatisfaction += 20;
+
+    enemySatisfaction = 0;
+
+    if (std::find(favGenres.begin(), favGenres.end(), enemyGenre) != favGenres.end())
+        enemySatisfaction += 30;
+
+    if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), enemyInstrumentName)
+            != favInstrumentsNames.end())
+        enemySatisfaction += 20;
+
+//    TODO: dunno, do something here
+//    if (playerSatisfaction > enemySatisfaction)
+
 }
 
-const float CharacterLogic::GetCurrentSatisfaction() const {
-    return currentSatisfaction;
+void CharacterLogic::SetAnimationModelToLoad(const std::string& model) {
+    modelPath = model;
+}
+
+const float CharacterLogic::GetPlayerSatisfaction() const {
+    return playerSatisfaction;
+}
+
+const float CharacterLogic::GetEnemySatisfaction() const {
+    return enemySatisfaction;
 }

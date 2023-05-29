@@ -98,13 +98,64 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
     mutex.unlock();
 }
 
-const float AIManager::GetCombinedSatisfaction() {
+const float AIManager::GetCombinedPlayerSatisfaction() {
     float satisfaction = 0.0f;
 
     mutex.lock();
 
     for (auto&& ch : charactersLogics) {
-        satisfaction += ch.second->GetCurrentSatisfaction();
+        satisfaction += ch.second->GetPlayerSatisfaction();
+    }
+
+    satisfaction /= (float)charactersLogics.size();
+
+    mutex.unlock();
+
+    return satisfaction;
+}
+
+void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
+    mutex.lock();
+
+    playerIsPlaying = true;
+
+    for (auto&& ch : charactersLogics) {
+        ch.second->SetEnemyInstrumentAndGenre(ins, gen);
+        ch.second->SetEnemyPlayingStatus(true);
+    }
+
+    mutex.unlock();
+}
+
+void AIManager::NotifyEnemyStopsPlaying() {
+    mutex.lock();
+
+    playerIsPlaying = false;
+
+    for (auto&& ch : charactersLogics) {
+        ch.second->SetEnemyPlayingStatus(false);
+    }
+
+    mutex.unlock();
+}
+
+void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
+    mutex.lock();
+
+    for (auto&& ch : charactersLogics) {
+        ch.second->SetEnemyPattern(pat);
+    }
+
+    mutex.unlock();
+}
+
+const float AIManager::GetCombinedEnemySatisfaction() {
+    float satisfaction = 0.0f;
+
+    mutex.lock();
+
+    for (auto&& ch : charactersLogics) {
+        satisfaction += ch.second->GetEnemySatisfaction();
     }
 
     satisfaction /= (float)charactersLogics.size();

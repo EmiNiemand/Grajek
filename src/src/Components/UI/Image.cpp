@@ -82,10 +82,14 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
 void Image::SetPosition(float x2, float y2) {
     x=x2; y=y2;
     parent->transform->SetLocalPosition(glm::vec3(x, y, z));
+
     UpdateCorners();
 
-    mesh.reset();
-    mesh = CreateMesh();
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    mesh->setupMesh();
 }
 
 //TODO: I actually have no idea what'd happen after using this method, probably best to avoid using it
@@ -105,13 +109,26 @@ void Image::SetRotation(float angle) {
 }
 
 void Image::SetScale(float newScale) {
-    scale = newScale;
-    parent->transform->SetLocalScale(glm::vec3(scale));
+    scale = {newScale, newScale};
+    parent->transform->SetLocalScale(glm::vec3(scale.x, scale.y, 1));
 
     UpdateCorners();
 
     mesh.reset();
     mesh = CreateMesh();
+}
+
+void Image::SetScale(glm::vec2 newScale) {
+    scale = newScale;
+    parent->transform->SetLocalScale(glm::vec3(scale.x, scale.y, 1));
+
+    UpdateCorners();
+
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    mesh->setupMesh();
 }
 
 void Image::SetColor(glm::vec3 newColor) {
@@ -139,6 +156,12 @@ void Image::Update() {
     UIComponent::Update();
 }
 
+void Image::OnDestroy() {
+    glDeleteTextures(1, &textureID);
+    mesh.reset();
+    Component::OnDestroy();
+}
+
 void Image::Draw() {
     if (!mesh) return;
     UIManager::GetInstance()->shader->Activate();
@@ -156,8 +179,8 @@ void Image::Draw() {
 
 void Image::UpdateCorners() {
     // Calculate two opposite vertices
-    leftBottom = {x - width*pivot.x*scale, y - height*pivot.y*scale};
-    rightTop = {x + width*(1-pivot.x)*scale, y + height*(1-pivot.y)*scale};
+    leftBottom = {x - width*pivot.x*scale.x, y - height*pivot.y*scale.y};
+    rightTop = {x + width*(1-pivot.x)*scale.x, y + height*(1-pivot.y)*scale.y};
 
     leftTop = {leftBottom.x, rightTop.y};
     rightBottom = {rightTop.x, leftBottom.y};
@@ -166,5 +189,5 @@ void Image::UpdateCorners() {
 glm::vec3 Image::GetColor() { return color; }
 float Image::GetAlpha() { return alpha; }
 
-float Image::GetWidth() { return width*scale; }
-float Image::GetHeight() { return height*scale; }
+float Image::GetWidth() { return width*scale.x; }
+float Image::GetHeight() { return height*scale.y; }
