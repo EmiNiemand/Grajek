@@ -212,9 +212,9 @@ void CharacterMovement::SetNewPathToPlayer() {
         if (isAvailable)
             break;
     }
-    spdlog::info("p1 " + std::to_string(playerPos.x) + ", " + std::to_string(playerPos.z));
-    playerPos = playerPos + GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetForward() * 3.0f;
-    spdlog::info("p2 " + std::to_string(playerPos.x) + ", " + std::to_string(playerPos.z));
+
+    // 
+//    playerPos = playerPos + GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetForward() * 3.0f;
 
     SetSubEndPoints();
 }
