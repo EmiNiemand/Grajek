@@ -136,7 +136,7 @@ void PlayerManager::UpdateAnimations() {
 	float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
         animator->SetAnimation("MainHero/MainHeroRun.dae");
-		animator->speed = 3;
+		animator->speed = 2;
 	}
 	else if (velocity <= 0.01 && previousVelocity > 0.01){
 		animator->SetAnimation("MainHero/MainHeroIdle.dae");

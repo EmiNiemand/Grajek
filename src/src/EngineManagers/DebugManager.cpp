@@ -130,7 +130,7 @@ void DebugManager::Render() {
         ImGui::Text("%s", selected->GetName().c_str());
         ImGui::DragFloat3("Position", inputVector1, 1.0f);
         ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
-        ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f,10.0f);
+        ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f);
         if(selected->GetComponent<BoxCollider>()) {
             ImGui::DragFloat3("Colider Size", inputVector4, 1.0f);
             ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
@@ -290,10 +290,12 @@ void DebugManager::SaveMenu()
         path += modelPaths[selectedModelId].path().filename().string();
         SceneManager::GetInstance()->CreatePrefabObject("House",path);
     }
-    if (ImGui::SmallButton("Add new default shop - NOT IMPLEMENTED")){
+    if (ImGui::SmallButton("Add new default shop")){
         SceneManager::GetInstance()->CreatePrefabObject("Shop");
     }if (ImGui::SmallButton("Add new default savePoint")){
         SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
+    }if (ImGui::SmallButton("Add new Die")) {
+        SceneManager::GetInstance()->CreatePrefabObject("Die");
     }
     ImGui::End();
 }
@@ -305,17 +307,33 @@ void DebugManager::Free() const {
     ImGui::DestroyContext();
 }
 
-std::vector<std::filesystem::directory_entry> DebugManager::FindModelPaths() {
+std::vector<std::filesystem::directory_entry> DebugManager::FindModelPaths(std::string folderName) {
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "models";
     path /= "Buildings";
+    if(!folderName.empty())
+        path /= folderName;
     std::vector<std::filesystem::directory_entry> scannedEntries;
     for(const auto& entry : fs::directory_iterator(path)){
         if(entry.path().string().ends_with(".obj"))
         scannedEntries.push_back(entry);
     }
 
+    return scannedEntries;
+}
+
+std::vector<std::filesystem::directory_entry> DebugManager::FindModelFolders() {
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "models";
+    path /= "Buildings";
+
+    std::vector<std::filesystem::directory_entry> scannedEntries;
+    for(const auto& entry : fs::directory_iterator(path)){
+        if(entry.is_directory())
+            scannedEntries.push_back(entry);
+    }
     return scannedEntries;
 }
 
