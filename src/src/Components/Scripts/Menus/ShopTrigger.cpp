@@ -2,6 +2,8 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Animations/GameObjectAnimator.h"
 #include "Components/Renderers/Renderer.h"
+#include "Components/Scripts/Menus/ShopMenu.h"
+#include "GloomEngine.h"
 
 ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -11,6 +13,7 @@ void ShopTrigger::Start() {
     door = GameObject::Instantiate("Door", parent->parent);
     door->AddComponent<Renderer>()->LoadModel("Buildings/drzwi.obj");
     door->transform->SetLocalPosition(glm::vec3(-3, 0, 3.5f));
+    shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     Component::Start();
 }
 
@@ -26,7 +29,7 @@ void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) 
     animation->AddComponent<GameObjectAnimator>()->Setup(door->transform, {
             {AnimatedProperty::Rotation, glm::vec3(0.0f, 60.0f, 0.0f), 1.5f}
     }, false);
-    active = true;
+    shopMenu->triggerActive = true;
     buttonImage->enabled = true;
     Component::OnTriggerEnter(gameObject);
 }
@@ -37,7 +40,7 @@ void ShopTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
     animation->AddComponent<GameObjectAnimator>()->Setup(door->transform, {
             {AnimatedProperty::Rotation, glm::vec3(0.0f, -60.0f, 0.0f), 1.5f}
     }, false);
-    active = false;
+    shopMenu->triggerActive = false;
     buttonImage->enabled = false;
     Component::OnTriggerExit(gameObject);
 }

@@ -4,13 +4,14 @@
 #include "Components/Component.h"
 
 class Image;
+class ShopMenu;
 
 class ShopTrigger : public Component {
 private:
     std::shared_ptr<GameObject> door;
 
 public:
-    bool active = false;
+    std::shared_ptr<ShopMenu> shopMenu;
     std::shared_ptr<Image> buttonImage;
 
 public:

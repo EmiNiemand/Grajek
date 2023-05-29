@@ -64,8 +64,8 @@ void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 bool ShopMenu::ShowMenu() {
-    // TODO check all triggers
-    if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
+    if (!triggerActive) return false;
+
     parent->EnableSelfAndChildren();
     if (!instruments.empty()) {
         for (const auto & instrument : instruments) {
