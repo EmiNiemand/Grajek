@@ -65,6 +65,8 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
 }
 
 void TrumpetSessionUI::PlaySound(int index) {
-    // TODO to do
+    for (int i = 0; i < sampleAnimators[index].size(); ++i) {
+        sampleAnimators[index][i]->Reset();
+    }
     SessionUI::PlaySound(index);
 }
