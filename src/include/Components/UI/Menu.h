@@ -17,6 +17,8 @@ public:
     Menu(const std::shared_ptr<GameObject> &parent, int id);
     ~Menu() override;
 
+    void OnDestroy() override;
+
     virtual void HideMenu();
     inline virtual void ChangeActiveButton(glm::vec2 moveVector);
     std::shared_ptr<Image> AddImage(std::string name, int x, int y, const std::string &path);

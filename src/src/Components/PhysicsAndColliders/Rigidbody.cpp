@@ -8,7 +8,7 @@
 #endif
 
 Rigidbody::Rigidbody(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
-    parent->AddComponent<BoxCollider>();
+    parent->AddComponent<BoxCollider>()->isDynamic = true;
 }
 
 Rigidbody::~Rigidbody() = default;

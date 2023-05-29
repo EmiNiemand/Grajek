@@ -11,14 +11,14 @@ class Mesh;
 
 class Image : public UIComponent {
 private:
-    unsigned int textureID{};
+    unsigned int textureID;
     std::shared_ptr<Mesh> mesh;
     glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
     // Original dimensions of the image
     int width = 1920, height = 1080;
     int x = 0, y = 0;
     float z = 0.0f;
-    float scale = 1;
+    glm::vec2 scale = glm::vec2(1);
 
     glm::vec3 color = glm::vec3(1.0f);
     float alpha = 1.0f;
@@ -36,12 +36,16 @@ public:
     * y from 0 to 1080
     */
     void LoadTexture(int x, int y, const std::string& path, float z = 0);
+
     void Update() override;
+    void OnDestroy() override;
+
     void Draw() override;
 
     void SetPosition(float x2, float y2);
     void SetRotation(float angle);
     void SetScale(float scale);
+    void SetScale(glm::vec2 newScale);
     void SetColor(glm::vec3 newColor);
     void SetAlpha(float newAlpha);
 

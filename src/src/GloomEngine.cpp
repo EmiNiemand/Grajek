@@ -61,6 +61,7 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
+    AIManager::GetInstance()->InitializeSpawner(1, 1, 100);
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
     lastAIFrameTime = (float)glfwGetTime();
@@ -87,20 +88,24 @@ bool GloomEngine::MainLoop() {
 
 
     if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        componentsCopy.clear();
         for (int i = 0; i < destroyComponentBufferIterator; ++i) {
-            const auto& component = destroyComponentBuffer[i];
+            auto component = destroyComponentBuffer[i];
+            if (!component) continue;
             component->OnDestroy();
-            component->GetParent()->RemoveComponent(component->GetId());
             RemoveComponent(component);
+            destroyComponentBuffer[i].reset();
         }
-        ClearDestroyComponentBuffer();
+        destroyComponentBufferIterator = 0;
 
         for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
-            const auto& gameObject = destroyGameObjectBuffer[i];
-            gameObject->parent->RemoveChild(gameObject->GetId());
+            auto gameObject = destroyGameObjectBuffer[i];
+            if (!gameObject) continue;
+            gameObject->Destroy();
             RemoveGameObject(gameObject);
+            destroyGameObjectBuffer[i].reset();
         }
-        ClearDestroyGameObjectBuffer();
+        destroyGameObjectBufferIterator = 0;
 
         SceneManager::GetInstance()->activeScene->UpdateSelfAndChildren();
 
@@ -179,6 +184,7 @@ bool GloomEngine::MainLoop() {
 
 void GloomEngine::Update() {
     //Frustum culling
+    if (!FindGameObjectWithName("MainMenu"))
     {
 #ifdef DEBUG
         ZoneScopedNC("Frustum Culling", 0xFFD733);
@@ -416,18 +422,4 @@ void GloomEngine::AddGameObjectToDestroyBuffer(const std::shared_ptr<GameObject>
 void GloomEngine::AddComponentToDestroyBuffer(const std::shared_ptr<Component>& component) {
     destroyComponentBuffer[destroyComponentBufferIterator] = component;
     ++destroyComponentBufferIterator;
-}
-
-void GloomEngine::ClearDestroyGameObjectBuffer() {
-    for (int i = 0; i < destroyGameObjectBufferIterator; ++i) {
-        destroyGameObjectBuffer[i] = nullptr;
-    }
-    destroyGameObjectBufferIterator = 0;
-}
-
-void GloomEngine::ClearDestroyComponentBuffer() {
-    for (int i = 0; i < destroyComponentBufferIterator; ++i) {
-        destroyComponentBuffer[i] = nullptr;
-    }
-    destroyComponentBufferIterator = 0;
 }

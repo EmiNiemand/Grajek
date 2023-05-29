@@ -18,7 +18,10 @@ Animation::Animation(std::string name, float mDuration, int mTicksPerSecond) : n
     ticksPerSecond = mTicksPerSecond;
 }
 
-Animation::~Animation() = default;
+Animation::~Animation() {
+    bones.clear();
+    boneInfoMap.clear();
+}
 
 std::shared_ptr<Bone> Animation::FindBone(const std::string& name)
 {

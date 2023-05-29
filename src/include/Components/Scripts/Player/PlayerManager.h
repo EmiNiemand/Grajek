@@ -55,11 +55,13 @@ public:
     std::shared_ptr<Menu> activeMenu;
     bool inputEnabled;
 
-private:
-    void Start() override;
+public:
     void Awake() override;
+    void Start() override;
     void Update() override;
+    void OnDestroy() override;
 
+private:
     void PollInput();
 
     // Session methods

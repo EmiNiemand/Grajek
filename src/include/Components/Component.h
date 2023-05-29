@@ -19,9 +19,6 @@ public:
     bool enabled = true;
 
     Component(const std::shared_ptr<GameObject> &parent, int id);
-
-    Component();
-
     virtual ~Component() = 0;
 
     static void Destroy(const std::shared_ptr<Component>& component);
@@ -29,7 +26,7 @@ public:
     /// Called one when Component is created by GameObject class
     inline virtual void OnCreate(){};
     /// Called one when Component is removed by GameObject class
-    inline virtual void OnDestroy(){};
+    inline virtual void OnDestroy(){parent.reset();};
 
     /// Called once on creation even if disabled
     inline virtual void Awake(){callOnAwake = false;};

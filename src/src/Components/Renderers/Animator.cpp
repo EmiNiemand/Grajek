@@ -222,6 +222,6 @@ void Animator::LoadModel(const std::string &path) {
 }
 
 void Animator::OnDestroy() {
-
+    model.reset();
     Component::OnDestroy();
 }

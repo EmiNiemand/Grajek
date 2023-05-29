@@ -53,7 +53,7 @@ void PlayerManager::Awake() {
     rb = parent->AddComponent<Rigidbody>();
 
     // Add Player scripts
-    // ------------------
+    // ------------------sssss
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
@@ -85,7 +85,6 @@ void PlayerManager::Awake() {
     // Set up Music Session
     // --------------------
     sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
-    GameObject::Instantiate("SessionUI", parent);
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
@@ -297,12 +296,12 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
-     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedSatisfaction());
+     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedPlayerSatisfaction());
 
     if (!pat) return;
 
     //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
-    equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
+    equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
 
     playerUI->UpdateCash(equipment->cash);
     playerUI->UpdateRep(equipment->rep);
@@ -315,7 +314,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     sessionStarter->Stop();
     sessionStarter.reset();
     activeMenu.reset();
-    session = parent->AddComponent<MusicSession>();
+    session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
     session->Setup(equipment->GetInstrumentWithName(instrument));
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 }
@@ -333,6 +332,23 @@ void PlayerManager::OnPlayerLoseDuel() {
     OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
     DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     // TODO add sound when player beat boss
+}
+
+void PlayerManager::OnDestroy() {
+    session.reset();
+    sessionStarter.reset();
+    sessionStarterUI.reset();
+    playerUI.reset();
+    equipment.reset();
+    movement.reset();
+    pauseMenu.reset();
+    optionsMenu.reset();
+    shopMenu.reset();
+    savePointMenu.reset();
+    animator.reset();
+    rb.reset();
+    activeMenu.reset();
+    Component::OnDestroy();
 }
 
 #pragma endregion

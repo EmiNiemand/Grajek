@@ -71,9 +71,9 @@ public:
     glm::vec4 screenColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.00f);
 
     unsigned int destroyGameObjectBufferIterator = 0;
-    std::shared_ptr<GameObject> destroyGameObjectBuffer[1000];
+    std::shared_ptr<GameObject> destroyGameObjectBuffer[2000];
     unsigned int destroyComponentBufferIterator = 0;
-    std::shared_ptr<Component> destroyComponentBuffer[5000];
+    std::shared_ptr<Component> destroyComponentBuffer[2000];
 
     std::shared_ptr<Game> game;
     /// set to 0 to pause, 1 to resume
@@ -139,9 +139,6 @@ private:
     GloomEngine();
     void InitializeWindow();
     static void glfwErrorCallback(int error, const char* description);
-
-    void ClearDestroyGameObjectBuffer();
-    void ClearDestroyComponentBuffer();
 };
 
 

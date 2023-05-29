@@ -34,8 +34,7 @@ void Indicator::Indicate() {
     auto position = glm::vec3(projection * glm::vec4(chPos, 1));
 
     auto animator = GameObject::Instantiate("Animator", parent);
-    auto indicator = GameObject::Instantiate("Indicator", animator)->
-            AddComponent<Image>();
+    auto indicator = GameObject::Instantiate("Indicator", animator)->AddComponent<Image>();
     indicator->LoadTexture((int)x, (int)y, texturePath);
 //    animator->AddComponent<UIAnimator>()->Setup(indicator, {
 //            {AnimatedProperty::Position, glm::vec3(x, y + 50, 0), 5}
@@ -55,4 +54,9 @@ void Indicator::Indicate() {
 //    animator->AddComponent<UIAnimator>()->Setup(indicator, {
 //            {AnimatedProperty::Position, glm::vec3(position.x, position.y, 0)}
 //    });
+}
+
+void Indicator::OnDestroy() {
+    camera.reset();
+    Component::OnDestroy();
 }

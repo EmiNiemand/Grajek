@@ -9,7 +9,7 @@ CharacterPathfinding::CharacterPathfinding()  {
     aiGrid = AIManager::GetInstance()->aiGrid;
     aiCellSize = AIManager::GetInstance()->aiCellSize;
     openList.reserve(1000);
-    closedList.reserve(5000);
+    closedList.reserve(10000);
 }
 
 CharacterPathfinding::~CharacterPathfinding() = default;

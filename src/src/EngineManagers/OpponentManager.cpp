@@ -17,15 +17,15 @@ OpponentManager *OpponentManager::GetInstance() {
 
 void OpponentManager::NotifyPlayerPlayedPattern(float satisfaction) const {
     for (const auto & opponent : opponents) {
-        opponent->UpdateSatisfaction(satisfaction);
+        opponent.second->UpdateSatisfaction(satisfaction);
     }
 }
 
 void OpponentManager::NotifyPlayerStopsPlaying() {
     for (const auto & opponent : opponents) {
-        opponent->wellPlayedPatternCount = 0;
-        opponent->satisfactionAverage = 0;
-        for (const auto & i : opponent->belt) {
+        opponent.second->wellPlayedPatternCount = 0;
+        opponent.second->satisfactionAverage = 0;
+        for (const auto & i : opponent.second->belt) {
             i->enabled = false;
         }
     }

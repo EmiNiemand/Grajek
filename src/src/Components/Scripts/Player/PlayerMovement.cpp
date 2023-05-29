@@ -18,6 +18,11 @@ void PlayerMovement::Start() {
     Component::Start();
 }
 
+void PlayerMovement::OnDestroy() {
+    rb.reset();
+    Component::OnDestroy();
+}
+
 void PlayerMovement::FixedUpdate() {
     Component::FixedUpdate();
     if (rb == nullptr)

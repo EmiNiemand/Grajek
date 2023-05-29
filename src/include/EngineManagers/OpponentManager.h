@@ -1,8 +1,8 @@
 #ifndef IMAGE_CPP_OPPONENTMANAGER_H
 #define IMAGE_CPP_OPPONENTMANAGER_H
 
-#include <vector>
 #include <memory>
+#include <unordered_map>
 
 class Opponent;
 
@@ -11,7 +11,7 @@ private:
     inline static OpponentManager* opponentManager;
 
 public:
-    std::vector<std::shared_ptr<Opponent>> opponents;
+    std::unordered_map<int, std::shared_ptr<Opponent>> opponents;
 
 private:
     explicit OpponentManager();

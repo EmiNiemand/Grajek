@@ -13,6 +13,11 @@ SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) 
 
 SavePointMenu::~SavePointMenu() = default;
 
+void SavePointMenu::OnDestroy() {
+    buttonImage.reset();
+    Menu::OnDestroy();
+}
+
 bool SavePointMenu::ShowMenu() {
     if (!triggerActive) return false;
 

@@ -17,6 +17,8 @@ public:
     SessionStarter(const std::shared_ptr<GameObject> &parent, int id);
     ~SessionStarter() override;
 
+    void OnDestroy() override;
+
     void Setup(const std::set<std::shared_ptr<Instrument>>& instruments);
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;

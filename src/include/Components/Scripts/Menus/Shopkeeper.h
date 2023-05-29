@@ -40,6 +40,9 @@ public:
 
     void Start() override;
     void Update() override;
+
+    void OnDestroy() override;
+
     void NextDialogue();
     void LoadData(std::shared_ptr<GameData> data) override;
     void SaveData(std::shared_ptr<GameData> &data) override;

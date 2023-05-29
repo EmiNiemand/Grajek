@@ -43,6 +43,11 @@ void ShopMenu::Awake() {
     Component::Awake();
 }
 
+void ShopMenu::OnDestroy() {
+    instruments.clear();
+    Menu::OnDestroy();
+}
+
 void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
     activeButton->GetParent()->children.begin()->second->DisableSelfAndChildren();
     if (moveVector.y == 1.0f) {
@@ -59,8 +64,8 @@ void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 bool ShopMenu::ShowMenu() {
-    // TODO check all triggers
-    if (!GloomEngine::GetInstance()->FindGameObjectWithName("ShopTrigger")->GetComponent<ShopTrigger>()->active) return false;
+    if (!triggerActive) return false;
+
     parent->EnableSelfAndChildren();
     if (!instruments.empty()) {
         for (const auto & instrument : instruments) {
@@ -120,3 +125,4 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
     button->nextButton->previousButton = temp;
     GameObject::Destroy(button->GetParent());
 }
+

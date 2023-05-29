@@ -13,8 +13,10 @@
 #include <vector>
 #include <unordered_map>
 
-constexpr float DISTANCE_TO_POINT = 2.0f;
-constexpr float DISTANCE_TO_COLLISION = 2.0f;
+constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
+constexpr float DISTANCE_TO_POINT = 1.75f;
+constexpr float DISTANCE_TO_COLLISION = 2.3f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.1f;
 
 class GameObject;
 class Rigidbody;
@@ -22,12 +24,19 @@ class CharacterLogic;
 class CharacterPathfinding;
 
 class CharacterMovement : public Component {
-    AI_MOVEMENTSTATE movementState = NearTargetSubPoint;
+    AI_MOVEMENTSTATE movementState = NearTargetPosition;
     // Collisions
     float collisionGridSize = 0.0f;
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
     glm::ivec2 cellPos {};
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* cellPtr = nullptr;
+    glm::vec3 steeringForce {};
+    glm::vec3 steeringPosition {};
+    glm::vec3 steeringDirection {};
+    glm::mat4 steeringMatrix {};
+    float maxDistanceToCharacter = FLT_MAX;
+    float distanceToCharacter = 0.0f;
+    float distanceToPoint = 0.0f;
     // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
     std::vector<glm::vec3>* path = nullptr;
@@ -40,16 +49,18 @@ class CharacterMovement : public Component {
     // Parameters for Rigidbody
     std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
-    float maxSpeed = 0.05f;
+    float maxSpeed = 0.08f;
     float speedMultiplier = 1.0f;
     float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
 
-    void ApplyForces(const glm::vec3 &velocity);
+    inline void ApplyForces(const glm::vec3 &velocity);
     static const glm::ivec2 GetRandomPoint();
     void SetRandomEndPoint();
     void SetSubEndPoints();
     void CalculatePath();
+    void SetNewPathToPlayer();
+    void ReturnToPreviousPath();
 
 public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
@@ -60,9 +71,8 @@ public:
     void AIUpdate() override;
     void OnDestroy() override;
 
-    void SetNewPathToPlayer();
-    void ReturnToPreviousPath();
-    const AI_MOVEMENTSTATE GetCurrentStatus() const;
+    void SetState(const AI_MOVEMENTSTATE& newState);
+    const AI_MOVEMENTSTATE GetState() const;
 
 };
 
