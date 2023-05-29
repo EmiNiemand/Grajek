@@ -307,17 +307,33 @@ void DebugManager::Free() const {
     ImGui::DestroyContext();
 }
 
-std::vector<std::filesystem::directory_entry> DebugManager::FindModelPaths() {
+std::vector<std::filesystem::directory_entry> DebugManager::FindModelPaths(std::string folderName) {
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "models";
     path /= "Buildings";
+    if(!folderName.empty())
+        path /= folderName;
     std::vector<std::filesystem::directory_entry> scannedEntries;
     for(const auto& entry : fs::directory_iterator(path)){
         if(entry.path().string().ends_with(".obj"))
         scannedEntries.push_back(entry);
     }
 
+    return scannedEntries;
+}
+
+std::vector<std::filesystem::directory_entry> DebugManager::FindModelFolders() {
+    std::filesystem::path path = std::filesystem::current_path();
+    path /= "res";
+    path /= "models";
+    path /= "Buildings";
+
+    std::vector<std::filesystem::directory_entry> scannedEntries;
+    for(const auto& entry : fs::directory_iterator(path)){
+        if(entry.is_directory())
+            scannedEntries.push_back(entry);
+    }
     return scannedEntries;
 }
 

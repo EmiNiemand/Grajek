@@ -21,7 +21,8 @@ private:
 	bool transformExtracted;
 	std::shared_ptr<GameObject> selected;
 
-    std::vector<fs::directory_entry> modelPaths = FindModelPaths();
+
+    std::vector<fs::directory_entry> modelPaths = FindModelPaths("");
 
 
 	void ProcessChildren(std::shared_ptr<GameObject> gameObject);
@@ -44,7 +45,8 @@ public:
 	void Render();
     void Free() const;
 
-    std::vector<std::filesystem::directory_entry> FindModelPaths();
+    std::vector<std::filesystem::directory_entry> FindModelFolders();
+    std::vector<std::filesystem::directory_entry> FindModelPaths(std::string folderName = "Normal");
 };
 
 #endif //GLOOMENGINE_DEBUGMANAGER_H
