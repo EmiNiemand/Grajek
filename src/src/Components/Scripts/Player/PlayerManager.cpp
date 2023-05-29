@@ -85,7 +85,6 @@ void PlayerManager::Awake() {
     // Set up Music Session
     // --------------------
     sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
-    GameObject::Instantiate("SessionUI", parent);
 
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
@@ -315,7 +314,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     sessionStarter->Stop();
     sessionStarter.reset();
     activeMenu.reset();
-    session = parent->AddComponent<MusicSession>();
+    session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
     session->Setup(equipment->GetInstrumentWithName(instrument));
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 }

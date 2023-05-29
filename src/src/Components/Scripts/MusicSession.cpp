@@ -25,7 +25,7 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
 
     bpm = (int)instrument->genre;
 
-    playerManager = parent->GetComponent<PlayerManager>();
+    playerManager = parent->parent->GetComponent<PlayerManager>();
 
     auto sessionUIInstance = GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI");
     sessionUIInstance = GameObject::Instantiate("Session", sessionUIInstance);
@@ -171,7 +171,7 @@ void MusicSession::PatternFail() {
 float MusicSession::GetRhythmValue(float currentNoteLength) { return currentNoteLength * (bpm/60.0f); }
 
 void MusicSession::Stop() {
-    parent->RemoveComponent(GetId());
+    GameObject::Destroy(parent);
     sessionUI->GetParent()->parent->RemoveAllChildren();
 }
 
