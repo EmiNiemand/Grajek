@@ -82,8 +82,10 @@ void MusicSession::StopSample(int index) {
     }
 
     // TODO: implement hold-type sounds
-    if(!(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums))
+    if(!(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums)) {
+        sessionUI->StopSound(index);
         DetectPattern();
+    }
 }
 
 void MusicSession::ToggleCheatSheet() { sessionUI->ToggleCheatSheet(); }
@@ -111,7 +113,8 @@ void MusicSession::DetectPattern() {
 
     for (auto pattern=potentialPatterns.begin(); pattern!=potentialPatterns.end(); )
     {
-        if(pattern->get()->sounds[lastIndex]->sample->id != recordedSounds[lastIndex].sample->id)
+        if(pattern->get()->sounds.size() < lastIndex+1 ||
+           pattern->get()->sounds[lastIndex]->sample->id != recordedSounds[lastIndex].sample->id)
             pattern = potentialPatterns.erase(pattern);
         else
             ++pattern;

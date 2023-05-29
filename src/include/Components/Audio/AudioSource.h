@@ -56,6 +56,7 @@ public:
     void IsMoving(bool state);
     void SetCone(glm::vec3 direction, glm::vec2 cone) const;
 
+    float GetGain() const;
 };
 
 #endif //GLOOMENGINE_AUDIOSOURCE_H

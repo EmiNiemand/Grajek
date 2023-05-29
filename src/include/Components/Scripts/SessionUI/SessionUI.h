@@ -50,7 +50,8 @@ public:
     virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath);
     void SetCheatSheet(const std::string& cheatSheetPath);
 
-    inline virtual void PlaySound(int index);
+    virtual void PlaySound(int index);
+    virtual void StopSound(int index);
     void ToggleCheatSheet();
     // Fraction values: <0, 1>
     void UpdateAccuracy(float fraction);

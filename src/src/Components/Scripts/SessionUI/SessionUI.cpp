@@ -126,4 +126,8 @@ void SessionUI::OnDestroy() {
     Component::OnDestroy();
 }
 
+void SessionUI::StopSound(int index) {
+
+}
+
 #pragma endregion

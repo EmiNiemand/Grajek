@@ -67,9 +67,9 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
         case Trumpet:
             instrument->Setup(instrumentName, MusicGenre::RnB);
             instrument->AddSamples({
-               "res/sounds/direct/drums/hat.wav",
-               "res/sounds/direct/drums/kick.wav",
-               "res/sounds/direct/drums/snare.wav"});
+               "res/sounds/direct/trumpet/lowPitched.wav",
+               "res/sounds/direct/trumpet/mediumPitched.wav",
+               "res/sounds/direct/trumpet/highPitched.wav"});
             break;
         case Launchpad:
             instrument->Setup(instrumentName, MusicGenre::SynthPop);
