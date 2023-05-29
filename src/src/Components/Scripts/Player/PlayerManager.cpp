@@ -105,9 +105,7 @@ void PlayerManager::Awake() {
     Component::Awake();
 }
 
-void PlayerManager::Start() {
-    Component::Start();
-}
+void PlayerManager::Start() { Component::Start(); }
 
 void PlayerManager::Update() {
 #ifdef DEBUG

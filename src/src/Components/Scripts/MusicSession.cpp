@@ -66,7 +66,8 @@ void MusicSession::PlaySample(int index) {
     recordedSounds.emplace_back(instrument->samples[index], rhythmDiff, currentTime);
     lastTime = currentTime;
 
-    DetectPattern();
+    if(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums)
+        DetectPattern();
 }
 
 void MusicSession::StopSample(int index) {
@@ -76,10 +77,13 @@ void MusicSession::StopSample(int index) {
     for (auto it = recordedSounds.rbegin(); it != recordedSounds.rend(); ++it) {
         if(it->sample->id == index) {
             it->duration = GetRhythmValue(glfwGetTime() - it->duration);
+            break;
         }
     }
 
     // TODO: implement hold-type sounds
+    if(!(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums))
+        DetectPattern();
 }
 
 void MusicSession::ToggleCheatSheet() { sessionUI->ToggleCheatSheet(); }
@@ -132,10 +136,13 @@ void MusicSession::DetectPattern() {
 
 void MusicSession::CalcAccuracyAndReset(const std::shared_ptr<MusicPattern> &goodPattern) {
     float accuracy = 0;
+    recordedSounds[0].delay = 0;
     for (int i = 0; i < recordedSounds.size(); i++)
     {
-        float recordedDelay = i == 0 ? 0 : recordedSounds[i].delay;
-        accuracy += abs(goodPattern->sounds[i]->delay - recordedDelay);
+        float soundAccuracy = abs(goodPattern->sounds[i]->delay - recordedSounds[i].delay);
+        if(goodPattern->sounds[i]->duration != 0)
+            soundAccuracy = (soundAccuracy + abs(goodPattern->sounds[i]->duration - recordedSounds[i].duration)) / 2.0f;
+        accuracy += soundAccuracy;
     }
 
     accuracy /= (float)recordedSounds.size();
