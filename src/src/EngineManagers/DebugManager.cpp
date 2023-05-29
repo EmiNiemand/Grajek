@@ -18,7 +18,12 @@ DebugManager::DebugManager() {
     displaySelected = false;
     transformExtracted = false;
     safetySwitch = false;
-    modelPaths = FindModelPaths();
+    folderPaths = FindModelFolders();
+    if (!folderPaths.empty()) {
+        selectedFolderId = 0;
+        selectedFolderName = folderPaths[0].path().filename().string();
+        modelPaths = FindModelPaths(selectedFolderName);
+    }
 }
 DebugManager::~DebugManager() = default;
 
@@ -140,27 +145,50 @@ void DebugManager::Render() {
         if(selected->GetComponent<Renderer>()){
             ImGui::Text("Path of model: %s", selected->GetComponent<Renderer>()->lastLoadedModelPath.c_str());
             //ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
-            static int selectedModelId = 0;
-            std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
-            const char * charModelName = stringModelName.c_str();
-            if(ImGui::BeginCombo("Models", charModelName))
-            {
-                for (int n = 0; n < modelPaths.size(); n++)
-                {
-                    const bool is_selected = (selectedModelId == n);
-                    if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
-                        selectedModelId = n;
+            if(folderPaths.empty()){
+                ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"!!!There are no model folders!!!");
+            } else {
+                const char * charFolderName = selectedFolderName.c_str();
+                if(ImGui::BeginCombo("Folders",charFolderName)){
+                    for (int n = 0; n < folderPaths.size(); n++)
+                    {
+                        const bool is_selected = (selectedFolderId == n);
+                        if (ImGui::Selectable(folderPaths[n].path().filename().generic_string().c_str(), is_selected))
+                            selectedFolderId = n;
 
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if (is_selected)
-                        ImGui::SetItemDefaultFocus();
+                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        if (is_selected)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
                 }
-                ImGui::EndCombo();
-            }
-            if(ImGui::SmallButton("Set new model")){
-                std::string path = "Buildings/";
-                path += modelPaths[selectedModelId].path().filename().string();
-                selected->GetComponent<Renderer>()->LoadModel(path);
+                //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+                if(modelPaths.empty()){
+                    ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"There are no models in the folder!");
+                } else {
+                    static int selectedModelId = 0;
+                    std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
+                    const char *charModelName = stringModelName.c_str();
+                    if (ImGui::BeginCombo("Models", charModelName)) {
+                        for (int n = 0; n < modelPaths.size(); n++) {
+                            const bool is_selected = (selectedModelId == n);
+                            if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                                selectedModelId = n;
+
+                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
+                    if (ImGui::SmallButton("Set new model")) {
+                        std::string path = "Buildings/";
+                        path += selectedFolderName + "/";
+                        path += modelPaths[selectedModelId].path().filename().string();
+                        selected->GetComponent<Renderer>()->LoadModel(path);
+                    }
+                }
+
             }
         } else {
             ImGui::Text("This object doesnt have a Renderer");
@@ -266,17 +294,20 @@ void DebugManager::SaveMenu()
     if (ImGui::SmallButton("Add new default house")){
         SceneManager::GetInstance()->CreatePrefabObject("House");
     }
-    //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
-    static int selectedModelId = 0;
-    std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
-    const char * charModelName = stringModelName.c_str();
-    if(ImGui::BeginCombo("Models", charModelName))
-    {
-        for (int n = 0; n < modelPaths.size(); n++)
+    //Folders combo
+    selectedFolderName = folderPaths[selectedFolderId].path().filename().string();
+    static int oldFolderId = 0;
+    if(oldFolderId != selectedFolderId) {
+        oldFolderId = selectedFolderId;
+        modelPaths = FindModelPaths(selectedFolderName);
+    }
+    const char * charFolderName = selectedFolderName.c_str();
+    if(ImGui::BeginCombo("Folders",charFolderName)){
+        for (int n = 0; n < folderPaths.size(); n++)
         {
-            const bool is_selected = (selectedModelId == n);
-            if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
-                selectedModelId = n;
+            const bool is_selected = (selectedFolderId == n);
+            if (ImGui::Selectable(folderPaths[n].path().filename().generic_string().c_str(), is_selected))
+                selectedFolderId = n;
 
             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
             if (is_selected)
@@ -284,18 +315,37 @@ void DebugManager::SaveMenu()
         }
         ImGui::EndCombo();
     }
-    if(ImGui::SmallButton("Add house with model at path")){
-        //TODO/INFO I assume all house models picked from the picker are in models/buildings
-        std::string path = "Buildings/";
-        path += modelPaths[selectedModelId].path().filename().string();
-        SceneManager::GetInstance()->CreatePrefabObject("House",path);
+    //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
+    if(modelPaths.empty()){
+        ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"There are no models in the folder!");
+    } else {
+        static int selectedModelId = 0;
+        std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
+        const char *charModelName = stringModelName.c_str();
+        if (ImGui::BeginCombo("Models", charModelName)) {
+            for (int n = 0; n < modelPaths.size(); n++) {
+                const bool is_selected = (selectedModelId == n);
+                if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                    selectedModelId = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        if (ImGui::SmallButton("Add house with model at path")) {
+            //TODO/INFO I assume all house models picked from the picker are in models/buildings
+            std::string path = "Buildings/";
+            path += selectedFolderName + "/";
+            path += modelPaths[selectedModelId].path().filename().string();
+            SceneManager::GetInstance()->CreatePrefabObject("House", path);
+        }
     }
     if (ImGui::SmallButton("Add new default shop")){
         SceneManager::GetInstance()->CreatePrefabObject("Shop");
     }if (ImGui::SmallButton("Add new default savePoint")){
         SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
-    }if (ImGui::SmallButton("Add new Die")) {
-        SceneManager::GetInstance()->CreatePrefabObject("Die");
     }
     ImGui::End();
 }
