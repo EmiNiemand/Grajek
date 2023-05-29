@@ -43,9 +43,6 @@ void AudioListener::OnCreate() {
     Component::OnCreate();
 }
 
-// Maybe will be used in future
-void AudioListener::Free() { }
-
 // Sets player audio gain. Type: float, default 1.0f
 void AudioListener::SetGain(float val) {
     if (val < 0.0f) {

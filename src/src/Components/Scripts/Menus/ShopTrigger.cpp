@@ -11,7 +11,7 @@ ShopTrigger::~ShopTrigger() = default;
 
 void ShopTrigger::Start() {
     door = GameObject::Instantiate("Door", parent->parent);
-    door->AddComponent<Renderer>()->LoadModel("Buildings/drzwi.obj");
+    door->AddComponent<Renderer>()->LoadModel("Buildings/Normal/drzwi.obj");
     door->transform->SetLocalPosition(glm::vec3(-3, 0, 3.5f));
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     Component::Start();

@@ -52,7 +52,11 @@ public:
     void NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
-    const float GetCombinedSatisfaction();
+    const float GetCombinedPlayerSatisfaction();
+    void NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
+    void NotifyEnemyStopsPlaying();
+    void NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
+    const float GetCombinedEnemySatisfaction();
     void RemoveCharacterLogic(const int& componentId);
     void RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const;
 

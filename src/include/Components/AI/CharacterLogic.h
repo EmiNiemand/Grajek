@@ -30,8 +30,16 @@ class CharacterLogic : public Component {
     InstrumentName playerInstrumentName {};
     MusicGenre playerGenre {};
     std::shared_ptr<MusicPattern> playerPattern = nullptr;
-    float minSatisfaction = 0;
-    float currentSatisfaction = 0;
+    InstrumentName enemyInstrumentName {};
+    MusicGenre enemyGenre {};
+    std::shared_ptr<MusicPattern> enemyPattern = nullptr;
+    InstrumentName previousPlayerInstrumentName {};
+    MusicGenre previousPlayerGenre {};
+    std::shared_ptr<MusicPattern> previousPlayerPattern = nullptr;
+    float repeatingModifier = 0.0f;
+    float minSatisfaction = 0.0f;
+    float playerSatisfaction = 0.0f;
+    float enemySatisfaction = 0.0f;
 
     void CalculateSatisfaction();
 
@@ -50,11 +58,15 @@ public:
     void OnCreate() override;
     void OnDestroy() override;
 
+    void SetAnimationModelToLoad(const std::string& model);
     void SetPlayerInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
     void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pat);
-    void SetPlayerPlayingStatus(bool state);
-    void SetAnimationModelToLoad(const std::string& model);
-    const float GetCurrentSatisfaction() const;
+    void SetPlayerPlayingStatus(bool isPlayerPlaying);
+    const float GetPlayerSatisfaction() const;
+    void SetEnemyInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
+    void SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat);
+    void SetEnemyPlayingStatus(bool isEnemyPlaying);
+    const float GetEnemySatisfaction() const;
 
 };
 

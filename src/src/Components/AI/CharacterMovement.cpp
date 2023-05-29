@@ -44,7 +44,14 @@ void CharacterMovement::FixedUpdate() {
 
         cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
 
-        speed = std::lerp(speed, maxSpeed, smoothingParam);
+        distanceToPoint = glm::distance(currentPosition, (*path)[pathIterator]);
+
+        if (distanceToPoint < DISTANCE_TO_ENDPOINT && subEndPointsIterator < 0 && pathIterator == 0)
+            speed = std::lerp(speed, 0.0f, smoothingParam);
+        else
+            speed = std::lerp(speed, maxSpeed, smoothingParam);
+
+        steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
 
         if (!cellPtr->empty()) {
             for (const auto& box: *cellPtr) {
@@ -57,7 +64,7 @@ void CharacterMovement::FixedUpdate() {
 
                     if (distanceToCharacter < maxDistanceToCharacter) {
                         maxDistanceToCharacter = distanceToCharacter;
-                        steeringDirection = glm::normalize(steeringPosition - currentPosition) * -1.0f;
+                        steeringDirection = glm::normalize(currentPosition - steeringPosition);
                     }
                 }
             }
@@ -68,22 +75,16 @@ void CharacterMovement::FixedUpdate() {
 
                 steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
 
-                steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1);
-            } else {
-                steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
+                steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
             }
 
             maxDistanceToCharacter = FLT_MAX;
-        } else {
-            steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
         }
 
         ApplyForces(steeringForce);
 
-        if (glm::distance(currentPosition, (*path)[pathIterator]) <
-                (DISTANCE_TO_POINT * AIManager::GetInstance()->aiCellSize)) {
+        if (distanceToPoint < (DISTANCE_TO_POINT * AIManager::GetInstance()->aiCellSize))
             --pathIterator;
-        }
     }
 
     Component::FixedUpdate();
@@ -212,6 +213,9 @@ void CharacterMovement::SetNewPathToPlayer() {
             break;
     }
 
+    // 
+//    playerPos = playerPos + GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetForward() * 3.0f;
+
     SetSubEndPoints();
 }
 
@@ -229,37 +233,43 @@ void CharacterMovement::SetSubEndPoints() {
     subEndPoints.clear();
     subEndPointsIterator = 3;
 
+    subEndPoints.push_back(endPoint);
+
     glm::ivec2 newEndPoint;
     float multiplier = 0.75f;
-    bool isAvailable = false;
-
-    subEndPoints.push_back(endPoint);
+    int x, y;
 
     while (multiplier > 0.1f) {
         newEndPoint = {endPoint.x, endPoint.y};
         newEndPoint *= multiplier;
 
         if (AIManager::GetInstance()->aiGrid[newEndPoint.x + AI_GRID_SIZE / 2][newEndPoint.y + AI_GRID_SIZE / 2]) {
-            for (int i = -1; i <= 1; ++i) {
-                for (int j = -1; j <= 1; ++j) {
-                    if (i == 0 && j == 0)
-                        continue;
+            x = -1, y = -1;
 
-                    if (!AIManager::GetInstance()->aiGrid[newEndPoint.x + i + AI_GRID_SIZE / 2][newEndPoint.y + j + AI_GRID_SIZE / 2]) {
-                        subEndPoints.emplace_back(newEndPoint.x + i, 0, newEndPoint.y + j);
-                        isAvailable = true;
-                        break;
-                    }
-                }
-
-                if (isAvailable)
+            while (true) {
+                newEndPoint = {endPoint.x + x, endPoint.y + y};
+                if (!AIManager::GetInstance()->aiGrid[newEndPoint.x + AI_GRID_SIZE / 2][newEndPoint.y + AI_GRID_SIZE / 2])
                     break;
+
+                newEndPoint = {endPoint.x + (x * -1), endPoint.y + y};
+                if (!AIManager::GetInstance()->aiGrid[newEndPoint.x + AI_GRID_SIZE / 2][newEndPoint.y + AI_GRID_SIZE / 2])
+                    break;
+
+                newEndPoint = {endPoint.x + x, endPoint.y + (y * -1)};
+                if (!AIManager::GetInstance()->aiGrid[newEndPoint.x + AI_GRID_SIZE / 2][newEndPoint.y + AI_GRID_SIZE / 2])
+                    break;
+
+                newEndPoint = {endPoint.x + (x * -1), endPoint.y + (y * -1)};
+                if (!AIManager::GetInstance()->aiGrid[newEndPoint.x + AI_GRID_SIZE / 2][newEndPoint.y + AI_GRID_SIZE / 2])
+                    break;
+
+                x *= 2;
+                y *= 2;
             }
-        } else {
-            subEndPoints.push_back(endPoint * multiplier);
         }
 
-        isAvailable = false;
+        subEndPoints.emplace_back(newEndPoint.x, 0.0f, newEndPoint.y);
+
         multiplier -= 0.25f;
     }
 }

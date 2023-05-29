@@ -10,6 +10,9 @@ enum AI_LOGICSTATE {
     AlertedByPlayer,
     MovingToPlayer,
     ListeningToPlayer,
+    AlertedByEnemy,
+    MovingToEnemy,
+    ListeningToEnemy,
 };
 
 enum AI_MOVEMENTSTATE {
@@ -17,6 +20,10 @@ enum AI_MOVEMENTSTATE {
     OnPathToPlayer,
     NearPlayerSubPoint,
     NearPlayerPosition,
+    SetPathToEnemy,
+    OnPathToEnemy,
+    NearEnemySubPoint,
+    NearEnemyPosition,
     OnPathToTarget,
     NearTargetSubPoint,
     NearTargetPosition,

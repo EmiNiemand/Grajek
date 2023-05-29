@@ -53,7 +53,7 @@ void PlayerManager::Awake() {
     rb = parent->AddComponent<Rigidbody>();
 
     // Add Player scripts
-    // ------------------
+    // ------------------sssss
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
@@ -296,12 +296,12 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
-     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedSatisfaction());
+     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedPlayerSatisfaction());
 
     if (!pat) return;
 
     //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
-    equipment->AddReward(AIManager::GetInstance()->GetCombinedSatisfaction()/100.0f);
+    equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
 
     playerUI->UpdateCash(equipment->cash);
     playerUI->UpdateRep(equipment->rep);

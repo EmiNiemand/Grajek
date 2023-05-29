@@ -40,7 +40,7 @@ std::shared_ptr<GameObject> JazzClap::Create() {
     else
         std::string model = "Models/JazzMan0" + std::to_string(i);
 
-    characterLogic->SetAnimationModelToLoad("JazzMan001/JazzMan001.dae");
+    characterLogic->SetAnimationModelToLoad("Crowd/JazzMan001/JazzMan001.dae");
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
     characterLogic->favGenres.push_back(Jazz);

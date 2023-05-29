@@ -13,8 +13,10 @@
 #include <vector>
 #include <unordered_map>
 
+constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
 constexpr float DISTANCE_TO_POINT = 1.75f;
-constexpr float DISTANCE_TO_COLLISION = 2.25f;
+constexpr float DISTANCE_TO_COLLISION = 2.3f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.1f;
 
 class GameObject;
 class Rigidbody;
@@ -34,6 +36,7 @@ class CharacterMovement : public Component {
     glm::mat4 steeringMatrix {};
     float maxDistanceToCharacter = FLT_MAX;
     float distanceToCharacter = 0.0f;
+    float distanceToPoint = 0.0f;
     // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
     std::vector<glm::vec3>* path = nullptr;
@@ -46,7 +49,7 @@ class CharacterMovement : public Component {
     // Parameters for Rigidbody
     std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
-    float maxSpeed = 0.075f;
+    float maxSpeed = 0.08f;
     float speedMultiplier = 1.0f;
     float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
