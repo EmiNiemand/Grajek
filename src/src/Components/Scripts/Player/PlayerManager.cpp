@@ -53,7 +53,7 @@ void PlayerManager::Awake() {
     rb = parent->AddComponent<Rigidbody>();
 
     // Add Player scripts
-    // ------------------
+    // ------------------sssss
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();

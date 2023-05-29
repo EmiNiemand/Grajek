@@ -16,7 +16,7 @@ Shop::~Shop() = default;
 
 std::shared_ptr<GameObject> Shop::Create() {
     auto shop = shared_from_this();
-    shop->AddComponent<Renderer>()->LoadModel("Buildings/MAINSHOP.obj");
+    shop->AddComponent<Renderer>()->LoadModel("Buildings/Normal/MAINSHOP.obj");
     shop->AddComponent<BoxCollider>()->SetOffset({-2.5, 3, 2});
     shop->GetComponent<BoxCollider>()->SetSize({2.5, 6, 2});
 
