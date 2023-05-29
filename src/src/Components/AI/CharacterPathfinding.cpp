@@ -111,9 +111,6 @@ std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& curr
         currentNode = currentNode->parent;
     }
 
-    spdlog::info("ol size: " + std::to_string(openList.size()));
-    spdlog::info("cl size: " + std::to_string(closedList.size()));
-
     for (const auto& n : openList)
         delete n.second;
 

@@ -26,7 +26,6 @@ public:
     void Start() override;
     void Update() override;
     void OnCreate() override;
-    void Free();
 
     void SetGain(float val);
     const float GetGain() const;
