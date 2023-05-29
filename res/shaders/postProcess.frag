@@ -22,8 +22,20 @@ mat3 sy = mat3(
 1.0, 0.0, -1.0
 );
 
+
+// Blur
+
+    float Pi = 6.28318530718; // Pi*2
+
+// GAUSSIAN BLUR SETTINGS
+    float Directions = 64.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
+    float Quality = 4.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
+    float Size = 1.0; // BLUR SIZE (Radius)     8.0
+
+
 void main()
 {
+
     vec3 diffuse = texture(screenTexture, TexCoords.st).rgb;
     mat3 I;
     for (int i=0; i<3; i++) {
@@ -80,6 +92,19 @@ void main()
 
     vec4 color = vec4(mix(diffuse, edgeColor, g), 1.0);
 
-    FragColor.rgb = mix(color.rgb, lineColor, clamp(diff, 0.0, 1.0));
-    FragColor.a = 1.0f;
+    color = vec4(mix(color.rgb, lineColor, clamp(diff, 0.0, 1.0)), 1.0);
+
+
+    // Blur
+
+    vec2 Radius = Size/texSize;
+
+    for( float d=0.0; d<Pi; d+=Pi/Directions) {
+        for(float i=1.0/Quality; i<=1.0; i+=1.0/Quality) {
+            color += texture( screenTexture, texCoord+vec2(cos(d),sin(d))*Radius*i);
+        }
+    }
+
+    color /= Quality * Directions - 15.0;
+    FragColor = color;
 }
