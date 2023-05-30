@@ -20,7 +20,7 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 
 CharacterMovement::~CharacterMovement() = default;
 
-void CharacterMovement::Start() {
+void CharacterMovement::Awake() {
     collisionGrid = CollisionManager::GetInstance()->grid;
     collisionGridSize = CollisionManager::GetInstance()->gridSize;
     otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
@@ -29,7 +29,7 @@ void CharacterMovement::Start() {
 
     SetRandomSpawnPoint();
     subEndPoints.resize(4);
-    Component::Start();
+    Component::Awake();
 }
 
 void CharacterMovement::FixedUpdate() {

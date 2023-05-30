@@ -69,7 +69,7 @@ public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
-    void Start() override;
+    void Awake() override;
     void FixedUpdate() override;
     void AIUpdate() override;
     void OnCreate() override;

@@ -31,7 +31,7 @@ void BoxCollider::FixedUpdate() {
     if (!isDynamic)
         return;
 
-    CollisionManager::GetInstance()->RemoveDynamicBoxCollider(parent->transform->GetGlobalPosition(), id);
+    CollisionManager::GetInstance()->RemoveDynamicBoxCollider(GetModelMatrix() * glm::vec4(0, 0, 0, 1), id);
     SetGridPoints();
     Component::FixedUpdate();
 }
@@ -48,9 +48,9 @@ void BoxCollider::OnDestroy() {
 }
 
 void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
-//#ifdef DEBUG
-//    ZoneScopedNC("CheckCollision", 0x03adfc);
-//#endif
+#ifdef DEBUG
+    ZoneScopedNC("CheckCollision", 0x03adfc);
+#endif
 
     bool isColliding = GetOBBCollision(other);
 
@@ -120,9 +120,9 @@ glm::mat4 BoxCollider::GetModelMatrix() {
 }
 
 bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
-#ifdef DEBUG
-    ZoneScopedNC("GetOBBCollision", 0x0339fc);
-#endif
+//#ifdef DEBUG
+//    ZoneScopedNC("GetOBBCollision", 0x0339fc);
+//#endif
 
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
