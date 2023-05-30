@@ -148,6 +148,7 @@ void Game::InitializeGame() const {
                                                        {"Walcz ze mna."},
                                                        {""}});
 
+
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
