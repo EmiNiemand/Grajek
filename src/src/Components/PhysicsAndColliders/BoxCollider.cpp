@@ -409,7 +409,7 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         int x = points[0].x;
         int y = points[0].y;
 
-        AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+        AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = true;
         return;
     }
 
@@ -427,7 +427,7 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
 
     for (int x = minX - 1; x <= maxX + 1; ++x) {
         for (int y = minY - 1; y <= maxY + 1; ++y) {
-            AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+            AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = true;
         }
     }
 }
