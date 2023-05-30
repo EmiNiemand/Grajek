@@ -17,7 +17,7 @@ private:
 	std::shared_ptr<AnimationModel> model;
     float currentTime;
 	bool isPlaying = false;
-    float blendingTimeInSeconds = 0.5f;
+    float blendingTimeInSeconds = 0.35f;
     float blendingTimeInTicks = 0;
 
 public:
