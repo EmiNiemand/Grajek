@@ -77,7 +77,6 @@ public:
     ~CharacterMovement() override;
 
     void Awake() override;
-    void Start() override;
     void FixedUpdate() override;
     void AIUpdate() override;
     void OnCreate() override;
