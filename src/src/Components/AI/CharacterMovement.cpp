@@ -91,10 +91,10 @@ void CharacterMovement::FixedUpdate() {
         ApplyForces(steeringForce);
 
         if (subEndPointsIterator < 0 && pathIterator < 1 && movementState == OnPathToPlayer) {
-            if (distanceToPoint < (DISTANCE_TO_PLAYER * AIManager::GetInstance()->aiCellSize))
+            if (distanceToPoint < DISTANCE_TO_PLAYER)
                 --pathIterator;
         } else {
-            if (distanceToPoint < (DISTANCE_TO_POINT * AIManager::GetInstance()->aiCellSize))
+            if (distanceToPoint < DISTANCE_TO_POINT)
                 --pathIterator;
         }
 

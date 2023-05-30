@@ -14,10 +14,10 @@
 #include <unordered_map>
 
 constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
-constexpr float DISTANCE_TO_POINT = 1.75f;
+constexpr float DISTANCE_TO_POINT = 1.8f;
 constexpr float DISTANCE_TO_PLAYER = 1.5f;
 constexpr float DISTANCE_TO_COLLISION = 2.3f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.1f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.11f;
 
 class GameObject;
 class Rigidbody;
