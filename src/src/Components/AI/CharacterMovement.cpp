@@ -20,13 +20,19 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 
 CharacterMovement::~CharacterMovement() = default;
 
+void CharacterMovement::Awake() {
+//    SetRandomSpawnPoint();
+    Component::Awake();
+}
+
 void CharacterMovement::Start() {
     collisionGrid = CollisionManager::GetInstance()->grid;
     collisionGridSize = CollisionManager::GetInstance()->gridSize;
+    aiGrid = AIManager::GetInstance()->aiGrid;
+    aiCellSize = AIManager::GetInstance()->aiCellSize;
     otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
     pathfinding = AIManager::GetInstance()->pathfinding;
     rigidbody = parent->GetComponent<Rigidbody>();
-
     SetRandomSpawnPoint();
     subEndPoints.resize(4);
     Component::Start();
@@ -40,8 +46,10 @@ void CharacterMovement::FixedUpdate() {
     currentPosition = parent->transform->GetLocalPosition();
 
     if (movementState == NearPlayerPosition) {
-        steeringForce = glm::normalize(GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition() - currentPosition);
+        steeringForce = glm::normalize(playerPosition - currentPosition);
+
         rotationAngle = std::atan2f(-steeringForce.x, -steeringForce.z) * 180.0f / std::numbers::pi;
+
         rigidbody->AddTorque(rotationAngle, ForceMode::Force);
     }
 
@@ -97,7 +105,6 @@ void CharacterMovement::FixedUpdate() {
             if (distanceToPoint < DISTANCE_TO_POINT)
                 --pathIterator;
         }
-
     }
 
     Component::FixedUpdate();
@@ -180,7 +187,7 @@ inline void CharacterMovement::ApplyForces(const glm::vec3& velocity) {
     rigidbody->AddTorque(rotationAngle, ForceMode::Force);
 }
 
-void CharacterMovement::SetRandomSpawnPoint() {
+inline void CharacterMovement::SetRandomSpawnPoint() {
     glm::ivec2 newSpawnPoint = GetRandomPoint();
 
     parent->transform->SetLocalPosition({newSpawnPoint.x, 0, newSpawnPoint.y});
@@ -196,17 +203,17 @@ void CharacterMovement::SetRandomEndPoint() {
     SetSubEndPoints();
 }
 
-const glm::ivec2 CharacterMovement::GetRandomPoint() {
+const glm::ivec2 CharacterMovement::GetRandomPoint() const {
     glm::ivec2 newEndPoint;
 
     // TODO: Change value for the real map size
-//    const int aiGridSize = AI_GRID_SIZE / 4 - 1;
+    //  const int aiGridSize = AI_GRID_SIZE / 4 - 1;
 
     while (true) {
-        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(-24, 24);
-        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(-24, 24);
+        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(-24 / aiCellSize, 24 / aiCellSize);
+        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(-24 / aiCellSize, 24 / aiCellSize);
 
-        if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+        if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
             break;
     }
 
@@ -216,33 +223,33 @@ const glm::ivec2 CharacterMovement::GetRandomPoint() {
 void CharacterMovement::SetNewPathToPlayer() {
     previousEndPoint = endPoint;
 
-    endPoint = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
+    playerPosition = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetLocalPosition();
 
-    glm::ivec2 newEndPoint, intEndPoint = {endPoint.x, endPoint.z};
+    glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
 
     int minX = -1, maxX = 1, minY = -1, maxY = 1;
     bool isAvailable = false;
 
     while (true) {
-        for (int y = minY; y <= maxY; ++y) {
+        for (int y = minY; y <= maxY; y+=2) {
             if (y > minY && y < maxY) {
                 newEndPoint = {intEndPoint.x + minX, intEndPoint.y + y};
-                if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
+                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
                     isAvailable = IsPositionAvailable(newEndPoint);
                     if (isAvailable)
                         break;
                 }
 
                 newEndPoint = {intEndPoint.x + maxX, intEndPoint.y + y};
-                if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
+                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
                     isAvailable = IsPositionAvailable(newEndPoint);
                     if (isAvailable)
                         break;
                 }
             } else {
-                for (int x = minX; x <= maxX; ++x) {
+                for (int x = minX; x <= maxX; x+=2) {
                     newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
-                    if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
+                    if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
                         isAvailable = IsPositionAvailable(newEndPoint);
                         if (isAvailable)
                             break;
@@ -290,24 +297,24 @@ void CharacterMovement::SetSubEndPoints() {
         newEndPoint = intEndPoint;
         newEndPoint *= multiplier;
 
-        if (AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
+        if (aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
             x = -1, y = -1;
 
             while (true) {
                 newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
-                if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
                 newEndPoint = {intEndPoint.x + (x * -1), intEndPoint.y + y};
-                if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
                 newEndPoint = {intEndPoint.x + x, intEndPoint.y + (y * -1)};
-                if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
                 newEndPoint = {intEndPoint.x + (x * -1), intEndPoint.y + (y * -1)};
-                if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
                 x -= 1;

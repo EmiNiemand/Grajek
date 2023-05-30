@@ -34,14 +34,16 @@ std::shared_ptr<GameObject> Default::Create() {
     character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();
 
-    int i = RandomnessManager::GetInstance()->GetInt(0, 1);
+    int i = RandomnessManager::GetInstance()->GetInt(1, 6);
 
-    if (i > 9)
-        std::string model = "Models/BasicMan00" + std::to_string(i);
+    std::string model;
+
+    if (i < 10)
+        model = "BasicMan00" + std::to_string(i);
     else
-        std::string model = "Models/BasicMan0" + std::to_string(i);
+        model = "BasicMan0" + std::to_string(i);
 
-    characterLogic->SetAnimationModelToLoad("Crowd/BasicMan001/BasicMan001.dae");
+    characterLogic->SetAnimationModelToLoad("Crowd/" + model + "/" + model + ".dae");
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
     characterLogic->favGenres.push_back(Jazz);

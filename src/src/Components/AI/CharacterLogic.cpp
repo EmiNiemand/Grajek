@@ -3,12 +3,12 @@
 //
 
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
-#include "Components/AI/CharacterPathfinding.h"
 #include "Components/AI/CharacterAnimations.h"
 #include "Components/UI/Indicator.h"
 
@@ -27,7 +27,7 @@ void CharacterLogic::Start() {
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
     characterAnimator->LoadAnimationModel(modelPath);
-    characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
+    characterAnimator->SetAnimation("AnimsNew/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
     Component::Start();

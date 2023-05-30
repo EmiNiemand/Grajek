@@ -5,7 +5,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "spdlog/spdlog.h"
 
-#include "EngineManagers/AIManager.h"
 #include <cmath>
 #include <unordered_map>
 #include <algorithm>

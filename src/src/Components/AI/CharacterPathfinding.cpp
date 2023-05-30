@@ -3,6 +3,7 @@
 //
 
 #include "Components/AI/CharacterPathfinding.h"
+#include "EngineManagers/AIManager.h"
 #include "Components/AI/Node.h"
 
 CharacterPathfinding::CharacterPathfinding()  {
