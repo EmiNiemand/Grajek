@@ -47,6 +47,37 @@ void CollisionManager::ManageCollision() {
         ++valueY;
     }
     CheckCollision(valueY);
+    ++valueY;
+    int gridPos;
+    for (int x = -5; x <= 5; ++x) {
+        gridPos = (playerPosition.x + x) + (playerPosition.y + valueY) * GRID_SIZE;
+        for (const auto &box: grid[gridPos]) {
+            if ((!box.second->GetParent()->GetComponent<Rigidbody>() && !box.second->isTrigger &&
+                 !box.second->enabled) ||
+                grid[gridPos].size() <= 1)
+                continue;
+
+            for (const auto &box2: grid[gridPos]) {
+                if (box.second == box2.second) continue;
+                {
+                    glm::vec3 boxPosition = glm::vec3(box.second->GetModelMatrix() * glm::vec4(0, 0, 0, 1));
+                    glm::vec3 box2Position = glm::vec3(box2.second->GetModelMatrix() * glm::vec4(0, 0, 0, 1));
+                    float distance = glm::length(
+                            glm::vec2(box2Position.x, box2Position.z) - glm::vec2(boxPosition.x, boxPosition.z));
+
+                    glm::vec3 boxScale = box.second->GetSize() * box.second->GetParent()->transform->GetGlobalScale();
+                    float boxSizeLength = glm::length(glm::vec3(boxScale.x, 0, boxScale.z));
+
+                    glm::vec3 box2Scale =
+                            box2.second->GetSize() * box2.second->GetParent()->transform->GetGlobalScale();
+                    float box2SizeLength = glm::length(glm::vec3(box2Scale.x, 0, box2Scale.z));
+                    if (distance >= boxSizeLength + box2SizeLength) continue;
+                }
+
+                box.second->CheckCollision(box2.second);
+            }
+        }
+    }
 
     for (int i = 0; i < threads.size(); ++i) {
         if (threads[i].joinable()) {
