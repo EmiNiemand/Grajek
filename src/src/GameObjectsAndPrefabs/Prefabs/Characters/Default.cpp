@@ -37,11 +37,11 @@ std::shared_ptr<GameObject> Default::Create() {
     int i = RandomnessManager::GetInstance()->GetInt(0, 1);
 
     if (i > 9)
-        std::string model = "Models/JazzMan00" + std::to_string(i);
+        std::string model = "Models/BasicMan00" + std::to_string(i);
     else
-        std::string model = "Models/JazzMan0" + std::to_string(i);
+        std::string model = "Models/BasicMan0" + std::to_string(i);
 
-    characterLogic->SetAnimationModelToLoad("JazzMan001/JazzMan001.dae");
+    characterLogic->SetAnimationModelToLoad("Crowd/BasicMan001/BasicMan001.dae");
 
     //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
     characterLogic->favGenres.push_back(Jazz);
