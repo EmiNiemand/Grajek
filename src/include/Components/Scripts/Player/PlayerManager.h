@@ -68,6 +68,7 @@ private:
     void OnSessionToggle();
     void OnSoundPlay(int index);
     void OnCheatSheetToggle();
+    void OnInstrumentControlToggle();
 
 	// Animation methods
 	void UpdateAnimations();

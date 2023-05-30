@@ -47,6 +47,9 @@ public:
     inline static std::unordered_map<Key, int> CheatSheet = {
             {Key::KEY_TAB, 0}
     };
+    inline static std::unordered_map<Key, int> InstrumentControl = {
+            {Key::KEY_LEFT_SHIFT, 0}
+    };
 };
 
 #endif //GLOOMENGINE_PLAYERINPUT_H

@@ -324,6 +324,11 @@ void PlayerManager::OnCheatSheetToggle() {
     session->ToggleCheatSheet();
 }
 
+void PlayerManager::OnInstrumentControlToggle() {
+    if (!session) return;
+    session->ToggleInstrumentControl();
+}
+
 void PlayerManager::OnPlayerLoseDuel() {
     Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
     session->Stop();
@@ -390,6 +395,9 @@ void PlayerManager::PollInput() {
 	}
 
     if(session) {
+        for (auto key: PlayerInput::InstrumentControl)
+            if (hid->IsKeyDown(key.first)) OnInstrumentControlToggle();
+
         for (auto key: PlayerInput::CheatSheet)
             if (hid->IsKeyDown(key.first)) OnCheatSheetToggle();
 
