@@ -52,7 +52,7 @@ void FileDataHandler::SaveGame(std::shared_ptr<GameData> gameData) {
         to_json(json, gameData);
 
         std::ofstream saveFile(path);
-        saveFile << json << std::endl;
+        saveFile << json.dump(0, '\t') << std::endl;
     }
     catch(std::exception e) {
         spdlog::info("Failed to write a file content at path: " + path.string());

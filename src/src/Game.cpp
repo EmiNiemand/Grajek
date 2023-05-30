@@ -82,8 +82,8 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, 0});
-    ground->transform->SetLocalScale({30, 2, 30});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(30, 30);
+    ground->transform->SetLocalScale({100, 2, 100});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(100, 100);
 
     // Set up lights
     // -------------
@@ -122,10 +122,6 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
-    auto savePoint1 = Prefab::Instantiate<SavePoint>();
-    savePoint1->transform->SetLocalPosition({-15, 0, 10});
-    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
-
     auto opponent = Prefab::Instantiate<OpponentPrefab>();
     opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
     // 2      *   *
@@ -152,25 +148,9 @@ void Game::InitializeGame() const {
                                                        {"Walcz ze mna."},
                                                        {""}});
 
-    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
-    shop->transform->SetLocalPosition({4, 0, -8});
-
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
-
-
-//    int x=0;
-////     Set up animated model
-//    for (int i = 0; i < 50; ++i) {
-//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene);
-//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
-//        animatedDood->transform->SetLocalPosition({-30 + x, 0, 0});
-//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-//        x++;
-//    }
 
     camera->SetTarget(nullptr);
 }

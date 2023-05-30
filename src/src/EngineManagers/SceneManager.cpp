@@ -166,7 +166,7 @@ void SceneManager::SaveMap(std::vector<std::shared_ptr<StaticObjectData>> mapDat
         to_json(json, mapData);
 
         std::ofstream saveFile(path);
-        saveFile << json << std::endl;
+        saveFile << json.dump(0, '\t') << std::endl;
     }
     catch(std::exception e) {
         spdlog::info("Failed to write a MAP file content at path: " + path.string());

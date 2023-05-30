@@ -40,7 +40,7 @@ void Shopkeeper::Start() {
     shopkeeperModel->transform->SetLocalScale({0.5, 0.5, 0.5});
     auto animatorObject = GameObject::Instantiate("ShopkeeperAnimator", shopkeeperModel);
     auto animator = animatorObject->AddComponent<Animator>();
-    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
+    animator->LoadAnimationModel("Crowd/JazzMan001/JazzMan001.dae");
     animator->SetAnimation("AnimsNew/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
     texts.push_back({{"Jestem Sklepu."},
