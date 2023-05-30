@@ -61,7 +61,7 @@ void GloomEngine::Initialize() {
     game = std::make_shared<Game>();
     game->InitializeGame();
 
-    AIManager::GetInstance()->InitializeSpawner(1, 50, 100);
+    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
     lastAIFrameTime = (float)glfwGetTime();

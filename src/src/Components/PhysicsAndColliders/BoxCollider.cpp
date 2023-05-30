@@ -57,8 +57,10 @@ void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
     if (!isColliding) {
         // OnTriggerExit
         if (isTrigger && collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerExit(other->parent);
             collisionsBuffer.erase(other->id);
+            collisionBufferMutex.unlock();
             return;
         }
     }
@@ -67,12 +69,16 @@ void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
     if (isColliding) {
         // OnTriggerEnter
         if (isTrigger && !collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerEnter(other->parent);
             collisionsBuffer.insert({other->id, other->parent});
+            collisionBufferMutex.unlock();
         }
         // OnTriggerStay
         if (isTrigger && collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerStay(other->parent);
+            collisionBufferMutex.unlock();
             return;
         }
 

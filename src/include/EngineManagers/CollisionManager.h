@@ -45,7 +45,7 @@ public:
     static CollisionManager* GetInstance();
 
     void ManageCollision();
-    void CheckCollision(int valueY);
+    void CheckCollision(int valueY, int maxY, int increaseValue);
 #ifdef DEBUG
     void Draw();
 #endif
