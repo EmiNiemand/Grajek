@@ -17,7 +17,7 @@ constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
 constexpr float DISTANCE_TO_POINT = 1.75f;
 constexpr float DISTANCE_TO_PLAYER = 1.5f;
 constexpr float DISTANCE_TO_COLLISION = 2.3f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.15f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.1f;
 
 class GameObject;
 class Rigidbody;
