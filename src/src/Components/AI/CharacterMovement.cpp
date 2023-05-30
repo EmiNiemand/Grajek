@@ -200,11 +200,11 @@ const glm::ivec2 CharacterMovement::GetRandomPoint() {
     glm::ivec2 newEndPoint;
 
     // TODO: Change value for the real map size
-    const int aiGridSize = AI_GRID_SIZE / 4 - 1;
+//    const int aiGridSize = AI_GRID_SIZE / 4 - 1;
 
     while (true) {
-        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(-aiGridSize, aiGridSize);
-        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(-aiGridSize, aiGridSize);
+        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(-24, 24);
+        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(-24, 24);
 
         if (!AIManager::GetInstance()->aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
             break;

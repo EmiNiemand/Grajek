@@ -12,7 +12,7 @@
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterPathfinding.h"
 
-constexpr int AI_GRID_SIZE = 100;
+constexpr int AI_GRID_SIZE = 1000;
 
 class GloomEngine;
 class CharacterLogic;
