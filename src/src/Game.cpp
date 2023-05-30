@@ -152,9 +152,6 @@ void Game::InitializeGame() const {
                                                        {"Walcz ze mna."},
                                                        {""}});
 
-    std::shared_ptr<GameObject> shop = Prefab::Instantiate<Shop>();
-    shop->transform->SetLocalPosition({4, 0, -8});
-
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();

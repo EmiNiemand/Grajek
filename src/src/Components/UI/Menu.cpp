@@ -28,9 +28,9 @@ void Menu::ChangeActiveButton(glm::vec2 moveVector) {
     }
 }
 
-std::shared_ptr<Image> Menu::AddImage(std::string name, int x, int y, const std::string &path) {
+std::shared_ptr<Image> Menu::AddImage(std::string name, int x, int y, const std::string &path, float z) {
     auto image = GameObject::Instantiate(name, parent)->AddComponent<Image>();
-	image->LoadTexture(x, y, path);
+	image->LoadTexture(x, y, path, z);
     return image;
 }
 
@@ -41,9 +41,9 @@ std::shared_ptr<Text> Menu::AddText(std::string name, std::string text, int x, i
 }
 
 std::shared_ptr<Button> Menu::AddButton(std::string name, int x, int y, const std::string &pathInactive, const std::string &pathActive,
-                     std::string text, FT_UInt fontSize, glm::vec3 color, const std::string &fontPath) {
+                     std::string text, FT_UInt fontSize, glm::vec3 color, const std::string &fontPath, float z) {
     auto button = GameObject::Instantiate(std::move(name), parent)->AddComponent<Button>();
-    button->LoadTexture(x, y, pathInactive, pathActive);
+    button->LoadTexture(x, y, pathInactive, pathActive, z);
     button->LoadFont(std::move(text), fontSize, color, fontPath);
     return button;
 }

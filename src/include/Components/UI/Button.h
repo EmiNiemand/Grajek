@@ -19,6 +19,7 @@ private:
     glm::vec3 color;
     FT_UInt fontSize;
     std::map<GLchar, Character> Characters;
+    float z = 0.0f;
 
 public:
     int x, y;
@@ -34,7 +35,7 @@ public:
     * x from 0 to 1920\n
     * y from 0 to 1080
     */
-    void LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive);
+    void LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive, float z = 0.0f);
     /**
     * x from 0 to 1920\n
     * y from 0 to 1080
