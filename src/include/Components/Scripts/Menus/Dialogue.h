@@ -39,7 +39,6 @@ public:
     void OnDestroy() override;
 
     void Awake() override;
-    void Start() override;
     void OnTriggerEnter(const std::shared_ptr<GameObject>& gameObject) override;
     void OnTriggerExit(const std::shared_ptr<GameObject>& gameObject) override;
     void Update() override;

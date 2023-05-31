@@ -131,14 +131,24 @@ void Game::InitializeGame() const {
     // 2      *   *
     // 1    *   *
     // 0  *
-    opponent->children.begin()->second->AddComponent<Opponent>()->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+    auto opponentComponent = opponent->children.begin()->second->AddComponent<Opponent>();
+    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                               {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
-    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Pokonales mnie."},
+    opponentComponent->dialogue->texts.push_back({{""},
+                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
+                                                      {""}});
+    opponentComponent->dialogue->texts.push_back({{""},
+                                                  {"Walcz!."},
+                                                  {""}});
+    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
                              {"Masz tu moja odznake Jazz Badge."},
                              {""}});
-    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
+    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
                              {"Pokonaj kolejnego lidera w Electro Gymie."},
                              {""}});
+    opponentComponent->lossDialogue->texts.push_back({{""},
+                                                     {"Przegrales."},
+                                                     {""}});
 
     auto dialog = GameObject::Instantiate("Dialog", activeScene);
     dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
@@ -155,19 +165,6 @@ void Game::InitializeGame() const {
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
-
-
-//    int x=0;
-////     Set up animated model
-//    for (int i = 0; i < 50; ++i) {
-//        std::shared_ptr<GameObject> animatedDood = GameObject::Instantiate("DOOD", SceneManager::GetInstance()->activeScene);
-//        auto animatedDoodAnimator = animatedDood->AddComponent<Animator>();
-//        animatedDoodAnimator->LoadAnimationModel("AnimsNew/Walk.dae");
-//        animatedDoodAnimator->SetAnimation("AnimsNew/Walk.dae");
-//        animatedDood->transform->SetLocalPosition({-30 + x, 0, 0});
-//        animatedDood->transform->SetLocalScale({0.5, 0.5, 0.5});
-//        x++;
-//    }
 
     camera->SetTarget(nullptr);
 }
