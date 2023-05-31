@@ -28,7 +28,6 @@
 #include "EngineManagers/OptionsManager.h"
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/DataPersistanceManager.h"
-#include "EngineManagers/OpponentManager.h"
 #include "EngineManagers/DialogueManager.h"
 #include "EngineManagers/SavePointManager.h"
 #include "LowLevelClasses/GameData.h"
@@ -263,7 +262,6 @@ void PlayerManager::OnSessionToggle() {
         session->Stop();
         session.reset();
         AIManager::GetInstance()->NotifyPlayerStopsPlaying();
-        OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
         return;
     }
     if (sessionStarter) {
@@ -296,7 +294,6 @@ void PlayerManager::OnSoundStop(int index) {
 
 void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
-     OpponentManager::GetInstance()->NotifyPlayerPlayedPattern(AIManager::GetInstance()->GetCombinedPlayerSatisfaction());
 
     if (!pat) return;
 
@@ -327,16 +324,6 @@ void PlayerManager::OnCheatSheetToggle() {
 void PlayerManager::OnInstrumentControlToggle() {
     if (!session) return;
     session->ToggleInstrumentControl();
-}
-
-void PlayerManager::OnPlayerLoseDuel() {
-    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
-    session->Stop();
-    session.reset();
-    AIManager::GetInstance()->NotifyPlayerStopsPlaying();
-    OpponentManager::GetInstance()->NotifyPlayerStopsPlaying();
-    DialogueManager::GetInstance()->NotifyMenuIsNotActive();
-    // TODO add sound when player beat boss
 }
 
 void PlayerManager::OnDestroy() {

@@ -1,9 +1,9 @@
-#include "Components/Scripts/OpponentSessionStarter.h"
+#include "Components/Scripts/Opponent/OpponentSessionStarter.h"
 #include "Components/Scripts/Instrument.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "Components/Renderers/Camera.h"
-#include "Components/Scripts/Opponent.h"
+#include "Components/Scripts/Opponent/Opponent.h"
 
 OpponentSessionStarter::OpponentSessionStarter(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 

@@ -1,7 +1,6 @@
 #include "GloomEngine.h"
-#include "Components/Scripts/Opponent.h"
+#include "Components/Scripts/Opponent/Opponent.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "EngineManagers/OpponentManager.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
 #include "Components/Scripts/Menus/Dialogue.h"
@@ -9,8 +8,12 @@
 #include "EngineManagers/HIDManager.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/DialogueManager.h"
-#include "Components/Scripts/OpponentSessionStarter.h"
+#include "Components/Scripts/Opponent/OpponentSessionStarter.h"
 #include "Components/Scripts/Player/PlayerEquipment.h"
+#include "Components/Scripts/Opponent/OpponentMusicSession.h"
+#include "EngineManagers/AIManager.h"
+#include "Components/Scripts/SessionUI/SessionUI.h"
+#include "Components/Renderers/Camera.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -32,15 +35,12 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
 
     // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
-    auto indicator = GameObject::Instantiate("OpponentSatisfaction", ui)->AddComponent<Image>();
-    indicator->LoadTexture(700 + (int)satisfaction * 5, 1000, "UI/satysfakcjaPrzeciwnika.png");
-    indicator->SetScale(0.5);
-    auto belt1 = GameObject::Instantiate("OpponentAverageSatisfaction", ui);
-    for (int i = 0; i < 20; i++) {
-        belt.push_back(GameObject::Instantiate("OpponentAverageSatisfaction", belt1)->AddComponent<Image>());
-        belt.back()->LoadTexture(700 + i * 25, 1000, "UI/satysfakcjaGracza.png");
-        belt.back()->SetScale(0.5f);
-    }
+    GameObject::Instantiate("OpponentFrame", ui)->AddComponent<Image>()->LoadTexture(460, 880, "UI/RamkaPrzeciwnik.png");
+    belt = GameObject::Instantiate("OpponentSatisfactionDifference", ui)->AddComponent<Image>();
+    belt->LoadTexture(960, 880, "UI/Satisfaction.png");
+    belt->SetScale(0.0f);
+    timeCounter = GameObject::Instantiate("OpponentTimeCounter", ui)->AddComponent<Image>();
+    timeCounter->LoadTexture(460, 865, "UI/TimeCounter.png");
     ui->DisableSelfAndChildren();
 
     // Setup dialogues
@@ -70,8 +70,6 @@ void Opponent::Start() {
 }
 
 void Opponent::Update() {
-    if (defeated) return;
-
     // Play pattern
     timer += GloomEngine::GetInstance()->deltaTime;
     if (timer >= pattern->sounds[sampleIndex]->delay) {
@@ -82,17 +80,24 @@ void Opponent::Update() {
             sampleIndex = 0;
     }
 
-    if (!triggerActive) return;
+    if (!dialogue->triggerActive) return;
+
+    auto hid = HIDManager::GetInstance();
+
+    if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex)
+        dialogue->image->enabled = true;
 
     // Show first dialogue
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter) {
+    if (hid->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
         dialogue->enabled = true;
         dialogueActive = true;
         return;
     }
 
+    if (defeated) return;
+
     // Show choose menu
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
+    if (hid->IsKeyDown(Key::KEY_ENTER) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
         chooseMenuActive = true;
         button1->isActive = false;
         button2->isActive = true;
@@ -103,29 +108,28 @@ void Opponent::Update() {
 
     // Choose menu
     if (chooseMenuActive) {
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_A) || HIDManager::GetInstance()->IsKeyDown(Key::KEY_ARROW_LEFT)) {
+        if (hid->IsKeyDown(Key::KEY_A) || hid->IsKeyDown(Key::KEY_ARROW_LEFT)) {
             button1->isActive = true;
             button2->isActive = false;
+            return;
         }
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_D) || HIDManager::GetInstance()->IsKeyDown(Key::KEY_ARROW_RIGHT)) {
+        if (hid->IsKeyDown(Key::KEY_D) || hid->IsKeyDown(Key::KEY_ARROW_RIGHT)) {
             button1->isActive = false;
             button2->isActive = true;
+            return;
         }
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
+        if (hid->IsKeyDown(Key::KEY_ENTER)) {
+            chooseMenuActive = false;
+            chooseMenu->DisableSelfAndChildren();
+            DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+            dialogue->image->enabled = false;
             if (button1->isActive) {
-                chooseMenuActive = false;
-                chooseMenu->DisableSelfAndChildren();
                 dialogue->texts[1].text2 = "Walcz!";
-                DialogueManager::GetInstance()->NotifyMenuIsNotActive();
-                dialogue->image->enabled = false;
                 acceptDialogueActive = true;
                 return;
             } else {
-                chooseMenuActive = false;
-                chooseMenu->DisableSelfAndChildren();
-                dialogue->texts[1].text2 = "Nie to nie.";
-                DialogueManager::GetInstance()->NotifyMenuIsNotActive();
                 dialogue->image->enabled = false;
+                dialogue->texts[1].text2 = "Nie to nie.";
                 rejectDialogueActive = true;
                 return;
             }
@@ -133,7 +137,7 @@ void Opponent::Update() {
     }
 
     // Hide reject dialogue
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER) && rejectDialogueActive) {
+    if (hid->IsKeyDown(Key::KEY_ENTER) && rejectDialogueActive) {
         dialogue->enabled = false;
         dialogue->HideDialogue();
         dialogueActive = false;
@@ -143,75 +147,79 @@ void Opponent::Update() {
     }
 
     // Hide accept dialogue
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER) && acceptDialogueActive) {
+    if (hid->IsKeyDown(Key::KEY_ENTER) && acceptDialogueActive) {
         dialogue->enabled = false;
         dialogue->HideDialogue();
         dialogueActive = false;
         acceptDialogueActive = false;
         dialogue->image->enabled = false;
         CreateSessionStarter();
+        DialogueManager::GetInstance()->NotifyMenuIsActive();
         return;
     }
 
     // Session starter
     if (sessionStarter) {
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ARROW_LEFT))
+        if (hid->IsKeyDown(Key::KEY_ARROW_LEFT))
             sessionStarter->ChangeActiveButton(glm::vec2(-1, 0));
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ARROW_RIGHT))
+        if (hid->IsKeyDown(Key::KEY_ARROW_RIGHT))
             sessionStarter->ChangeActiveButton(glm::vec2(1, 0));
-        if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
+        if (hid->IsKeyDown(Key::KEY_ENTER)) {
             sessionStarter->OnClick();
             GameObject::Destroy(sessionStarter->GetParent());
             sessionStarter.reset();
+            return;
         }
     }
 
-    // End of time
-    if (wellPlayedPatternCount >= 10) {
-        defeated = true;
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->OnPlayerLoseDuel();
-        winDialogue->ShowDialogue();
+    // Music session
+    if (musicSession) {
+        time += GloomEngine::GetInstance()->deltaTime;
+        timeCounter->SetScale(glm::vec2(1 - time / battleTime, 1));
+        if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT))
+            musicSession->ToggleInstrumentControl();
+        if (hid->IsKeyDown(Key::KEY_TAB))
+            musicSession->ToggleCheatSheet();
+        for (auto key: PlaySound) {
+            if (hid->IsKeyDown(key.first)) musicSession->PlaySample(key.second);
+            if (hid->IsKeyUp(key.first)) musicSession->StopSample(key.second);
+        }
+        if (time >= battleTime || satisfactionDifference >= 100 || satisfactionDifference <= -100) {
+            if (satisfactionDifference <= -100 || (time >= battleTime && satisfactionDifference <= 0)) {
+                lossDialogue->ShowDialogue();
+                time = 0.0f;
+                satisfactionDifference = 0.0f;
+            }
+            if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
+                defeated = true;
+                winDialogue->ShowDialogue();
+                dialogue->texts.pop_back();
+                dialogue->texts[0].text2 = "To byla dobra bitwa. Pokonaj kolejnego przeciwnika.";
+                // TODO add sound when player beat boss
+            }
+            ui->DisableSelfAndChildren();
+            GameObject::Destroy(musicSession->GetParent());
+            musicSession.reset();
+            GameObject::Destroy(sessionUI->GetParent());
+            sessionUI.reset();
+            Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
+            AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+            DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+            dialogue->image->enabled = false;
+        }
+        return;
     }
+
+    if (hid->IsKeyDown(Key::KEY_ENTER) && lossDialogue->active)
+        dialogue->image->enabled = true;
 
     Component::Update();
 }
 
-void Opponent::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
-    if (gameObject->GetName() != "Player") return;
-    triggerActive = true;
-    ui->EnableSelfAndChildren();
-    for (const auto & i : belt) {
-        i->enabled = false;
-    }
-    Component::OnTriggerEnter(gameObject);
-}
-
-void Opponent::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
-    if (gameObject->GetName() != "Player") return;
-    triggerActive = false;
-    ui->DisableSelfAndChildren();
-    Component::OnTriggerExit(gameObject);
-}
-
 void Opponent::UpdateSatisfaction(float satisfaction1) {
-    if (triggerActive) {
-        for (const auto & i : belt) {
-            i->enabled = false;
-        }
-        if (satisfaction1 >= satisfaction) wellPlayedPatternCount++;
-        if (satisfactionAverage == 0.0f) {
-            satisfactionAverage = satisfaction1;
-            for (int i = 0; i < (int)satisfactionAverage / 5; i++) {
-                belt[i]->enabled = true;
-            }
-            return;
-        }
-        satisfactionAverage += satisfaction1;
-        satisfactionAverage /= 2;
-        for (int i = 0; i < (int)satisfactionAverage / 5; i++) {
-            belt[i]->enabled = true;
-        }
-    }
+    float s = satisfaction1 - satisfaction;
+    satisfactionDifference += s;
+    belt->SetScale(glm::vec2(satisfactionDifference / 100, 1.0f));
 }
 
 void Opponent::CreateSessionStarter() {
@@ -222,19 +230,16 @@ void Opponent::CreateSessionStarter() {
 }
 
 void Opponent::CreateMusicSession(InstrumentName instrumentName) {
-    // TODO create music session
-//    musicSession = GameObject::Instantiate("OpponentMusicSession", parent)->AddComponent<OpponentMusicSession>();
-//    musicSession->Setup(equipment->GetInstrumentWithName(instrumentName));
-//    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrumentName, equipment->GetInstrumentWithName(instrumentName)->genre);
-}
-
-void Opponent::OnCreate() {
-    OpponentManager::GetInstance()->opponents.insert({id, std::dynamic_pointer_cast<Opponent>(shared_from_this())});
-    Component::OnCreate();
+    auto equipment = playerManager->GetParent()->GetComponent<PlayerEquipment>();
+    musicSession = GameObject::Instantiate("OpponentMusicSession", parent)->AddComponent<OpponentMusicSession>();
+    musicSession->Setup(equipment->GetInstrumentWithName(instrumentName));
+    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrumentName, equipment->GetInstrumentWithName(instrumentName)->genre);
+    belt->SetScale(0);
+    timeCounter->SetScale(1);
+    ui->EnableSelfAndChildren();
 }
 
 void Opponent::OnDestroy() {
-    OpponentManager::GetInstance()->opponents.erase(id);
     ui.reset();
     instrument.reset();
     pattern.reset();
@@ -244,9 +249,12 @@ void Opponent::OnDestroy() {
     button2.reset();
     sessionStarter.reset();
     chooseMenu.reset();
-    belt.clear();
+    belt.reset();
     dialogue.reset();
     winDialogue.reset();
     lossDialogue.reset();
+    musicSession.reset();
+    sessionUI.reset();
+    timeCounter.reset();
     Component::OnDestroy();
 }

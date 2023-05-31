@@ -51,6 +51,7 @@ public:
 
     float GetWidth();
     float GetHeight();
+    glm::vec2 GetScale();
     glm::vec3 GetColor();
     float GetAlpha();
 

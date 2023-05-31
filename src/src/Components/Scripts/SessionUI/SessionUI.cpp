@@ -48,6 +48,7 @@ void SessionUI::PlaySound(int index) {
 
 void SessionUI::ToggleCheatSheet() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
+    if (instrumentControlActive) return;
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -64,6 +65,7 @@ void SessionUI::ToggleCheatSheet() {
 
 void SessionUI::ToggleInstrumentControl() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return;
+    if (cheatSheetActive) return;
     instrumentControlActive = !instrumentControlActive;
     if (instrumentControlActive) {
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)

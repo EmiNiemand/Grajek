@@ -16,18 +16,18 @@ struct Strings {
 
 class Dialogue : public Component {
 private:
-    bool active = false;
     std::shared_ptr<Text> text1;
     std::shared_ptr<Text> text2;
     std::shared_ptr<Text> text3;
     std::shared_ptr<GameObject> dialogue;
     std::shared_ptr<PlayerManager> playerManager;
-    short dialogueIndex = 0;
 
 public:
+    bool active = false;
     bool triggerActive = false;
     bool menuActive = false;
     bool forced = false;
+    short dialogueIndex = 0;
     std::vector<Strings> texts;
     std::shared_ptr<Image> image;
 

@@ -31,8 +31,7 @@
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/AIManager.h"
-#include "GameObjectsAndPrefabs/Prefabs/OpponentPrefab.h"
-#include "Components/Scripts/Opponent.h"
+#include "Components/Scripts/Opponent/Opponent.h"
 #include "Components/Scripts/Instrument.h"
 
 #ifdef DEBUG
@@ -126,12 +125,14 @@ void Game::InitializeGame() const {
     savePoint1->transform->SetLocalPosition({-15, 0, 10});
     savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
 
-    auto opponent = Prefab::Instantiate<OpponentPrefab>();
+    auto opponent = GameObject::Instantiate("Opponent", activeScene);
+    opponent->AddComponent<Renderer>()->LoadModel("texturedModels/przeciwnik.obj");
+    opponent->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
     opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
     // 2      *   *
     // 1    *   *
     // 0  *
-    auto opponentComponent = opponent->children.begin()->second->AddComponent<Opponent>();
+    auto opponentComponent = opponent->AddComponent<Opponent>();
     opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                               {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
     opponentComponent->dialogue->texts.push_back({{""},
