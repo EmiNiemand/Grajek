@@ -51,6 +51,7 @@ public:
     void UpdateLight(int componentId);
     void RemoveLight(int componentId);
     void SetFov(float fov);
+    void SetGamma(float gamma);
 private:
     explicit RendererManager();
 

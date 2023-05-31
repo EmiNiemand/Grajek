@@ -42,6 +42,7 @@ public:
     void Free() const;
 
     void WindowResize();
+    void SetGamma(float gamma);
 
 private:
     explicit PostProcessingManager();

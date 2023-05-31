@@ -7,6 +7,7 @@
 #include "Components/Renderers/Camera.h"
 #include "LowLevelClasses/GameData.h"
 #include "EngineManagers/HIDManager.h"
+#include "EngineManagers/RendererManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 #include "Components/Scripts/PlayerInput.h"
@@ -82,6 +83,10 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
     if(moveVector != glm::vec2(0))
         moveVector = glm::normalize(moveVector);
 	movement->Move(moveVector);
+
+    if(moveVector.x > 0) gamma +=0.5f;
+    if(moveVector.x < 0) gamma -= 0.5f;
+    RendererManager::GetInstance()->SetGamma(gamma);
 }
 #pragma endregion
 

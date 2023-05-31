@@ -52,7 +52,7 @@ void Game::InitializeGame() const {
 
 	// Set gamma
 	// ---------
-	RendererManager::GetInstance()->SetGamma(10.0f);
+	RendererManager::GetInstance()->SetGamma(1.0f);
 
     // Set up player
     // -------------
@@ -246,6 +246,7 @@ void Game::InitializeGame() const {
 
 bool Game::GameLoop() {
     shouldQuit = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->gameShouldExit;
+
 
     return shouldQuit;
 }

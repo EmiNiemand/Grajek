@@ -39,6 +39,8 @@ private:
     std::shared_ptr<ShopMenu> shopMenu;
     glm::vec2 moveInput;
 
+    float gamma = 1.0f;
+
 public:
     bool inputEnabled;
     std::shared_ptr<Menu> activeMenu;

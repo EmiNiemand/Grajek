@@ -9,6 +9,7 @@
 #include "Components/Renderers/Lights/SpotLight.h"
 #include "stb_image.h"
 #include "EngineManagers/OptionsManager.h"
+#include "EngineManagers/PostProcessingManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -208,4 +209,8 @@ void RendererManager::RemoveSpotLight(int lightNumber, const std::shared_ptr<Sha
 void RendererManager::SetFov(float fov) {
     RendererManager::fov = fov;
     UpdateProjection();
+}
+
+void RendererManager::SetGamma(float gamma) {
+    PostProcessingManager::GetInstance()->SetGamma(gamma);
 }

@@ -9,6 +9,8 @@ uniform sampler2D texturePosition;
 uniform sampler2D textureNormal;
 uniform sampler2D textureColor;
 
+uniform float gamma = 1;
+
 mat3 sx = mat3(
 1.0, 2.0, 1.0,
 0.0, 0.0, 0.0,
@@ -82,6 +84,6 @@ void main()
 
     FragColor.rgb = mix(color.rgb, lineColor, clamp(diff, 0.0, 1.0));
 
-    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/2.2));
+    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/float(gamma)));
     FragColor.a = 1.0f;
 }

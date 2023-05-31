@@ -185,3 +185,8 @@ void PostProcessingManager::WindowResize() {
     postProcessingShader->SetInt("textureColor", 3);
 }
 
+void PostProcessingManager::SetGamma(float gamma) {
+    postProcessingShader->Activate();
+    postProcessingShader->SetFloat("gamma", gamma);
+}
+
