@@ -13,10 +13,9 @@
 #include <vector>
 #include <unordered_map>
 
-constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
-constexpr float DISTANCE_TO_POINT = 1.8f;
-constexpr float DISTANCE_TO_PLAYER = 1.0f;
-constexpr float DISTANCE_TO_COLLISION = 2.3f;
+constexpr float DISTANCE_TO_POINT = 1.75f;
+constexpr float DISTANCE_TO_PLAYER = 0.75f;
+constexpr float DISTANCE_TO_COLLISION = 2.2f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.11f;
 
 class GameObject;
@@ -28,8 +27,8 @@ class CharacterMovement : public Component {
     AI_MOVEMENTSTATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     // Collisions
-    float collisionGridSize = 0.0f;
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
+    float collisionGridSize = 0.0f;
     glm::ivec2 cellPos {};
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* cellPtr = nullptr;
     glm::vec3 steeringForce {};
@@ -37,12 +36,11 @@ class CharacterMovement : public Component {
     glm::vec3 steeringDirection {};
     glm::mat4 steeringMatrix {};
     float maxDistanceToCharacter = FLT_MAX;
-    float distanceToCharacter = 0.0f;
-    float distanceToPoint = 0.0f;
+    float distance = 0.0f;
     // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
-    const bool *aiGrid;
-    float aiCellSize;
+    const bool *aiGrid = nullptr;
+    float aiCellSize = 1.0f;
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
     glm::vec3 playerPosition {};
@@ -60,6 +58,7 @@ class CharacterMovement : public Component {
     float rotationAngle = 0.0f;
 
     inline void ApplyForces(const glm::vec3 &velocity);
+    inline void ApplyRotation(const glm::vec3 &velocity);
     const glm::ivec2 GetRandomPoint() const;
     inline void SetRandomSpawnPoint();
     void SetRandomEndPoint();
@@ -69,7 +68,7 @@ class CharacterMovement : public Component {
     void ReturnToPreviousPath();
 
 protected:
-    const bool IsPositionAvailable(const glm::ivec2 &position) const;
+    const bool IsPositionAvailable(const glm::ivec2 &position);
     const glm::ivec2 GetNewEndTarget() const;
 
 public:

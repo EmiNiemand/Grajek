@@ -43,9 +43,7 @@ void CharacterMovement::FixedUpdate() {
     if (movementState == NearPlayerPosition) {
         steeringForce = glm::normalize(playerPosition - currentPosition);
 
-        rotationAngle = std::atan2f(-steeringForce.x, -steeringForce.z) * 180.0f / std::numbers::pi;
-
-        rigidbody->AddTorque(rotationAngle, ForceMode::Force);
+        ApplyRotation(steeringForce);
     }
 
     if (pathIterator >= 0) {
@@ -54,9 +52,7 @@ void CharacterMovement::FixedUpdate() {
 
         cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
 
-        distanceToPoint = glm::distance(currentPosition, (*path)[pathIterator]);
-
-        if (distanceToPoint < DISTANCE_TO_ENDPOINT && subEndPointsIterator < 0 && pathIterator == 0)
+        if (subEndPointsIterator < 0 && pathIterator < 4)
             speed = std::lerp(speed, 0.0f, smoothingParam);
         else
             speed = std::lerp(speed, maxSpeed, smoothingParam);
@@ -70,10 +66,10 @@ void CharacterMovement::FixedUpdate() {
 
                 if (box.second->isDynamic) {
                     steeringPosition = box.second->GetParent()->transform->GetGlobalPosition();
-                    distanceToCharacter = glm::distance(currentPosition, steeringPosition);
+                    distance = glm::distance(currentPosition, steeringPosition);
 
-                    if (distanceToCharacter < maxDistanceToCharacter) {
-                        maxDistanceToCharacter = distanceToCharacter;
+                    if (distance < maxDistanceToCharacter) {
+                        maxDistanceToCharacter = distance;
                         steeringDirection = glm::normalize(currentPosition - steeringPosition);
                     }
                 }
@@ -93,11 +89,13 @@ void CharacterMovement::FixedUpdate() {
 
         ApplyForces(steeringForce);
 
-        if (subEndPointsIterator < 0 && pathIterator < 1 && movementState == OnPathToPlayer) {
-            if (distanceToPoint < DISTANCE_TO_PLAYER)
+        distance = glm::distance(currentPosition, (*path)[pathIterator]);
+
+        if (subEndPointsIterator < 0 && pathIterator == 2 && movementState == OnPathToPlayer) {
+            if (distance < DISTANCE_TO_PLAYER)
                 --pathIterator;
         } else {
-            if (distanceToPoint < DISTANCE_TO_POINT)
+            if (distance < DISTANCE_TO_POINT)
                 --pathIterator;
         }
     }
@@ -177,6 +175,10 @@ void CharacterMovement::OnDestroy() {
 inline void CharacterMovement::ApplyForces(const glm::vec3& velocity) {
     rigidbody->AddForce(velocity * speed * speedMultiplier, ForceMode::Force);
 
+    ApplyRotation(velocity);
+}
+
+inline void CharacterMovement::ApplyRotation(const glm::vec3& velocity) {
     rotationAngle = std::atan2f(-velocity.x, -velocity.z) * 180.0f / std::numbers::pi;
 
     rigidbody->AddTorque(rotationAngle, ForceMode::Force);
@@ -185,7 +187,7 @@ inline void CharacterMovement::ApplyForces(const glm::vec3& velocity) {
 inline void CharacterMovement::SetRandomSpawnPoint() {
     glm::ivec2 newSpawnPoint = GetRandomPoint();
 
-    parent->transform->SetLocalPosition({newSpawnPoint.x, 0, newSpawnPoint.y});
+    parent->transform->SetLocalPosition({newSpawnPoint.x, 0.01f, newSpawnPoint.y});
 }
 
 void CharacterMovement::SetRandomEndPoint() {
@@ -204,9 +206,11 @@ const glm::ivec2 CharacterMovement::GetRandomPoint() const {
     // TODO: Change value for the real map size
     //  const int aiGridSize = AI_GRID_SIZE / 4 - 1;
 
+    const int aiGridSize = (int)std::round(24.0f / aiCellSize);
+
     while (true) {
-        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(-24 / aiCellSize, 24 / aiCellSize);
-        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(-24 / aiCellSize, 24 / aiCellSize);
+        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(-aiGridSize, aiGridSize);
+        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(-aiGridSize, aiGridSize);
 
         if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
             break;
@@ -222,11 +226,11 @@ void CharacterMovement::SetNewPathToPlayer() {
 
     glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
 
-    int minX = -1, maxX = 1, minY = -1, maxY = 1;
+    int minX = -2, maxX = 2, minY = -2, maxY = 2;
     bool isAvailable = false;
 
     while (true) {
-        for (int y = minY; y <= maxY; y+=2) {
+        for (int y = minY; y <= maxY; y += 2) {
             if (y > minY && y < maxY) {
                 newEndPoint = {intEndPoint.x + minX, intEndPoint.y + y};
                 if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
@@ -242,7 +246,7 @@ void CharacterMovement::SetNewPathToPlayer() {
                         break;
                 }
             } else {
-                for (int x = minX; x <= maxX; x+=2) {
+                for (int x = minX; x <= maxX; x += 2) {
                     newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
                     if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
                         isAvailable = IsPositionAvailable(newEndPoint);
@@ -259,10 +263,10 @@ void CharacterMovement::SetNewPathToPlayer() {
         if (isAvailable)
             break;
 
-        --minX, ++maxX, --minY, ++maxY;
+        minX -= 2, maxX += 2, minY -= 2, maxY += 2;
     }
 
-    speedMultiplier = 2.0f - (float)maxX / 10.0f;
+    speedMultiplier = 2.0f - (float) maxX / 10.0f;
     endPoint = {newEndPoint.x, 0, newEndPoint.y};
 
     SetSubEndPoints();
@@ -286,39 +290,38 @@ void CharacterMovement::SetSubEndPoints() {
 
     glm::ivec2 newEndPoint, intEndPoint = {endPoint.x, endPoint.z};
     float multiplier = 0.75f;
-    int x, y;
+    int minX = -1, maxX = 1, minY = -1, maxY = 1;
+    bool isAvailable = false;
 
     while (multiplier > 0.1f) {
         newEndPoint = intEndPoint;
         newEndPoint *= multiplier;
 
         if (aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
-            x = -1, y = -1;
+            for (int y = minY; y <= maxY; ++y) {
+                for (int x = minX; x <= maxX; ++x) {
+                    newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
 
-            while (true) {
-                newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
-                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                    if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
+                        isAvailable = true;
+                        break;
+                    }
+
+                    if (y > minY && y < maxY)
+                        x = maxX - 1;
+                }
+
+                if (isAvailable)
                     break;
 
-                newEndPoint = {intEndPoint.x + (x * -1), intEndPoint.y + y};
-                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    break;
-
-                newEndPoint = {intEndPoint.x + x, intEndPoint.y + (y * -1)};
-                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    break;
-
-                newEndPoint = {intEndPoint.x + (x * -1), intEndPoint.y + (y * -1)};
-                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    break;
-
-                x -= 1;
-                y -= 1;
+                if (y == maxY)
+                    --minX, ++maxX, --minY, ++maxY;
             }
         }
 
         subEndPoints.emplace_back(newEndPoint.x, 0.0f, newEndPoint.y);
 
+        isAvailable = false;
         multiplier -= 0.25f;
     }
 }
@@ -335,12 +338,13 @@ const glm::ivec2 CharacterMovement::GetNewEndTarget() const {
     return {endPoint.x, endPoint.z};
 }
 
-const bool CharacterMovement::IsPositionAvailable(const glm::ivec2& position) const {
+const bool CharacterMovement::IsPositionAvailable(const glm::ivec2& position) {
     bool isAvailable = true;
 
     for (const auto& mov : *otherCharacters) {
         if (position == mov.second->GetNewEndTarget()) {
             isAvailable = false;
+            break;
         }
     }
 
@@ -356,11 +360,16 @@ void CharacterMovement::CalculatePath() {
 
     if (path != nullptr)
         path->clear();
+
     delete path;
 
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},
                                     {endPoint.x, endPoint.z});
 
+    spdlog::info("path");
+
+    for (const auto&n : *path)
+        spdlog::info(std::to_string(n.x) + ", " + std::to_string(n.z));
     if (path == nullptr)
         pathIterator = -1;
     else
