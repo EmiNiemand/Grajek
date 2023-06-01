@@ -78,6 +78,7 @@ public:
 
     int GetId() const;
     const std::string &GetName() const;
+    void SetName(const std::string& newName);
     bool GetEnabled() const;
 
     void RecalculateGlobalRotation();
