@@ -12,7 +12,7 @@ Die::~Die() = default;
 std::shared_ptr<GameObject> Die::Create() {
     auto die = shared_from_this();
     auto dieRenderer = die->AddComponent<Renderer>();
-    dieRenderer->LoadModel("domek/domek.obj");
+    dieRenderer->LoadModel("Cube/Cube.obj");
     auto dieCollider = die->AddComponent<BoxCollider>();
     dieCollider->SetOffset({0, 1, 0});
 

@@ -21,8 +21,10 @@ private:
 	bool transformExtracted;
 	std::shared_ptr<GameObject> selected;
 
-
-    std::vector<fs::directory_entry> modelPaths = FindModelPaths("");
+    int selectedFolderId;
+    std::string selectedFolderName;
+    std::vector<fs::directory_entry> folderPaths;
+    std::vector<fs::directory_entry> modelPaths;
 
 
 	void ProcessChildren(std::shared_ptr<GameObject> gameObject);

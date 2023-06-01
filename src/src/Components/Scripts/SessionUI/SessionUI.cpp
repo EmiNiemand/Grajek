@@ -36,6 +36,11 @@ void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -1);
 }
 
+void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
+    instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
+    instrumentControl->LoadTexture(451, -1100, instrumentControlPath, -1);
+}
+
 void SessionUI::PlaySound(int index) {
     sampleSources[index]->ForcePlaySound();
     //spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
@@ -43,6 +48,7 @@ void SessionUI::PlaySound(int index) {
 
 void SessionUI::ToggleCheatSheet() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
+    if (instrumentControlActive) return;
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -54,6 +60,23 @@ void SessionUI::ToggleCheatSheet() {
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
                 });
+    }
+}
+
+void SessionUI::ToggleInstrumentControl() {
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return;
+    if (cheatSheetActive) return;
+    instrumentControlActive = !instrumentControlActive;
+    if (instrumentControlActive) {
+        GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
+                ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
+                {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
+        });
+    } else {
+        GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
+                ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
+                {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
+        });
     }
 }
 
@@ -123,6 +146,7 @@ void SessionUI::OnDestroy() {
     sampleImages.clear();
     sampleAnimators.clear();
     cheatSheet.reset();
+    instrumentControl.reset();
     Component::OnDestroy();
 }
 

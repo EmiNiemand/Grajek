@@ -6,6 +6,7 @@
 #include "Components/Renderers/Camera.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "EngineManagers/AIManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -22,30 +23,70 @@ CollisionManager::CollisionManager() {
 }
 
 CollisionManager::~CollisionManager() {
-    delete colliderManager;
+    delete collisionManager;
 }
 
 CollisionManager* CollisionManager::GetInstance() {
-    if (colliderManager == nullptr) {
-        colliderManager = new CollisionManager();
+    if (collisionManager == nullptr) {
+        collisionManager = new CollisionManager();
     }
 
-    return colliderManager;
+    return collisionManager;
 }
 
 
 void CollisionManager::ManageCollision() {
-    int gridPos;
-
+#ifdef DEBUG
+    ZoneScopedNC("ManageCollisions", 0xDC143C);
+#endif
     glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetGlobalPosition();
     playerPosition = glm::ivec2((int)(playerPos.x / gridSize) + GRID_SIZE / 2, (int)(playerPos.z / gridSize) + GRID_SIZE / 2);
 
+    int threadsNumber = AIManager::GetInstance()->GetMaxCharacters() / 10;
+
+    threadsNumber = threadsNumber == 0 ? 1 : threadsNumber;
+    threadsNumber = threadsNumber > maxNumberOfThreads + 1 ? (int)maxNumberOfThreads + 1 : threadsNumber;
+
+    int maxY = 11 / threadsNumber;
+    int valueY = -5;
+    int increaseValue = threadsNumber;
+    int maxYShortage = 11 % threadsNumber;
+    int additionalMaxYValue = maxYShortage > 0 ? 1 : 0;
+
+    for (int i = 0; i < threadsNumber - 1; ++i) {
+        threads.emplace_back(&CollisionManager::CheckCollision, collisionManager, valueY, maxY + additionalMaxYValue,
+                             increaseValue);
+        ++valueY;
+        --maxYShortage;
+        additionalMaxYValue = maxYShortage > 0 ? 1 : 0;
+    }
+
+    CheckCollision(valueY, maxY + additionalMaxYValue, increaseValue);
+
+    if (threads.empty()) return;
+
+    for (int i = 0; i < threads.size(); ++i) {
+        if (threads[i].joinable()) {
+            threads[i].join();
+        }
+    }
+
+    threads.clear();
+}
+
+void CollisionManager::CheckCollision(int valueY, int maxY, int increaseValue) {
+    int gridPos;
+
     // Handle collision
-    for (int x = -5; x <= 5; x++) {
-        for (int y = -5; y <= 5; y++) {
-            gridPos = (playerPosition.x + x) + (playerPosition.y + y) * GRID_SIZE;
+    for (int y = 0 ; y < maxY; ++y, valueY += increaseValue) {
+        if (valueY > 5) return;
+
+        for (int x = -5; x <= 5; ++x) {
+            gridPos = (playerPosition.x + x) + (playerPosition.y + valueY) * GRID_SIZE;
+
             for (const auto& box : grid[gridPos]) {
-                if (!box.second->GetParent()->GetComponent<Rigidbody>() && !box.second->isTrigger) continue;
+                if (grid[gridPos].size() < 2) break;
+                if ((!box.second->GetParent()->GetComponent<Rigidbody>() && !box.second->isTrigger) || !box.second->enabled) continue;
 
                 for (const auto& box2 : grid[gridPos]) {
                     if (box.second == box2.second) continue;
@@ -59,8 +100,8 @@ void CollisionManager::ManageCollision() {
 
                     glm::vec3 box2Scale = box2.second->GetSize() * box2.second->GetParent()->transform->GetGlobalScale();
                     float box2SizeLength = glm::length(glm::vec3(box2Scale.x, 0, box2Scale.z));
-
                     if (distance >= boxSizeLength + box2SizeLength) continue;
+
 
                     box.second->CheckCollision(box2.second);
                 }
@@ -115,9 +156,11 @@ void CollisionManager::RemoveDynamicBoxCollider(const glm::vec3& position, int c
 #endif
     glm::ivec2 gridPos = glm::ivec2((int)(position.x / gridSize) + GRID_SIZE / 2, (int)(position.z / gridSize) + GRID_SIZE / 2);
 
-    for (int x = -1; x <= 1; x++) {
-        for (int y = -1; y <= 1; y++) {
-            int newGridPos = (gridPos.x + x) + (gridPos.y + y) * GRID_SIZE;
+    int newGridPos;
+
+    for (int y = -2; y <= 2; ++y) {
+        for (int x = -2; x <= 2; ++x) {
+            newGridPos = (gridPos.x + x) + (gridPos.y + y) * GRID_SIZE;
             if (grid[newGridPos].contains(componentId)) grid[newGridPos].erase(componentId);
         }
     }
@@ -214,4 +257,5 @@ void CollisionManager::OnBoxCollidersChange() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
     glBindVertexArray(0);
 }
+
 #endif

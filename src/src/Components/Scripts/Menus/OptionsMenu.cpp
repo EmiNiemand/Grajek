@@ -46,6 +46,8 @@ void OptionsMenu::Start() {
     button->ChangePosition(button->x, shadowResolutionButtonY[shadowResolutionIterator]);
 
     GameObject::Instantiate("Background", parent)->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity90.png");
+    scroll = parent->AddComponent<AudioSource>();
+    scroll->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
 
     Component::Start();
 }
@@ -123,6 +125,8 @@ void OptionsMenu::ChangeValue(float y) {
         nextValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume - 0.125f]);
         button = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolume")->GetComponent<Button>();
         button->ChangePosition(button->x, musicVolumeButtonY[musicVolumeIterator]);
+        scroll->ForcePlaySound();
+        // TODO delete
 		spdlog::info(musicVolumeIterator);
     }
 	else if (activeButtonName == "WindowResolution") {
@@ -170,6 +174,7 @@ void OptionsMenu::ChangeValue(float y) {
         nextValue->ChangeText(windowResolutionValues[windowResolutionIterator - 1]);
         button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolution")->GetComponent<Button>();
 		button->ChangePosition(button->x, windowResolutionButtonY[windowResolutionIterator]);
+        scroll->ForcePlaySound();
     }
 
 	else if (activeButtonName == "WindowFullScreen") {
@@ -201,6 +206,7 @@ void OptionsMenu::ChangeValue(float y) {
         nextValue->ChangeText(windowFullScreenValues[windowFullScreenIterator - 1]);
         button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreen")->GetComponent<Button>();
 		button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
+        scroll->ForcePlaySound();
     }
 
 	else if (activeButtonName == "ShadowResolution") {
@@ -222,6 +228,7 @@ void OptionsMenu::ChangeValue(float y) {
         nextValue->ChangeText(shadowResolutionValues[shadowResolutionIterator - 1]);
         button = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolution")->GetComponent<Button>();
 		button->ChangePosition(button->x, shadowResolutionButtonY[shadowResolutionIterator]);
+        scroll->ForcePlaySound();
     }
 }
 
@@ -253,4 +260,9 @@ void OptionsMenu::ChangeShadowResolution() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     RendererManager::GetInstance()->shader->Activate();
     RendererManager::GetInstance()->shader->SetInt("shadowMap", shadowManager->depthMap);
+}
+
+void OptionsMenu::OnDestroy() {
+    scroll.reset();
+    Menu::OnDestroy();
 }

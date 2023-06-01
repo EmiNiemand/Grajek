@@ -14,9 +14,10 @@
 #include <unordered_map>
 
 constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
-constexpr float DISTANCE_TO_POINT = 1.75f;
+constexpr float DISTANCE_TO_POINT = 1.8f;
+constexpr float DISTANCE_TO_PLAYER = 1.5f;
 constexpr float DISTANCE_TO_COLLISION = 2.3f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.1f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.11f;
 
 class GameObject;
 class Rigidbody;
@@ -38,6 +39,7 @@ class CharacterMovement : public Component {
     float distanceToCharacter = 0.0f;
     float distanceToPoint = 0.0f;
     // Paths and points
+    std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
@@ -56,6 +58,7 @@ class CharacterMovement : public Component {
 
     inline void ApplyForces(const glm::vec3 &velocity);
     static const glm::ivec2 GetRandomPoint();
+    inline void SetRandomSpawnPoint();
     void SetRandomEndPoint();
     void SetSubEndPoints();
     void CalculatePath();
@@ -66,13 +69,16 @@ public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
-    void Start() override;
+    void Awake() override;
     void FixedUpdate() override;
     void AIUpdate() override;
+    void OnCreate() override;
     void OnDestroy() override;
 
     void SetState(const AI_MOVEMENTSTATE& newState);
     const AI_MOVEMENTSTATE GetState() const;
+    const bool IsPositionAvailable(const glm::ivec2 &position) const;
+    const glm::ivec2 GetNewEndTarget() const;
 
 };
 

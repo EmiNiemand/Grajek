@@ -12,6 +12,7 @@ class GloomEngine;
 class GameObject;
 //Insert prefab classes here
 class House;
+class Image;
 
 class SceneManager {
 private:
@@ -21,6 +22,8 @@ public:
     std::shared_ptr<GameObject> activeScene;
 
     std::string file;
+
+    std::shared_ptr<Image> loadingScreen;
 public:
     SceneManager(SceneManager &other) = delete;
     void operator=(const SceneManager&) = delete;

@@ -13,6 +13,10 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
     // ------------------
     SetCheatSheet("UI/Sesja/clapPatterns.png");
 
+    // Set up instrument control
+    // ------------------
+    SetInstrumentControl("UI/Sesja/clapControl.png");
+
     // Load theme
     // ----------
     GameObject::Instantiate("Theme", parent)->AddComponent<Image>()

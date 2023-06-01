@@ -40,6 +40,8 @@ public:
     void OnDestroy() override;
 
     void Draw() override;
+
+    void SetPosition(float x2, float y2) override;
 };
 
 #endif //GLOOMENGINE_TEXT_H

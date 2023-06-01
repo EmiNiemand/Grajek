@@ -26,11 +26,6 @@ std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& curr
     startGridPos = LocalToGrid(currentPosition);
     endGridPos = LocalToGrid(endTarget);
 
-    // Possible implementation of limiting grid size by distance from start grid point to end
-    // grid point, not implemented due to no/low performance gain
-//    int distance = std::clamp((int)glm::distance(glm::vec2{startGridPos.x + 5, startGridPos.y + 5},
-//                                             {endGridPos.x + 5, endGridPos.y + 5}), 0, AI_GRID_SIZE);
-
     currentNode = new Node();
     currentNode->pos = startGridPos;
     currentNode->gCost = 0;
@@ -47,14 +42,10 @@ std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& curr
                 if (i == 0 && j == 0)
                     continue;
 
-                // Same as the comment before
-//                gridIndex = {std::clamp(currentNode->pos.x + i, AI_GRID_SIZE / 2 - distance, AI_GRID_SIZE / 2 + distance),
-//                             std::clamp(currentNode->pos.y + j, AI_GRID_SIZE / 2 - distance, AI_GRID_SIZE / 2 + distance)};
-
                 gridIndex = {std::clamp(currentNode->pos.x + i, 0, AI_GRID_SIZE),
                              std::clamp(currentNode->pos.y + j, 0, AI_GRID_SIZE)};
 
-                if (aiGrid[gridIndex.x][gridIndex.y] || closedList.contains(gridIndex.x * 100 + gridIndex.y))
+                if (aiGrid[gridIndex.x + gridIndex.y * AI_GRID_SIZE] || closedList.contains(gridIndex.x * 100 + gridIndex.y))
                     continue;
 
                 if (openList.contains(gridIndex.x * 100 + gridIndex.y)) {

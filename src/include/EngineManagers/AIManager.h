@@ -12,10 +12,11 @@
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterPathfinding.h"
 
-constexpr int AI_GRID_SIZE = 100;
+constexpr int AI_GRID_SIZE = 1000;
 
 class GloomEngine;
 class CharacterLogic;
+class CharacterMovement;
 class CharacterPathfinding;
 class BoxCollider;
 
@@ -37,9 +38,10 @@ public:
     //TODO: Implement!
     //std::vector<std::shared_ptr<GameObject>> buildings;
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> charactersLogics;
+    std::unordered_map<int, std::shared_ptr<CharacterMovement>> charactersMovements;
     std::shared_ptr<CharacterPathfinding> pathfinding;
     const float aiCellSize = 1.0f;
-    bool aiGrid[AI_GRID_SIZE][AI_GRID_SIZE] = {};
+    bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
 
     AIManager(AIManager &other) = delete;
     void operator=(const AIManager&) = delete;
@@ -58,8 +60,8 @@ public:
     void NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedEnemySatisfaction();
     void RemoveCharacterLogic(const int& componentId);
-    void RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const;
-
+    void RemoveCharacterMovement(const int &componentId);
+    [[nodiscard]] inline int GetMaxCharacters() const { return maxCharacters;}
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H

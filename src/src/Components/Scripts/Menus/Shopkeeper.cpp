@@ -40,8 +40,8 @@ void Shopkeeper::Start() {
     shopkeeperModel->transform->SetLocalScale({0.5, 0.5, 0.5});
     auto animatorObject = GameObject::Instantiate("ShopkeeperAnimator", shopkeeperModel);
     auto animator = animatorObject->AddComponent<Animator>();
-    animator->LoadAnimationModel("JazzMan001/JazzMan001.dae");
-    animator->SetAnimation("AnimsNew/Idle3.dae");
+    animator->LoadAnimationModel("Crowd/JazzMan001/JazzMan001.dae");
+    animator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
     texts.push_back({{"Jestem Sklepu."},
                                {"Mozesz sie poruszac WSAD."},
@@ -118,7 +118,7 @@ void Shopkeeper::Update() {
         dialogueIndex++;
         // Load shopkeeper animation
         if (dialogueIndex == texts.size()) {
-            GloomEngine::GetInstance()->FindGameObjectWithName("ShopkeeperAnimator")->GetComponent<Animator>()->SetAnimation("AnimsNew/Walk.dae");
+            GloomEngine::GetInstance()->FindGameObjectWithName("ShopkeeperAnimator")->GetComponent<Animator>()->SetAnimation("CrowdAnimations/Walk.dae");
             parent->GetComponent<BoxCollider>()->enabled = false;
             shopkeeperModel->AddComponent<GameObjectAnimator>()->Setup(shopkeeperModel->transform, {
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},

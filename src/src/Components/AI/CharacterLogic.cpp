@@ -27,7 +27,7 @@ void CharacterLogic::Start() {
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
     characterAnimator->LoadAnimationModel(modelPath);
-    characterAnimator->SetAnimation("AnimsNew/Idle1.dae");
+    characterAnimator->SetAnimation("CrowdAnimations/Idle1.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
     Component::Start();
@@ -74,7 +74,7 @@ void CharacterLogic::AIUpdate() {
         CalculateSatisfaction();
 
         if (playerSatisfaction > minSatisfaction) {
-            characterIndicator->Indicate();
+//            characterIndicator->Indicate();
             logicState = MovingToPlayer;
             characterMovement->SetState(SetPathToPlayer);
         }

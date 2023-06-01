@@ -42,17 +42,18 @@ public:
 
     void Draw() override;
 
-    void SetPosition(float x2, float y2);
-    void SetRotation(float angle);
-    void SetScale(float scale);
+    void SetPosition(float x2, float y2) override;
+    void SetRotation(float angle) override;
+    void SetScale(float scale) override;
     void SetScale(glm::vec2 newScale);
-    void SetColor(glm::vec3 newColor);
-    void SetAlpha(float newAlpha);
+    void SetColor(glm::vec3 newColor) override;
+    void SetAlpha(float newAlpha) override;
 
     float GetWidth();
     float GetHeight();
-    glm::vec3 GetColor();
-    float GetAlpha();
+    glm::vec2 GetScale();
+    glm::vec3 GetColor() override;
+    float GetAlpha() override;
 
 private:
     void UpdateCorners();

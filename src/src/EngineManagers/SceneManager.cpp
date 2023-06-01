@@ -8,11 +8,13 @@
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
+#include "GameObjectsAndPrefabs/Prefabs/InvisibleBlock.h"
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/UI/Image.h"
 
 #include <fstream>
 
@@ -40,6 +42,11 @@ void SceneManager::InitializeScene() {
 #endif
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
+
+    // TODO create loading screen
+//    loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
+//    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreen.png");
+//    loadingScreen->Draw();
 
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
@@ -100,15 +107,20 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     for (const auto &object: staticObjectsData) {
         newGameObject.reset();
         if(object->name == "House"){
-            newGameObject = Prefab::Instantiate<House>();
+            //newGameObject = Prefab::Instantiate<House>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<House>(object->uniqueName);
         }
         if(object->name == "Shop"){
-            newGameObject = Prefab::Instantiate<Shop>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<Shop>(object->uniqueName);
         }
         if(object->name == "SavePoint"){
-            newGameObject = Prefab::Instantiate<SavePoint>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<SavePoint>(object->uniqueName);
+        }
+        if(object->name == "InvisibleBlock"){
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<InvisibleBlock>(object->uniqueName);
         }
         if(newGameObject) {
+            //if(!object->uniqueName.empty())
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);
             newGameObject->transform->SetLocalScale(object->scale);
@@ -166,7 +178,7 @@ void SceneManager::SaveMap(std::vector<std::shared_ptr<StaticObjectData>> mapDat
         to_json(json, mapData);
 
         std::ofstream saveFile(path);
-        saveFile << json << std::endl;
+        saveFile << json.dump(0, '\t') << std::endl;
     }
     catch(std::exception e) {
         spdlog::info("Failed to write a MAP file content at path: " + path.string());
@@ -179,6 +191,7 @@ void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<Sta
     for (const auto& object: mapData){
         objectJson.clear();
 
+        objectJson["uniqueName"] = object -> uniqueName;
         objectJson["name"] = object -> name;
 
         objectJson["position.x"] = object->position.x;
@@ -215,6 +228,8 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject = std::make_shared<StaticObjectData>();
 
         newObject->name = object["name"];
+        if(object.contains("uniqueName"))
+        newObject->uniqueName= object["uniqueName"];
 
         newObject->position.x = object["position.x"];
         newObject->position.y = object["position.y"];
@@ -243,7 +258,7 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject->coliderOffset.y = object["coliderOffset.y"];
         if(object.contains("coliderOffset.z"))
         newObject->coliderOffset.z = object["coliderOffset.z"];
-        
+
         mapData.push_back(newObject);
     }
 }
@@ -271,7 +286,10 @@ void SceneManager::CreatePrefabObject(const std::string name) {
     } else if(name == "SavePoint"){
         spdlog::info("Created object from prefab SavePoint");
         Prefab::Instantiate<SavePoint>();
-    } else {
+    } else if(name == "InvisibleBlock"){
+        spdlog::info("Created object from prefab InvisibleBlock");
+        Prefab::Instantiate<InvisibleBlock>();
+    }else {
         spdlog::info("Failed to find prefab with name: " + name);
     }
 }

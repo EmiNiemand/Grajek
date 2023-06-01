@@ -18,7 +18,7 @@ private:
 
     inline static unsigned int maxNumberOfThreads = std::thread::hardware_concurrency() / 2;
     std::vector<std::thread> threads;
-    std::shared_ptr<Animator> buffer[1000];
+    std::shared_ptr<Animator> buffer[200];
 
 public:
     AnimationManager(AnimationManager &other) = delete;

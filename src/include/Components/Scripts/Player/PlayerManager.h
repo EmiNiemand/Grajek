@@ -68,6 +68,7 @@ private:
     void OnSessionToggle();
     void OnSoundPlay(int index);
     void OnCheatSheetToggle();
+    void OnInstrumentControlToggle();
 
 	// Animation methods
 	void UpdateAnimations();
@@ -91,7 +92,6 @@ public:
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
     void CreateMusicSession(InstrumentName instrument);
-    void OnPlayerLoseDuel();
 
     // UI methods
     void ToggleOptionsMenu();

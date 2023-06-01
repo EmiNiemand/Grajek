@@ -44,15 +44,21 @@ protected:
     std::shared_ptr<Image> cheatSheet;
     bool cheatSheetActive = false;
 
+    // Instrument control
+    std::shared_ptr<Image> instrumentControl;
+    bool instrumentControlActive = false;
+
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
     virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath);
     void SetCheatSheet(const std::string& cheatSheetPath);
+    void SetInstrumentControl(const std::string& instrumentControlPath);
 
     virtual void PlaySound(int index);
     virtual void StopSound(int index);
     void ToggleCheatSheet();
+    void ToggleInstrumentControl();
     // Fraction values: <0, 1>
     void UpdateAccuracy(float fraction);
 

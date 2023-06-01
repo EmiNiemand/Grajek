@@ -14,14 +14,11 @@ Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Componen
 Dialogue::~Dialogue() = default;
 
 void Dialogue::Awake() {
+    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     parent->GetComponent<BoxCollider>()->SetSize({5, 5, 5});
     parent->GetComponent<BoxCollider>()->isTrigger = true;
-    Component::Awake();
-}
-
-void Dialogue::Start() {
-    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
 
     image = GameObject::Instantiate("ButtonImage", parent)->AddComponent<Image>();
     image->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
@@ -36,7 +33,8 @@ void Dialogue::Start() {
     GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png");
     image->enabled = false;
     dialogue->DisableSelfAndChildren();
-    Component::Start();
+
+    Component::Awake();
 }
 
 void Dialogue::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {

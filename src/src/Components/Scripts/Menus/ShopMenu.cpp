@@ -5,6 +5,7 @@
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Button.h"
 #include "Components/Scripts/Menus/ShopTrigger.h"
+#include "Components/UI/Popup.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -101,15 +102,24 @@ void ShopMenu::OnClick() {
             secondInstrumentIndex--;
             thirdInstrumentIndex--;
             fourthInstrumentIndex--;
+            GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
+                    Setup(610, 340, "UI/Sklep/Popup.png", "UI/buttonInactive.png", "UI/buttonActive.png");
         } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
             instruments.erase(instruments.begin() + secondInstrumentIndex);
             thirdInstrumentIndex--;
             fourthInstrumentIndex--;
+            GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
+                    Setup(610, 340, "UI/Sklep/Popup.png", "UI/buttonInactive.png", "UI/buttonActive.png");
         } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
             instruments.erase(instruments.begin() + thirdInstrumentIndex);
             fourthInstrumentIndex--;
-        } else if (activeButton->GetParent()->GetName() == "FourthInstrument")
+            GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
+                    Setup(610, 340, "UI/Sklep/Popup.png", "UI/buttonInactive.png", "UI/buttonActive.png");
+        } else if (activeButton->GetParent()->GetName() == "FourthInstrument") {
             instruments.erase(instruments.begin() + fourthInstrumentIndex);
+            GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
+                    Setup(610, 340, "UI/Sklep/Popup.png", "UI/buttonInactive.png", "UI/buttonActive.png");
+        }
         DeleteButton(activeButton);
         spdlog::info("[SM] Bought instrument!");
     } else {

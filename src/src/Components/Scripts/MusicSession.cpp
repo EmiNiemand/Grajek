@@ -90,6 +90,8 @@ void MusicSession::StopSample(int index) {
 
 void MusicSession::ToggleCheatSheet() { sessionUI->ToggleCheatSheet(); }
 
+void MusicSession::ToggleInstrumentControl() { sessionUI->ToggleInstrumentControl(); }
+
 void MusicSession::DetectPattern() {
     // Initialize potential patterns list
     // ----------------------------------
