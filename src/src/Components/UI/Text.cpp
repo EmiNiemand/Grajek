@@ -3,6 +3,7 @@
 #include "Components/UI/Text.h"
 #include "EngineManagers/UIManager.h"
 #include "GloomEngine.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -96,6 +97,13 @@ void Text::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::v
     this->x = x;
     this->y = y;
     this->color = color;
+}
+
+void Text::SetPosition(float x2, float y2) {
+    x = x2;
+    y = y2;
+
+    parent->transform->SetLocalPosition(glm::vec3(x, y, 0));
 }
 
 void Text::Update() {

@@ -168,6 +168,10 @@ void Game::InitializeGame() const {
     shopkeeper->AddComponent<Shopkeeper>();
 
     camera->SetTarget(nullptr);
+
+    // TODO delete loading screen
+//    GameObject::Destroy(SceneManager::GetInstance()->loadingScreen->GetParent());
+//    SceneManager::GetInstance()->loadingScreen.reset();
 }
 
 bool Game::GameLoop() {

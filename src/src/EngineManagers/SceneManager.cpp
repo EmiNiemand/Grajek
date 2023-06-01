@@ -13,6 +13,7 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/UI/Image.h"
 
 #include <fstream>
 
@@ -40,6 +41,11 @@ void SceneManager::InitializeScene() {
 #endif
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
+
+    // TODO create loading screen
+//    loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
+//    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreen.png");
+//    loadingScreen->Draw();
 
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";

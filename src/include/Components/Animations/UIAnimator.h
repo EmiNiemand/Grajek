@@ -16,7 +16,7 @@ private:
     std::vector<AnimationCheckpoint> checkpoints;
     int checkpointIndex = 0;
     AnimationCheckpoint checkpoint;
-    std::shared_ptr<Image> image;
+    std::shared_ptr<UIComponent> uiComponent;
     glm::vec3 valueDelta;
     bool loopingAnimation;
     AnimationBehaviour type;
@@ -26,7 +26,7 @@ public:
 
     UIAnimator(const std::shared_ptr<GameObject> &parent, int id);
 
-    void Setup(std::shared_ptr<Image> animatedImage,
+    void Setup(std::shared_ptr<UIComponent> animatedImage,
                std::vector<AnimationCheckpoint> animation,
                AnimationBehaviour behaviour = AnimationBehaviour::OneTime);
     void Reset();
