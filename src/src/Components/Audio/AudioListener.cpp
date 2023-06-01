@@ -2,10 +2,9 @@
 // Created by Adrian on 07.04.2023.
 //
 
-#include <al.h>
-#include "Components/Audio/AudioListener.h"
-#include "EngineManagers/AudioManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/AudioManager.h"
+#include "Components/Audio/AudioListener.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -31,8 +30,9 @@ void AudioListener::Start() {
 
 void AudioListener::Update() {
 #ifdef DEBUG
-    ZoneScopedNC("Audio listener", 0x800080);
+    ZoneScopedNC("AudioListener", 0x800080);
 #endif
+
     position = parent->transform->GetLocalPosition();
     alListener3f(AL_POSITION, position.x, position.y, position.z);
     Component::Update();
@@ -43,27 +43,32 @@ void AudioListener::OnCreate() {
     Component::OnCreate();
 }
 
-// Sets player audio gain. Type: float, default 1.0f
-void AudioListener::SetGain(float val) {
-    if (val < 0.0f) {
-        gain = 0.0f;
-    } else {
-        gain = val;
-    }
+/**
+ * @annotation
+ * Sets player audio gain (e.g. global volume level).
+ * @param val - value between 0.0f - 1.0f
+ */
+void AudioListener::SetGain(const float& val) {
+    gain = std::clamp(val, 0.0f, 1.0f);
 
     alListenerf(AL_GAIN, gain);
 }
 
-// Return current gain value
+/**
+ * @annotation
+ * Returns current audio gain (e.g. global volume level).
+ * @returns float - value between 0.0f - 1.0f
+ */
 const float AudioListener::GetGain() const {
     return gain;
 }
 
-// Sets player audio velocity. Type: glm::vec3.
-// Used in calculating doppler shift (moving objects emitting sound)
-void AudioListener::SetVelocity(glm::vec3 vel) {
+/**
+ * @annotation
+ * Sets player velocity (for doppler shift).
+ * @param vel - velocity
+ */
+void AudioListener::SetVelocity(const glm::vec3& vel) {
     velocity = vel;
     alListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
-
-

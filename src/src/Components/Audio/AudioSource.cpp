@@ -3,9 +3,9 @@
 //
 
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "Components/Audio/AudioSource.h"
 #include "EngineManagers/AudioManager.h"
-#include "LowLevelClasses/AudioLoader.h"
+#include "Components/Audio/AudioSource.h"
+#include "Components/Audio/AudioLoader.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -28,30 +28,39 @@ void AudioSource::Update() {
 
     if (maxDistance > 0.0f) {
         if (distanceMode == AudioDistanceMode::Paused) {
-            if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance) {
+            if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance)
                 PauseSound();
-            } else {
+            else
                 PlaySound();
-            }
         } else {
-            if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance) {
+            if (glm::distance(playerPos->GetLocalPosition(), position) > maxDistance)
                 alSourcef(sourceId, AL_GAIN, 0.0f);
-            } else {
+            else
                 alSourcef(sourceId, AL_GAIN, gain);
-            }
         }
     }
+
+    alGetSourcei(sourceId, AL_BUFFERS_PROCESSED, &currentState);
+
+    if (isPlaying && !isLooping)
+        isPlaying = audioLoader->FillProcessedBuffers(currentState);
+    else if (isLooping)
+        audioLoader->FillProcessedBuffers(currentState);
+
     Component::Update();
 }
 
 void AudioSource::OnCreate() {
     AudioManager::GetInstance()->audioSources.insert({id, std::dynamic_pointer_cast<AudioSource>(shared_from_this())});
+    audioLoader = std::make_shared<AudioLoader>();
     Component::OnCreate();
 }
 
 void AudioSource::OnDestroy() {
-    playerPos.reset();
     AudioManager::GetInstance()->RemoveAudioSource(id);
+    playerPos = nullptr;
+    audioLoader->CloseFile();
+    audioLoader = nullptr;
     Component::OnDestroy();
 }
 
@@ -66,7 +75,7 @@ void AudioSource::OnUpdate() {
 void AudioSource::Free() {
     alSourceStop(sourceId);
     alSourcei(sourceId, AL_BUFFER, NULL);
-    alDeleteBuffers(1, &bufferId);
+    alDeleteBuffers(4, buffersIds);
     alDeleteSources(1, &sourceId);
 }
 
@@ -75,18 +84,10 @@ void AudioSource::Free() {
  * Loads audio. Requires path to file and sound type. NOTE: types are either placed in res/sounds/direct or
  * res/sounds/positional (indicating their purpose).
  * @param path - path to .wav file
- * @param type - Positional or Direct
+ * @param type - Positional or Direct audio
  */
-void AudioSource::LoadAudioData(const char* path, AudioType type) {
-    std::unique_ptr<AudioLoader> loader = std::make_unique<AudioLoader>();
-
-    alGenBuffers(1, &bufferId);
-
-    //  Currently unused, maybe in future for audio streaming
-    //  AudioManager::GetInstance()->audioBuffers.insert({bufferId, std::dynamic_pointer_cast<AudioSource>(shared_from_this())});
-
-    loader->LoadAudioFile(path, type, bufferId);
-
+void AudioSource::LoadAudioData(const std::string& path, AudioType type) {
+    alGenBuffers(4, buffersIds);
     alGenSources(1, &sourceId);
 
     alSourcef(sourceId, AL_PITCH, 1);
@@ -101,15 +102,20 @@ void AudioSource::LoadAudioData(const char* path, AudioType type) {
     }
 
     alSourcei(sourceId, AL_LOOPING, AL_FALSE);
-    alSourcei(sourceId, AL_BUFFER, bufferId);
+
+    audioLoader->InitializeAudioLoader(sourceId, buffersIds);
+    audioLoader->OpenFile(path);
+    audioLoader->LoadFileHeader(type);
+    audioLoader->FillBuffersQueue();
 }
 
 /**
  * @annotation
  * Plays the sound only if it is not currently playing.
  */
-void AudioSource::PlaySound() const {
+void AudioSource::PlaySound() {
     if (currentState != AL_PLAYING) {
+        isPlaying = true;
         alSourcePlay(sourceId);
     }
 }
@@ -118,7 +124,8 @@ void AudioSource::PlaySound() const {
  * @annotation
  * Plays the sound despite its current status.
  */
-void AudioSource::ForcePlaySound() const {
+void AudioSource::ForcePlaySound() {
+    isPlaying = true;
     alSourcePlay(sourceId);
 }
 
@@ -147,7 +154,7 @@ void AudioSource::StopSound() const {
  * Sets position offset.
  * @param offset - vector3 added to position, default {0}
  */
-void AudioSource::SetPositionOffset(glm::vec3 offset) {
+void AudioSource::SetPositionOffset(const glm::vec3& offset) {
     positionOffset = offset;
     position += positionOffset;
     alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
@@ -159,7 +166,7 @@ void AudioSource::SetPositionOffset(glm::vec3 offset) {
  * audio will still play with zero volume until player is again in audio range.
  * @param mode - Paused or Continuous, default Continuous
  */
-void AudioSource::SetDistanceMode(AudioDistanceMode mode) {
+void AudioSource::SetDistanceMode(const AudioDistanceMode& mode) {
     distanceMode = mode;
 }
 
@@ -168,7 +175,7 @@ void AudioSource::SetDistanceMode(AudioDistanceMode mode) {
  * Sets audio pitch.
  * @param val - [0.5 - 2.0], default 1.0
  */
-void AudioSource::SetPitch(float val) const {
+void AudioSource::SetPitch(const float& val) const {
     alSourcef(sourceId, AL_PITCH, val);
 }
 
@@ -177,7 +184,7 @@ void AudioSource::SetPitch(float val) const {
  * Sets audio gain. Each division/multiply by 2 results in -6/+6 dB.
  * @param val - [0.0 - x], default 1.0.
  */
-void AudioSource::SetGain(float val) {
+void AudioSource::SetGain(const float& val) {
     if (val < 0.0f) {
         gain = 0.0f;
     } else {
@@ -192,7 +199,7 @@ void AudioSource::SetGain(float val) {
  * Sets audio velocity. Used in calculating doppler shift (moving objects emitting sound).
  * @param velocity - vector3, default {0}
  */
-void AudioSource::SetVelocity(glm::vec3 velocity) const {
+void AudioSource::SetVelocity(const glm::vec3& velocity) const {
     alSource3f(sourceId, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
 
@@ -202,7 +209,7 @@ void AudioSource::SetVelocity(glm::vec3 velocity) const {
  * for more realistic effect.
  * @param val - [0.0f - x], default 0.0f
  */
-void AudioSource::SetMaxDistance(float val) {
+void AudioSource::SetMaxDistance(const float& val) {
     maxDistance = val;
 
     if (maxDistance == 0.0f) {
@@ -220,8 +227,8 @@ void AudioSource::SetMaxDistance(float val) {
  * Sets audio looping state.
  * @param state - true or false, default false
  */
-void AudioSource::IsLooping(bool state) const {
-    alSourcei(sourceId, AL_LOOPING, state);
+void AudioSource::IsLooping(const bool& state) {
+    isLooping = state;
 }
 
 /**
@@ -230,7 +237,7 @@ void AudioSource::IsLooping(bool state) const {
  * @param state - true or false, default false
  */
 // Sets if the target will be moving. If set to true, then the position
-void AudioSource::IsMoving(bool state) {
+void AudioSource::IsMoving(const bool& state) {
     isMovingTarget = state;
 }
 
@@ -240,7 +247,7 @@ void AudioSource::IsMoving(bool state) {
  * @param direction - vector3, sound direction
  * @param cone - vector2, inner angle and outer angle
  */
-void AudioSource::SetCone(glm::vec3 direction, glm::vec2 cone) const {
+void AudioSource::SetCone(const glm::vec3& direction, const glm::vec2& cone) const {
     alSource3f(sourceId, AL_DIRECTION, direction.x, direction.y, direction.z);
     alSourcef(sourceId, AL_CONE_INNER_ANGLE, cone.x);
     alSourcef(sourceId, AL_CONE_OUTER_ANGLE, cone.y);

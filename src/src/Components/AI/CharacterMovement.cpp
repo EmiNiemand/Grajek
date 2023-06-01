@@ -98,6 +98,15 @@ void CharacterMovement::FixedUpdate() {
             if (distance < DISTANCE_TO_POINT)
                 --pathIterator;
         }
+
+        if (subEndPointsIterator < 0 && pathIterator < 0) {
+            if (movementState == OnPathToPlayer)
+                movementState = NearPlayerPosition;
+            else if (movementState == OnPathToTarget)
+                movementState = NearTargetPosition;
+            else if (movementState == OnPathToEnemy)
+                movementState = NearEnemyPosition;
+        }
     }
 
     Component::FixedUpdate();
@@ -115,8 +124,6 @@ void CharacterMovement::AIUpdate() {
                 endPoint = subEndPoints[subEndPointsIterator];
                 movementState = OnPathToTarget;
                 CalculatePath();
-            } else {
-                movementState = NearTargetPosition;
             }
             break;
         case OnPathToTarget:
@@ -135,8 +142,6 @@ void CharacterMovement::AIUpdate() {
                 endPoint = subEndPoints[subEndPointsIterator];
                 movementState = OnPathToPlayer;
                 CalculatePath();
-            } else {
-                movementState = NearPlayerPosition;
             }
             break;
         case OnPathToPlayer:
@@ -366,10 +371,10 @@ void CharacterMovement::CalculatePath() {
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},
                                     {endPoint.x, endPoint.z});
 
-    spdlog::info("path");
+//    spdlog::info("path");
+//    for (const auto&n : *path)
+//        spdlog::info(std::to_string(n.x) + ", " + std::to_string(n.z));
 
-    for (const auto&n : *path)
-        spdlog::info(std::to_string(n.x) + ", " + std::to_string(n.z));
     if (path == nullptr)
         pathIterator = -1;
     else

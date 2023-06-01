@@ -165,6 +165,8 @@ void CharacterLogic::CalculateSatisfaction() {
         != favInstrumentsNames.end())
         playerSatisfaction += 20;
 
+    playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
+
     enemySatisfaction = 0;
 
     if (std::find(favGenres.begin(), favGenres.end(), enemyGenre) != favGenres.end())
@@ -174,6 +176,7 @@ void CharacterLogic::CalculateSatisfaction() {
             != favInstrumentsNames.end())
         enemySatisfaction += 20;
 
+    enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
 //    TODO: dunno, do something here
 //    if (playerSatisfaction > enemySatisfaction)
 

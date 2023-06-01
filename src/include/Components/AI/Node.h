@@ -16,16 +16,31 @@ struct Node {
     float fCost = 0, gCost = 0, hCost = 0;
     glm::ivec2 pos {};
 
+    /**
+      * @annotation
+      * Calculates Node's fCost.
+      */
     inline void CalculateFCost() {
         fCost = gCost + hCost;
     }
 
-    // NOTE: octile distance (similar to Chebyshev, performs better than Manhattan or Euclidean)
+    /**
+      * @annotation
+      * Calculates Node's hCost.
+      * NOTE: currently, it is a heuristic implementation of octile distance, which similar to Chebyshev distance,
+      * but also performs better than Manhattan or Euclidean
+      * @param targetPosition - end grid position
+      */
     inline void CalculateHCost(const glm::ivec2& targetPosition) {
-        int dx = std::fabs(targetPosition.x - pos.x), dy = std::fabs(targetPosition.y - pos.y);
+        int dx = std::abs(targetPosition.x - pos.x), dy = std::abs(targetPosition.y - pos.y);
         hCost = STRAIGHT_MOVE_COST * (dx + dy) + (DIAGONAL_MOVE_COST - 2 * STRAIGHT_MOVE_COST) * std::min(dx, dy);
     }
 
+     /**
+      * @annotation
+      * Calculates Node's gCost.
+      * @param position - grid position
+      */
     inline void CalculateGCost(const glm::ivec2& position) {
         if ((position.x != 0 && position.y == 0) || (position.x == 0 && position.y != 0))
             gCost = parent->gCost + STRAIGHT_MOVE_COST;
