@@ -16,7 +16,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -4.0,
@@ -35,7 +36,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -0.5,
@@ -54,7 +56,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -73,7 +76,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -92,7 +96,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -111,7 +116,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.5,
@@ -130,7 +136,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -4.0,
@@ -149,7 +156,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -168,7 +176,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -187,7 +196,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -206,7 +216,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.5,
@@ -225,7 +236,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -3.5,
@@ -244,7 +256,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.5,
   "scale.y": 0.6000000238418579,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -0.5,
@@ -263,7 +276,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.600000023841858,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -282,7 +296,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 0.6499999761581421,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -301,7 +316,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -320,7 +336,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -339,7 +356,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -358,7 +376,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -5.0,
@@ -377,7 +396,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -396,7 +416,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": -0.5,
@@ -415,7 +436,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -434,7 +456,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 0.6000000238418579,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -453,7 +476,8 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
   "coliderOffset.x": 0.0,
@@ -472,44 +496,47 @@
   "rotation.z": 0.0,
   "scale.x": 1.0,
   "scale.y": 1.0,
-  "scale.z": 1.0
+  "scale.z": 1.0,
+  "uniqueName":"House"
 },
 {
-"coliderOffset.x": -2.5,
-"coliderOffset.y": 3.0,
-"coliderOffset.z": 2.0,
-"coliderSize.x": 2.5,
-"coliderSize.y": 6.0,
-"coliderSize.z": 2.0,
-"modelPath": "Buildings/Normal/MAINSHOP.obj",
-"name": "Shop",
-"position.x": 4.0,
-"position.y": 0.0,
-"position.z": -8.0,
-"rotation.x": 0.0,
-"rotation.y": 0.0,
-"rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0
+  "coliderOffset.x": -2.5,
+  "coliderOffset.y": 3.0,
+  "coliderOffset.z": 2.0,
+  "coliderSize.x": 2.5,
+  "coliderSize.y": 6.0,
+  "coliderSize.z": 2.0,
+  "modelPath": "Buildings/Normal/MAINSHOP.obj",
+  "name": "Shop",
+  "position.x": 4.0,
+  "position.y": 0.0,
+  "position.z": -8.0,
+  "rotation.x": 0.0,
+  "rotation.y": 0.0,
+  "rotation.z": 0.0,
+  "scale.x": 1.0,
+  "scale.y": 1.0,
+  "scale.z": 1.0,
+  "uniqueName":"Shop"
 },
 {
-"coliderOffset.x": 0.0,
-"coliderOffset.y": 0.0,
-"coliderOffset.z": 0.0,
-"coliderSize.x": 0.5,
-"coliderSize.y": 1.0,
-"coliderSize.z": 0.5,
-"modelPath": "SavePoint/SavePoint.obj",
-"name": "SavePoint",
-"position.x": -6.0,
-"position.y": 0.0,
-"position.z": 10.0,
-"rotation.x": 0.0,
-"rotation.y": 0.0,
-"rotation.z": 0.0,
-"scale.x": 2.0,
-"scale.y": 2.0,
-"scale.z": 2.0
+  "coliderOffset.x": 0.0,
+  "coliderOffset.y": 0.0,
+  "coliderOffset.z": 0.0,
+  "coliderSize.x": 0.5,
+  "coliderSize.y": 1.0,
+  "coliderSize.z": 0.5,
+  "modelPath": "SavePoint/SavePoint.obj",
+  "name": "SavePoint",
+  "position.x": -6.0,
+  "position.y": 0.0,
+  "position.z": 10.0,
+  "rotation.x": 0.0,
+  "rotation.y": 0.0,
+  "rotation.z": 0.0,
+  "scale.x": 2.0,
+  "scale.y": 2.0,
+  "scale.z": 2.0,
+  "uniqueName":"SavePoint"
 }
 ]
