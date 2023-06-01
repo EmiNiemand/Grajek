@@ -344,8 +344,12 @@ void DebugManager::SaveMenu()
     }
     if (ImGui::SmallButton("Add new default shop")){
         SceneManager::GetInstance()->CreatePrefabObject("Shop");
-    }if (ImGui::SmallButton("Add new default savePoint")){
+    }
+    if (ImGui::SmallButton("Add new default savePoint")){
         SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
+    }
+    if (ImGui::SmallButton("Add new default InvisibleBlock")){
+        SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
     }
     ImGui::End();
 }
