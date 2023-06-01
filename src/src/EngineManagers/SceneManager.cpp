@@ -101,16 +101,17 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     for (const auto &object: staticObjectsData) {
         newGameObject.reset();
         if(object->name == "House"){
-            newGameObject = Prefab::Instantiate<House>();
+            //newGameObject = Prefab::Instantiate<House>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<House>(object->uniqueName);
         }
         if(object->name == "Shop"){
-            newGameObject = Prefab::Instantiate<Shop>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<Shop>(object->uniqueName);
         }
         if(object->name == "SavePoint"){
-            newGameObject = Prefab::Instantiate<SavePoint>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<SavePoint>(object->uniqueName);
         }
         if(object->name == "InvisibleBlock"){
-            newGameObject = Prefab::Instantiate<InvisibleBlock>();
+            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<InvisibleBlock>(object->uniqueName);
         }
         if(newGameObject) {
             //if(!object->uniqueName.empty())

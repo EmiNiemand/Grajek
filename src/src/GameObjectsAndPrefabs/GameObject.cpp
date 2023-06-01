@@ -208,3 +208,7 @@ void GameObject::DestroyAllChildren() {
         toDestroy[i].reset();
     }
 }
+
+void GameObject::SetName(const std::string& newName) {
+    name = newName;
+}

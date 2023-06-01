@@ -132,7 +132,13 @@ void DebugManager::Render() {
         }
 
         ImGui::Begin("Properties");
+
+        static char newName[200] = "";
         ImGui::Text("%s", selected->GetName().c_str());
+        ImGui::InputText("Input new name",newName, IM_ARRAYSIZE(newName));
+        if(ImGui::SmallButton("Set new name")){
+            selected->SetName(newName);
+        }
         ImGui::DragFloat3("Position", inputVector1, 1.0f);
         ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
         ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f);
@@ -141,7 +147,6 @@ void DebugManager::Render() {
             ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
         }
 
-        //static char newModelPath[200] = "Write new path here";
         if(selected->GetComponent<Renderer>()){
             ImGui::Text("Path of model: %s", selected->GetComponent<Renderer>()->lastLoadedModelPath.c_str());
             //ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
@@ -281,8 +286,6 @@ void DebugManager::DisplaySystemInfo() {
 
 void DebugManager::SaveMenu()
 {
-    static char inputPath[200] = "";
-    static int selectedObjectId = 0;
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
