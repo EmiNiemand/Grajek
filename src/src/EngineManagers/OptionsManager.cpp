@@ -64,7 +64,7 @@ void OptionsManager::Save() {
         json["shadowResolution"] = shadowResolution;
 
         std::ofstream saveFile(path);
-        saveFile << json << std::endl;
+        saveFile << json.dump(0, '\t') << std::endl;
     }
     catch (std::exception e) {
         spdlog::info("Failed to read a file content at path: " + path.string());

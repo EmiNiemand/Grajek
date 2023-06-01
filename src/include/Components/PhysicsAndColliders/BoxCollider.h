@@ -8,6 +8,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cmath>
+#include <mutex>
 
 class GameObject;
 
@@ -16,6 +17,8 @@ private:
     // Size of the box from center to direction
     glm::vec3 size{};
     glm::vec3 offset{};
+
+    std::mutex collisionBufferMutex;
 
     std::unordered_map<int, std::shared_ptr<GameObject>> collisionsBuffer;
 

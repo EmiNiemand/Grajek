@@ -170,6 +170,11 @@ void AIManager::RemoveCharacterLogic(const int& componentId) {
         charactersLogics.erase(componentId);
 }
 
+void AIManager::RemoveCharacterMovement(const int& componentId) {
+    if (charactersMovements.contains(componentId))
+        charactersMovements.erase(componentId);
+}
+
 void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
                                 const int& maxCharacters, const int& spawnDelay,
                                 std::unordered_map<int, std::shared_ptr<CharacterLogic>>* currentCharactersLogics) {
@@ -206,64 +211,5 @@ void AIManager::SpawnCharacters(const std::stop_token& token, std::mutex& mutex,
         }
 
         std::this_thread::sleep_for(delay);
-    }
-}
-
-void AIManager::RemoveBoxCollider(const std::shared_ptr<BoxCollider>& ptr) const {
-    glm::mat4 model = ptr->GetModelMatrix();
-
-    const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(ptr->GetParent()->globalRotation.x),
-                                             glm::vec3(1.0f, 0.0f, 0.0f));
-    const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(ptr->GetParent()->globalRotation.y),
-                                             glm::vec3(0.0f, 1.0f, 0.0f));
-    const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f), glm::radians(ptr->GetParent()->globalRotation.z),
-                                             glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // Y * X * Z
-    const glm::mat4 rotationMatrix = transformY * transformX * transformZ;
-
-    glm::vec4 pos = model * glm::vec4(0, 0, 0, 1);
-
-    glm::vec4 xVec = (rotationMatrix * glm::vec4(1, 0, 0, 1)) * ptr->GetSize().x *
-                     ptr->GetParent()->transform->GetGlobalScale().x;
-    glm::vec4 zVec = (rotationMatrix * glm::vec4(0, 0, 1, 1)) * ptr->GetSize().z *
-                     ptr->GetParent()->transform->GetGlobalScale().z;
-
-    auto xVector = glm::vec2(xVec.x, xVec.z);
-    auto zVector = glm::vec2(zVec.x, zVec.z);
-
-    glm::ivec2 points[4] = {
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiCellSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiCellSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiCellSize),
-            glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiCellSize)
-    };
-
-    if (points[0] == points[1] &&
-        points[1] == points[2] &&
-        points[2] == points[3]) {
-        int x = points[0].x;
-        int y = points[0].y;
-
-        AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
-        return;
-    }
-
-    int minX = points[0].x;
-    int minY = points[0].y;
-    int maxX = points[0].x;
-    int maxY = points[0].y;
-
-    for (int i = 1; i < 4; i++) {
-        if (minX > points[i].x) minX = points[i].x;
-        if (minY > points[i].y) minY = points[i].y;
-        if (maxX < points[i].x) maxX = points[i].x;
-        if (maxY < points[i].y) maxY = points[i].y;
-    }
-
-    for (int x = minX - 1; x <= maxX + 1; ++x) {
-        for (int y = minY - 1; y <= maxY + 1; ++y) {
-            AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
-        }
     }
 }

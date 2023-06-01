@@ -31,7 +31,7 @@ void BoxCollider::FixedUpdate() {
     if (!isDynamic)
         return;
 
-    CollisionManager::GetInstance()->RemoveDynamicBoxCollider(parent->transform->GetGlobalPosition(), id);
+    CollisionManager::GetInstance()->RemoveDynamicBoxCollider(GetModelMatrix() * glm::vec4(0, 0, 0, 1), id);
     SetGridPoints();
     Component::FixedUpdate();
 }
@@ -48,17 +48,19 @@ void BoxCollider::OnDestroy() {
 }
 
 void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
-//#ifdef DEBUG
-//    ZoneScopedNC("CheckCollision", 0x03adfc);
-//#endif
+#ifdef DEBUG
+    ZoneScopedNC("CheckCollision", 0x03adfc);
+#endif
 
     bool isColliding = GetOBBCollision(other);
 
     if (!isColliding) {
         // OnTriggerExit
         if (isTrigger && collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerExit(other->parent);
             collisionsBuffer.erase(other->id);
+            collisionBufferMutex.unlock();
             return;
         }
     }
@@ -67,12 +69,16 @@ void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
     if (isColliding) {
         // OnTriggerEnter
         if (isTrigger && !collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerEnter(other->parent);
             collisionsBuffer.insert({other->id, other->parent});
+            collisionBufferMutex.unlock();
         }
         // OnTriggerStay
         if (isTrigger && collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerStay(other->parent);
+            collisionBufferMutex.unlock();
             return;
         }
 
@@ -120,9 +126,9 @@ glm::mat4 BoxCollider::GetModelMatrix() {
 }
 
 bool BoxCollider::GetOBBCollision(const std::shared_ptr<BoxCollider>& other) {
-#ifdef DEBUG
-    ZoneScopedNC("GetOBBCollision", 0x0339fc);
-#endif
+//#ifdef DEBUG
+//    ZoneScopedNC("GetOBBCollision", 0x0339fc);
+//#endif
 
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
     const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -409,7 +415,7 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         int x = points[0].x;
         int y = points[0].y;
 
-        AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+        AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = true;
         return;
     }
 
@@ -427,7 +433,7 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
 
     for (int x = minX - 1; x <= maxX + 1; ++x) {
         for (int y = minY - 1; y <= maxY + 1; ++y) {
-            AIManager::GetInstance()->aiGrid[x + AI_GRID_SIZE / 2][y + AI_GRID_SIZE / 2] = true;
+            AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = true;
         }
     }
 }

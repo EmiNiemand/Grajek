@@ -81,8 +81,8 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, 0});
-    ground->transform->SetLocalScale({30, 2, 30});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(30, 30);
+    ground->transform->SetLocalScale({100, 2, 100});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(100, 100);
 
     // Set up lights
     // -------------
@@ -121,10 +121,6 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
-    auto savePoint1 = Prefab::Instantiate<SavePoint>();
-    savePoint1->transform->SetLocalPosition({-15, 0, 10});
-    savePoint1->transform->SetLocalScale({2.0, 2.0, 2.0});
-
     auto opponent = GameObject::Instantiate("Opponent", activeScene);
     opponent->AddComponent<Renderer>()->LoadModel("texturedModels/przeciwnik.obj");
     opponent->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
@@ -162,6 +158,7 @@ void Game::InitializeGame() const {
     dialog->GetComponent<Dialogue>()->texts.push_back({{""},
                                                        {"Walcz ze mna."},
                                                        {""}});
+
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));

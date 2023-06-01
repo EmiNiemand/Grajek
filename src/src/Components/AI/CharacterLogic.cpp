@@ -74,7 +74,7 @@ void CharacterLogic::AIUpdate() {
         CalculateSatisfaction();
 
         if (playerSatisfaction > minSatisfaction) {
-            characterIndicator->Indicate();
+//            characterIndicator->Indicate();
             logicState = MovingToPlayer;
             characterMovement->SetState(SetPathToPlayer);
         }

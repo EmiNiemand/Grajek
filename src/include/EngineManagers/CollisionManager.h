@@ -5,6 +5,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <memory>
+#include <thread>
 #include <vector>
 #include <unordered_map>
 
@@ -16,7 +17,10 @@ class BoxCollider;
 
 class CollisionManager {
 private:
-    inline static CollisionManager* colliderManager;
+    inline static CollisionManager* collisionManager;
+    inline static unsigned int maxNumberOfThreads = std::thread::hardware_concurrency() / 2;
+
+    std::vector<std::thread> threads;
 
     unsigned int vao, vbo, ebo;
     std::vector<glm::vec3> vertices;
@@ -41,6 +45,7 @@ public:
     static CollisionManager* GetInstance();
 
     void ManageCollision();
+    void CheckCollision(int valueY, int maxY, int increaseValue);
 #ifdef DEBUG
     void Draw();
 #endif
