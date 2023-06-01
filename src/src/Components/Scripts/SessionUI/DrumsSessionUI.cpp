@@ -22,7 +22,7 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
     // Set up samples
     // --------------
     // Hi-Hat
-    sampleImages[0]->LoadTexture(950, 800, "UI/Sesja/circle.png");
+    sampleImages[0]->LoadTexture(1000, 300, "UI/Sesja/DrumsHiHat.png");
     sampleAnimators.push_back({
         GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
         GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
@@ -36,7 +36,7 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
             {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
     // Kick
-    sampleImages[1]->LoadTexture(1250, 800, "UI/Sesja/circle.png");
+    sampleImages[1]->LoadTexture(1250, 200, "UI/Sesja/DrumsKick.png");
     sampleAnimators.push_back({
               GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
               GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()
@@ -50,7 +50,7 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
             {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
     // Snare
-    sampleImages[2]->LoadTexture(1550, 800, "UI/Sesja/circle.png");
+    sampleImages[2]->LoadTexture(1500, 300, "UI/Sesja/DrumsSnare.png");
     sampleAnimators.push_back({
           GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
           GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>()

@@ -22,7 +22,7 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
     cashText->LoadFont("$: 0", 20, 1010, 64, glm::vec3(1));
     auto backgroundMoney =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
-    backgroundMoney->LoadTexture(0, 0, "UI/MoneyBackground.png");
+    backgroundMoney->LoadTexture(0, 0, "UI/MoneyBackground.png", -1);
     backgroundMoney->SetPosition(0, 1080-backgroundMoney->GetHeight());
 
     auto menus = GameObject::Instantiate("Menus", parent);
@@ -168,13 +168,14 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
     if(!playAnimation) return;
 
     auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
-    addMoneyImage->LoadTexture(0, 0, "UI/AddMoneyBackground.png");
+    addMoneyImage->LoadTexture(0, 0, "UI/MoneyAddedBackground.png", -1);
     addMoneyImage->SetPosition(0, 1080 - addMoneyImage->GetHeight());
     // Animator is added to image so that it's automatically destroyed after animation is done
     auto addMoneyAnimator = addMoneyImage->GetParent()->AddComponent<UIAnimator>();
     addMoneyAnimator->Setup(addMoneyImage, {
-            {AnimatedProperty::Position, glm::vec3(100), 0.1f},
-            {AnimatedProperty::Position, glm::vec3(0), 1.0f},
-            {AnimatedProperty::Position, glm::vec3(-100), 0.5f}
+            {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 0.1f},
+            {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 1.0f},
+            {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight(), 0), 0.5f}
     });
+    //TODO: add text animation when it gets implemented
 }

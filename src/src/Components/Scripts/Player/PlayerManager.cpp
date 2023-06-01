@@ -80,7 +80,7 @@ void PlayerManager::Awake() {
 
     // Set up Player's UI
     // ------------------
-    playerUI->UpdateCash(equipment->GetCash());
+    playerUI->UpdateCash(equipment->GetCash(), false);
 
     // Set up Music Session
     // --------------------
@@ -120,7 +120,7 @@ void PlayerManager::Update() {
 bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &instrument) {
     if(!equipment->BuyInstrument(price, instrument)) return false;
 
-    playerUI->UpdateCash(equipment->GetCash());
+    playerUI->UpdateCash(equipment->GetCash(), price!=0);
     return true;
 }
 
@@ -300,7 +300,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 
     if (!pat) return;
 
-    //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedSatisfaction()));
+    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedPlayerSatisfaction()));
     equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
 
     playerUI->UpdateCash(equipment->cash);
@@ -413,7 +413,7 @@ void PlayerManager::PollInput() {
 
 void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     equipment->Setup(data->money, data->reputation);
-    playerUI->UpdateCash(data->money);
+    playerUI->UpdateCash(data->money, false);
     parent->transform->SetLocalPosition(data->playerPosition);
     parent->UpdateSelfAndChildren();
     Camera::activeCamera->transform->SetLocalPosition(
