@@ -12,6 +12,7 @@
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 #include <unordered_map>
+#include <numbers>
 
 constexpr float DISTANCE_TO_POINT = 1.75f;
 constexpr float DISTANCE_TO_PLAYER = 0.75f;
@@ -57,19 +58,19 @@ class CharacterMovement : public Component {
     float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
 
-    inline void ApplyForces(const glm::vec3 &velocity);
-    inline void ApplyRotation(const glm::vec3 &velocity);
-    const glm::ivec2 GetRandomPoint() const;
+    inline void ApplyForces(const glm::vec3 &force);
+    inline void ApplyRotation(const glm::vec3 &force);
     inline void SetRandomSpawnPoint();
+    const glm::ivec2 GetRandomPoint() const;
     void SetRandomEndPoint();
-    void SetSubEndPoints();
-    void CalculatePath();
     void SetNewPathToPlayer();
     void ReturnToPreviousPath();
+    void SetSubEndPoints();
+    void CalculatePath();
 
 protected:
     const bool IsPositionAvailable(const glm::ivec2 &position);
-    const glm::ivec2 GetNewEndTarget() const;
+    const glm::ivec2 GetCurrentEndTarget() const;
 
 public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);

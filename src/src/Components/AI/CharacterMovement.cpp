@@ -10,7 +10,6 @@
 #include "Components/AI/CharacterLogic.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
-#include <numbers>
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -177,24 +176,42 @@ void CharacterMovement::OnDestroy() {
     Component::OnDestroy();
 }
 
-inline void CharacterMovement::ApplyForces(const glm::vec3& velocity) {
-    rigidbody->AddForce(velocity * speed * speedMultiplier, ForceMode::Force);
+/**
+ * @annotation
+ * Applies all forces based on force value.
+ * @param velocity - force
+ */
+inline void CharacterMovement::ApplyForces(const glm::vec3& force) {
+    rigidbody->AddForce(force * speed * speedMultiplier, ForceMode::Force);
 
-    ApplyRotation(velocity);
+    ApplyRotation(force);
 }
 
-inline void CharacterMovement::ApplyRotation(const glm::vec3& velocity) {
-    rotationAngle = std::atan2f(-velocity.x, -velocity.z) * 180.0f / std::numbers::pi;
+/**
+ * @annotation
+ * Applies rotation based on force value.
+ * @param velocity - force
+ */
+inline void CharacterMovement::ApplyRotation(const glm::vec3& force) {
+    rotationAngle = std::atan2f(-force.x, -force.z) * 180.0f / std::numbers::pi;
 
     rigidbody->AddTorque(rotationAngle, ForceMode::Force);
 }
 
+/**
+ * @annotation
+ * Sets random spawn point on AI grid.
+ */
 inline void CharacterMovement::SetRandomSpawnPoint() {
     glm::ivec2 newSpawnPoint = GetRandomPoint();
 
     parent->transform->SetLocalPosition({newSpawnPoint.x, 0.01f, newSpawnPoint.y});
 }
 
+/**
+ * @annotation
+ * Sets new random point as the end point on AI grid.
+ */
 void CharacterMovement::SetRandomEndPoint() {
     speed = 0.0f;
 
@@ -205,6 +222,11 @@ void CharacterMovement::SetRandomEndPoint() {
     SetSubEndPoints();
 }
 
+/**
+ * @annotation
+ * Returns new random point on AI grid.
+ * @returns glm::ivec2 - random point in a given grid
+ */
 const glm::ivec2 CharacterMovement::GetRandomPoint() const {
     glm::ivec2 newEndPoint;
 
@@ -224,6 +246,10 @@ const glm::ivec2 CharacterMovement::GetRandomPoint() const {
     return newEndPoint;
 }
 
+/**
+ * @annotation
+ * Sets new end point near player position.
+ */
 void CharacterMovement::SetNewPathToPlayer() {
     previousEndPoint = endPoint;
 
@@ -277,21 +303,28 @@ void CharacterMovement::SetNewPathToPlayer() {
     SetSubEndPoints();
 }
 
+/**
+ * @annotation
+ * Sets previous end point as the current one.
+ */
 void CharacterMovement::ReturnToPreviousPath() {
     endPoint = previousEndPoint;
     speedMultiplier = 1.0f;
     SetSubEndPoints();
 }
 
+/**
+ * @annotation
+ * Sets sub end points for new end target.
+ */
 void CharacterMovement::SetSubEndPoints() {
 #ifdef DEBUG
     ZoneScopedNC("SetSubEndPoints", 0xfc0f09);
 #endif
 
-    subEndPoints.clear();
     subEndPointsIterator = 3;
-
-    subEndPoints.push_back(endPoint);
+    subEndPoints.insert(subEndPoints.cbegin() + subEndPointsIterator, endPoint);
+    --subEndPointsIterator;
 
     glm::ivec2 newEndPoint, intEndPoint = {endPoint.x, endPoint.z};
     float multiplier = 0.75f;
@@ -324,38 +357,20 @@ void CharacterMovement::SetSubEndPoints() {
             }
         }
 
-        subEndPoints.emplace_back(newEndPoint.x, 0.0f, newEndPoint.y);
+        subEndPoints.insert(subEndPoints.cbegin() + subEndPointsIterator, {newEndPoint.x, 0.0f, newEndPoint.y});
 
         isAvailable = false;
         multiplier -= 0.25f;
-    }
-}
-
-void CharacterMovement::SetState(const AI_MOVEMENTSTATE& newState) {
-    movementState = newState;
-}
-
-const AI_MOVEMENTSTATE CharacterMovement::GetState() const {
-    return movementState;
-}
-
-const glm::ivec2 CharacterMovement::GetNewEndTarget() const {
-    return {endPoint.x, endPoint.z};
-}
-
-const bool CharacterMovement::IsPositionAvailable(const glm::ivec2& position) {
-    bool isAvailable = true;
-
-    for (const auto& mov : *otherCharacters) {
-        if (position == mov.second->GetNewEndTarget()) {
-            isAvailable = false;
-            break;
-        }
+        --subEndPointsIterator;
     }
 
-    return isAvailable;
+    subEndPointsIterator = 3;
 }
 
+/**
+ * @annotation
+ * Calculates path using Pathfinding component.
+ */
 void CharacterMovement::CalculatePath() {
 #ifdef DEBUG
     ZoneScopedNC("CalculatePath", 0xfc0f03);
@@ -379,4 +394,50 @@ void CharacterMovement::CalculatePath() {
         pathIterator = -1;
     else
         pathIterator = (int)path->size() - 1;
+}
+
+/**
+ * @annotation
+ * Sets new movement state.
+ * @param newState - new state to set
+ */
+void CharacterMovement::SetState(const AI_MOVEMENTSTATE& newState) {
+    movementState = newState;
+}
+
+/**
+ * @annotation
+ * Returns current movement state.
+ * @returns AI_MOVEMENTSTATE - current state
+ */
+const AI_MOVEMENTSTATE CharacterMovement::GetState() const {
+    return movementState;
+}
+
+/**
+ * @annotation
+ * Returns current end target.
+ * @returns glm::ivec2 - endPoint casted to int values
+ */
+const glm::ivec2 CharacterMovement::GetCurrentEndTarget() const {
+    return {endPoint.x, endPoint.z};
+}
+
+/**
+ * @annotation
+ * Checks whether this position is already chosen by another CharacterMovement object
+ * @param position - position to check
+ * @returns bool - false if not available, otherwise true
+ */
+const bool CharacterMovement::IsPositionAvailable(const glm::ivec2& position) {
+    bool isAvailable = true;
+
+    for (const auto& mov : *otherCharacters) {
+        if (position == mov.second->GetCurrentEndTarget()) {
+            isAvailable = false;
+            break;
+        }
+    }
+
+    return isAvailable;
 }

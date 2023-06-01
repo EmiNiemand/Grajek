@@ -6,7 +6,6 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/Renderers/Animator.h"
-#include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterAnimations.h"
@@ -101,13 +100,33 @@ void CharacterLogic::OnDestroy() {
     Component::OnDestroy();
 }
 
-void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, const MusicGenre& gen) {
-    playerInstrumentName = ins;
-    playerGenre = gen;
+/**
+ * @annotation
+ * Sets animation model to load.
+ * @param model - path to model
+ */
+void CharacterLogic::SetAnimationModelToLoad(const std::string& model) {
+    modelPath = model;
 }
 
-void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) {
-    playerPattern = pat;
+/**
+ * @annotation
+ * Sets player instrument and genre being used for playing.
+ * @param instrument - enum for instrument name
+ * @param genre - enum for music genre
+ */
+void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& instrument, const MusicGenre& genre) {
+    playerInstrumentName = instrument;
+    playerGenre = genre;
+}
+
+/**
+ * @annotation
+ * Sets pattern played by player.
+ * @param pattern - music pattern
+ */
+void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pattern) {
+    playerPattern = pattern;
 
     if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern) != favPatterns.end())
         playerSatisfaction += 15;
@@ -117,7 +136,12 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) 
     playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
 }
 
-void CharacterLogic::SetPlayerPlayingStatus(bool isPlayerPlaying) {
+/**
+ * @annotation
+ * Sets new player session state.
+ * @param isPlayerPlaying - session state
+ */
+void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
     if (isPlayerPlaying) {
         logicState = AlertedByPlayer;
     } else {
@@ -128,13 +152,33 @@ void CharacterLogic::SetPlayerPlayingStatus(bool isPlayerPlaying) {
     }
 }
 
-void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen) {
-    enemyInstrumentName = ins;
-    enemyGenre = gen;
+/**
+ * @annotation
+ * Returns current satisfaction based on player style.
+ * @returns float - player satisfaction
+ */
+const float CharacterLogic::GetPlayerSatisfaction() const {
+    return playerSatisfaction;
 }
 
-void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat) {
-    enemyPattern = pat;
+/**
+ * @annotation
+ * Sets enemy instrument and genre being used for playing.
+ * @param instrument - enum for instrument name
+ * @param genre - enum for music genre
+ */
+void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre) {
+    enemyInstrumentName = instrument;
+    enemyGenre = genre;
+}
+
+/**
+ * @annotation
+ * Sets pattern played by enemy.
+ * @param pattern - music pattern
+ */
+void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pattern) {
+    enemyPattern = pattern;
 
     if (std::find(favPatterns.begin(), favPatterns.end(), enemyPattern) != favPatterns.end())
         enemySatisfaction += 15;
@@ -144,7 +188,12 @@ void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat) {
     enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
 }
 
-void CharacterLogic::SetEnemyPlayingStatus(bool isEnemyPlaying) {
+/**
+ * @annotation
+ * Sets new enemy session state.
+ * @param isEnemyPlaying - session state
+ */
+void CharacterLogic::SetEnemyPlayingStatus(const bool& isEnemyPlaying) {
     if (isEnemyPlaying) {
         logicState = AlertedByPlayer;
     } else {
@@ -155,6 +204,19 @@ void CharacterLogic::SetEnemyPlayingStatus(bool isEnemyPlaying) {
     }
 }
 
+/**
+ * @annotation
+ * Returns current satisfaction based on enemy style.
+ * @returns float - enemy satisfaction
+ */
+const float CharacterLogic::GetEnemySatisfaction() const {
+    return enemySatisfaction;
+}
+
+/**
+ * @annotation
+ * Calculates starting satisfaction.
+ */
 void CharacterLogic::CalculateSatisfaction() {
     playerSatisfaction = 100;
 
@@ -180,16 +242,4 @@ void CharacterLogic::CalculateSatisfaction() {
 //    TODO: dunno, do something here
 //    if (playerSatisfaction > enemySatisfaction)
 
-}
-
-void CharacterLogic::SetAnimationModelToLoad(const std::string& model) {
-    modelPath = model;
-}
-
-const float CharacterLogic::GetPlayerSatisfaction() const {
-    return playerSatisfaction;
-}
-
-const float CharacterLogic::GetEnemySatisfaction() const {
-    return enemySatisfaction;
 }
