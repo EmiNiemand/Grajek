@@ -304,7 +304,6 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
 
     playerUI->UpdateCash(equipment->cash);
-    playerUI->UpdateRep(equipment->rep);
 }
 
 void PlayerManager::CreateMusicSession(InstrumentName instrument) {
@@ -415,7 +414,6 @@ void PlayerManager::PollInput() {
 void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     equipment->Setup(data->money, data->reputation);
     playerUI->UpdateCash(data->money);
-    playerUI->UpdateRep(data->reputation);
     parent->transform->SetLocalPosition(data->playerPosition);
     parent->UpdateSelfAndChildren();
     Camera::activeCamera->transform->SetLocalPosition(
@@ -426,7 +424,6 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
 
 void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
     data->money = equipment->GetCash();
-    data->reputation = equipment->GetRep();
     data->playerPosition = parent->transform->GetLocalPosition();
     for(const auto& instrument : equipment->instruments)
         data->instruments.insert(instrument->name);

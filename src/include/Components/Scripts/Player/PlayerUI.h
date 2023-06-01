@@ -12,14 +12,12 @@ class Text;
 class PlayerUI : public Component {
 private:
     std::shared_ptr<Text> cashText;
-    std::shared_ptr<Text> repText;
 public:
     PlayerUI(const std::shared_ptr<GameObject> &parent, int id);
 
     void OnDestroy() override;
 
-    void UpdateCash(int newAmount);
-    void UpdateRep(int newAmount);
+    void UpdateCash(int newAmount, bool playAnimation=true);
 };
 
 

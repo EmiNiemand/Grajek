@@ -14,15 +14,16 @@
 #include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "EngineManagers/SavePointManager.h"
+#include "Components/Animations/UIAnimator.h"
 
 //TODO: what the hell happened here o.0
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
-    cashText->LoadFont("Money: 0", 140, 1040, 22);
-    repText = GameObject::Instantiate("Reputation", parent)->AddComponent<Text>();
-    repText->LoadFont("Rep: 0", 140, 1000, 22);
-    GameObject::Instantiate("UI", parent)->AddComponent<Image>()->LoadTexture(0, 952, "UI/Player.png");
+    cashText->LoadFont("$: 0", 20, 1010, 64, glm::vec3(1));
+    auto backgroundMoney =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
+    backgroundMoney->LoadTexture(0, 0, "UI/MoneyBackground.png");
+    backgroundMoney->SetPosition(0, 1080-backgroundMoney->GetHeight());
 
     auto menus = GameObject::Instantiate("Menus", parent);
 
@@ -158,14 +159,22 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
 
 void PlayerUI::OnDestroy() {
     cashText.reset();
-    repText.reset();
     Component::OnDestroy();
 }
 
-void PlayerUI::UpdateCash(int newAmount) {
-	cashText->text = "Money: " + std::to_string(newAmount);
-}
+void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
+	cashText->text = "$ " + std::to_string(newAmount);
 
-void PlayerUI::UpdateRep(int newAmount) {
-	repText->text = "Rep: " + std::to_string(newAmount);
+    if(!playAnimation) return;
+
+    auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
+    addMoneyImage->LoadTexture(0, 0, "UI/AddMoneyBackground.png");
+    addMoneyImage->SetPosition(0, 1080 - addMoneyImage->GetHeight());
+    // Animator is added to image so that it's automatically destroyed after animation is done
+    auto addMoneyAnimator = addMoneyImage->GetParent()->AddComponent<UIAnimator>();
+    addMoneyAnimator->Setup(addMoneyImage, {
+            {AnimatedProperty::Position, glm::vec3(100), 0.1f},
+            {AnimatedProperty::Position, glm::vec3(0), 1.0f},
+            {AnimatedProperty::Position, glm::vec3(-100), 0.5f}
+    });
 }
