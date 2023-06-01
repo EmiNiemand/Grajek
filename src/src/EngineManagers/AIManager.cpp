@@ -130,7 +130,8 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     for (auto&& ch : charactersLogics)
         satisfaction += ch.second->GetPlayerSatisfaction();
 
-    satisfaction /= (float)charactersLogics.size();
+    if (!charactersLogics.empty())
+        satisfaction /= (float)charactersLogics.size();
 
     mutex.unlock();
 
@@ -198,7 +199,8 @@ const float AIManager::GetCombinedEnemySatisfaction() {
     for (auto&& ch : charactersLogics)
         satisfaction += ch.second->GetEnemySatisfaction();
 
-    satisfaction /= (float)charactersLogics.size();
+    if (!charactersLogics.empty())
+        satisfaction /= (float)charactersLogics.size();
 
     mutex.unlock();
 
