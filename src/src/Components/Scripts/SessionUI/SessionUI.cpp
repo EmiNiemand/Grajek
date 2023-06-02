@@ -12,8 +12,10 @@
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath) {
+    //TODO: add these three to OptionsManager
     metronomeSoundEnabled = true;
     metronomeVisualEnabled = true;
+    backingTrackEnabled = true;
 
     MetronomeSetup(metronomePath, bpm);
     AccuracyFeedbackSetup();
@@ -94,7 +96,7 @@ void SessionUI::UpdateAccuracy(float fraction) {
 }
 
 void SessionUI::Update() {
-    if (metronomeImage->GetAlpha() == 1.0f) {
+    if (metronomeSoundEnabled && metronomeImage->GetAlpha() == 1.0f) {
         tickSound->PlaySound();
     }
     Component::Update();
@@ -104,14 +106,43 @@ void SessionUI::Update() {
 void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
     metronomeImage = GameObject::Instantiate("Metronome", parent)->AddComponent<Image>();
     metronomeImage->LoadTexture(0, 0, metronomePath, -0.5);
-    GameObject::Instantiate("MetronomeAnimator", parent)->AddComponent<UIAnimator>()->Setup(metronomeImage, {
+    metronomeAnimator = GameObject::Instantiate("MetronomeAnimator", parent)->AddComponent<UIAnimator>();
+    metronomeAnimator->Setup(metronomeImage, {
             {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
             {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
     }, AnimationBehaviour::Looping);
 
-    tickSound = parent->AddComponent<AudioSource>();
+    tickSound = metronomeImage->GetParent()->AddComponent<AudioSource>();
     tickSound->LoadAudioData("res/sounds/direct/tick.wav", AudioType::Direct);
     tickSound->IsLooping(false);
+
+    metronomeSoundIndicator.insert({true, GameObject::Instantiate("MetronomeSoundEnabled", parent)->AddComponent<Image>()});
+    metronomeSoundIndicator.insert({false, GameObject::Instantiate("MetronomeSoundDisabled", parent)->AddComponent<Image>()});
+    metronomeSoundIndicator[true]->LoadTexture(50, 850, "UI/Sesja/metronomeSoundEnabled.png", -0.5);
+    metronomeSoundIndicator[false]->LoadTexture(50, 850, "UI/Sesja/metronomeSoundDisabled.png", -0.5);
+    metronomeSoundIndicator[true]->SetAlpha(metronomeSoundEnabled ? 1:0);
+    metronomeSoundIndicator[false]->SetAlpha(metronomeSoundEnabled ? 0:1);
+
+    metronomeVisualsIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
+    metronomeVisualsIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});
+    metronomeVisualsIndicator[true]->LoadTexture(50, 900, "UI/Sesja/metronomeVisualsEnabled.png", -0.5);
+    metronomeVisualsIndicator[false]->LoadTexture(50, 900, "UI/Sesja/metronomeVisualsDisabled.png", -0.5);
+    metronomeVisualsIndicator[true]->SetAlpha(metronomeVisualEnabled ? 1:0);
+    metronomeVisualsIndicator[false]->SetAlpha(metronomeVisualEnabled ? 0:1);
+}
+
+void SessionUI::BackingTrackSetup(const std::string& trackName) {
+    backingTrack = GameObject::Instantiate("BackingTrack", parent)->AddComponent<AudioSource>();
+    backingTrack->LoadAudioData(("res/sounds/direct/"+trackName+".wav").c_str(), AudioType::Direct);
+    backingTrack->IsLooping(true);
+    backingTrack->PlaySound();
+
+    backingTrackIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
+    backingTrackIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});
+    backingTrackIndicator[true]->LoadTexture(110, 900, "UI/Sesja/backingTrackEnabled.png", -0.5);
+    backingTrackIndicator[false]->LoadTexture(110, 900, "UI/Sesja/backingTrackDisabled.png", -0.5);
+    backingTrackIndicator[true]->SetAlpha(backingTrackEnabled ? 1:0);
+    backingTrackIndicator[false]->SetAlpha(backingTrackEnabled ? 0:1);
 }
 
 void SessionUI::AccuracyFeedbackSetup() {
@@ -128,7 +159,7 @@ void SessionUI::AccuracyFeedbackSetup() {
     for (int i = 0; i < 4; ++i) {
         auto ratingImage = GameObject::Instantiate("AccuracyImage", parent)->AddComponent<Image>();
         ratingImage->LoadTexture(0, 0,accuracyImagePaths[i], 0.7f);
-        ratingImage->SetPosition(960 - ratingImage->GetWidth()/2, 540 - ratingImage->GetHeight()/2);
+        ratingImage->SetPosition(960 - ratingImage->GetWidth()/2, 750 - ratingImage->GetHeight()/2);
         ratingImage->SetAlpha(0);
         accuracyRatingAnimator[i]->Setup(ratingImage, {
                 {AnimatedProperty::Alpha, glm::vec3(1.0f), 0},
@@ -137,21 +168,62 @@ void SessionUI::AccuracyFeedbackSetup() {
     }
 }
 
+void SessionUI::StopSound(int index) {}
+
+bool SessionUI::ToggleMetronomeSound() {
+    metronomeSoundEnabled = !metronomeSoundEnabled && metronomeVisualEnabled;
+
+    metronomeSoundIndicator[true]->SetAlpha(metronomeSoundEnabled ? 1:0);
+    metronomeSoundIndicator[false]->SetAlpha(metronomeSoundEnabled ? 0:1);
+
+    return metronomeSoundEnabled;
+}
+
+bool SessionUI::ToggleMetronomeVisuals() {
+    metronomeVisualEnabled = !metronomeVisualEnabled;
+    metronomeAnimator->paused = !metronomeVisualEnabled;
+
+    metronomeImage->SetAlpha(metronomeVisualEnabled ? 1:0);
+
+    metronomeVisualsIndicator[true]->SetAlpha(metronomeVisualEnabled ? 1:0);
+    metronomeVisualsIndicator[false]->SetAlpha(metronomeVisualEnabled ? 0:1);
+
+    ToggleMetronomeSound();
+
+    return metronomeVisualEnabled;
+}
+
+bool SessionUI::ToggleBackingTrack() {
+    if(!backingTrack) return false;
+
+    backingTrackEnabled = !backingTrackEnabled;
+    backingTrack->SetGain(backingTrackEnabled? 1:0);
+
+    backingTrackIndicator[true]->SetAlpha(backingTrackEnabled ? 1:0);
+    backingTrackIndicator[false]->SetAlpha(backingTrackEnabled ? 0:1);
+
+    return backingTrackEnabled;
+}
+
 void SessionUI::OnDestroy() {
     accuracyRating.clear();
     accuracyRatingAnimator.clear();
     metronomeImage.reset();
+    metronomeAnimator.reset();
     tickSound.reset();
-    sampleSources.clear();
-    sampleImages.clear();
-    sampleAnimators.clear();
+    metronomeSoundIndicator[true].reset();
+    metronomeSoundIndicator[false].reset();
+    metronomeVisualsIndicator[true].reset();
+    metronomeVisualsIndicator[false].reset();
+    backingTrackIndicator[true].reset();
+    backingTrackIndicator[false].reset();
     cheatSheet.reset();
     instrumentControl.reset();
+    sampleSources.clear();
+    sampleImages.clear();
+    for(int i=0; i<sampleAnimators.size(); i++)
+        sampleAnimators[i].clear();
+    sampleAnimators.clear();
     Component::OnDestroy();
 }
-
-void SessionUI::StopSound(int index) {
-
-}
-
 #pragma endregion

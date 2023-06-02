@@ -69,6 +69,9 @@ private:
     void OnSoundPlay(int index);
     void OnCheatSheetToggle();
     void OnInstrumentControlToggle();
+    void OnMetronomeSoundToggle();
+    void OnMetronomeVisualsToggle();
+    void OnBackingTrackToggle();
 
 	// Animation methods
 	void UpdateAnimations();

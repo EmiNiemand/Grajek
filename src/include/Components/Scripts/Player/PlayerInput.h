@@ -38,7 +38,7 @@ public:
 			{Key::KEY_ENTER, 0}
 	};
 
-    // Here value corresponds to number of sound being played
+    // Here value corresponds to index of sound being played
     inline static std::unordered_map<Key, int> PlaySound = {
             {Key::KEY_R, 0},
             {Key::KEY_U, 1},
@@ -49,6 +49,15 @@ public:
     };
     inline static std::unordered_map<Key, int> InstrumentControl = {
             {Key::KEY_LEFT_SHIFT, 0}
+    };
+    inline static std::unordered_map<Key, int> MetronomeSoundToggle = {
+            {Key::KEY_1, 0}
+    };
+    inline static std::unordered_map<Key, int> MetronomeVisualToggle = {
+            {Key::KEY_2, 0}
+    };
+    inline static std::unordered_map<Key, int> BackingTrackToggle = {
+            {Key::KEY_3, 0}
     };
 };
 

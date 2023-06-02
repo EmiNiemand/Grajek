@@ -30,15 +30,17 @@ private:
 
     // Metronome
     std::shared_ptr<Image> metronomeImage;
+    std::shared_ptr<UIAnimator> metronomeAnimator;
     std::shared_ptr<AudioSource> tickSound;
+    std::map<bool, std::shared_ptr<Image>> metronomeSoundIndicator;
+    std::map<bool, std::shared_ptr<Image>> metronomeVisualsIndicator;
     bool metronomeSoundEnabled;
     bool metronomeVisualEnabled;
 
-protected:
-    // Samples
-    std::vector<std::shared_ptr<AudioSource>> sampleSources;
-    std::vector<std::shared_ptr<Image>> sampleImages;
-    std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
+    // Backing track
+    std::shared_ptr<AudioSource> backingTrack;
+    std::map<bool, std::shared_ptr<Image>> backingTrackIndicator;
+    bool backingTrackEnabled = true;
 
     // Cheat sheet
     std::shared_ptr<Image> cheatSheet;
@@ -47,6 +49,12 @@ protected:
     // Instrument control
     std::shared_ptr<Image> instrumentControl;
     bool instrumentControlActive = false;
+protected:
+    // Samples
+    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::vector<std::shared_ptr<Image>> sampleImages;
+    std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
+
 
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
@@ -66,6 +74,12 @@ public:
 
     void OnDestroy() override;
 
+    bool ToggleMetronomeSound();
+    bool ToggleMetronomeVisuals();
+    bool ToggleBackingTrack();
+
+protected:
+    void BackingTrackSetup(const std::string& trackName);
 private:
     void MetronomeSetup(const std::string& metronomePath, int bpm);
     void AccuracyFeedbackSetup();

@@ -189,11 +189,15 @@ void MusicSession::Stop() {
 
 // Pass-through functions
 void MusicSession::ToggleMetronomeVisuals() {
-
+    sessionUI->ToggleMetronomeVisuals();
 }
 
 void MusicSession::ToggleMetronomeSound() {
+    sessionUI->ToggleMetronomeSound();
+}
 
+void MusicSession::ToggleBackingTrack() {
+    sessionUI->ToggleBackingTrack();
 }
 
 void MusicSession::OnDestroy() {

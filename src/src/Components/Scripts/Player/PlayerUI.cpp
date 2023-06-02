@@ -123,37 +123,32 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     // Set up save point menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", menus)->AddComponent<SavePointMenu>();
     {
+        std::vector<std::shared_ptr<Button>> loadGameButtons;
+        int ypos = 700;
         for (int i = 0; i < 2; i++) {
+            int xpos = 120;
             for (int j = 0; j < 5; j++) {
-                savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1),
-                                               i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png",
-                                               "Save " + std::to_string(i * 5 + j + 1), 32);
+                std::string currentIndex = std::to_string(i * 5 + j + 1);
+                loadGameButtons.push_back(savePointMenu->Menu::AddButton(
+                        "Save" + currentIndex, xpos, ypos,
+                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png",
+                        "Save " + currentIndex, 46));
+                xpos += 350;
             }
+            ypos -= 500;
         }
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save10")->GetComponent<Button>();
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save2")->GetComponent<Button>();
-        for (int i = 2; i <= 9; i++) {
-            GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(
-                    i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                    "Save" + std::to_string(i - 1))->GetComponent<Button>();
-            GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(
-                    i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                    "Save" + std::to_string(i + 1))->GetComponent<Button>();
+        loadGameButtons[0]->previousButton = loadGameButtons[9];
+        loadGameButtons[0]->nextButton = loadGameButtons[1];
+        for (int i = 1; i < loadGameButtons.size() - 1; i++) {
+            loadGameButtons[i]->previousButton = loadGameButtons[i - 1];
+            loadGameButtons[i]->nextButton = loadGameButtons[i + 1];
         }
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save9")->GetComponent<Button>();
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save1")->GetComponent<Button>();
+        loadGameButtons[loadGameButtons.size() - 1]->previousButton = loadGameButtons[loadGameButtons.size() - 2];
+        loadGameButtons[loadGameButtons.size() - 1]->nextButton = loadGameButtons[0];
         savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
         savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/Sklep/Przycisk.png");
-        savePointMenu->GetParent()->DisableSelfAndChildren();
         SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;
+        savePointMenu->GetParent()->DisableSelfAndChildren();
     }
 }
 

@@ -42,11 +42,12 @@ public:
 
     void PlaySample(int index);
     void StopSample(int index);
+
     void ToggleCheatSheet();
     void ToggleInstrumentControl();
-
     void ToggleMetronomeVisuals();
     void ToggleMetronomeSound();
+    void ToggleBackingTrack();
 
 private:
     void DetectPattern();

@@ -297,7 +297,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 
     if (!pat) return;
 
-    spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedPlayerSatisfaction()));
+    //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedPlayerSatisfaction()));
     equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
 
     playerUI->UpdateCash(equipment->cash);
@@ -325,21 +325,19 @@ void PlayerManager::OnInstrumentControlToggle() {
     session->ToggleInstrumentControl();
 }
 
-void PlayerManager::OnDestroy() {
-    session.reset();
-    sessionStarter.reset();
-    sessionStarterUI.reset();
-    playerUI.reset();
-    equipment.reset();
-    movement.reset();
-    pauseMenu.reset();
-    optionsMenu.reset();
-    shopMenu.reset();
-    savePointMenu.reset();
-    animator.reset();
-    rb.reset();
-    activeMenu.reset();
-    Component::OnDestroy();
+void PlayerManager::OnMetronomeSoundToggle() {
+    if (!session) return;
+    session->ToggleMetronomeSound();
+}
+
+void PlayerManager::OnMetronomeVisualsToggle() {
+    if (!session) return;
+    session->ToggleMetronomeVisuals();
+}
+
+void PlayerManager::OnBackingTrackToggle() {
+    if (!session) return;
+    session->ToggleBackingTrack();
 }
 
 #pragma endregion
@@ -381,16 +379,21 @@ void PlayerManager::PollInput() {
 	}
 
     if(session) {
-        for (auto key: PlayerInput::InstrumentControl)
-            if (hid->IsKeyDown(key.first)) OnInstrumentControlToggle();
-
-        for (auto key: PlayerInput::CheatSheet)
-            if (hid->IsKeyDown(key.first)) OnCheatSheetToggle();
-
         for (auto key: PlayerInput::PlaySound) {
             if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
             if (hid->IsKeyUp(key.first)) OnSoundStop(key.second);
         }
+        for (auto key: PlayerInput::InstrumentControl)
+            if (hid->IsKeyDown(key.first)) OnInstrumentControlToggle();
+        for (auto key: PlayerInput::CheatSheet)
+            if (hid->IsKeyDown(key.first)) OnCheatSheetToggle();
+        for (auto key: PlayerInput::MetronomeSoundToggle)
+            if (hid->IsKeyDown(key.first)) OnMetronomeSoundToggle();
+        for (auto key: PlayerInput::MetronomeVisualToggle)
+            if (hid->IsKeyDown(key.first)) OnMetronomeVisualsToggle();
+        for (auto key: PlayerInput::BackingTrackToggle)
+            if (hid->IsKeyDown(key.first)) OnBackingTrackToggle();
+
         return;
     }
 
@@ -422,4 +425,21 @@ void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
     data->playerPosition = parent->transform->GetLocalPosition();
     for(const auto& instrument : equipment->instruments)
         data->instruments.insert(instrument->name);
+}
+
+void PlayerManager::OnDestroy() {
+    session.reset();
+    sessionStarter.reset();
+    sessionStarterUI.reset();
+    playerUI.reset();
+    equipment.reset();
+    movement.reset();
+    pauseMenu.reset();
+    optionsMenu.reset();
+    shopMenu.reset();
+    savePointMenu.reset();
+    animator.reset();
+    rb.reset();
+    activeMenu.reset();
+    Component::OnDestroy();
 }

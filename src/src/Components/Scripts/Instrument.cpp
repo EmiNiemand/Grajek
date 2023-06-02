@@ -102,6 +102,16 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
             break;
         case Drums:
             // 2      *
+            // 1  *
+            // 0
+            instrument->GeneratePattern({
+                {1, 0}, {2, 1}});
+            // 2      *
+            // 1  * *
+            // 0
+            instrument->GeneratePattern({
+                {1, 0}, {1, 0.5}, {2, 0.5}});
+            // 2      *
             // 1    *   *
             // 0  *
             instrument->GeneratePattern({
@@ -113,6 +123,12 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
             instrument->GeneratePattern({
                 {1, 0}, {0, 0.5}, {2, 0.5},
                 {0, 0.5}});
+            // 2        *
+            // 1  *   *
+            // 0    *     *
+            instrument->GeneratePattern({
+                {1, 0}, {0, 0.5}, {1, 0.5},
+                {2, 0.5}, {0, 0.5}});
             break;
             // TODO: actually implement these three
         case Trumpet:
