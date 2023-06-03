@@ -16,17 +16,17 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
 
     // Main Menu
     auto mainMenu = GameObject::Instantiate("MainMenu", mainMenuScene)->AddComponent<MainMenu>();
-    auto newGameButton = mainMenu->AddButton("NewGameButton", 900, 600, "UI/buttonInactive.png", "UI/buttonActive.png", "New Game", 32);
-    auto loadGameButton = mainMenu->AddButton("LoadGameButton", 900, 500, "UI/buttonInactive.png", "UI/buttonActive.png", "Load Game", 32);
-    auto optionsButton = mainMenu->AddButton("OptionsButton", 900, 400, "UI/buttonInactive.png", "UI/buttonActive.png", "Options", 32);
-    auto creditsButton = mainMenu->AddButton("CreditsButton", 900, 300, "UI/buttonInactive.png", "UI/buttonActive.png", "Credits", 32);
-    auto exitButton = mainMenu->AddButton("ExitFromGameButton", 900, 200, "UI/buttonInactive.png", "UI/buttonActive.png", "Exit", 32);
-    auto pauseBackground = mainMenu->AddImage("Background", 0, 0, "UI/MainMenu.png");
+    auto newGameButton = mainMenu->AddButton("NewGameButton", 773, 438, "UI/MainMenu/NewGameInactive.png", "UI/MainMenu/NewGameActive.png", "", 32);
+    auto continueButton = mainMenu->AddButton("LoadGameButton", 785, 345, "UI/MainMenu/ContinueInactive.png", "UI/MainMenu/ContinueActive.png", "", 32);
+    auto optionsButton = mainMenu->AddButton("OptionsButton", 784, 254, "UI/MainMenu/SettingsInactive.png", "UI/MainMenu/SettingsActive.png", "", 32);
+    auto creditsButton = mainMenu->AddButton("CreditsButton", 810, 160, "UI/MainMenu/CreditsInactive.png", "UI/MainMenu/CreditsActive.png", "", 32);
+    auto exitButton = mainMenu->AddButton("ExitFromGameButton", 877, 69, "UI/MainMenu/ExitInactive.png", "UI/MainMenu/ExitActive.png", "", 32);
+    auto pauseBackground = mainMenu->AddImage("Background", 0, 0, "UI/MainMenu/MainMenu.png");
     newGameButton->previousButton = exitButton;
-    newGameButton->nextButton = loadGameButton;
-    loadGameButton->previousButton = newGameButton;
-    loadGameButton->nextButton = optionsButton;
-    optionsButton->previousButton = loadGameButton;
+    newGameButton->nextButton = continueButton;
+    continueButton->previousButton = newGameButton;
+    continueButton->nextButton = optionsButton;
+    optionsButton->previousButton = continueButton;
     optionsButton->nextButton = creditsButton;
     creditsButton->previousButton = optionsButton;
     creditsButton->nextButton = exitButton;

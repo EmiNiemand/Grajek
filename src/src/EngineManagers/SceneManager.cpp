@@ -43,10 +43,14 @@ void SceneManager::InitializeScene() {
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
 
-    // TODO create loading screen
-//    loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
-//    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreen.png");
-//    loadingScreen->Draw();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
+    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreen.png");
+    loadingScreen->Draw();
+    deleteLoadingScreen = true;
+    glfwMakeContextCurrent(GloomEngine::GetInstance()->window);
+    glfwSwapBuffers(GloomEngine::GetInstance()->window);
 
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
@@ -71,6 +75,7 @@ void SceneManager::LoadScene(const std::string& scene) {
 }
 
 void SceneManager::ClearScene() const {
+    if (!activeScene) return;
     activeScene->RemoveAllChildren();
     Animator::animationModels.clear();
     Animator::animations.clear();
