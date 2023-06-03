@@ -1,5 +1,5 @@
 #include "GloomEngine.h"
-#include "Components/Scripts/Opponent/Opponent.h"
+#include "Components/Scripts/Opponent.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
@@ -8,9 +8,7 @@
 #include "EngineManagers/HIDManager.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/DialogueManager.h"
-#include "Components/Scripts/Opponent/OpponentSessionStarter.h"
 #include "Components/Scripts/Player/PlayerEquipment.h"
-#include "Components/Scripts/Opponent/OpponentMusicSession.h"
 #include "EngineManagers/AIManager.h"
 #include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/Renderers/Camera.h"
@@ -19,7 +17,7 @@ Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Componen
 
 Opponent::~Opponent() = default;
 
-void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1) {
+void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1, short bet1) {
     // Setup pattern
     instrument = std::move(instrument1);
     instrument->GeneratePattern(musicPattern);
@@ -32,6 +30,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         sample->SetPositionOffset(parent->transform->GetLocalPosition());
     }
     satisfaction = satisfaction1;
+    bet = bet1 * 2;
 
     // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
@@ -153,59 +152,34 @@ void Opponent::Update() {
         dialogueActive = false;
         acceptDialogueActive = false;
         dialogue->image->enabled = false;
-        CreateSessionStarter();
-        DialogueManager::GetInstance()->NotifyMenuIsActive();
+        sessionStarter = true;
+        playerManager->StartSessionWithOpponent(std::dynamic_pointer_cast<Opponent>(shared_from_this()));
         return;
-    }
-
-    // Session starter
-    if (sessionStarter) {
-        if (hid->IsKeyDown(Key::KEY_ARROW_LEFT))
-            sessionStarter->ChangeActiveButton(glm::vec2(-1, 0));
-        if (hid->IsKeyDown(Key::KEY_ARROW_RIGHT))
-            sessionStarter->ChangeActiveButton(glm::vec2(1, 0));
-        if (hid->IsKeyDown(Key::KEY_ENTER)) {
-            sessionStarter->OnClick();
-            GameObject::Destroy(sessionStarter->GetParent());
-            sessionStarter.reset();
-            return;
-        }
     }
 
     // Music session
     if (musicSession) {
         time += GloomEngine::GetInstance()->deltaTime;
         timeCounter->SetScale(glm::vec2(1 - time / battleTime, 1));
-        if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT))
-            musicSession->ToggleInstrumentControl();
-        if (hid->IsKeyDown(Key::KEY_TAB))
-            musicSession->ToggleCheatSheet();
-        for (auto key: PlaySound) {
-            if (hid->IsKeyDown(key.first)) musicSession->PlaySample(key.second);
-            if (hid->IsKeyUp(key.first)) musicSession->StopSample(key.second);
-        }
         if (time >= battleTime || satisfactionDifference >= 100 || satisfactionDifference <= -100) {
             if (satisfactionDifference <= -100 || (time >= battleTime && satisfactionDifference <= 0)) {
                 lossDialogue->ShowDialogue();
                 time = 0.0f;
                 satisfactionDifference = 0.0f;
+                playerManager->EndSessionWithOpponent(false, bet);
             }
             if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
                 defeated = true;
                 winDialogue->ShowDialogue();
                 dialogue->texts.pop_back();
                 dialogue->texts[0].text2 = "To byla dobra bitwa. Pokonaj kolejnego przeciwnika.";
+                playerManager->EndSessionWithOpponent(false, bet);
                 // TODO add sound when player beat boss
             }
             ui->DisableSelfAndChildren();
-            GameObject::Destroy(musicSession->GetParent());
-            musicSession.reset();
-            GameObject::Destroy(sessionUI->GetParent());
-            sessionUI.reset();
-            Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
-            AIManager::GetInstance()->NotifyPlayerStopsPlaying();
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
+            musicSession = false;
         }
         return;
     }
@@ -216,27 +190,10 @@ void Opponent::Update() {
     Component::Update();
 }
 
-void Opponent::UpdateSatisfaction(float satisfaction1) {
+void Opponent::PlayerPlayedPattern(float satisfaction1) {
     float s = satisfaction1 - satisfaction;
     satisfactionDifference += s;
     belt->SetScale(glm::vec2(satisfactionDifference / 100, 1.0f));
-}
-
-void Opponent::CreateSessionStarter() {
-    playerManager->inputEnabled = false;
-    GloomEngine::GetInstance()->timeScale = 0;
-    sessionStarter = GameObject::Instantiate("OpponentSessionStarter", parent)->AddComponent<OpponentSessionStarter>();
-    sessionStarter->Setup(playerManager->GetParent()->GetComponent<PlayerEquipment>()->instruments);
-}
-
-void Opponent::CreateMusicSession(InstrumentName instrumentName) {
-    auto equipment = playerManager->GetParent()->GetComponent<PlayerEquipment>();
-    musicSession = GameObject::Instantiate("OpponentMusicSession", parent)->AddComponent<OpponentMusicSession>();
-    musicSession->Setup(equipment->GetInstrumentWithName(instrumentName));
-    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrumentName, equipment->GetInstrumentWithName(instrumentName)->genre);
-    belt->SetScale(0);
-    timeCounter->SetScale(1);
-    ui->EnableSelfAndChildren();
 }
 
 void Opponent::OnDestroy() {
@@ -247,14 +204,19 @@ void Opponent::OnDestroy() {
     playerManager.reset();
     button1.reset();
     button2.reset();
-    sessionStarter.reset();
     chooseMenu.reset();
     belt.reset();
     dialogue.reset();
     winDialogue.reset();
     lossDialogue.reset();
-    musicSession.reset();
-    sessionUI.reset();
     timeCounter.reset();
     Component::OnDestroy();
+}
+
+void Opponent::PlayerStartedMusicSession() {
+    musicSession = true;
+    sessionStarter = false;
+    belt->SetScale(0);
+    timeCounter->SetScale(1);
+    ui->EnableSelfAndChildren();
 }

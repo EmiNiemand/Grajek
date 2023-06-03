@@ -31,7 +31,7 @@
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/AIManager.h"
-#include "Components/Scripts/Opponent/Opponent.h"
+#include "Components/Scripts/Opponent.h"
 #include "Components/Scripts/Instrument.h"
 
 #ifdef DEBUG
@@ -124,13 +124,13 @@ void Game::InitializeGame() const {
     auto opponent = GameObject::Instantiate("Opponent", activeScene);
     opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
     opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
+    opponent->transform->SetLocalPosition(glm::vec3(0, 0, 7));
     // 2      *   *
     // 1    *   *
     // 0  *
     auto opponentComponent = opponent->AddComponent<Opponent>();
     opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
     opponentComponent->dialogue->texts.push_back({{""},
                                                       {"Zaplac jezeli chcesz ze mna walczyc."},
                                                       {""}});

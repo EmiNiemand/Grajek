@@ -68,7 +68,7 @@ private:
 public:
     GLFWwindow* window;
 
-    glm::vec4 screenColor = glm::vec4(0, 0, 0, 1);
+    glm::vec4 screenColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.00f);
 
     unsigned int destroyGameObjectBufferIterator = 0;
     std::shared_ptr<GameObject> destroyGameObjectBuffer[2000];

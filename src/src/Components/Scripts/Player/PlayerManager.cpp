@@ -7,7 +7,7 @@
 #include "Components/Scripts/Player/PlayerMovement.h"
 #include "Components/Scripts/Player/PlayerEquipment.h"
 #include "Components/Scripts/Player/PlayerUI.h"
-#include "Components/Scripts/Opponent/Opponent.h"
+#include "Components/Scripts/Opponent.h"
 #include "Components/Scripts/Menus/PauseMenu.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
@@ -256,15 +256,13 @@ void PlayerManager::OnSessionToggle() {
     //TODO: this method implementation just seems wrong
     //if(activeMenu && activeMenu != sessionStarter) return;
 
-    // Cannot stop session if in duel
-    if(sessionOpponent) return;
-
     auto dialogueManager = DialogueManager::GetInstance();
     auto savePointManager = SavePointManager::GetInstance();
     if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
     if(savePointManager) savePointManager->NotifyMenuIsNotActive();
 
     if (session) {
+        if(sessionOpponent) return;
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
@@ -272,6 +270,7 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
     if (sessionStarter) {
+        if(sessionOpponent) return;
         sessionStarter->Stop();
         sessionStarter.reset();
         //activeMenu.reset();
@@ -307,10 +306,9 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
     float satisfaction = AIManager::GetInstance()->GetCombinedPlayerSatisfaction();
     //spdlog::info("Crowd satisfaction: "+std::to_string(satisfaction));
     equipment->AddReward(satisfaction / 100.0f);
-    //TODO: dla Kamila
-    // (satisfaction w zakresie <0, 100>)
-    // if(sessionOpponent)
-    //     sessionOpponent->PlayerPlayedPattern(satisfaction);
+
+     if(sessionOpponent)
+         sessionOpponent->PlayerPlayedPattern(satisfaction);
 
     playerUI->UpdateCash(equipment->cash);
 }
@@ -326,23 +324,25 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     session->Setup(equipment->GetInstrumentWithName(instrument));
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 
-    //TODO: dla Kamila
-    // sessionOpponent->PlayerStartedMusicSession();
+    if (sessionOpponent)
+        sessionOpponent->PlayerStartedMusicSession();
 }
 
-//TODO: dla Kamila
 void PlayerManager::StartSessionWithOpponent(const std::shared_ptr<Opponent>& opponent) {
     if(!opponent) return;
     if(session) return;
 
+    inputEnabled = true;
     sessionOpponent = opponent;
     OnSessionToggle();
 }
 
-//TODO: dla Kamila
 void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
     sessionOpponent = nullptr;
-    OnSessionToggle();
+    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
+    session->Stop();
+    session.reset();
+    AIManager::GetInstance()->NotifyPlayerStopsPlaying();
     equipment->cash = moneyBet * (wonSession ? 1:-1);
 }
 
