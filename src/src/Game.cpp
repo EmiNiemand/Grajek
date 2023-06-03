@@ -164,11 +164,9 @@ void Game::InitializeGame() const {
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
-    camera->SetTarget(nullptr);
+    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
 
-    // TODO delete loading screen
-//    GameObject::Destroy(SceneManager::GetInstance()->loadingScreen->GetParent());
-//    SceneManager::GetInstance()->loadingScreen.reset();
+    camera->SetTarget(nullptr);
 }
 
 bool Game::GameLoop() {

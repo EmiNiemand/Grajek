@@ -24,6 +24,8 @@ public:
     std::string file;
 
     std::shared_ptr<Image> loadingScreen;
+    bool deleteLoadingScreen = false;
+
 public:
     SceneManager(SceneManager &other) = delete;
     void operator=(const SceneManager&) = delete;
