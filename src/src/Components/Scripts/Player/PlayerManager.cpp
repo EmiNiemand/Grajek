@@ -7,6 +7,7 @@
 #include "Components/Scripts/Player/PlayerMovement.h"
 #include "Components/Scripts/Player/PlayerEquipment.h"
 #include "Components/Scripts/Player/PlayerUI.h"
+#include "Components/Scripts/Opponent/Opponent.h"
 #include "Components/Scripts/Menus/PauseMenu.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
@@ -52,7 +53,7 @@ void PlayerManager::Awake() {
     rb = parent->AddComponent<Rigidbody>();
 
     // Add Player scripts
-    // ------------------sssss
+    // ------------------
     movement = parent->AddComponent<PlayerMovement>();
     equipment = parent->AddComponent<PlayerEquipment>();
     playerUI = GameObject::Instantiate("PlayerUI", parent)->AddComponent<PlayerUI>();
@@ -90,6 +91,8 @@ void PlayerManager::Awake() {
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
     activeMenu = nullptr;
+
+    sessionOpponent = nullptr;
 
     // Load game
     // ---------
@@ -252,6 +255,10 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 void PlayerManager::OnSessionToggle() {
     //TODO: this method implementation just seems wrong
     //if(activeMenu && activeMenu != sessionStarter) return;
+
+    // Cannot stop session if in duel
+    if(sessionOpponent) return;
+
     auto dialogueManager = DialogueManager::GetInstance();
     auto savePointManager = SavePointManager::GetInstance();
     if(dialogueManager) dialogueManager->NotifyMenuIsNotActive();
@@ -297,8 +304,13 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
 
     if (!pat) return;
 
-    //spdlog::info("Crowd satisfaction: "+std::to_string(AIManager::GetInstance()->GetCombinedPlayerSatisfaction()));
-    equipment->AddReward(AIManager::GetInstance()->GetCombinedPlayerSatisfaction() / 100.0f);
+    float satisfaction = AIManager::GetInstance()->GetCombinedPlayerSatisfaction();
+    //spdlog::info("Crowd satisfaction: "+std::to_string(satisfaction));
+    equipment->AddReward(satisfaction / 100.0f);
+    //TODO: dla Kamila
+    // (satisfaction w zakresie <0, 100>)
+    // if(sessionOpponent)
+    //     sessionOpponent->PlayerPlayedPattern(satisfaction);
 
     playerUI->UpdateCash(equipment->cash);
 }
@@ -313,6 +325,25 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
     session->Setup(equipment->GetInstrumentWithName(instrument));
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
+
+    //TODO: dla Kamila
+    // sessionOpponent->PlayerStartedMusicSession();
+}
+
+//TODO: dla Kamila
+void PlayerManager::StartSessionWithOpponent(const std::shared_ptr<Opponent>& opponent) {
+    if(!opponent) return;
+    if(session) return;
+
+    sessionOpponent = opponent;
+    OnSessionToggle();
+}
+
+//TODO: dla Kamila
+void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
+    sessionOpponent = nullptr;
+    OnSessionToggle();
+    equipment->cash = moneyBet * (wonSession ? 1:-1);
 }
 
 void PlayerManager::OnCheatSheetToggle() {

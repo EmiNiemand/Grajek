@@ -19,6 +19,7 @@ class PlayerEquipment;
 class Instrument;
 class MusicSession;
 class SessionStarter;
+class Opponent;
 class PauseMenu;
 class OptionsMenu;
 class ShopMenu;
@@ -33,6 +34,7 @@ private:
     std::shared_ptr<MusicSession> session;
     std::shared_ptr<SessionStarter> sessionStarter;
     std::shared_ptr<GameObject> sessionStarterUI;
+    std::shared_ptr<Opponent> sessionOpponent;
 	// Player scripts
 	std::shared_ptr<PlayerUI> playerUI;
     std::shared_ptr<PlayerEquipment> equipment;
@@ -92,6 +94,8 @@ public:
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
     // Session methods
+    void StartSessionWithOpponent(const std::shared_ptr<Opponent>& opponent);
+    void EndSessionWithOpponent(bool wonSession, float moneyBet);
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
     void CreateMusicSession(InstrumentName instrument);
