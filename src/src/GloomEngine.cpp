@@ -159,10 +159,12 @@ bool GloomEngine::MainLoop() {
 #ifdef DEBUG
         ZoneScopedNC("Update", 0xDC143C);
 #endif
-        if (!SceneManager::GetInstance()->deleteLoadingScreen)
-            glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
-        else {
+
+        glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
+
+        if (SceneManager::GetInstance()->deleteLoadingScreen) {
             GameObject::Destroy(SceneManager::GetInstance()->loadingScreen->GetParent());
+            SceneManager::GetInstance()->loadingScreen.reset();
             SceneManager::GetInstance()->deleteLoadingScreen = false;
         }
 
@@ -172,10 +174,8 @@ bool GloomEngine::MainLoop() {
         if (deltaTime > idealDeltaTime + 0.01f) deltaTime = idealDeltaTime;
         lastFrameTime = currentTime;
 
-        if (!SceneManager::GetInstance()->deleteLoadingScreen) {
-            glfwMakeContextCurrent(window);
+        if (!FindGameObjectWithName("LoadingScreen"))
             glfwSwapBuffers(window);
-        }
     }
 
 #ifdef DEBUG
