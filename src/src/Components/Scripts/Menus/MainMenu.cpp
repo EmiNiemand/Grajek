@@ -3,6 +3,8 @@
 #include "Components/UI/Button.h"
 #include "EngineManagers/SceneManager.h"
 #include "Components/Scripts/Menus/MainMenuManager.h"
+#include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
 
 MainMenu::MainMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -33,7 +35,9 @@ void MainMenu::OnClick() {
         mainMenuManager->activeMenu = mainMenuManager->loadGameMenu;
         mainMenuManager->loadGameMenu->ShowMenu();
     } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
-
+        HideMenu();
+        mainMenuManager->activeMenu = mainMenuManager->optionsMenu;
+        mainMenuManager->optionsMenu->ShowMenu();
     } else if (activeButton->GetParent()->GetName() == "ExitFromGameButton") {
         gameShouldExit = true;
     }

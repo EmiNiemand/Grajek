@@ -16,7 +16,10 @@ AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, int id) : Co
 AudioSource::~AudioSource() = default;
 
 void AudioSource::Start() {
-    playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
+    auto player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
+
+    if (player != nullptr)
+        playerPos = player->transform;
     Component::Start();
 }
 

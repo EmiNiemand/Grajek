@@ -124,7 +124,7 @@ void Game::InitializeGame() const {
     auto opponent = GameObject::Instantiate("Opponent", activeScene);
     opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
     opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    opponent->transform->SetLocalPosition(glm::vec3(0, 0, 7));
+    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
     // 2      *   *
     // 1    *   *
     // 0  *
