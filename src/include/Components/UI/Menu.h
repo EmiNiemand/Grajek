@@ -19,6 +19,7 @@ public:
 
     void OnDestroy() override;
 
+    virtual bool ShowMenu();
     virtual void HideMenu();
     inline virtual void ChangeActiveButton(glm::vec2 moveVector);
     std::shared_ptr<Image> AddImage(std::string name, int x, int y, const std::string &path, float z = 0.0f);

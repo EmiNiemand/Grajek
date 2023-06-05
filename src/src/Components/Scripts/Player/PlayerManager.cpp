@@ -86,6 +86,11 @@ void PlayerManager::Awake() {
     // --------------------
     sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
 
+    // Set up UI's
+    // -----------
+    // Note: You need to instantiate them beforehand, so do not move
+    //       PlayerUI (or wherever instantiating gets moved) creation
+    //       below these.
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
@@ -157,78 +162,67 @@ void PlayerManager::OnMove(glm::vec2 moveVector) {
 #pragma endregion
 
 #pragma region Interaction Events
-//TODO: implement interaction with IUsable
 void PlayerManager::OnInteract() {
-    if(session) return;
-    if(activeMenu && activeMenu != shopMenu && activeMenu != savePointMenu) return;
+    if(session || sessionStarter) return;
+    if(activeMenu &&
+        activeMenu != shopMenu &&
+        activeMenu != savePointMenu) return;
 
-    if (!shopMenu->GetParent()->GetEnabled()) {
-        if (shopMenu->ShowMenu()) {
-            GloomEngine::GetInstance()->timeScale = 0;
-            activeMenu = shopMenu;
-            return;
-        }
+    if (shopMenu->ShowMenu()) {
+        activeMenu = shopMenu;
+        return;
     }
-    if (!savePointMenu->GetParent()->GetEnabled()) {
-        if (savePointMenu->ShowMenu()) {
-            GloomEngine::GetInstance()->timeScale = 0;
-            activeMenu = savePointMenu;
-            return;
-        }
+    else shopMenu->HideMenu();
+
+    if (savePointMenu->ShowMenu()) {
+        activeMenu = savePointMenu;
+        return;
     }
-    GloomEngine::GetInstance()->timeScale = 1;
-    if (shopMenu->GetParent()->GetEnabled())
-        shopMenu->HideMenu();
-    if (savePointMenu->GetParent()->GetEnabled())
-        savePointMenu->HideMenu();
+    else savePointMenu->HideMenu();
+
+    // If the code got to this point,
+    // active menu got closed
     activeMenu.reset();
 }
 #pragma endregion
 
-//TODO: rewrite these monstrosities
 #pragma region UI Events
 void PlayerManager::ToggleOptionsMenu() {
     //TODO: this should be simply controlled by pauseMenu
     // (which means that PlayerManager here only calls method)
     // in PauseMenu (or even activeMenu)
-    if (activeMenu == pauseMenu) {
-        pauseMenu->HideMenu();
+    activeMenu->HideMenu();
+
+    if (activeMenu == pauseMenu)
         activeMenu = optionsMenu;
-        optionsMenu->ShowMenu();
-    }
-    else if(activeMenu == optionsMenu) {
-        optionsMenu->HideMenu();
+    else if(activeMenu == optionsMenu)
         activeMenu = pauseMenu;
-        pauseMenu->ShowMenu();
-    }
+
+    activeMenu->ShowMenu();
 }
 
 void PlayerManager::OnMenuToggle() {
-    //TODO: this all should be simply controlled by activeMenu alone
-    //if(session) return;
-    if(activeMenu &&
-        !(activeMenu == pauseMenu ||
-          activeMenu == optionsMenu ||
-          activeMenu == shopMenu ||
-          activeMenu == savePointMenu)) return;
+    if(sessionStarter) {
+        OnSessionToggle();
+        return;
+    }
 
-    DialogueManager::GetInstance()->NotifyMenuIsActive();
     // Pause menu
     if(!activeMenu) {
-        GloomEngine::GetInstance()->timeScale = 0;
         activeMenu = pauseMenu;
-        pauseMenu->ShowMenu();
+        activeMenu->ShowMenu();
+        DialogueManager::GetInstance()->NotifyMenuIsActive();
     }
     // Options -> Pause menu
     else if (activeMenu == optionsMenu) {
         OptionsManager::GetInstance()->Save();
-        optionsMenu->HideMenu();
-        pauseMenu->ShowMenu();
+        activeMenu->HideMenu();
         activeMenu = pauseMenu;
+        activeMenu->ShowMenu();
+        DialogueManager::GetInstance()->NotifyMenuIsActive();
     }
     // Disable any active menu
     else if(activeMenu) {
-        GloomEngine::GetInstance()->timeScale = 1;
         activeMenu->HideMenu();
         activeMenu.reset();
         DialogueManager::GetInstance()->NotifyMenuIsNotActive();
@@ -254,10 +248,10 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 #pragma region Music Session Events
 void PlayerManager::OnSessionToggle() {
     //TODO: this method implementation just seems wrong
-    //if(activeMenu && activeMenu != sessionStarter) return;
 
     // Cannot stop session if in duel
     if(sessionOpponent) return;
+    if(activeMenu) return;
 
     auto dialogueManager = DialogueManager::GetInstance();
     auto savePointManager = SavePointManager::GetInstance();
@@ -274,7 +268,6 @@ void PlayerManager::OnSessionToggle() {
     if (sessionStarter) {
         sessionStarter->Stop();
         sessionStarter.reset();
-        //activeMenu.reset();
         GloomEngine::GetInstance()->timeScale = 1;
         return;
     }

@@ -15,10 +15,12 @@ void MainMenu::Start() {
     Component::Start();
 }
 
-void MainMenu::ShowMenu() {
-    parent->EnableSelfAndChildren();
+bool MainMenu::ShowMenu() {
+    if(!Menu::ShowMenu()) return false;
+
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGameButton")->GetComponent<Button>();
     activeButton->isActive = true;
+    return true;
 }
 
 void MainMenu::OnClick() {

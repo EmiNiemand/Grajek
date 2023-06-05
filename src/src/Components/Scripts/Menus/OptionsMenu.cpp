@@ -52,13 +52,15 @@ void OptionsMenu::Start() {
     Component::Start();
 }
 
-void OptionsMenu::ShowMenu() {
-    parent->EnableSelfAndChildren();
+bool OptionsMenu::ShowMenu() {
+    if(!Menu::ShowMenu()) return false;
+
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("BackToPauseMenu")->GetComponent<Button>();
     activeButton->isActive = true;
     GloomEngine::GetInstance()->FindGameObjectWithName("PreviousValue")->GetComponent<Button>()->ChangeText("");
     GloomEngine::GetInstance()->FindGameObjectWithName("CurrentValue")->GetComponent<Button>()->ChangeText("");
     GloomEngine::GetInstance()->FindGameObjectWithName("NextValue")->GetComponent<Button>()->ChangeText("");
+    return true;
 }
 
 void OptionsMenu::ChangeActiveButton(glm::vec2 moveVector) {
@@ -236,8 +238,8 @@ void OptionsMenu::OnClick() {
     if(activeButton->GetParent()->GetName() == "BackToPauseMenu") {
         OptionsManager::GetInstance()->Save();
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
-        HideMenu();
-        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
+//        HideMenu();
+//        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
     }
 }
 

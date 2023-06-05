@@ -66,8 +66,8 @@ void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
 
 bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
+    if(!Menu::ShowMenu()) return false;
 
-    parent->EnableSelfAndChildren();
     if (!instruments.empty()) {
         for (const auto & instrument : instruments) {
             instrument->GetParent()->children.begin()->second->DisableSelfAndChildren();

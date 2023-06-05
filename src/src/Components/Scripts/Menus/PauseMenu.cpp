@@ -11,26 +11,28 @@ PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(p
 
 PauseMenu::~PauseMenu() = default;
 
-void PauseMenu::ShowMenu() {
-    parent->EnableSelfAndChildren();
+bool PauseMenu::ShowMenu() {
+    if(!Menu::ShowMenu()) return false;
+
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("ResumeButton")->GetComponent<Button>();
     activeButton->isActive = true;
+    return true;
 }
 
 void PauseMenu::OnClick() {
-    if (activeButton->GetParent()->GetName() == "ResumeButton") {
-        GloomEngine::GetInstance()->timeScale = 1;
+    auto buttonName = activeButton->GetParent()->GetName();
+    if (buttonName == "ResumeButton") {
         HideMenu();
         //TODO: fix this
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->activeMenu.reset();
         DialogueManager::GetInstance()->NotifyMenuIsNotActive();
-    } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
+    } else if (buttonName == "OptionsButton") {
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
-        HideMenu();
-        GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
-    } else if (activeButton->GetParent()->GetName() == "Main MenuButton") {
+//        HideMenu();
+//        GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>()->ShowMenu();
+    } else if (buttonName == "Main MenuButton") {
         SceneManager::GetInstance()->LoadScene("MainMenu");
-    } else if (activeButton->GetParent()->GetName() == "ExitButton") {
+    } else if (buttonName == "ExitButton") {
         gameShouldExit = true;
     }
 }

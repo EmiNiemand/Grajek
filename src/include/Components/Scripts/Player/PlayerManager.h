@@ -58,37 +58,13 @@ public:
     bool inputEnabled;
 
 public:
+    PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
+
+    // Component methods
     void Awake() override;
     void Start() override;
     void Update() override;
     void OnDestroy() override;
-
-private:
-    void PollInput();
-
-    // Session methods
-    void OnSessionToggle();
-    void OnSoundPlay(int index);
-    void OnCheatSheetToggle();
-    void OnInstrumentControlToggle();
-    void OnMetronomeSoundToggle();
-    void OnMetronomeVisualsToggle();
-    void OnBackingTrackToggle();
-
-	// Animation methods
-	void UpdateAnimations();
-
-    // ovement methods
-    void OnMove(glm::vec2 moveVector);
-    void OnInteract();
-
-    // UI methods
-    void OnUIMove(glm::vec2 moveVector);
-	void OnMenuToggle();
-	void OnApply();
-
-public:
-    PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
 
     // Equipment methods
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
@@ -111,6 +87,30 @@ public:
     void SaveData(std::shared_ptr<GameData> &data) override;
 
     void OnSoundStop(int index);
+
+private:
+    void PollInput();
+
+    // Session methods
+    void OnSessionToggle();
+    void OnSoundPlay(int index);
+    void OnCheatSheetToggle();
+    void OnInstrumentControlToggle();
+    void OnMetronomeSoundToggle();
+    void OnMetronomeVisualsToggle();
+    void OnBackingTrackToggle();
+
+	// Animation methods
+	void UpdateAnimations();
+
+    // Movement methods
+    void OnMove(glm::vec2 moveVector);
+    void OnInteract();
+
+    // UI methods
+    void OnUIMove(glm::vec2 moveVector);
+	void OnMenuToggle();
+	void OnApply();
 };
 
 

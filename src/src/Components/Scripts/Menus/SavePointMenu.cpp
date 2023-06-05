@@ -20,8 +20,8 @@ void SavePointMenu::OnDestroy() {
 
 bool SavePointMenu::ShowMenu() {
     if (!triggerActive) return false;
+    if(!Menu::ShowMenu()) return false;
 
-    parent->EnableSelfAndChildren();
     buttonImage->enabled = false;
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
     activeButton->isActive = true;
@@ -56,7 +56,6 @@ void SavePointMenu::OnClick() {
     path /= "ProjectConfig";
     path /= "Saves";
     DataPersistanceManager::GetInstance()->SaveGame(path.string(), activeButton->text);
-    GloomEngine::GetInstance()->timeScale = 1;
     HideMenu();
     GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->activeMenu.reset();
     Menu::OnClick();

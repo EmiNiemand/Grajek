@@ -12,7 +12,7 @@ public:
     LoadGameMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~LoadGameMenu() override;
 
-    void ShowMenu();
+    bool ShowMenu() override;
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;
 };

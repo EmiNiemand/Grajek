@@ -11,10 +11,19 @@ Menu::Menu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent
 
 Menu::~Menu() = default;
 
+bool Menu::ShowMenu() {
+    if(GetParent()->GetEnabled()) return false;
+
+    parent->EnableSelfAndChildren();
+    GloomEngine::GetInstance()->timeScale = 0;
+    return true;
+}
+
 void Menu::HideMenu() {
     parent->DisableSelfAndChildren();
     if (activeButton)
         activeButton->isActive = false;
+    GloomEngine::GetInstance()->timeScale = 1;
 }
 
 void Menu::ChangeActiveButton(glm::vec2 moveVector) {

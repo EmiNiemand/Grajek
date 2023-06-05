@@ -31,7 +31,7 @@ public:
     ~OptionsMenu() override;
 
     void Start() override;
-    void ShowMenu();
+    bool ShowMenu() override;
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void ChangeValue(float y);
     void OnClick() override;

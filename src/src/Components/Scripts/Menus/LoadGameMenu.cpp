@@ -8,10 +8,12 @@ LoadGameMenu::LoadGameMenu(const std::shared_ptr<GameObject> &parent, int id) : 
 
 LoadGameMenu::~LoadGameMenu() = default;
 
-void LoadGameMenu::ShowMenu() {
-    parent->EnableSelfAndChildren();
+bool LoadGameMenu::ShowMenu() {
+    if(!Menu::ShowMenu()) return false;
+
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame1")->GetComponent<Button>();
     activeButton->isActive = true;
+    return true;
 }
 
 void LoadGameMenu::ChangeActiveButton(glm::vec2 moveVector) {

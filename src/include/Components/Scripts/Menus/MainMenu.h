@@ -12,7 +12,7 @@ public:
     ~MainMenu() override;
 
     void Start() override;
-    void ShowMenu();
+    bool ShowMenu() override;
     void OnClick() override;
 };
 
