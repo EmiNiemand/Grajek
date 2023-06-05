@@ -13,21 +13,22 @@ enum AI_LOGICSTATE {
     AlertedByEnemy,
     MovingToEnemy,
     ListeningToEnemy,
+    WalkingAway,
 };
 
 enum AI_MOVEMENTSTATE {
-    SetPathToPlayer,
+    SettingPathToPlayer,
     OnPathToPlayer,
     NearPlayerSubPoint,
     NearPlayerPosition,
-    SetPathToEnemy,
+    SettingPathToEnemy,
     OnPathToEnemy,
     NearEnemySubPoint,
     NearEnemyPosition,
     OnPathToTarget,
     NearTargetSubPoint,
     NearTargetPosition,
-    ReturnToPreviousTarget,
+    ReturningToPreviousTarget,
 };
 
 enum AI_ANIMATIONSTATE {

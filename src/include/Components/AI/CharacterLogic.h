@@ -37,6 +37,9 @@ class CharacterLogic : public Component {
     MusicGenre previousPlayerGenre {};
     std::shared_ptr<MusicPattern> previousPlayerPattern = nullptr;
     float repeatingModifier = 0.0f;
+    float lowerSatisfactionLimit = 0.0f;
+    float middleSatisfactionLimit = 0.0f;
+    float upperSatisfactionLimit = 0.0f;
     float minSatisfaction = 0.0f;
     float playerSatisfaction = 0.0f;
     float enemySatisfaction = 0.0f;

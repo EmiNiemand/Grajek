@@ -153,7 +153,7 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    filePointer = file.tellg();
+    dataStartSectionPointer = file.tellg();
 
     if (type == AudioType::Positional) {
         if (bitsPerSample == 8)
@@ -184,7 +184,7 @@ void AudioLoader::FillBuffersQueue() {
     for (int i = 0; i < NUM_BUFFERS; ++i) {
         if (samplesSizeToLoad < BUFFER_SIZE) {
             file.read(reinterpret_cast<char *>(data), samplesSizeToLoad);
-            file.seekg(filePointer);
+            file.seekg(dataStartSectionPointer);
             alBufferData(buffers[i], format, data, samplesSizeToLoad, sampleRate);
             alSourceQueueBuffers(source, 1, &buffers[i]);
             samplesSizeToLoad = subChunkSize;
@@ -217,7 +217,7 @@ const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
 
         if (samplesSizeToLoad < BUFFER_SIZE) {
             file.read(reinterpret_cast<char *>(data), samplesSizeToLoad);
-            file.seekg(filePointer);
+            file.seekg(dataStartSectionPointer);
             alBufferData(bufferId, format, data, samplesSizeToLoad, sampleRate);
             alSourceQueueBuffers(source, 1, &bufferId);
             samplesSizeToLoad = subChunkSize;

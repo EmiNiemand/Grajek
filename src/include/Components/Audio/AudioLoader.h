@@ -19,7 +19,7 @@ class AudioLoader {
     const ALuint *buffers = nullptr;
     // Header values of WAV file
     std::ifstream file {};
-    long long filePointer = 0;
+    long long dataStartSectionPointer = 0;
     uint32_t fileSize = 0;
     uint32_t formatLength = 0;
     uint16_t formatType = 0;

@@ -14,10 +14,11 @@
 #include <unordered_map>
 #include <numbers>
 
-constexpr float DISTANCE_TO_POINT = 1.75f;
-constexpr float DISTANCE_TO_PLAYER = 0.75f;
-constexpr float DISTANCE_TO_COLLISION = 2.2f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.11f;
+constexpr float DISTANCE_TO_POINT = 1.8f;
+constexpr float DISTANCE_TO_COLLISION = 2.0f;
+constexpr float AVOIDANCE_ROTATION_FACTOR = 1.8f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.25f;
+constexpr float MOVEMENT_TIMEOUT = 2.75f;
 
 class GameObject;
 class Rigidbody;
@@ -38,6 +39,7 @@ class CharacterMovement : public Component {
     glm::mat4 steeringMatrix {};
     float maxDistanceToCharacter = FLT_MAX;
     float distance = 0.0f;
+    float time = 0.0f;
     // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
     const bool *aiGrid = nullptr;
@@ -60,8 +62,8 @@ class CharacterMovement : public Component {
 
     inline void ApplyForces(const glm::vec3 &force);
     inline void ApplyRotation(const glm::vec3 &force);
-    inline void SetRandomSpawnPoint();
-    const glm::ivec2 GetRandomPoint() const;
+    void SetRandomSpawnPoint();
+    const glm::vec3 GetRandomPoint();
     void SetRandomEndPoint();
     void SetNewPathToPlayer();
     void ReturnToPreviousPath();

@@ -28,7 +28,10 @@ void CharacterLogic::Start() {
     characterAnimator->LoadAnimationModel(modelPath);
     characterAnimator->SetAnimation("AnimsNew/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
+    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(35, 50);
+    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
+    middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(50, 65);
+    upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
     Component::Start();
 }
 
@@ -36,6 +39,7 @@ void CharacterLogic::Update() {
     if (logicState != ListeningToPlayer) {
         switch (characterMovement->GetState()) {
             case OnPathToPlayer:
+            case OnPathToEnemy:
                 characterAnimations->SetNewState(Running);
                 break;
             case OnPathToTarget:
@@ -43,6 +47,9 @@ void CharacterLogic::Update() {
                 break;
             case NearTargetSubPoint:
                 characterAnimations->SetNewState(Idle);
+                break;
+            case NearEnemyPosition:
+                logicState = ListeningToEnemy;
                 break;
             case NearPlayerPosition:
                 logicState = ListeningToPlayer;
@@ -53,15 +60,26 @@ void CharacterLogic::Update() {
     }
 
     if (logicState == ListeningToPlayer) {
-        if (playerSatisfaction > 70.0f) {
+        if (playerSatisfaction >= upperSatisfactionLimit) {
             characterAnimations->SetNewState(Cheering);
-        } else if (playerSatisfaction < 40.0f && playerSatisfaction >= 30.0f) {
-            characterAnimations->SetNewState(Booing);
-        } else if (playerSatisfaction < 30.0f) {
-            logicState = AlertedByPlayer;
-            characterMovement->SetState(ReturnToPreviousTarget);
-        } else {
+        } else if (playerSatisfaction >= middleSatisfactionLimit) {
             characterAnimations->SetNewState(Idle);
+        } else if (playerSatisfaction >= lowerSatisfactionLimit)  {
+            characterAnimations->SetNewState(Booing);
+        } else {
+            logicState = WalkingAway;
+            characterMovement->SetState(ReturningToPreviousTarget);
+        }
+    } else if (logicState == ListeningToEnemy) {
+        if (enemySatisfaction >= upperSatisfactionLimit) {
+            characterAnimations->SetNewState(Cheering);
+        } else if (enemySatisfaction >= middleSatisfactionLimit) {
+            characterAnimations->SetNewState(Idle);
+        } else if (enemySatisfaction >= lowerSatisfactionLimit)  {
+            characterAnimations->SetNewState(Booing);
+        } else {
+            logicState = WalkingAway;
+            characterMovement->SetState(ReturningToPreviousTarget);
         }
     }
 
@@ -75,7 +93,7 @@ void CharacterLogic::AIUpdate() {
         if (playerSatisfaction > minSatisfaction) {
 //            characterIndicator->Indicate();
             logicState = MovingToPlayer;
-            characterMovement->SetState(SetPathToPlayer);
+            characterMovement->SetState(SettingPathToPlayer);
         }
     }
 
@@ -146,7 +164,7 @@ void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
         logicState = AlertedByPlayer;
     } else {
         if (logicState != None)
-            characterMovement->SetState(ReturnToPreviousTarget);
+            characterMovement->SetState(ReturningToPreviousTarget);
 
         logicState = None;
     }
@@ -198,7 +216,7 @@ void CharacterLogic::SetEnemyPlayingStatus(const bool& isEnemyPlaying) {
         logicState = AlertedByPlayer;
     } else {
         if (logicState != None)
-            characterMovement->SetState(ReturnToPreviousTarget);
+            characterMovement->SetState(ReturningToPreviousTarget);
 
         logicState = None;
     }
