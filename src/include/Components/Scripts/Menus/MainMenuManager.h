@@ -8,6 +8,7 @@ class Menu;
 class MainMenu;
 class LoadGameMenu;
 class MainMenuOptionsMenu;
+class CreditsMenu;
 
 class MainMenuManager : public Component {
 public:
@@ -15,7 +16,7 @@ public:
     std::shared_ptr<MainMenu> mainMenu;
     std::shared_ptr<LoadGameMenu> loadGameMenu;
     std::shared_ptr<MainMenuOptionsMenu> optionsMenu;
-//    std::shared_ptr<CreditsMenu> creditsMenu;
+    std::shared_ptr<CreditsMenu> creditsMenu;
 
 public:
     void Start() override;

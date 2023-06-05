@@ -8,6 +8,7 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 #include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/CreditsMenu.h"
 
 #ifdef DEBUG
     #include "tracy/Tracy.hpp"
@@ -19,6 +20,7 @@ void MainMenuManager::Start() {
     mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>();
     loadGameMenu = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>();
     optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<MainMenuOptionsMenu>();
+    creditsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("CreditsMenu")->GetComponent<CreditsMenu>();
     activeMenu = mainMenu;
     Component::Start();
 }
@@ -36,6 +38,7 @@ void MainMenuManager::OnDestroy() {
     mainMenu.reset();
     loadGameMenu.reset();
     optionsMenu.reset();
+    creditsMenu.reset();
     Component::OnDestroy();
 }
 

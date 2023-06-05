@@ -4,6 +4,7 @@
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/CreditsMenu.h"
 
 MainMenuPrefab::MainMenuPrefab(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
             Prefab(name, id, parent, tag) {
@@ -94,6 +95,10 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     saveButton->previousButton = shadowResolutionButton;
     saveButton->nextButton = musicVolumeButton;
     optionsMenu->GetParent()->DisableSelfAndChildren();
+
+    // Credits Menu
+    auto creditsMenu = GameObject::Instantiate("CreditsMenu", mainMenuScene)->AddComponent<CreditsMenu>();
+    creditsMenu->AddImage("CreditsBackground", 0, 0, "UI/Credits.png");
 
     return mainMenuScene;
 }
