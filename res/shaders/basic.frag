@@ -153,7 +153,7 @@ void main()
     //cel shading
     float intensity = max(dot(-normalize(directionalLights[0].direction), N), 0.0);
 
-    if (intensity > 0.9) {
+    if (intensity > 0.8) {
         intensity = 0.5;
     }
     else if (intensity > 0.5) {
