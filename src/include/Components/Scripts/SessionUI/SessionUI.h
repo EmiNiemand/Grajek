@@ -59,7 +59,9 @@ protected:
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
-    virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath);
+    // In child classes you need to place BackingTrackSetup() before calling parent's Setup()
+    virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
+                       bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack);
     void SetCheatSheet(const std::string& cheatSheetPath);
     void SetInstrumentControl(const std::string& instrumentControlPath);
 

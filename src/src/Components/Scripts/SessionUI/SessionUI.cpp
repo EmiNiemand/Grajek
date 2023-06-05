@@ -11,14 +11,18 @@
 
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath) {
-    //TODO: add these three to OptionsManager
-    metronomeSoundEnabled = true;
-    metronomeVisualEnabled = true;
-    backingTrackEnabled = true;
+void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
+                      bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+    // I negate actual values to use Toggle methods to easily setup elements
+    metronomeSoundEnabled = !(sessionMetronomeSound & sessionMetronomeVisuals);
+    metronomeVisualEnabled = !sessionMetronomeVisuals;
+    backingTrackEnabled = !sessionBackingTrack;
 
-    MetronomeSetup(metronomePath, bpm);
+    MetronomeSetup("UI/Sesja/Ramka.png", bpm);
     AccuracyFeedbackSetup();
+
+    ToggleMetronomeVisuals();
+    ToggleBackingTrack();
 
     // Set up sound samples
     // --------------------

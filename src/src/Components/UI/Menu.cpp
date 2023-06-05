@@ -20,6 +20,8 @@ bool Menu::ShowMenu() {
 }
 
 void Menu::HideMenu() {
+    if(!GetParent()->GetEnabled()) return;
+
     parent->DisableSelfAndChildren();
     if (activeButton)
         activeButton->isActive = false;

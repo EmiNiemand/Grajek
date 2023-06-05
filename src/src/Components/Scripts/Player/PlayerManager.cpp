@@ -85,6 +85,9 @@ void PlayerManager::Awake() {
     // Set up Music Session
     // --------------------
     sessionStarterUI = GameObject::Instantiate("SessionStarterUI", parent);
+    sessionMetronomeSound = true;
+    sessionMetronomeVisuals = true;
+    sessionBackingTrack = true;
 
     // Set up UI's
     // -----------
@@ -310,7 +313,7 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     sessionStarter.reset();
     activeMenu.reset();
     session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
-    session->Setup(equipment->GetInstrumentWithName(instrument));
+    session->Setup(equipment->GetInstrumentWithName(instrument), sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
 
     if (sessionOpponent)
@@ -344,17 +347,17 @@ void PlayerManager::OnInstrumentControlToggle() {
 
 void PlayerManager::OnMetronomeSoundToggle() {
     if (!session) return;
-    session->ToggleMetronomeSound();
+    sessionMetronomeSound = session->ToggleMetronomeSound();
 }
 
 void PlayerManager::OnMetronomeVisualsToggle() {
     if (!session) return;
-    session->ToggleMetronomeVisuals();
+    sessionMetronomeVisuals = session->ToggleMetronomeVisuals();
 }
 
 void PlayerManager::OnBackingTrackToggle() {
     if (!session) return;
-    session->ToggleBackingTrack();
+    sessionBackingTrack = session->ToggleBackingTrack();
 }
 
 #pragma endregion
@@ -435,6 +438,9 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
             parent->transform->GetGlobalPosition() + Camera::activeCamera->GetComponent<Camera>()->cameraOffset);
     for(const auto& instrument : data->instruments)
         equipment->BuyInstrument(0, Instrument::GetInstrument(instrument));
+    sessionBackingTrack = data->sessionBackingTrack;
+    sessionMetronomeSound = data->sessionMetronomeSound;
+    sessionMetronomeVisuals = data->sessionMetronomeVisuals;
 }
 
 void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
@@ -442,6 +448,9 @@ void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
     data->playerPosition = parent->transform->GetLocalPosition();
     for(const auto& instrument : equipment->instruments)
         data->instruments.insert(instrument->name);
+    data->sessionBackingTrack = sessionBackingTrack;
+    data->sessionMetronomeSound = sessionMetronomeSound;
+    data->sessionMetronomeVisuals = sessionMetronomeVisuals;
 }
 
 void PlayerManager::OnDestroy() {

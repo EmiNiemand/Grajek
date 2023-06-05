@@ -9,7 +9,8 @@ public:
 
     void PlaySound(int index) override;
 
-    void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath) override;
+    void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
+               bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) override;
 };
 
 #endif //GLOOMENGINE_DRUMSSESSIONUI_H

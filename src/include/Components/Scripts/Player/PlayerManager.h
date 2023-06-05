@@ -35,6 +35,7 @@ private:
     std::shared_ptr<SessionStarter> sessionStarter;
     std::shared_ptr<GameObject> sessionStarterUI;
     std::shared_ptr<Opponent> sessionOpponent;
+    bool sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack;
 	// Player scripts
 	std::shared_ptr<PlayerUI> playerUI;
     std::shared_ptr<PlayerEquipment> equipment;

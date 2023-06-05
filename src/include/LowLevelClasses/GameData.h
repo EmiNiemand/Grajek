@@ -16,6 +16,10 @@ public:
     int reputation;
     glm::vec3 playerPosition;
     std::set<InstrumentName> instruments;
+    bool sessionMetronomeSound;
+    bool sessionMetronomeVisuals;
+    bool sessionBackingTrack;
+
     bool shopkeeperEvent;
 
 public:

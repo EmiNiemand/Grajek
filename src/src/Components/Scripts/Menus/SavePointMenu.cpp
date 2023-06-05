@@ -63,5 +63,5 @@ void SavePointMenu::OnClick() {
 
 void SavePointMenu::HideMenu() {
     Menu::HideMenu();
-    buttonImage->enabled = true;
+    if (triggerActive) buttonImage->enabled = true;
 }

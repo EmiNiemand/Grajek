@@ -20,7 +20,7 @@
 
 MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
+void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
     instrument = std::move(playerInstrument);
 
     bpm = (int)instrument->genre;
@@ -40,7 +40,7 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
         case Launchpad: sessionUI = sessionUIInstance->AddComponent<LaunchpadSessionUI>(); break;
         case Guitar:    sessionUI = sessionUIInstance->AddComponent<GuitarSessionUI>(); break;
     }
-    sessionUI->Setup(bpm, instrument->samples, "UI/Sesja/Ramka.png");
+    sessionUI->Setup(bpm, instrument->samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 }
 
 void MusicSession::Update() {
@@ -188,16 +188,16 @@ void MusicSession::Stop() {
 }
 
 // Pass-through functions
-void MusicSession::ToggleMetronomeVisuals() {
-    sessionUI->ToggleMetronomeVisuals();
+bool MusicSession::ToggleMetronomeVisuals() {
+    return sessionUI->ToggleMetronomeVisuals();
 }
 
-void MusicSession::ToggleMetronomeSound() {
-    sessionUI->ToggleMetronomeSound();
+bool MusicSession::ToggleMetronomeSound() {
+    return sessionUI->ToggleMetronomeSound();
 }
 
-void MusicSession::ToggleBackingTrack() {
-    sessionUI->ToggleBackingTrack();
+bool MusicSession::ToggleBackingTrack() {
+    return sessionUI->ToggleBackingTrack();
 }
 
 void MusicSession::OnDestroy() {

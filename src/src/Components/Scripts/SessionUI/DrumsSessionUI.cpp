@@ -7,8 +7,13 @@
 
 DrumsSessionUI::DrumsSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
 
-void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath) {
-    SessionUI::Setup(bpm, samples, metronomePath);
+void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
+                           bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+    // Load backing track
+    // ------------------
+    BackingTrackSetup("drums/backingTrack");
+
+    SessionUI::Setup(bpm, samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 
     // Add cheat sheet
     // ------------------
@@ -19,9 +24,6 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
     GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
             ->LoadTexture(0, 0, "UI/Sesja/widokPerkusja.png");
 
-    // Load backing track
-    // ------------------
-    BackingTrackSetup("drums/backingTrack");
 
     // Set up samples
     // --------------
