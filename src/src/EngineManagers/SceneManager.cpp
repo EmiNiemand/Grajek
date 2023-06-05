@@ -103,23 +103,25 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
     spdlog::info("Loaded map objects successfully.");
 
+    std::shared_ptr<GameObject> map = GameObject::Instantiate("Map");
+
     std::shared_ptr<GameObject> newGameObject;
     for (const auto &object: staticObjectsData) {
         newGameObject.reset();
-        if(object->name == "House"){
-            //newGameObject = Prefab::Instantiate<House>();
-            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<House>(object->uniqueName);
+        if(object->name == "House") {
+            newGameObject = Prefab::Instantiate<House>(object->uniqueName);
         }
-        if(object->name == "Shop"){
-            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<Shop>(object->uniqueName);
+        if(object->name == "Shop") {
+            newGameObject = Prefab::Instantiate<Shop>(object->uniqueName);
         }
-        if(object->name == "SavePoint"){
-            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<SavePoint>(object->uniqueName);
+        if(object->name == "SavePoint") {
+            newGameObject = Prefab::Instantiate<SavePoint>(object->uniqueName);
         }
-        if(object->name == "InvisibleBlock"){
-            newGameObject = PrefabFactory::GetInstance()->CreateGameObjectFromPrefab<InvisibleBlock>(object->uniqueName);
+        if(object->name == "InvisibleBlock") {
+            newGameObject = Prefab::Instantiate<InvisibleBlock>(object->uniqueName);
         }
         if(newGameObject) {
+            newGameObject->SetParent(map);
             //if(!object->uniqueName.empty())
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);
@@ -264,12 +266,13 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
 }
 
 std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStaticSaveablePrefabs() {
-    std::map<int,std::shared_ptr<SaveableStaticObject>> objects;
+    std::map<int, std::shared_ptr<SaveableStaticObject>> objects;
+
     int i = 0;
-    for (const auto& object : SceneManager::GetInstance()->activeScene->children) {
-        i++;
+    for (const auto& object : GloomEngine::GetInstance()->gameObjects) {
         if (std::dynamic_pointer_cast<SaveableStaticObject>(object.second) != nullptr) {
             objects[object.first] = (std::dynamic_pointer_cast<SaveableStaticObject>(object.second));
+            ++i;
         }
     }
 
