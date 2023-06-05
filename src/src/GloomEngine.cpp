@@ -24,6 +24,7 @@
 #include "Components/Scripts/Player/PlayerMovement.h"
 #include "Other/FrustumCulling.h"
 #include "Components/Renderers/Animator.h"
+#include "Components/UI/Image.h"
 
 #include <filesystem>
 #include <stb_image.h>
@@ -53,15 +54,12 @@ void GloomEngine::Initialize() {
     OptionsManager::GetInstance()->Load();
     InitializeWindow();
 
-    SceneManager::GetInstance()->InitializeScene();
+    game = std::make_shared<Game>();
+    SceneManager::GetInstance()->LoadScene("MainMenu");
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
 
-    game = std::make_shared<Game>();
-    game->InitializeGame();
-
-    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
     lastAIFrameTime = (float)glfwGetTime();
@@ -126,32 +124,34 @@ bool GloomEngine::MainLoop() {
         }
     }
 
-    // AI UPDATE
-    if (multiplier4Rate > multiplier4LastRate || (multiplier4Rate == 0 && multiplier4LastRate != 0)) {
+    if (SceneManager::GetInstance()->activeScene->GetName() != "MainMenuScene") {
+        // AI UPDATE
+        if (multiplier4Rate > multiplier4LastRate || (multiplier4Rate == 0 && multiplier4LastRate != 0)) {
 #ifdef DEBUG
-        ZoneScopedNC("AI update", 0x00FF00);
+            ZoneScopedNC("AI update", 0x00FF00);
 #endif
-        if (timeScale != 0) {
-            AIUpdate();
+            if (timeScale != 0) {
+                AIUpdate();
+            }
+
+            AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
+            if (AIDeltaTime > idealAIDeltaTime + 0.01f) AIDeltaTime = idealAIDeltaTime;
+            lastAIFrameTime = currentTime;
         }
 
-        AIDeltaTime = (currentTime - lastAIFrameTime) * timeScale;
-        if (AIDeltaTime > idealAIDeltaTime + 0.01f) AIDeltaTime = idealAIDeltaTime;
-        lastAIFrameTime = currentTime;
-    }
-
-    // FIXED UPDATE
-    if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
+        // FIXED UPDATE
+        if (multiplier120Rate > multiplier120LastRate || (multiplier120Rate == 0 && multiplier120LastRate != 0)) {
 #ifdef DEBUG
-        ZoneScopedNC("Fixed update", 0x00008B);
+            ZoneScopedNC("Fixed update", 0x00008B);
 #endif
-        if (timeScale != 0) {
-            FixedUpdate();
-        }
+            if (timeScale != 0) {
+                FixedUpdate();
+            }
 
-        fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
-        if (fixedDeltaTime > idealFixedDeltaTime + 0.01f) fixedDeltaTime = idealFixedDeltaTime;
-        lastFixedFrameTime = currentTime;
+            fixedDeltaTime = (currentTime - lastFixedFrameTime) * timeScale;
+            if (fixedDeltaTime > idealFixedDeltaTime + 0.01f) fixedDeltaTime = idealFixedDeltaTime;
+            lastFixedFrameTime = currentTime;
+        }
     }
 
     // UPDATE
@@ -159,7 +159,14 @@ bool GloomEngine::MainLoop() {
 #ifdef DEBUG
         ZoneScopedNC("Update", 0xDC143C);
 #endif
+
         glClearColor(screenColor.x, screenColor.y, screenColor.z, screenColor.w);
+
+        if (SceneManager::GetInstance()->deleteLoadingScreen) {
+            GameObject::Destroy(SceneManager::GetInstance()->loadingScreen->GetParent());
+            SceneManager::GetInstance()->loadingScreen.reset();
+            SceneManager::GetInstance()->deleteLoadingScreen = false;
+        }
 
         Update();
 
@@ -167,8 +174,8 @@ bool GloomEngine::MainLoop() {
         if (deltaTime > idealDeltaTime + 0.01f) deltaTime = idealDeltaTime;
         lastFrameTime = currentTime;
 
-        glfwMakeContextCurrent(window);
-        glfwSwapBuffers(window);
+        if (!FindGameObjectWithName("LoadingScreen"))
+            glfwSwapBuffers(window);
     }
 
 #ifdef DEBUG
@@ -184,7 +191,7 @@ bool GloomEngine::MainLoop() {
 
 void GloomEngine::Update() {
     //Frustum culling
-    if (!FindGameObjectWithName("MainMenu"))
+    if (SceneManager::GetInstance()->activeScene->GetName() != "MainMenuScene")
     {
 #ifdef DEBUG
         ZoneScopedNC("Frustum Culling", 0xFFD733);
@@ -211,7 +218,7 @@ void GloomEngine::Update() {
 
     }
     // Preparing shadow map
-    if (!FindGameObjectWithName("MainMenu"))
+    if (SceneManager::GetInstance()->activeScene->GetName() != "MainMenuScene")
     {
 #ifdef DEBUG
         ZoneScopedNC("Prepare shadow", 0xFFD733);
@@ -250,7 +257,7 @@ void GloomEngine::Update() {
         glEnable(GL_DEPTH_TEST);
     }
     // Drawing debug lines for colliders
-    if (!FindGameObjectWithName("MainMenu"))
+    if (SceneManager::GetInstance()->activeScene->GetName() != "MainMenuScene")
     {
 #ifdef DEBUG
         ZoneScopedNC("Draw colliders", 0x800000);

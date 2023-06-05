@@ -31,7 +31,7 @@
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/AIManager.h"
-#include "Components/Scripts/Opponent/Opponent.h"
+#include "Components/Scripts/Opponent.h"
 #include "Components/Scripts/Instrument.h"
 
 #ifdef DEBUG
@@ -130,7 +130,7 @@ void Game::InitializeGame() const {
     // 0  *
     auto opponentComponent = opponent->AddComponent<Opponent>();
     opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
     opponentComponent->dialogue->texts.push_back({{""},
                                                       {"Zaplac jezeli chcesz ze mna walczyc."},
                                                       {""}});
@@ -164,11 +164,9 @@ void Game::InitializeGame() const {
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
-    camera->SetTarget(nullptr);
+    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
 
-    // TODO delete loading screen
-//    GameObject::Destroy(SceneManager::GetInstance()->loadingScreen->GetParent());
-//    SceneManager::GetInstance()->loadingScreen.reset();
+    camera->SetTarget(nullptr);
 }
 
 bool Game::GameLoop() {

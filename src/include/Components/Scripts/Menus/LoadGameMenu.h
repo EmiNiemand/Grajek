@@ -1,7 +1,6 @@
 #ifndef GLOOMENGINE_LOADGAMEMENU_H
 #define GLOOMENGINE_LOADGAMEMENU_H
 
-#include <vector>
 #include "Components/UI/Menu.h"
 
 class LoadGameMenu : public Menu {

@@ -128,8 +128,6 @@ void OptionsMenu::ChangeValue(float y) {
         button = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolume")->GetComponent<Button>();
         button->ChangePosition(button->x, musicVolumeButtonY[musicVolumeIterator]);
         scroll->ForcePlaySound();
-        // TODO delete
-		spdlog::info(musicVolumeIterator);
     }
 	else if (activeButtonName == "WindowResolution") {
         if (y == -1.0f) {
