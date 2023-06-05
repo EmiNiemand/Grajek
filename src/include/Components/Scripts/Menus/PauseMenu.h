@@ -13,7 +13,7 @@ public:
     PauseMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~PauseMenu() override;
 
-    void ShowMenu();
+    bool ShowMenu() override;
     void OnClick() override;
 };
 

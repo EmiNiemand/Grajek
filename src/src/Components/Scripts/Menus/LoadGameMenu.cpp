@@ -2,16 +2,17 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
 #include "EngineManagers/SceneManager.h"
-//#include <filesystem>
 
 LoadGameMenu::LoadGameMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
 LoadGameMenu::~LoadGameMenu() = default;
 
-void LoadGameMenu::ShowMenu() {
-    parent->EnableSelfAndChildren();
+bool LoadGameMenu::ShowMenu() {
+    if(!Menu::ShowMenu()) return false;
+
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame1")->GetComponent<Button>();
     activeButton->isActive = true;
+    return true;
 }
 
 void LoadGameMenu::ChangeActiveButton(glm::vec2 moveVector) {

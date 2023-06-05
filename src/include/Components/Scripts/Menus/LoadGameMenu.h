@@ -1,7 +1,6 @@
 #ifndef GLOOMENGINE_LOADGAMEMENU_H
 #define GLOOMENGINE_LOADGAMEMENU_H
 
-#include <vector>
 #include "Components/UI/Menu.h"
 
 class LoadGameMenu : public Menu {
@@ -12,7 +11,7 @@ public:
     LoadGameMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~LoadGameMenu() override;
 
-    void ShowMenu();
+    bool ShowMenu() override;
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;
 };

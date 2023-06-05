@@ -14,15 +14,16 @@
 #include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "EngineManagers/SavePointManager.h"
+#include "Components/Animations/UIAnimator.h"
 
 //TODO: what the hell happened here o.0
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
-    cashText->LoadFont("Money: 0", 140, 1040, 22);
-    repText = GameObject::Instantiate("Reputation", parent)->AddComponent<Text>();
-    repText->LoadFont("Rep: 0", 140, 1000, 22);
-    GameObject::Instantiate("UI", parent)->AddComponent<Image>()->LoadTexture(0, 952, "UI/Player.png");
+    cashText->LoadFont("$: 0", 20, 1010, 64, glm::vec3(1));
+    auto backgroundMoney =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
+    backgroundMoney->LoadTexture(0, 0, "UI/MoneyBackground.png", -1);
+    backgroundMoney->SetPosition(0, 1080-backgroundMoney->GetHeight());
 
     auto menus = GameObject::Instantiate("Menus", parent);
 
@@ -122,50 +123,54 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     // Set up save point menu
     auto savePointMenu = GameObject::Instantiate("SavePointMenu", menus)->AddComponent<SavePointMenu>();
     {
+        std::vector<std::shared_ptr<Button>> loadGameButtons;
+        int ypos = 700;
         for (int i = 0; i < 2; i++) {
+            int xpos = 120;
             for (int j = 0; j < 5; j++) {
-                savePointMenu->Menu::AddButton("Save" + std::to_string(i * 5 + j + 1), j * 300 + 50 * (j + 1),
-                                               i * 300 + 100 * (i + 1), "UI/buttonInactive.png", "UI/buttonActive.png",
-                                               "Save " + std::to_string(i * 5 + j + 1), 32);
+                std::string currentIndex = std::to_string(i * 5 + j + 1);
+                loadGameButtons.push_back(savePointMenu->Menu::AddButton(
+                        "Save" + currentIndex, xpos, ypos,
+                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png",
+                        "Save " + currentIndex, 46));
+                xpos += 350;
             }
+            ypos -= 500;
         }
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save1")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save10")->GetComponent<Button>();
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save1")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save2")->GetComponent<Button>();
-        for (int i = 2; i <= 9; i++) {
-            GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(
-                    i))->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                    "Save" + std::to_string(i - 1))->GetComponent<Button>();
-            GloomEngine::GetInstance()->FindGameObjectWithName("Save" + std::to_string(
-                    i))->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                    "Save" + std::to_string(i + 1))->GetComponent<Button>();
+        loadGameButtons[0]->previousButton = loadGameButtons[9];
+        loadGameButtons[0]->nextButton = loadGameButtons[1];
+        for (int i = 1; i < loadGameButtons.size() - 1; i++) {
+            loadGameButtons[i]->previousButton = loadGameButtons[i - 1];
+            loadGameButtons[i]->nextButton = loadGameButtons[i + 1];
         }
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save10")->GetComponent<Button>()->previousButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save9")->GetComponent<Button>();
-        GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save10")->GetComponent<Button>()->nextButton = GloomEngine::GetInstance()->FindGameObjectWithName(
-                "Save1")->GetComponent<Button>();
+        loadGameButtons[loadGameButtons.size() - 1]->previousButton = loadGameButtons[loadGameButtons.size() - 2];
+        loadGameButtons[loadGameButtons.size() - 1]->nextButton = loadGameButtons[0];
         savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
-        savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/Sklep/Przycisk.png");
-        savePointMenu->GetParent()->DisableSelfAndChildren();
+        savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/enterSavePoint.png");
         SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;
+        savePointMenu->GetParent()->DisableSelfAndChildren();
     }
 }
 
 void PlayerUI::OnDestroy() {
     cashText.reset();
-    repText.reset();
     Component::OnDestroy();
 }
 
-void PlayerUI::UpdateCash(int newAmount) {
-	cashText->text = "Money: " + std::to_string(newAmount);
-}
+void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
+	cashText->text = "$ " + std::to_string(newAmount);
 
-void PlayerUI::UpdateRep(int newAmount) {
-	repText->text = "Rep: " + std::to_string(newAmount);
+    if(!playAnimation) return;
+
+    auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
+    addMoneyImage->LoadTexture(0, 0, "UI/MoneyAddedBackground.png", -1);
+    addMoneyImage->SetPosition(0, 1080 - addMoneyImage->GetHeight());
+    // Animator is added to image so that it's automatically destroyed after animation is done
+    auto addMoneyAnimator = addMoneyImage->GetParent()->AddComponent<UIAnimator>();
+    addMoneyAnimator->Setup(addMoneyImage, {
+            {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 0.1f},
+            {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 1.0f},
+            {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight(), 0), 0.5f}
+    });
+    //TODO: add text animation when it gets implemented
 }

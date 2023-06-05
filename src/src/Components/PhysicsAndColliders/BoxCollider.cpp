@@ -6,10 +6,6 @@
 
 #include <cmath>
 
-#ifdef DEBUG
-#include <tracy/Tracy.hpp>
-#endif
-
 BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     size = {1.0f, 1.0f, 1.0f};
@@ -24,10 +20,6 @@ void BoxCollider::Start() {
 }
 
 void BoxCollider::FixedUpdate() {
-//#ifdef DEBUG
-//    ZoneScopedNC("BoxCollider", 0xf0fc03);
-//#endif
-
     if (!isDynamic)
         return;
 
@@ -47,17 +39,15 @@ void BoxCollider::OnDestroy() {
 }
 
 void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
-#ifdef DEBUG
-    ZoneScopedNC("CheckCollision", 0x03adfc);
-#endif
-
     bool isColliding = GetOBBCollision(other);
 
     if (!isColliding) {
         // OnTriggerExit
         if (isTrigger && collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerExit(other->parent);
             collisionsBuffer.erase(other->id);
+            collisionBufferMutex.unlock();
             return;
         }
     }
@@ -66,12 +56,16 @@ void BoxCollider::CheckCollision(const std::shared_ptr<BoxCollider>& other) {
     if (isColliding) {
         // OnTriggerEnter
         if (isTrigger && !collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerEnter(other->parent);
             collisionsBuffer.insert({other->id, other->parent});
+            collisionBufferMutex.unlock();
         }
         // OnTriggerStay
         if (isTrigger && collisionsBuffer.contains(other->id)) {
+            collisionBufferMutex.lock();
             for (const auto& component : parent->components) component.second->OnTriggerStay(other->parent);
+            collisionBufferMutex.unlock();
             return;
         }
 
@@ -299,7 +293,7 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
         else {
             glm::vec3 velocity = parent->GetComponent<Rigidbody>()->velocity;
             float velocityLength = glm::length(velocity);
-            glm::vec3 vel = closestVector * 0.001f;
+            glm::vec3 vel = closestVector * 0.005f;
 
             if(velocityLength < 0.01f) {
                 vel = closestVector * 0.01f;
@@ -313,9 +307,6 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
 
 
 void BoxCollider::SetGridPoints() {
-#ifdef DEBUG
-    ZoneScopedNC("SGP", 0x0339fc);
-#endif
     glm::mat4 model = GetModelMatrix();
 
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(parent->globalRotation.x),
@@ -362,10 +353,6 @@ void BoxCollider::SetGridPoints() {
 }
 
 void BoxCollider::SetCollidersGridPoints(const glm::ivec2* points) {
-#ifdef DEBUG
-    ZoneScopedNC("SCGP", 0x0339fc);
-#endif
-
     if (points[0] == points[1] &&
         points[1] == points[2] &&
         points[2] == points[3]) {
@@ -398,10 +385,6 @@ void BoxCollider::SetCollidersGridPoints(const glm::ivec2* points) {
 }
 
 void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
-#ifdef DEBUG
-    ZoneScopedNC("SAIGP", 0x0339fc);
-#endif
-
     if (points[0] == points[1] &&
         points[1] == points[2] &&
         points[2] == points[3]) {

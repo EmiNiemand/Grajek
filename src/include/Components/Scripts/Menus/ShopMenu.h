@@ -23,7 +23,7 @@ public:
     void OnDestroy() override;
 
     void ChangeActiveButton(glm::vec2 moveVector) override;
-    bool ShowMenu();
+    bool ShowMenu() override;
     void OnClick() override;
 private:
     void DeleteButton(std::shared_ptr<Button> button);

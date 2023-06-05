@@ -19,6 +19,7 @@ class PlayerEquipment;
 class Instrument;
 class MusicSession;
 class SessionStarter;
+class Opponent;
 class PauseMenu;
 class OptionsMenu;
 class ShopMenu;
@@ -33,6 +34,8 @@ private:
     std::shared_ptr<MusicSession> session;
     std::shared_ptr<SessionStarter> sessionStarter;
     std::shared_ptr<GameObject> sessionStarterUI;
+    std::shared_ptr<Opponent> sessionOpponent;
+    bool sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack;
 	// Player scripts
 	std::shared_ptr<PlayerUI> playerUI;
     std::shared_ptr<PlayerEquipment> equipment;
@@ -56,42 +59,23 @@ public:
     bool inputEnabled;
 
 public:
+    PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
+
+    // Component methods
     void Awake() override;
     void Start() override;
     void Update() override;
     void OnDestroy() override;
 
-private:
-    void PollInput();
-
-    // Session methods
-    void OnSessionToggle();
-    void OnSoundPlay(int index);
-    void OnCheatSheetToggle();
-
-	// Animation methods
-	void UpdateAnimations();
-
-    // ovement methods
-    void OnMove(glm::vec2 moveVector);
-    void OnInteract();
-
-    // UI methods
-    void OnUIMove(glm::vec2 moveVector);
-	void OnMenuToggle();
-	void OnApply();
-
-public:
-    PlayerManager(const std::shared_ptr<GameObject> &parent, int id);
-
     // Equipment methods
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
 
     // Session methods
+    void StartSessionWithOpponent(const std::shared_ptr<Opponent>& opponent);
+    void EndSessionWithOpponent(bool wonSession, float moneyBet);
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat);
     void CreateMusicSession(InstrumentName instrument);
-    void OnPlayerLoseDuel();
 
     // UI methods
     void ToggleOptionsMenu();
@@ -104,6 +88,30 @@ public:
     void SaveData(std::shared_ptr<GameData> &data) override;
 
     void OnSoundStop(int index);
+
+private:
+    void PollInput();
+
+    // Session methods
+    void OnSessionToggle();
+    void OnSoundPlay(int index);
+    void OnCheatSheetToggle();
+    void OnInstrumentControlToggle();
+    void OnMetronomeSoundToggle();
+    void OnMetronomeVisualsToggle();
+    void OnBackingTrackToggle();
+
+	// Animation methods
+	void UpdateAnimations();
+
+    // Movement methods
+    void OnMove(glm::vec2 moveVector);
+    void OnInteract();
+
+    // UI methods
+    void OnUIMove(glm::vec2 moveVector);
+	void OnMenuToggle();
+	void OnApply();
 };
 
 

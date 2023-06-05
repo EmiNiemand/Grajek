@@ -21,16 +21,16 @@ std::shared_ptr<Mesh> Button::CreateMesh(int x, int y, int width, int height) {
 
     Vertex vertex1, vertex2, vertex3, vertex4;
     // left bottom
-    vertex1.position = glm::vec3((float)x/960-1, (float)y/540-1, 0.0f);
+    vertex1.position = glm::vec3((float)x/960-1, (float)y/540-1, z);
     vertex1.texCoords = glm::vec2(0.0f, 0.0f);
     // left top
-    vertex2.position = glm::vec3((float)x/960-1, (float)y/540-1 + (float)height/540, 0.0f);
+    vertex2.position = glm::vec3((float)x/960-1, (float)y/540-1 + (float)height/540, z);
     vertex2.texCoords = glm::vec2(0.0f, 1.0f);
     // right bottom
-    vertex3.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1, 0.0f);
+    vertex3.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1, z);
     vertex3.texCoords = glm::vec2(1.0f, 0.0f);
     // right top
-    vertex4.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1 + (float)height/540, 0.0f);
+    vertex4.position = glm::vec3((float)x/960-1 + (float)width/960, (float)y/540-1 + (float)height/540, z);
     vertex4.texCoords = glm::vec2(1.0f, 1.0f);
 
     vertices.push_back(vertex1);
@@ -41,7 +41,7 @@ std::shared_ptr<Mesh> Button::CreateMesh(int x, int y, int width, int height) {
     return std::make_shared<Mesh>(vertices, indices, textures);
 }
 
-void Button::LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive) {
+void Button::LoadTexture(int x, int y, const std::string& path, const std::string& pathIsActive, float z) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int width, height, nrChannels;
@@ -65,6 +65,7 @@ void Button::LoadTexture(int x, int y, const std::string& path, const std::strin
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        this->z = z;
         this->textureMesh = CreateMesh(x, y, width, height);
         this->width = width;
         this->height = height;

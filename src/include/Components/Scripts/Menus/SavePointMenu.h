@@ -19,8 +19,8 @@ public:
 
     void OnDestroy() override;
 
-    bool ShowMenu();
-    void HideMenu();
+    bool ShowMenu() override;
+    void HideMenu() override;
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;
 };

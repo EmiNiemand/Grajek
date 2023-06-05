@@ -38,6 +38,7 @@ std::shared_ptr<StaticObjectData> Shop::SaveStatic() {
     std::shared_ptr<BoxCollider> colider = GetComponent<BoxCollider>();
 
     newData->name = this->GetPrefabName();
+    newData->uniqueName = this->GetName();
     newData->position = this->transform->GetLocalPosition();
     newData->rotation = this->transform->GetLocalRotation();
     newData->scale = this->transform->GetLocalScale();

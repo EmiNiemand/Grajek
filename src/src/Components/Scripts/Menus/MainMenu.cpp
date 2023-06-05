@@ -3,6 +3,9 @@
 #include "Components/UI/Button.h"
 #include "EngineManagers/SceneManager.h"
 #include "Components/Scripts/Menus/MainMenuManager.h"
+#include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/CreditsMenu.h"
 
 MainMenu::MainMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -15,10 +18,12 @@ void MainMenu::Start() {
     Component::Start();
 }
 
-void MainMenu::ShowMenu() {
-    parent->EnableSelfAndChildren();
+bool MainMenu::ShowMenu() {
+    if(!Menu::ShowMenu()) return false;
+
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("NewGameButton")->GetComponent<Button>();
     activeButton->isActive = true;
+    return true;
 }
 
 void MainMenu::OnClick() {
@@ -33,7 +38,13 @@ void MainMenu::OnClick() {
         mainMenuManager->activeMenu = mainMenuManager->loadGameMenu;
         mainMenuManager->loadGameMenu->ShowMenu();
     } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
-
+        HideMenu();
+        mainMenuManager->activeMenu = mainMenuManager->optionsMenu;
+        mainMenuManager->optionsMenu->ShowMenu();
+    } else if (activeButton->GetParent()->GetName() == "CreditsButton") {
+        HideMenu();
+        mainMenuManager->activeMenu = mainMenuManager->creditsMenu;
+        mainMenuManager->creditsMenu->ShowMenu();
     } else if (activeButton->GetParent()->GetName() == "ExitFromGameButton") {
         gameShouldExit = true;
     }

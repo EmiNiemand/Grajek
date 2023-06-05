@@ -30,28 +30,45 @@ private:
 
     // Metronome
     std::shared_ptr<Image> metronomeImage;
+    std::shared_ptr<UIAnimator> metronomeAnimator;
     std::shared_ptr<AudioSource> tickSound;
+    std::map<bool, std::shared_ptr<Image>> metronomeSoundIndicator;
+    std::map<bool, std::shared_ptr<Image>> metronomeVisualsIndicator;
     bool metronomeSoundEnabled;
     bool metronomeVisualEnabled;
 
+    // Backing track
+    std::shared_ptr<AudioSource> backingTrack;
+    std::map<bool, std::shared_ptr<Image>> backingTrackIndicator;
+    bool backingTrackEnabled = true;
+
+    // Cheat sheet
+    std::shared_ptr<Image> cheatSheet;
+    bool cheatSheetActive = false;
+
+    // Instrument control
+    std::shared_ptr<Image> instrumentControl;
+    bool instrumentControlActive = false;
 protected:
     // Samples
     std::vector<std::shared_ptr<AudioSource>> sampleSources;
     std::vector<std::shared_ptr<Image>> sampleImages;
     std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
 
-    // Cheat sheet
-    std::shared_ptr<Image> cheatSheet;
-    bool cheatSheetActive = false;
 
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
-    virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath);
+    // In child classes you need to place BackingTrackSetup() before calling parent's Setup()
+    virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
+                       bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack);
     void SetCheatSheet(const std::string& cheatSheetPath);
+    void SetInstrumentControl(const std::string& instrumentControlPath);
 
-    inline virtual void PlaySound(int index);
+    virtual void PlaySound(int index);
+    virtual void StopSound(int index);
     void ToggleCheatSheet();
+    void ToggleInstrumentControl();
     // Fraction values: <0, 1>
     void UpdateAccuracy(float fraction);
 
@@ -59,6 +76,12 @@ public:
 
     void OnDestroy() override;
 
+    bool ToggleMetronomeSound();
+    bool ToggleMetronomeVisuals();
+    bool ToggleBackingTrack();
+
+protected:
+    void BackingTrackSetup(const std::string& trackName);
 private:
     void MetronomeSetup(const std::string& metronomePath, int bpm);
     void AccuracyFeedbackSetup();

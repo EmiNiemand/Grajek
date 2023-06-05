@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 class Button;
+class AudioSource;
 
 class OptionsMenu : public Menu {
 private:
@@ -23,17 +24,19 @@ private:
     int windowResolutionButtonY[4] = {0, 175, 395, 600};
     int windowFullScreenButtonY[3] = {0, 175, 600};
     int shadowResolutionButtonY[4] = {0, 175, 395, 600};
+    std::shared_ptr<AudioSource> scroll;
 
 public:
     OptionsMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~OptionsMenu() override;
 
     void Start() override;
-    void ShowMenu();
+    bool ShowMenu() override;
     void ChangeActiveButton(glm::vec2 moveVector) override;
     void ChangeValue(float y);
     void OnClick() override;
     static void ChangeShadowResolution();
+    void OnDestroy() override;
 };
 
 #endif //GLOOMENGINE_OPTIONSMENU_H

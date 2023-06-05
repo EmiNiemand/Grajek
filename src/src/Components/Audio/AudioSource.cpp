@@ -256,3 +256,5 @@ void AudioSource::SetCone(const glm::vec3& direction, const glm::vec2& cone) con
     alSourcef(sourceId, AL_CONE_INNER_ANGLE, cone.x);
     alSourcef(sourceId, AL_CONE_OUTER_ANGLE, cone.y);
 }
+
+float AudioSource::GetGain() const { return gain; }

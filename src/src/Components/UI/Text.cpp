@@ -3,6 +3,7 @@
 #include "Components/UI/Text.h"
 #include "EngineManagers/UIManager.h"
 #include "GloomEngine.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -98,6 +99,13 @@ void Text::LoadFont(std::string text, float x, float y, FT_UInt fontSize, glm::v
     this->color = color;
 }
 
+void Text::SetPosition(float x2, float y2) {
+    x = x2;
+    y = y2;
+
+    parent->transform->SetLocalPosition(glm::vec3(x, y, 0));
+}
+
 void Text::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Text", 0x800080);
@@ -126,10 +134,10 @@ void Text::Draw() {
         GLfloat w = ch.Size.x;
         GLfloat h = ch.Size.y;
         // Update VBO for each character
-        this->mesh->vertices[0].position = {xpos/960-1,	   (ypos+h)/540-1, 0};
-        this->mesh->vertices[1].position = {xpos/960-1,	   ypos/540-1, 0};
-        this->mesh->vertices[2].position = {(xpos+w)/960-1, (ypos+h)/540-1, 0};
-        this->mesh->vertices[3].position = {(xpos+w)/960-1, ypos/540-1, 0};
+        this->mesh->vertices[0].position = {xpos/960-1,	   (ypos+h)/540-1, -1};
+        this->mesh->vertices[1].position = {xpos/960-1,	   ypos/540-1, -1};
+        this->mesh->vertices[2].position = {(xpos+w)/960-1, (ypos+h)/540-1, -1};
+        this->mesh->vertices[3].position = {(xpos+w)/960-1, ypos/540-1, -1};
 
         // Render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);

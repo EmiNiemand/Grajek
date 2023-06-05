@@ -20,7 +20,7 @@
 
 MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
+void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
     instrument = std::move(playerInstrument);
 
     bpm = (int)instrument->genre;
@@ -40,7 +40,7 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
         case Launchpad: sessionUI = sessionUIInstance->AddComponent<LaunchpadSessionUI>(); break;
         case Guitar:    sessionUI = sessionUIInstance->AddComponent<GuitarSessionUI>(); break;
     }
-    sessionUI->Setup(bpm, instrument->samples, "UI/Sesja/Ramka.png");
+    sessionUI->Setup(bpm, instrument->samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 }
 
 void MusicSession::Update() {
@@ -66,7 +66,8 @@ void MusicSession::PlaySample(int index) {
     recordedSounds.emplace_back(instrument->samples[index], rhythmDiff, currentTime);
     lastTime = currentTime;
 
-    DetectPattern();
+    if(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums)
+        DetectPattern();
 }
 
 void MusicSession::StopSample(int index) {
@@ -76,13 +77,20 @@ void MusicSession::StopSample(int index) {
     for (auto it = recordedSounds.rbegin(); it != recordedSounds.rend(); ++it) {
         if(it->sample->id == index) {
             it->duration = GetRhythmValue(glfwGetTime() - it->duration);
+            break;
         }
     }
 
     // TODO: implement hold-type sounds
+    if(!(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums)) {
+        sessionUI->StopSound(index);
+        DetectPattern();
+    }
 }
 
 void MusicSession::ToggleCheatSheet() { sessionUI->ToggleCheatSheet(); }
+
+void MusicSession::ToggleInstrumentControl() { sessionUI->ToggleInstrumentControl(); }
 
 void MusicSession::DetectPattern() {
     // Initialize potential patterns list
@@ -107,7 +115,8 @@ void MusicSession::DetectPattern() {
 
     for (auto pattern=potentialPatterns.begin(); pattern!=potentialPatterns.end(); )
     {
-        if(pattern->get()->sounds[lastIndex]->sample->id != recordedSounds[lastIndex].sample->id)
+        if(pattern->get()->sounds.size() < lastIndex+1 ||
+           pattern->get()->sounds[lastIndex]->sample->id != recordedSounds[lastIndex].sample->id)
             pattern = potentialPatterns.erase(pattern);
         else
             ++pattern;
@@ -132,10 +141,13 @@ void MusicSession::DetectPattern() {
 
 void MusicSession::CalcAccuracyAndReset(const std::shared_ptr<MusicPattern> &goodPattern) {
     float accuracy = 0;
+    recordedSounds[0].delay = 0;
     for (int i = 0; i < recordedSounds.size(); i++)
     {
-        float recordedDelay = i == 0 ? 0 : recordedSounds[i].delay;
-        accuracy += abs(goodPattern->sounds[i]->delay - recordedDelay);
+        float soundAccuracy = abs(goodPattern->sounds[i]->delay - recordedSounds[i].delay);
+        if(goodPattern->sounds[i]->duration != 0)
+            soundAccuracy = (soundAccuracy + abs(goodPattern->sounds[i]->duration - recordedSounds[i].duration)) / 2.0f;
+        accuracy += soundAccuracy;
     }
 
     accuracy /= (float)recordedSounds.size();
@@ -176,12 +188,16 @@ void MusicSession::Stop() {
 }
 
 // Pass-through functions
-void MusicSession::ToggleMetronomeVisuals() {
-
+bool MusicSession::ToggleMetronomeVisuals() {
+    return sessionUI->ToggleMetronomeVisuals();
 }
 
-void MusicSession::ToggleMetronomeSound() {
+bool MusicSession::ToggleMetronomeSound() {
+    return sessionUI->ToggleMetronomeSound();
+}
 
+bool MusicSession::ToggleBackingTrack() {
+    return sessionUI->ToggleBackingTrack();
 }
 
 void MusicSession::OnDestroy() {

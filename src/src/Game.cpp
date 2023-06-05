@@ -31,7 +31,6 @@
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/AIManager.h"
-#include "GameObjectsAndPrefabs/Prefabs/OpponentPrefab.h"
 #include "Components/Scripts/Opponent.h"
 #include "Components/Scripts/Instrument.h"
 
@@ -63,11 +62,11 @@ void Game::InitializeGame() const {
 
     // Load all animations
     // -------------
-    Animator::LoadAnimation("AnimsNew/Walk.dae");
-    Animator::LoadAnimation("AnimsNew/Happy.dae");
-    Animator::LoadAnimation("AnimsNew/Angry.dae");
-    Animator::LoadAnimation("AnimsNew/Idle1.dae");
-    Animator::LoadAnimation("AnimsNew/Idle3.dae");
+    Animator::LoadAnimation("CrowdAnimations/Walk.dae");
+    Animator::LoadAnimation("CrowdAnimations/Happy.dae");
+    Animator::LoadAnimation("CrowdAnimations/Angry.dae");
+    Animator::LoadAnimation("CrowdAnimations/Idle1.dae");
+    Animator::LoadAnimation("CrowdAnimations/Idle3.dae");
     Animator::LoadAnimation("MainHero/MainHeroIdle.dae");
     Animator::LoadAnimation("MainHero/MainHeroRun.dae");
     Animator::LoadAnimation("MainHero/MainHeroClap.dae");
@@ -122,19 +121,31 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
-    auto opponent = Prefab::Instantiate<OpponentPrefab>();
+    auto opponent = GameObject::Instantiate("Opponent", activeScene);
+    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
+    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
     opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
     // 2      *   *
     // 1    *   *
     // 0  *
-    opponent->children.begin()->second->AddComponent<Opponent>()->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f);
-    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Pokonales mnie."},
+    auto opponentComponent = opponent->AddComponent<Opponent>();
+    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
+    opponentComponent->dialogue->texts.push_back({{""},
+                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
+                                                      {""}});
+    opponentComponent->dialogue->texts.push_back({{""},
+                                                  {"Walcz!."},
+                                                  {""}});
+    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
                              {"Masz tu moja odznake Jazz Badge."},
                              {""}});
-    opponent->children.begin()->second->GetComponent<Opponent>()->dialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
+    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
                              {"Pokonaj kolejnego lidera w Electro Gymie."},
                              {""}});
+    opponentComponent->lossDialogue->texts.push_back({{""},
+                                                     {"Przegrales."},
+                                                     {""}});
 
     auto dialog = GameObject::Instantiate("Dialog", activeScene);
     dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
@@ -152,6 +163,8 @@ void Game::InitializeGame() const {
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
+
+    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
 
     camera->SetTarget(nullptr);
 }

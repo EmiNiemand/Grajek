@@ -1,8 +1,15 @@
 {
-"money": 500,
-"playerPosition.x": -4.1583147048950195,
-"playerPosition.y": -0.04626646637916565,
-"playerPosition.z": 9.221802711486816,
-"reputation": 0,
-"shopkeeperEvent": false
+  "instrument.Drums": 0,
+  "instrument.Guitar": 0,
+  "instrument.Launchpad": 0,
+  "instrument.Trumpet": 0,
+  "money": 2986,
+  "playerPosition.x": -14.437032699584961,
+  "playerPosition.y": -0.03334677964448929,
+  "playerPosition.z": 10.570147514343262,
+  "reputation": 0,
+  "session.backingTrack": false,
+  "session.metronomeSound": false,
+  "session.metronomeVisuals": false,
+  "shopkeeperEvent": false
 }

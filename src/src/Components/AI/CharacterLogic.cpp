@@ -26,7 +26,7 @@ void CharacterLogic::Start() {
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
     characterAnimator->LoadAnimationModel(modelPath);
-    characterAnimator->SetAnimation("AnimsNew/Idle3.dae");
+    characterAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
     minSatisfaction = RandomnessManager::GetInstance()->GetFloat(35, 50);
     lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);

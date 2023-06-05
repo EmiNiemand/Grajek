@@ -10,10 +10,10 @@
 
 UIAnimator::UIAnimator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void UIAnimator::Setup(std::shared_ptr<Image> animatedImage,
+void UIAnimator::Setup(std::shared_ptr<UIComponent> animatedUIComponent,
                        std::vector<AnimationCheckpoint> animation,
                        AnimationBehaviour behaviour) {
-    image = std::move(animatedImage);
+    uiComponent = std::move(animatedUIComponent);
     checkpoints = std::move(animation);
     checkpoint = checkpoints[0];
     type = behaviour;
@@ -42,26 +42,26 @@ void UIAnimator::Update() {
         // Snap property value to checkpoint value
         switch (checkpoint.property) {
             case AnimatedProperty::Position:
-                image->SetPosition(checkpoint.value.x, checkpoint.value.y);
+                uiComponent->SetPosition(checkpoint.value.x, checkpoint.value.y);
                 break;
             case AnimatedProperty::Rotation:
-                image->SetRotation(checkpoint.value.z);
+                uiComponent->SetRotation(checkpoint.value.z);
                 break;
             case AnimatedProperty::Scale:
-                image->SetScale(checkpoint.value.x);
+                uiComponent->SetScale(checkpoint.value.x);
                 break;
             case AnimatedProperty::Color:
-                image->SetColor(checkpoint.value);
+                uiComponent->SetColor(checkpoint.value);
                 break;
             case AnimatedProperty::Alpha:
-                image->SetAlpha(checkpoint.value.x);
+                uiComponent->SetAlpha(checkpoint.value.x);
                 break;
         }
 
         // Finish, loop or suspend animation
         // ---------------------------------
         if(checkpointIndex >= checkpoints.size()) {
-            auto imageTransform = image->GetParent()->transform;
+            auto imageTransform = uiComponent->GetParent()->transform;
             switch(type) {
                 case AnimationBehaviour::Resetable:
                     return;
@@ -79,23 +79,23 @@ void UIAnimator::Update() {
     }
 
     float deltaTime = GloomEngine::GetInstance()->deltaTime;
-    auto imageTransform = image->GetParent()->transform;
+    auto uiComponentTransform = uiComponent->GetParent()->transform;
     switch (checkpoint.property) {
         case AnimatedProperty::Position:
-            image->SetPosition(imageTransform->GetLocalPosition().x + valueDelta.x * deltaTime,
-                               imageTransform->GetLocalPosition().y + valueDelta.y * deltaTime);
+            uiComponent->SetPosition(uiComponentTransform->GetLocalPosition().x + valueDelta.x * deltaTime,
+                                     uiComponentTransform->GetLocalPosition().y + valueDelta.y * deltaTime);
             break;
         case AnimatedProperty::Rotation:
-            image->SetRotation(imageTransform->GetLocalRotation().z + valueDelta.z * deltaTime);
+            uiComponent->SetRotation(uiComponentTransform->GetLocalRotation().z + valueDelta.z * deltaTime);
             break;
         case AnimatedProperty::Scale:
-            image->SetScale(imageTransform->GetLocalScale().x + valueDelta.x * deltaTime);
+            uiComponent->SetScale(uiComponentTransform->GetLocalScale().x + valueDelta.x * deltaTime);
             break;
         case AnimatedProperty::Color:
-            image->SetColor(image->GetColor() + valueDelta * deltaTime);
+            uiComponent->SetColor(uiComponent->GetColor() + valueDelta * deltaTime);
             break;
         case AnimatedProperty::Alpha:
-            image->SetAlpha(image->GetAlpha() + valueDelta.x * deltaTime);
+            uiComponent->SetAlpha(uiComponent->GetAlpha() + valueDelta.x * deltaTime);
             break;
     }
 
@@ -112,37 +112,37 @@ void UIAnimator::Reset() {
 }
 
 void UIAnimator::CalcValueDelta() {
-    auto imageTransform = image->GetParent()->transform;
+    auto uiComponentTransform = uiComponent->GetParent()->transform;
     switch(checkpoint.property) {
         case AnimatedProperty::Position:
             valueDelta = (checkpoint.value
-                          - imageTransform->GetLocalPosition())
+                          - uiComponentTransform->GetLocalPosition())
                          / checkpoint.duration;
             break;
         case AnimatedProperty::Rotation:
             valueDelta = (checkpoint.value
-                          - imageTransform->GetLocalRotation())
+                          - uiComponentTransform->GetLocalRotation())
                          / checkpoint.duration;
             break;
         case AnimatedProperty::Scale:
             valueDelta = glm::vec3(checkpoint.value
-                        - imageTransform->GetLocalScale())
+                        - uiComponentTransform->GetLocalScale())
                          / checkpoint.duration;
             break;
         case AnimatedProperty::Color:
             valueDelta = (checkpoint.value
-                          - image->GetColor())
+                          - uiComponent->GetColor())
                          / checkpoint.duration;
             break;
         case AnimatedProperty::Alpha:
             valueDelta = (checkpoint.value
-                          - image->GetAlpha())
+                          - uiComponent->GetAlpha())
                          / checkpoint.duration;
             break;
     }
 }
 
 void UIAnimator::OnDestroy() {
-    image.reset();
+    uiComponent.reset();
     Component::OnDestroy();
 }

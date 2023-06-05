@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Components/UI/Image.h"
+#include "LowLevelClasses/Shader.h"
 #include "LowLevelClasses/Mesh.h"
 #include "stb_image.h"
 #include "EngineManagers/UIManager.h"
@@ -188,6 +189,7 @@ void Image::UpdateCorners() {
 
 glm::vec3 Image::GetColor() { return color; }
 float Image::GetAlpha() { return alpha; }
+glm::vec2 Image::GetScale() { return scale; }
 
 float Image::GetWidth() { return width*scale.x; }
 float Image::GetHeight() { return height*scale.y; }

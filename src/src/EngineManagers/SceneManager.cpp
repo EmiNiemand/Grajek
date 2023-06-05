@@ -8,11 +8,13 @@
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
+#include "GameObjectsAndPrefabs/Prefabs/InvisibleBlock.h"
 #include "Game.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/UI/Image.h"
 
 #include <fstream>
 
@@ -41,6 +43,15 @@ void SceneManager::InitializeScene() {
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
 
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
+    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreen.png");
+    loadingScreen->Draw();
+    deleteLoadingScreen = true;
+    glfwSwapBuffers(GloomEngine::GetInstance()->window);
+
     std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "ProjectConfig";
@@ -64,6 +75,7 @@ void SceneManager::LoadScene(const std::string& scene) {
 }
 
 void SceneManager::ClearScene() const {
+    if (!activeScene) return;
     activeScene->RemoveAllChildren();
     Animator::animationModels.clear();
     Animator::animations.clear();
@@ -96,19 +108,26 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
     spdlog::info("Loaded map objects successfully.");
 
+    std::shared_ptr<GameObject> map = GameObject::Instantiate("Map");
+
     std::shared_ptr<GameObject> newGameObject;
     for (const auto &object: staticObjectsData) {
         newGameObject.reset();
-        if(object->name == "House"){
-            newGameObject = Prefab::Instantiate<House>();
+        if(object->name == "House") {
+            newGameObject = Prefab::Instantiate<House>(object->uniqueName);
         }
-        if(object->name == "Shop"){
-            newGameObject = Prefab::Instantiate<Shop>();
+        if(object->name == "Shop") {
+            newGameObject = Prefab::Instantiate<Shop>(object->uniqueName);
         }
-        if(object->name == "SavePoint"){
-            newGameObject = Prefab::Instantiate<SavePoint>();
+        if(object->name == "SavePoint") {
+            newGameObject = Prefab::Instantiate<SavePoint>(object->uniqueName);
+        }
+        if(object->name == "InvisibleBlock") {
+            newGameObject = Prefab::Instantiate<InvisibleBlock>(object->uniqueName);
         }
         if(newGameObject) {
+            newGameObject->SetParent(map);
+            //if(!object->uniqueName.empty())
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);
             newGameObject->transform->SetLocalScale(object->scale);
@@ -179,6 +198,7 @@ void SceneManager::to_json(nlohmann::json &json, std::vector<std::shared_ptr<Sta
     for (const auto& object: mapData){
         objectJson.clear();
 
+        objectJson["uniqueName"] = object -> uniqueName;
         objectJson["name"] = object -> name;
 
         objectJson["position.x"] = object->position.x;
@@ -215,6 +235,8 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject = std::make_shared<StaticObjectData>();
 
         newObject->name = object["name"];
+        if(object.contains("uniqueName"))
+        newObject->uniqueName= object["uniqueName"];
 
         newObject->position.x = object["position.x"];
         newObject->position.y = object["position.y"];
@@ -243,18 +265,19 @@ void SceneManager::from_json(const nlohmann::json &json, std::vector<std::shared
         newObject->coliderOffset.y = object["coliderOffset.y"];
         if(object.contains("coliderOffset.z"))
         newObject->coliderOffset.z = object["coliderOffset.z"];
-        
+
         mapData.push_back(newObject);
     }
 }
 
 std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStaticSaveablePrefabs() {
-    std::map<int,std::shared_ptr<SaveableStaticObject>> objects;
+    std::map<int, std::shared_ptr<SaveableStaticObject>> objects;
+
     int i = 0;
-    for (const auto& object : SceneManager::GetInstance()->activeScene->children) {
-        i++;
+    for (const auto& object : GloomEngine::GetInstance()->gameObjects) {
         if (std::dynamic_pointer_cast<SaveableStaticObject>(object.second) != nullptr) {
             objects[object.first] = (std::dynamic_pointer_cast<SaveableStaticObject>(object.second));
+            ++i;
         }
     }
 
@@ -271,7 +294,10 @@ void SceneManager::CreatePrefabObject(const std::string name) {
     } else if(name == "SavePoint"){
         spdlog::info("Created object from prefab SavePoint");
         Prefab::Instantiate<SavePoint>();
-    } else {
+    } else if(name == "InvisibleBlock"){
+        spdlog::info("Created object from prefab InvisibleBlock");
+        Prefab::Instantiate<InvisibleBlock>();
+    }else {
         spdlog::info("Failed to find prefab with name: " + name);
     }
 }

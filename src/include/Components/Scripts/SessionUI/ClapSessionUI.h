@@ -7,7 +7,7 @@ class ClapSessionUI : public SessionUI {
 public:
     ClapSessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
-    void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, std::string metronomePath) override;
+    void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) override;
     void PlaySound(int index) override;
 };
 

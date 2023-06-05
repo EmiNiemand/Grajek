@@ -60,7 +60,7 @@ public:
     const float GetCombinedEnemySatisfaction();
     void RemoveCharacterLogic(const int& componentId);
     void RemoveCharacterMovement(const int &componentId);
-
+    [[nodiscard]] inline int GetMaxCharacters() const { return maxCharacters;}
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H

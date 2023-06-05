@@ -5,6 +5,10 @@
 #include "Components/Scripts/Player/PlayerInput.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "EngineManagers/OptionsManager.h"
+#include "Components/Scripts/Menus/MainMenu.h"
+#include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/CreditsMenu.h"
 
 #ifdef DEBUG
     #include "tracy/Tracy.hpp"
@@ -15,6 +19,8 @@ MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, int 
 void MainMenuManager::Start() {
     mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>();
     loadGameMenu = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<MainMenuOptionsMenu>();
+    creditsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("CreditsMenu")->GetComponent<CreditsMenu>();
     activeMenu = mainMenu;
     Component::Start();
 }
@@ -31,6 +37,8 @@ void MainMenuManager::OnDestroy() {
     activeMenu.reset();
     mainMenu.reset();
     loadGameMenu.reset();
+    optionsMenu.reset();
+    creditsMenu.reset();
     Component::OnDestroy();
 }
 
@@ -38,9 +46,9 @@ void MainMenuManager::OnMenuToggle() {
     if (!activeMenu) return;
     if (activeMenu == mainMenu) return;
     // TODO uncomment later
-//    if (activeMenu == optionsMenu) {
-//        OptionsManager::GetInstance()->Save();
-//    }
+    if (activeMenu == optionsMenu) {
+        OptionsManager::GetInstance()->Save();
+    }
     activeMenu->HideMenu();
     activeMenu = mainMenu;
     mainMenu->ShowMenu();
