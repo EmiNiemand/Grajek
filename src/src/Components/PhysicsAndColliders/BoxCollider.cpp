@@ -294,7 +294,7 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
         else {
             glm::vec3 velocity = parent->GetComponent<Rigidbody>()->velocity;
             float velocityLength = glm::length(velocity);
-            glm::vec3 vel = closestVector * 0.001f;
+            glm::vec3 vel = closestVector * 0.005f;
 
             if(velocityLength < 0.01f) {
                 vel = closestVector * 0.01f;
