@@ -9,7 +9,7 @@ file(GLOB_RECURSE HEADER_FILES
 	 *.hpp)
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} src/GameObjectsAndPrefabs/Prefabs/InvisibleBlock.cpp include/GameObjectsAndPrefabs/Prefabs/InvisibleBlock.h src/GameObjectsAndPrefabs/Prefabs/InvisibleBlock.cpp)
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")
