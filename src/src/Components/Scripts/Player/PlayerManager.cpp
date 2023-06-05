@@ -245,8 +245,6 @@ void PlayerManager::OnUIMove(glm::vec2 moveVector) {
 
 #pragma region Music Session Events
 void PlayerManager::OnSessionToggle() {
-    //TODO: this method implementation just seems wrong
-
     // Cannot stop session if in duel
     if(sessionOpponent) return;
     if(activeMenu) return;
@@ -270,11 +268,10 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
 
-    if(dialogueManager) DialogueManager::GetInstance()->NotifyMenuIsActive();
+    if(dialogueManager) dialogueManager->NotifyMenuIsActive();
     if(savePointManager) savePointManager->NotifyMenuIsActive();
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
-    //activeMenu = sessionStarter;
     sessionStarter->Setup(equipment->instruments);
 }
 
@@ -325,8 +322,8 @@ void PlayerManager::StartSessionWithOpponent(const std::shared_ptr<Opponent>& op
     if(session) return;
 
     inputEnabled = true;
-    sessionOpponent = opponent;
     OnSessionToggle();
+    sessionOpponent = opponent;
 }
 
 void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
