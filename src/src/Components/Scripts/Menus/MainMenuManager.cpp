@@ -45,10 +45,8 @@ void MainMenuManager::OnDestroy() {
 void MainMenuManager::OnMenuToggle() {
     if (!activeMenu) return;
     if (activeMenu == mainMenu) return;
-    // TODO uncomment later
-    if (activeMenu == optionsMenu) {
+    if (activeMenu == optionsMenu)
         OptionsManager::GetInstance()->Save();
-    }
     activeMenu->HideMenu();
     activeMenu = mainMenu;
     mainMenu->ShowMenu();

@@ -37,7 +37,7 @@ void MainMenu::OnClick() {
         HideMenu();
         mainMenuManager->activeMenu = mainMenuManager->loadGameMenu;
         mainMenuManager->loadGameMenu->ShowMenu();
-    } else if (activeButton->GetParent()->GetName() == "OptionsButton") {
+    } else if (activeButton->GetParent()->GetName() == "MainMenuOptionsButton") {
         HideMenu();
         mainMenuManager->activeMenu = mainMenuManager->optionsMenu;
         mainMenuManager->optionsMenu->ShowMenu();
