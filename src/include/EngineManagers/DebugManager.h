@@ -19,6 +19,7 @@ private:
     bool safetySwitch;
 	//flag to check if position of the GameObject was already extracted. 
 	bool transformExtracted;
+    std::string searchName;
 	std::shared_ptr<GameObject> selected;
 
     int selectedFolderId;

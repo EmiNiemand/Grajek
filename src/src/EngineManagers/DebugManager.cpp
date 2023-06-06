@@ -4,6 +4,7 @@
 #ifdef DEBUG
 #include "EngineManagers/DebugManager.h"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "windows.h"
@@ -40,6 +41,9 @@ void DebugManager::Initialize(GLFWwindow* window, const char* glsl_version) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -55,12 +59,18 @@ void DebugManager::Render() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    ImGui::ShowDemoWindow();
     DisplaySystemInfo();
     SaveMenu();
     {
-        ImGui::Begin("Debug Window");
+        ImGui::Begin("Hierarchy Tree");
 
-        ImGui::Text("Hierarchy Tree");
+
+        ImGui::InputText("##Search",&searchName);
+        ImGui::SameLine();
+        if(ImGui::SmallButton("Reset Search")){
+            searchName = "";
+        }
         ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
         ImGui::SameLine();
         if (ImGui::SmallButton("Open")) {
@@ -72,13 +82,15 @@ void DebugManager::Render() {
         std::string label;
         for (const auto& child : SceneManager::GetInstance()->activeScene->children) {
             label = "Open##" + std::to_string(child.first);
-            ImGui::Text("%s", child.second->GetName().c_str());
-            ImGui::SameLine();
-            if (ImGui::SmallButton(label.c_str())) {
-                displaySelected = true;
-                transformExtracted = false;
-                selected = child.second;
-                safetySwitch = false;
+            if(searchName.empty() || child.second->GetName().find(searchName) != std::string::npos) {
+                ImGui::Text("%s", child.second->GetName().c_str());
+                ImGui::SameLine();
+                if (ImGui::SmallButton(label.c_str())) {
+                    displaySelected = true;
+                    transformExtracted = false;
+                    selected = child.second;
+                    safetySwitch = false;
+                }
             }
             ProcessChildren(child.second);
         }
@@ -226,14 +238,17 @@ void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
     std::string label;
     for (const auto& child : gameObject->children)
     {
-        label = "Open##" + std::to_string(child.first);
-        ImGui::Text("%s", child.second->GetName().c_str());
-        ImGui::SameLine();
-        if (ImGui::SmallButton(label.c_str())) {
-            displaySelected = true;
-            safetySwitch = false;
-            transformExtracted = false;
-            selected = child.second;
+        if(searchName.empty() || child.second->GetName().find(searchName) != std::string::npos)
+        {
+            label = "Open##" + std::to_string(child.first);
+            ImGui::Text("%s", child.second->GetName().c_str());
+            ImGui::SameLine();
+            if (ImGui::SmallButton(label.c_str())) {
+                displaySelected = true;
+                safetySwitch = false;
+                transformExtracted = false;
+                selected = child.second;
+            }
         }
         ProcessChildren(child.second);
     }
