@@ -71,7 +71,7 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("MainHero/MainHeroRun.dae");
     Animator::LoadAnimation("MainHero/MainHeroClap.dae");
     Animator::LoadAnimation("MainHero/MainHeroTrumpet.dae");
-    Animator::LoadAnimation("MainHero/MainHeroPercussion.dae");
+    Animator::LoadAnimation("MainHero/MainHeroDrums.dae");
 
     // Set up player
     // -------------
