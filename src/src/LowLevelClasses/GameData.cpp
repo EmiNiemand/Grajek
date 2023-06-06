@@ -9,4 +9,5 @@ GameData::GameData() {
     reputation = 0;
     playerPosition = glm::vec3(0, 0.5, 0);
     shopkeeperEvent = false;
+    saveDate = "";
 }

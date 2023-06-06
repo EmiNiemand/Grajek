@@ -21,6 +21,7 @@ public:
     bool sessionBackingTrack;
 
     bool shopkeeperEvent;
+    std::string saveDate;
 
 public:
     GameData();
