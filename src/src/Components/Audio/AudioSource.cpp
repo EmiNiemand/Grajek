@@ -87,7 +87,6 @@ void AudioSource::Free() {
     alDeleteSources(1, &sourceId);
 }
 
-
 /**
  * @annotation
  * Sets audio to play when calling Start() method (e.g. after loading the game).

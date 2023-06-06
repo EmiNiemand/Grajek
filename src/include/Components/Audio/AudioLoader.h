@@ -31,6 +31,7 @@ class AudioLoader {
     ALsizei subChunkSize = 0;
     // Remaining amount of data to load
     ALsizei samplesSizeToLoad = 0;
+    ALfloat samples[BUFFER_SIZE] {};
 
 public:
     explicit AudioLoader();
