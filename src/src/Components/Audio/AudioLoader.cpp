@@ -61,9 +61,8 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strcmp(data, "RIFF") != 0) {
+    if (std::strncmp(data, "RIFF", 4) != 0) {
         spdlog::error("Invalid WAVE file (header doesn't contain RIFF)!");
-        spdlog::info(data);
         return;
     }
 
@@ -77,7 +76,7 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strcmp(data, "WAVE") != 0) {
+    if (std::strncmp(data, "WAVE", 4) != 0) {
         spdlog::error("Invalid WAVE file (header doesn't contain WAVE)!");
         return;
     }
@@ -90,7 +89,7 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strcmp(data, "fmt ") != 0) {
+    if (std::strncmp(data, "fmt ", 4) != 0) {
         spdlog::error("Invalid WAVE file (header doesn't contain fmt )!");
         return;
     }
@@ -139,7 +138,7 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strcmp(data, "data") != 0) {
+    if (std::strncmp(data, "data", 4) != 0) {
         spdlog::error("Invalid WAVE file (header doesn't contain data)!");
         return;
     }
