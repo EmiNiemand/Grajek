@@ -3,9 +3,7 @@
 
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "spdlog/spdlog.h"
 
-#include "EngineManagers/AIManager.h"
 #include <cmath>
 #include <unordered_map>
 #include <algorithm>
@@ -30,7 +28,7 @@ class CharacterPathfinding {
 
 public:
     explicit CharacterPathfinding();
-    ~CharacterPathfinding();
+    virtual ~CharacterPathfinding();
 
     std::vector<glm::vec3>* FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget);
 };

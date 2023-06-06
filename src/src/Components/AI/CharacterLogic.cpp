@@ -3,12 +3,11 @@
 //
 
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/Renderers/Animator.h"
-#include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
-#include "Components/AI/CharacterPathfinding.h"
 #include "Components/AI/CharacterAnimations.h"
 #include "Components/UI/Indicator.h"
 
@@ -27,9 +26,12 @@ void CharacterLogic::Start() {
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
     characterAnimator->LoadAnimationModel(modelPath);
-    characterAnimator->SetAnimation("CrowdAnimations/Idle1.dae");
+    characterAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 50);
+    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(35, 50);
+    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
+    middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(50, 65);
+    upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
     Component::Start();
 }
 
@@ -37,6 +39,7 @@ void CharacterLogic::Update() {
     if (logicState != ListeningToPlayer) {
         switch (characterMovement->GetState()) {
             case OnPathToPlayer:
+            case OnPathToEnemy:
                 characterAnimations->SetNewState(Running);
                 break;
             case OnPathToTarget:
@@ -44,6 +47,9 @@ void CharacterLogic::Update() {
                 break;
             case NearTargetSubPoint:
                 characterAnimations->SetNewState(Idle);
+                break;
+            case NearEnemyPosition:
+                logicState = ListeningToEnemy;
                 break;
             case NearPlayerPosition:
                 logicState = ListeningToPlayer;
@@ -54,15 +60,26 @@ void CharacterLogic::Update() {
     }
 
     if (logicState == ListeningToPlayer) {
-        if (playerSatisfaction > 70.0f) {
+        if (playerSatisfaction >= upperSatisfactionLimit) {
             characterAnimations->SetNewState(Cheering);
-        } else if (playerSatisfaction < 40.0f && playerSatisfaction >= 30.0f) {
-            characterAnimations->SetNewState(Booing);
-        } else if (playerSatisfaction < 30.0f) {
-            logicState = AlertedByPlayer;
-            characterMovement->SetState(ReturnToPreviousTarget);
-        } else {
+        } else if (playerSatisfaction >= middleSatisfactionLimit) {
             characterAnimations->SetNewState(Idle);
+        } else if (playerSatisfaction >= lowerSatisfactionLimit)  {
+            characterAnimations->SetNewState(Booing);
+        } else {
+            logicState = WalkingAway;
+            characterMovement->SetState(ReturningToPreviousTarget);
+        }
+    } else if (logicState == ListeningToEnemy) {
+        if (enemySatisfaction >= upperSatisfactionLimit) {
+            characterAnimations->SetNewState(Cheering);
+        } else if (enemySatisfaction >= middleSatisfactionLimit) {
+            characterAnimations->SetNewState(Idle);
+        } else if (enemySatisfaction >= lowerSatisfactionLimit)  {
+            characterAnimations->SetNewState(Booing);
+        } else {
+            logicState = WalkingAway;
+            characterMovement->SetState(ReturningToPreviousTarget);
         }
     }
 
@@ -76,7 +93,7 @@ void CharacterLogic::AIUpdate() {
         if (playerSatisfaction > minSatisfaction) {
 //            characterIndicator->Indicate();
             logicState = MovingToPlayer;
-            characterMovement->SetState(SetPathToPlayer);
+            characterMovement->SetState(SettingPathToPlayer);
         }
     }
 
@@ -101,13 +118,33 @@ void CharacterLogic::OnDestroy() {
     Component::OnDestroy();
 }
 
-void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& ins, const MusicGenre& gen) {
-    playerInstrumentName = ins;
-    playerGenre = gen;
+/**
+ * @annotation
+ * Sets animation model to load.
+ * @param model - path to model
+ */
+void CharacterLogic::SetAnimationModelToLoad(const std::string& model) {
+    modelPath = model;
 }
 
-void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) {
-    playerPattern = pat;
+/**
+ * @annotation
+ * Sets player instrument and genre being used for playing.
+ * @param instrument - enum for instrument name
+ * @param genre - enum for music genre
+ */
+void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& instrument, const MusicGenre& genre) {
+    playerInstrumentName = instrument;
+    playerGenre = genre;
+}
+
+/**
+ * @annotation
+ * Sets pattern played by player.
+ * @param pattern - music pattern
+ */
+void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pattern) {
+    playerPattern = pattern;
 
     if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern) != favPatterns.end())
         playerSatisfaction += 15;
@@ -117,24 +154,49 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pat) 
     playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
 }
 
-void CharacterLogic::SetPlayerPlayingStatus(bool isPlayerPlaying) {
+/**
+ * @annotation
+ * Sets new player session state.
+ * @param isPlayerPlaying - session state
+ */
+void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
     if (isPlayerPlaying) {
         logicState = AlertedByPlayer;
     } else {
         if (logicState != None)
-            characterMovement->SetState(ReturnToPreviousTarget);
+            characterMovement->SetState(ReturningToPreviousTarget);
 
         logicState = None;
     }
 }
 
-void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen) {
-    enemyInstrumentName = ins;
-    enemyGenre = gen;
+/**
+ * @annotation
+ * Returns current satisfaction based on player style.
+ * @returns float - player satisfaction
+ */
+const float CharacterLogic::GetPlayerSatisfaction() const {
+    return playerSatisfaction;
 }
 
-void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat) {
-    enemyPattern = pat;
+/**
+ * @annotation
+ * Sets enemy instrument and genre being used for playing.
+ * @param instrument - enum for instrument name
+ * @param genre - enum for music genre
+ */
+void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre) {
+    enemyInstrumentName = instrument;
+    enemyGenre = genre;
+}
+
+/**
+ * @annotation
+ * Sets pattern played by enemy.
+ * @param pattern - music pattern
+ */
+void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pattern) {
+    enemyPattern = pattern;
 
     if (std::find(favPatterns.begin(), favPatterns.end(), enemyPattern) != favPatterns.end())
         enemySatisfaction += 15;
@@ -144,17 +206,35 @@ void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat) {
     enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
 }
 
-void CharacterLogic::SetEnemyPlayingStatus(bool isEnemyPlaying) {
+/**
+ * @annotation
+ * Sets new enemy session state.
+ * @param isEnemyPlaying - session state
+ */
+void CharacterLogic::SetEnemyPlayingStatus(const bool& isEnemyPlaying) {
     if (isEnemyPlaying) {
         logicState = AlertedByPlayer;
     } else {
         if (logicState != None)
-            characterMovement->SetState(ReturnToPreviousTarget);
+            characterMovement->SetState(ReturningToPreviousTarget);
 
         logicState = None;
     }
 }
 
+/**
+ * @annotation
+ * Returns current satisfaction based on enemy style.
+ * @returns float - enemy satisfaction
+ */
+const float CharacterLogic::GetEnemySatisfaction() const {
+    return enemySatisfaction;
+}
+
+/**
+ * @annotation
+ * Calculates starting satisfaction.
+ */
 void CharacterLogic::CalculateSatisfaction() {
     playerSatisfaction = 100;
 
@@ -165,6 +245,8 @@ void CharacterLogic::CalculateSatisfaction() {
         != favInstrumentsNames.end())
         playerSatisfaction += 20;
 
+    playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
+
     enemySatisfaction = 0;
 
     if (std::find(favGenres.begin(), favGenres.end(), enemyGenre) != favGenres.end())
@@ -174,19 +256,8 @@ void CharacterLogic::CalculateSatisfaction() {
             != favInstrumentsNames.end())
         enemySatisfaction += 20;
 
+    enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
 //    TODO: dunno, do something here
 //    if (playerSatisfaction > enemySatisfaction)
 
-}
-
-void CharacterLogic::SetAnimationModelToLoad(const std::string& model) {
-    modelPath = model;
-}
-
-const float CharacterLogic::GetPlayerSatisfaction() const {
-    return playerSatisfaction;
-}
-
-const float CharacterLogic::GetEnemySatisfaction() const {
-    return enemySatisfaction;
 }

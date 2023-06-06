@@ -12,12 +12,13 @@
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 #include <unordered_map>
+#include <numbers>
 
-constexpr float DISTANCE_TO_ENDPOINT = 1.0f;
 constexpr float DISTANCE_TO_POINT = 1.8f;
-constexpr float DISTANCE_TO_PLAYER = 1.5f;
-constexpr float DISTANCE_TO_COLLISION = 2.3f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.11f;
+constexpr float DISTANCE_TO_COLLISION = 2.0f;
+constexpr float AVOIDANCE_ROTATION_FACTOR = 1.8f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.25f;
+constexpr float MOVEMENT_TIMEOUT = 2.75f;
 
 class GameObject;
 class Rigidbody;
@@ -26,9 +27,10 @@ class CharacterPathfinding;
 
 class CharacterMovement : public Component {
     AI_MOVEMENTSTATE movementState = NearTargetPosition;
+    std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     // Collisions
-    float collisionGridSize = 0.0f;
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
+    float collisionGridSize = 0.0f;
     glm::ivec2 cellPos {};
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* cellPtr = nullptr;
     glm::vec3 steeringForce {};
@@ -36,13 +38,15 @@ class CharacterMovement : public Component {
     glm::vec3 steeringDirection {};
     glm::mat4 steeringMatrix {};
     float maxDistanceToCharacter = FLT_MAX;
-    float distanceToCharacter = 0.0f;
-    float distanceToPoint = 0.0f;
+    float distance = 0.0f;
+    float time = 0.0f;
     // Paths and points
-    std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
+    const bool *aiGrid = nullptr;
+    float aiCellSize = 1.0f;
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
+    glm::vec3 playerPosition {};
     glm::vec3 currentPosition {};
     glm::vec3 endPoint {};
     glm::vec3 previousEndPoint {};
@@ -56,14 +60,19 @@ class CharacterMovement : public Component {
     float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
 
-    inline void ApplyForces(const glm::vec3 &velocity);
-    static const glm::ivec2 GetRandomPoint();
-    inline void SetRandomSpawnPoint();
+    inline void ApplyForces(const glm::vec3 &force);
+    inline void ApplyRotation(const glm::vec3 &force);
+    void SetRandomSpawnPoint();
+    const glm::vec3 GetRandomPoint();
     void SetRandomEndPoint();
-    void SetSubEndPoints();
-    void CalculatePath();
     void SetNewPathToPlayer();
     void ReturnToPreviousPath();
+    void SetSubEndPoints();
+    void CalculatePath();
+
+protected:
+    const bool IsPositionAvailable(const glm::ivec2 &position);
+    const glm::ivec2 GetCurrentEndTarget() const;
 
 public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
@@ -77,8 +86,6 @@ public:
 
     void SetState(const AI_MOVEMENTSTATE& newState);
     const AI_MOVEMENTSTATE GetState() const;
-    const bool IsPositionAvailable(const glm::ivec2 &position) const;
-    const glm::ivec2 GetNewEndTarget() const;
 
 };
 

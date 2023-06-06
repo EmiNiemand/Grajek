@@ -37,6 +37,9 @@ class CharacterLogic : public Component {
     MusicGenre previousPlayerGenre {};
     std::shared_ptr<MusicPattern> previousPlayerPattern = nullptr;
     float repeatingModifier = 0.0f;
+    float lowerSatisfactionLimit = 0.0f;
+    float middleSatisfactionLimit = 0.0f;
+    float upperSatisfactionLimit = 0.0f;
     float minSatisfaction = 0.0f;
     float playerSatisfaction = 0.0f;
     float enemySatisfaction = 0.0f;
@@ -59,13 +62,13 @@ public:
     void OnDestroy() override;
 
     void SetAnimationModelToLoad(const std::string& model);
-    void SetPlayerInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
+    void SetPlayerInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre);
     void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pat);
-    void SetPlayerPlayingStatus(bool isPlayerPlaying);
+    void SetPlayerPlayingStatus(const bool& isPlayerPlaying);
     const float GetPlayerSatisfaction() const;
-    void SetEnemyInstrumentAndGenre(const InstrumentName &ins, const MusicGenre &gen);
+    void SetEnemyInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre);
     void SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat);
-    void SetEnemyPlayingStatus(bool isEnemyPlaying);
+    void SetEnemyPlayingStatus(const bool& isEnemyPlaying);
     const float GetEnemySatisfaction() const;
 
 };

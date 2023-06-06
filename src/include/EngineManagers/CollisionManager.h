@@ -61,5 +61,4 @@ private:
     explicit CollisionManager();
 };
 
-
 #endif //OPENGLGP_COLLIDERMANAGER_H

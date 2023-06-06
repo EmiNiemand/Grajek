@@ -2,6 +2,7 @@
 // Created by Adrian on 13.05.2023.
 //
 
+#include "EngineManagers/AIManager.h"
 #include "Components/AI/CharacterPathfinding.h"
 #include "Components/AI/Node.h"
 
@@ -14,14 +15,33 @@ CharacterPathfinding::CharacterPathfinding()  {
 
 CharacterPathfinding::~CharacterPathfinding() = default;
 
+/**
+ * @annotation
+ * Translates grid position to local.
+ * @param position - grid position
+ * @returns glm::vec3 - local position
+ */
 inline const glm::vec3 CharacterPathfinding::GridToLocal(const glm::vec2& position) const {
     return {(position.x - AI_GRID_SIZE / 2.0f) * aiCellSize, 0, (position.y - AI_GRID_SIZE / 2.0f) * aiCellSize};
 }
 
+/**
+ * @annotation
+ * Translates local position to grid.
+ * @param position - local position
+ * @returns glm::ivec2 - grid position
+ */
 inline const glm::ivec2 CharacterPathfinding::LocalToGrid(const glm::vec2& position) const {
     return {position.x / aiCellSize + AI_GRID_SIZE / 2.0f, position.y / aiCellSize + AI_GRID_SIZE / 2.0f};
 }
 
+/**
+ * @annotation
+ * Calculates new path with the A* algorithm.
+ * @param currentPosition - start/current position
+ * @param endTarget - end position
+ * @returns std::vector\<glm::vec3\>* - pointer to vector of points
+ */
 std::vector<glm::vec3>* CharacterPathfinding::FindNewPath(const glm::ivec2& currentPosition, const glm::ivec2& endTarget) {
     startGridPos = LocalToGrid(currentPosition);
     endGridPos = LocalToGrid(endTarget);

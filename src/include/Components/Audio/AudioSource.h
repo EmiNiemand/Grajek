@@ -9,22 +9,28 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Components/Component.h"
-#include <al.h>
-#include <vector>
 #include <memory>
-#include <unordered_map>
+#include <al.h>
+
+constexpr int NUM_BUFFERS = 4;
 
 class GameObject;
-class AudioListener;
+class AudioLoader;
 class Transform;
 
 class AudioSource : public Component {
-    std::shared_ptr<Transform> playerPos;
+    // Player position
+    std::shared_ptr<Transform> playerPos = nullptr;
     glm::vec3 position = {};
     glm::vec3 positionOffset = {};
-    ALuint bufferId;
-    ALuint sourceId;
-    ALint currentState;
+    // Audio data
+    std::shared_ptr<AudioLoader> audioLoader = nullptr;
+    ALuint buffersIds[NUM_BUFFERS] {};
+    ALuint sourceId = 0;
+    ALint currentState = 0;
+    bool isLooping = false;
+    bool isPlaying = false;
+    // Settings
     float gain = 1.0f;
     float maxDistance = 0.0f;
     bool isMovingTarget = false;
@@ -41,20 +47,20 @@ public:
     void OnDestroy() override;
     void Free();
 
-    void LoadAudioData(const char* path, AudioType type);
-    void PlaySound() const;
-    void ForcePlaySound() const;
+    void LoadAudioData(const std::string& path, AudioType type);
+    void PlaySound();
+    void ForcePlaySound();
     void PauseSound() const;
     void StopSound() const;
-    void SetPositionOffset(glm::vec3 offset);
-    void SetDistanceMode(AudioDistanceMode mode);
-    void SetGain(float val);
-    void SetPitch(float val) const;
-    void SetVelocity(glm::vec3 velocity) const;
-    void SetMaxDistance(float val);
-    void IsLooping(bool state) const;
-    void IsMoving(bool state);
-    void SetCone(glm::vec3 direction, glm::vec2 cone) const;
+    void SetPositionOffset(const glm::vec3& offset);
+    void SetDistanceMode(const AudioDistanceMode& mode);
+    void SetGain(const float& val);
+    void SetPitch(const float& val) const;
+    void SetVelocity(const glm::vec3& velocity) const;
+    void SetMaxDistance(const float& val);
+    void IsLooping(const bool& state);
+    void IsMoving(const bool& state);
+    void SetCone(const glm::vec3& direction, const glm::vec2& cone) const;
 
     float GetGain() const;
 };

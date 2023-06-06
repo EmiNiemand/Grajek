@@ -5,20 +5,21 @@
 #ifndef GLOOMENGINE_AUDIOMANAGER_H
 #define GLOOMENGINE_AUDIOMANAGER_H
 
-#include <al.h>
-#include <alc.h>
-#include <alext.h>
+#include <string>
 #include <memory>
 #include <unordered_map>
 #include <thread>
+#include <al.h>
+#include <alc.h>
+#include <alext.h>
 
 class GloomEngine;
 class AudioSource;
 class AudioListener;
 
 class AudioManager {
-    ALCdevice* audioDevice;
-    ALCcontext* audioContext;
+    ALCdevice* audioDevice = nullptr;
+    ALCcontext* audioContext = nullptr;
     std::jthread deviceChanger;
 
     inline static AudioManager* audioManager;

@@ -9,8 +9,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Components/Component.h"
-#include <vector>
-#include <unordered_map>
+#include <al.h>
 
 class GameObject;
 
@@ -27,9 +26,9 @@ public:
     void Update() override;
     void OnCreate() override;
 
-    void SetGain(float val);
+    void SetGain(const float& val);
     const float GetGain() const;
-    void SetVelocity(glm::vec3 velocity);
+    void SetVelocity(const glm::vec3& vel);
 
 };
 

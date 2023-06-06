@@ -102,7 +102,6 @@ void CollisionManager::CheckCollision(int valueY, int maxY, int increaseValue) {
                     float box2SizeLength = glm::length(glm::vec3(box2Scale.x, 0, box2Scale.z));
                     if (distance >= boxSizeLength + box2SizeLength) continue;
 
-
                     box.second->CheckCollision(box2.second);
                 }
             }

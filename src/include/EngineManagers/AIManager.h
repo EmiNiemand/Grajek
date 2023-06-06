@@ -18,10 +18,10 @@ class GloomEngine;
 class CharacterLogic;
 class CharacterMovement;
 class CharacterPathfinding;
-class BoxCollider;
 
 class AIManager {
     bool playerIsPlaying = false;
+    bool enemyIsPlaying = false;
     int maxCharacters = 0;
     int spawnDelay = 0;
     std::jthread characterSpawner;
@@ -30,9 +30,8 @@ class AIManager {
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, std::mutex& mutex, const bool& playerIsPlaying,
-                                const int& maxCharacters, const int& spawnDelay,
-                                std::unordered_map<int, std::shared_ptr<CharacterLogic>>* currentCharactersLogics);
+    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& currentCharacters,
+                                const int& maxCharacters, const int& spawnDelay);
 
 public:
     //TODO: Implement!

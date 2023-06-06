@@ -23,7 +23,6 @@ CPMAddPackage("gh:g-truc/glm#0.9.9.8")
 CPMAddPackage("gh:ocornut/imgui@1.88")
 CPMAddPackage("gh:gabime/spdlog@1.10.0")
 CPMAddPackage("gh:nlohmann/json@3.11.2")
-CPMAddPackage("gh:adamstark/AudioFile#1.1.1")
 CPMAddPackage("gh:kcat/openal-soft#1.23.1")
 CPMAddPackage("gh:aseprite/freetype2#VER-2-10-0")
 CPMAddPackage("gh:wolfpld/tracy#v0.9.1")
@@ -43,7 +42,6 @@ set_target_properties(glad
                       imgui
                       spdlog
 					  nlohmann_json
-					  AudioFile
 					  OpenAL
 					  freetype
 					  TracyClient PROPERTIES FOLDER "thirdparty")
