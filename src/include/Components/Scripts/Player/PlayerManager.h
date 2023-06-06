@@ -70,6 +70,7 @@ public:
 
     // Equipment methods
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
+    int GetCash();
 
     // Session methods
     void StartSessionWithOpponent(const std::shared_ptr<Opponent>& opponent);

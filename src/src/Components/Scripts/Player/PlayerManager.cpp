@@ -141,6 +141,10 @@ bool PlayerManager::BuyInstrument(int price, const std::shared_ptr<Instrument> &
 std::set<InstrumentName> PlayerManager::GetInstruments() {
     return equipment->GetInstrumentNames();
 }
+
+int PlayerManager::GetCash() {
+    return equipment->cash;
+}
 #pragma endregion
 
 #pragma region Animation Events
