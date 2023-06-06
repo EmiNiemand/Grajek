@@ -27,7 +27,11 @@ enum class Key{
     KEY_SPACE = 32,
     KEY_ESC = 256,
     KEY_ENTER = 257,
-    KEY_BACKSPACE = 259
+    KEY_BACKSPACE = 259,
+    KEY_LEFT_BRACKET = 91,
+    KEY_MINUS = 45,
+    KEY_SEMICOLON = 59,
+    KEY_APOSTROPHE = 39
 };
 
 enum class ForceMode{
