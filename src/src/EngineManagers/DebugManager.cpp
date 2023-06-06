@@ -74,12 +74,14 @@ void DebugManager::Render() {
         if(ImGui::SmallButton("Reset Search")){
             searchName = "";
         }
-        ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Open")) {
-            displaySelected = true;
-            safetySwitch = false;
-            selected = SceneManager::GetInstance()->activeScene;
+        if(searchName.empty() || SceneManager::GetInstance()->activeScene->GetName().find(searchName) != std::string::npos) {
+            ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
+            ImGui::SameLine();
+            if (ImGui::SmallButton("Open")) {
+                displaySelected = true;
+                safetySwitch = false;
+                selected = SceneManager::GetInstance()->activeScene;
+            }
         }
         ImGui::Indent();
         std::string label;
