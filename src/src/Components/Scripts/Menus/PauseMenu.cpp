@@ -2,10 +2,13 @@
 #include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Button.h"
+#include "Components/Audio/AudioListener.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "EngineManagers/SceneManager.h"
 #include "EngineManagers/DialogueManager.h"
+#include "EngineManagers/AudioManager.h"
+#include "EngineManagers/OptionsManager.h"
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -16,7 +19,13 @@ bool PauseMenu::ShowMenu() {
 
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("ResumeButton")->GetComponent<Button>();
     activeButton->isActive = true;
+    AudioManager::GetInstance()->audioListener->SetGain(0);
     return true;
+}
+
+void PauseMenu::HideMenu() {
+    Menu::HideMenu();
+    AudioManager::GetInstance()->audioListener->SetGain(OptionsManager::GetInstance()->musicVolume);
 }
 
 void PauseMenu::OnClick() {
