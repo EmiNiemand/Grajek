@@ -45,10 +45,13 @@ void DebugManager::Initialize(GLFWwindow* window, const char* glsl_version) {
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
     ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
+void DebugManager::Start() {
+    ImGui_ImplGlfw_InstallCallbacks(GloomEngine::GetInstance()->window);
+}
 
 void DebugManager::Render() {
     ImGui_ImplOpenGL3_NewFrame();
