@@ -105,7 +105,7 @@ void Game::InitializeGame() const {
     portalRadioSound->SetMaxDistance(20.0f);
     portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
     portalRadioSound->IsLooping(true);
-    portalRadioSound->PlaySound();
+    portalRadioSound->PlaySoundAfterStart(true);
 
     std::shared_ptr<GameObject> bench2 = GameObject::Instantiate("Bench", activeScene);
     bench2->transform->SetLocalPosition({10, 0, 0});
