@@ -45,6 +45,7 @@ public:
 	static DebugManager* GetInstance();
 
 	void Initialize(GLFWwindow* window, const char* glsl_version);
+    void Start();
 	void Render();
     void Free() const;
 

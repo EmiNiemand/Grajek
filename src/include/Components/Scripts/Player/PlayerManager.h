@@ -51,6 +51,7 @@ private:
 	//PlayerCollider collider;
 	//PlayerCamera camera;
 	// Local variables
+    std::shared_ptr<AudioSource> stepSound;
     glm::vec2 moveInput;
 	float previousVelocity;
 

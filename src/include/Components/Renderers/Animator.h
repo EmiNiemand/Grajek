@@ -15,7 +15,6 @@ class Animator : public Drawable {
 private:
     glm::mat4 finalBoneMatrices[BONE_NUMBER];
 	std::shared_ptr<AnimationModel> model;
-    float currentTime;
 	bool isPlaying = false;
     float blendingTimeInSeconds = 0.35f;
     float blendingTimeInTicks = 0;
@@ -23,6 +22,7 @@ private:
 public:
 	float speed = 1;
     float previousAnimationTime = 0;
+    float currentTime;
     Animation previousAnimation;
     Animation currentAnimation;
 

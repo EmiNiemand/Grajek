@@ -2,6 +2,7 @@
 #define OPENGLGP_SCENEMANAGER_H
 
 #include <memory>
+#include <unordered_map>
 #include "nlohmann/json.hpp"
 #include "LowLevelClasses/StaticObjectData.h"
 #include "Interfaces/SaveableStaticObject.h"
@@ -25,6 +26,9 @@ public:
 
     std::shared_ptr<Image> loadingScreen;
     bool deleteLoadingScreen = false;
+
+
+    std::unordered_map<std::string, std::shared_ptr<GameObject>> parents;
 
 public:
     SceneManager(SceneManager &other) = delete;
