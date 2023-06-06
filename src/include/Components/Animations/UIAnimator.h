@@ -30,6 +30,7 @@ public:
                std::vector<AnimationCheckpoint> animation,
                AnimationBehaviour behaviour = AnimationBehaviour::OneTime);
     void Reset();
+    void Stop();
 
     void Update() override;
 
