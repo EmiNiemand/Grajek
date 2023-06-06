@@ -62,7 +62,6 @@ void DebugManager::Render() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
     DisplaySystemInfo();
     SaveMenu();
     {
