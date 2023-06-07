@@ -358,7 +358,7 @@ void GloomEngine::InitializeWindow() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
     glfwWindowHint(GLFW_SAMPLES, 4);
     // Create window with graphics context
-    window = glfwCreateWindow(OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, "Gloomies", NULL, NULL);
+    window = glfwCreateWindow(OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, "Grajek @ GloomEngine", NULL, NULL);
     if (window == nullptr)
         throw;
     glfwMakeContextCurrent(window);
