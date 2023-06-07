@@ -81,8 +81,8 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, 0});
-    ground->transform->SetLocalScale({100, 2, 100});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(100, 100);
+    ground->transform->SetLocalScale({150, 2, 150});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(150, 150);
 
     // Set up lights
     // -------------
@@ -164,7 +164,7 @@ void Game::InitializeGame() const {
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
-//    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
+    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
 
     camera->SetTarget(nullptr);
 }
