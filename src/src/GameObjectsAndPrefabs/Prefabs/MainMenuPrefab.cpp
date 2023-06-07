@@ -5,6 +5,9 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
 #include "Components/Scripts/Menus/CreditsMenu.h"
+#include "LowLevelClasses/GameData.h"
+#include <fstream>
+#include "nlohmann/json.hpp"
 
 MainMenuPrefab::MainMenuPrefab(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
             Prefab(name, id, parent, tag) {
@@ -21,7 +24,7 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     auto mainMenu = GameObject::Instantiate("MainMenu", mainMenuScene)->AddComponent<MainMenu>();
     auto newGameButton = mainMenu->AddButton("NewGameButton", 773, 438, "UI/MainMenu/NewGameInactive.png", "UI/MainMenu/NewGameActive.png", "", 32);
     auto continueButton = mainMenu->AddButton("LoadGameButton", 785, 345, "UI/MainMenu/ContinueInactive.png", "UI/MainMenu/ContinueActive.png", "", 32);
-    auto optionsButton = mainMenu->AddButton("OptionsButton", 784, 254, "UI/MainMenu/SettingsInactive.png", "UI/MainMenu/SettingsActive.png", "", 32);
+    auto optionsButton = mainMenu->AddButton("MainMenuOptionsButton", 784, 254, "UI/MainMenu/SettingsInactive.png", "UI/MainMenu/SettingsActive.png", "", 32);
     auto creditsButton = mainMenu->AddButton("CreditsButton", 810, 160, "UI/MainMenu/CreditsInactive.png", "UI/MainMenu/CreditsActive.png", "", 32);
     auto exitButton = mainMenu->AddButton("ExitFromGameButton", 877, 69, "UI/MainMenu/ExitInactive.png", "UI/MainMenu/ExitActive.png", "", 32);
     mainMenu->AddImage("MainMenuBackground", 0, 0, "UI/MainMenu/MainMenu.png");
@@ -46,9 +49,25 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
             for (int j = 0; j < 5; j++) {
                 std::string currentIndex = std::to_string(i * 5 + j + 1);
                 loadGameButtons.push_back(loadGameMenu->Menu::AddButton(
-                        "LoadGame" + currentIndex, xpos, ypos,
-                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png",
-                        "Save " + currentIndex, 46));
+                        "Save " + currentIndex, xpos, ypos,
+                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png"));
+
+                std::filesystem::path path = std::filesystem::current_path();
+                path += "\\res\\ProjectConfig\\Saves\\Save ";
+                path += currentIndex;
+                path += ".json";
+                std::shared_ptr<GameData> gameData = std::make_shared<GameData>();
+                try {
+                    std::ifstream input(path);
+                    nlohmann::json json;
+                    input >> json;
+                    json.at("saveDate").get_to(gameData->saveDate);
+                }
+                catch (std::exception e) {
+                    spdlog::info("Failed to read a file content at path: " + path.string());
+                }
+                loadGameMenu->Menu::AddText("SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 125, 30);
+
                 xpos += 350;
             }
             ypos -= 500;
@@ -99,6 +118,7 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     // Credits Menu
     auto creditsMenu = GameObject::Instantiate("CreditsMenu", mainMenuScene)->AddComponent<CreditsMenu>();
     creditsMenu->AddImage("CreditsBackground", 0, 0, "UI/Credits.png");
+    creditsMenu->GetParent()->DisableSelfAndChildren();
 
     return mainMenuScene;
 }

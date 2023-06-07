@@ -108,7 +108,7 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
     spdlog::info("Loaded map objects successfully.");
 
-    std::shared_ptr<GameObject> map = GameObject::Instantiate("Map");
+    auto map = GameObject::Instantiate("map");
 
     std::shared_ptr<GameObject> newGameObject;
     for (const auto &object: staticObjectsData) {
@@ -126,7 +126,18 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
             newGameObject = Prefab::Instantiate<InvisibleBlock>(object->uniqueName);
         }
         if(newGameObject) {
-            newGameObject->SetParent(map);
+
+            std::size_t found = object->uniqueName.find('_');
+            std::string parentName = object->uniqueName.substr(0, found);
+
+            if (found != std::string::npos) {
+                if (!parents.contains(parentName)) {
+                    auto p = GameObject::Instantiate(parentName, map);
+                    parents.insert({parentName, p});
+                }
+                newGameObject->SetParent(parents.at(parentName));
+            }
+
             //if(!object->uniqueName.empty())
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);

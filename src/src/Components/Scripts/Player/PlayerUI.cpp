@@ -15,6 +15,8 @@
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "EngineManagers/SavePointManager.h"
 #include "Components/Animations/UIAnimator.h"
+#include "LowLevelClasses/GameData.h"
+#include <fstream>
 
 //TODO: what the hell happened here o.0
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
@@ -131,8 +133,24 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                 std::string currentIndex = std::to_string(i * 5 + j + 1);
                 loadGameButtons.push_back(savePointMenu->Menu::AddButton(
                         "Save" + currentIndex, xpos, ypos,
-                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png",
-                        "Save " + currentIndex, 46));
+                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png", "Save " + currentIndex, 0, glm::vec3(1)));
+
+                std::filesystem::path path = std::filesystem::current_path();
+                path += "\\res\\ProjectConfig\\Saves\\Save ";
+                path += currentIndex;
+                path += ".json";
+                std::shared_ptr<GameData> gameData = std::make_shared<GameData>();
+                try {
+                    std::ifstream input(path);
+                    nlohmann::json json;
+                    input >> json;
+                    json.at("saveDate").get_to(gameData->saveDate);
+                }
+                catch (std::exception e) {
+                    spdlog::info("Failed to read a file content at path: " + path.string());
+                }
+                savePointMenu->saveDates.push_back(savePointMenu->Menu::AddText("SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 125, 30));
+
                 xpos += 350;
             }
             ypos -= 500;

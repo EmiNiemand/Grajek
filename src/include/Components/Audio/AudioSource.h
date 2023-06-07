@@ -30,6 +30,7 @@ class AudioSource : public Component {
     ALint currentState = 0;
     bool isLooping = false;
     bool isPlaying = false;
+    bool startWithTheGame = false;
     // Settings
     float gain = 1.0f;
     float maxDistance = 0.0f;
@@ -47,6 +48,7 @@ public:
     void OnDestroy() override;
     void Free();
 
+    void PlaySoundAfterStart(const bool& state);
     void LoadAudioData(const std::string& path, AudioType type);
     void PlaySound();
     void ForcePlaySound();
@@ -61,8 +63,8 @@ public:
     void IsLooping(const bool& state);
     void IsMoving(const bool& state);
     void SetCone(const glm::vec3& direction, const glm::vec2& cone) const;
+    const float GetGain() const;
 
-    float GetGain() const;
 };
 
 #endif //GLOOMENGINE_AUDIOSOURCE_H

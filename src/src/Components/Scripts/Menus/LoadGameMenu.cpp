@@ -10,7 +10,7 @@ LoadGameMenu::~LoadGameMenu() = default;
 bool LoadGameMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGame1")->GetComponent<Button>();
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save 1")->GetComponent<Button>();
     activeButton->isActive = true;
     return true;
 }
@@ -34,10 +34,10 @@ void LoadGameMenu::OnClick() {
     path /= "res";
     path /= "ProjectConfig";
     path /= "Saves";
-    path /= activeButton->text;
+    path /= activeButton->GetParent()->GetName();
     if (!std::filesystem::exists(path.string() + ".json")) return;
 
-    file = activeButton->text;
+    file = activeButton->GetParent()->GetName();
     GloomEngine::GetInstance()->timeScale = 1;
     SceneManager::GetInstance()->LoadScene("Scene");
     Menu::OnClick();
