@@ -6,6 +6,7 @@
 class TrumpetSessionUI : public SessionUI {
 private:
     bool soundsToFade[3];
+    glm::vec2 valveInitPos[3];
 public:
     TrumpetSessionUI(const std::shared_ptr<GameObject> &parent, int id);
     void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
