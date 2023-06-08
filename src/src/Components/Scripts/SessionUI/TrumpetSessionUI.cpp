@@ -26,57 +26,44 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
     // Set up samples
     // --------------
     // Low-pitched sound
-    sampleImages[0]->LoadTexture(950, 800, "UI/Sesja/circle.png");
+    sampleImages[0]->LoadTexture(1000, 0, "UI/Sesja/trumpetValve.png");
     sampleAnimators.push_back({
-                                      GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
                                       GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>(),
                                       GameObject::Instantiate("PositionAnimator", parent)->AddComponent<UIAnimator>()
                               });
     sampleAnimators[0][0]->Setup(sampleImages[0], {
-            {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
-            {AnimatedProperty::Scale, glm::vec3(1.0f), 1}
-    }, AnimationBehaviour::Resetable);
-    sampleAnimators[0][1]->Setup(sampleImages[0], {
             {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
             {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
-    sampleAnimators[0][2]->Setup(sampleImages[0], {
+    sampleAnimators[0][1]->Setup(sampleImages[0], {
             {AnimatedProperty::Position, glm::vec3(950, 300, 0), 2}
     }, AnimationBehaviour::Resetable);
     // Medium-pitched sound
-    sampleImages[1]->LoadTexture(1250, 800, "UI/Sesja/circle.png");
+    sampleImages[1]->LoadTexture(1300, 0, "UI/Sesja/trumpetValve.png");
+    sampleImages[1]->SetPosition(1300, sampleImages[1]->GetHeight()/2);
     sampleAnimators.push_back({
-                                      GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
-                                      GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>(),
-                                      GameObject::Instantiate("PositionAnimator", parent)->AddComponent<UIAnimator>()
-                              });
+        GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>(),
+        GameObject::Instantiate("PositionAnimator", parent)->AddComponent<UIAnimator>()
+    });
     sampleAnimators[1][0]->Setup(sampleImages[1], {
-            {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
-            {AnimatedProperty::Scale, glm::vec3(1.0f), 1}
-    }, AnimationBehaviour::Resetable);
-    sampleAnimators[1][1]->Setup(sampleImages[1], {
             {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
             {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
-    sampleAnimators[1][2]->Setup(sampleImages[1], {
+    sampleAnimators[1][1]->Setup(sampleImages[1], {
             {AnimatedProperty::Position, glm::vec3(1250, 300, 0), 2}
     }, AnimationBehaviour::Resetable);
     // High-pitched sound
-    sampleImages[2]->LoadTexture(1550, 800, "UI/Sesja/circle.png");
+    sampleImages[2]->LoadTexture(1600, 0, "UI/Sesja/trumpetValve.png");
+    sampleImages[2]->SetPosition(1600, sampleImages[2]->GetHeight()/2);
     sampleAnimators.push_back({
-                                      GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
                                       GameObject::Instantiate("ColorAnimator", parent)->AddComponent<UIAnimator>(),
                                       GameObject::Instantiate("PositionAnimator", parent)->AddComponent<UIAnimator>()
                               });
     sampleAnimators[2][0]->Setup(sampleImages[2], {
-            {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
-            {AnimatedProperty::Scale, glm::vec3(1.0f), 1}
-    }, AnimationBehaviour::Resetable);
-    sampleAnimators[2][1]->Setup(sampleImages[2], {
             {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
             {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
-    sampleAnimators[2][2]->Setup(sampleImages[2], {
+    sampleAnimators[2][1]->Setup(sampleImages[2], {
             {AnimatedProperty::Position, glm::vec3(1550, 300, 0), 2}
     }, AnimationBehaviour::Resetable);
 }

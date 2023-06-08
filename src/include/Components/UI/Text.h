@@ -24,6 +24,8 @@ private:
 public:
     std::string text;
     glm::vec3 color;
+    // Range: < -1, 1 >
+    float z = -0.05;
 
 public:
     Text(const std::shared_ptr<GameObject> &parent, int id);
