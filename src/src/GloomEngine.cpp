@@ -60,6 +60,12 @@ void GloomEngine::Initialize() {
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
 
+    HIDManager::GetInstance();
+
+#ifdef DEBUG
+    DebugManager::GetInstance()->Start();
+#endif
+
     lastFrameTime = (float)glfwGetTime();
     lastFixedFrameTime = (float)glfwGetTime();
     lastAIFrameTime = (float)glfwGetTime();
@@ -352,7 +358,7 @@ void GloomEngine::InitializeWindow() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
     glfwWindowHint(GLFW_SAMPLES, 4);
     // Create window with graphics context
-    window = glfwCreateWindow(OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, "Gloomies", NULL, NULL);
+    window = glfwCreateWindow(OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height, "Grajek @ GloomEngine", NULL, NULL);
     if (window == nullptr)
         throw;
     glfwMakeContextCurrent(window);
@@ -375,14 +381,8 @@ void GloomEngine::InitializeWindow() {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 #endif
 
-    // Initialize OpenGL loader
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-    bool err = gl3wInit() != 0;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-    bool err = glewInit() != GLEW_OK;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
     bool err = !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-#endif
+
     if (err)
     {
         spdlog::error("Failed to initialize OpenGL loader!");

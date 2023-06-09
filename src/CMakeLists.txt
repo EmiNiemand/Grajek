@@ -8,8 +8,13 @@ file(GLOB_RECURSE HEADER_FILES
 	 *.h
 	 *.hpp)
 
+IF (WIN32)
+	enable_language("RC")
+	set (WIN32_RESOURCES ${CMAKE_SOURCE_DIR}/res/gameResources.rc)
+ENDIF()
+
 # Define the executable
-add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${WIN32_RESOURCES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

@@ -71,7 +71,7 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("MainHero/MainHeroRun.dae");
     Animator::LoadAnimation("MainHero/MainHeroClap.dae");
     Animator::LoadAnimation("MainHero/MainHeroTrumpet.dae");
-    Animator::LoadAnimation("MainHero/MainHeroPercussion.dae");
+    Animator::LoadAnimation("MainHero/MainHeroDrums.dae");
 
     // Set up player
     // -------------
@@ -81,8 +81,8 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, 0});
-    ground->transform->SetLocalScale({100, 2, 100});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(100, 100);
+    ground->transform->SetLocalScale({150, 2, 150});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(150, 150);
 
     // Set up lights
     // -------------
@@ -92,8 +92,8 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -7});
-    bench->transform->SetLocalRotation({0, 180, 0});
+    bench->transform->SetLocalPosition({3, 0, -5});
+    bench->transform->SetLocalRotation({0, 0, 0});
     bench->transform->SetLocalScale({0.5, 0.5, 0.5});
     bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
     bench->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});

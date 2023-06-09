@@ -266,6 +266,7 @@ void PlayerManager::OnSessionToggle() {
         session->Stop();
         session.reset();
         AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+        animator->SetAnimation("MainHero/MainHeroIdle.dae");
         return;
     }
     if (sessionStarter) {
@@ -316,9 +317,11 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     sessionStarter->Stop();
     sessionStarter.reset();
     activeMenu.reset();
+    auto chosenInstrument = equipment->GetInstrumentWithName(instrument);
     session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
-    session->Setup(equipment->GetInstrumentWithName(instrument), sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
-    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
+    session->Setup(chosenInstrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, chosenInstrument->genre);
+    animator->SetAnimation("MainHero/MainHero"+chosenInstrument->NameToString()+".dae");
 
     if (sessionOpponent)
         sessionOpponent->PlayerStartedMusicSession();

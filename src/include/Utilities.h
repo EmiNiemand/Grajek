@@ -9,6 +9,7 @@ class GameFont {
 public:
     inline static const std::string Eggnog="Eggnog.ttf";
 	inline static const std::string KanitLight="Kanit-Light.ttf";
+    inline static const std::string MarckScript="MarckScript.ttf";
 };
 
 class Color {

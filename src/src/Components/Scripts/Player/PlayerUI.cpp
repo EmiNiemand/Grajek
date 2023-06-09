@@ -23,9 +23,10 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
     cashText->LoadFont("$: 0", 20, 1010, 64, glm::vec3(1));
-    auto backgroundMoney =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
-    backgroundMoney->LoadTexture(0, 0, "UI/MoneyBackground.png", -1);
-    backgroundMoney->SetPosition(0, 1080-backgroundMoney->GetHeight());
+    cashText->z = -0.85;
+    cashBackground =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
+    cashBackground->LoadTexture(0, 0, "UI/MoneyBackground.png", -0.8);
+    cashBackground->SetPosition(0, 1080 - cashBackground->GetHeight());
 
     auto menus = GameObject::Instantiate("Menus", parent);
 
@@ -38,23 +39,30 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                 "Main Menu",
                 "Exit"
         };
+        std::vector<std::string> buttonImageNames = {
+                "Resume",
+                "Options",
+                "MainMenu",
+                "Exit"
+        };
 
-        int buttonOffset = -100;
-        int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
+        int buttonOffset = -140;
+        int currentYPos = 650;
 
         std::vector<std::shared_ptr<Button>> buttonBuffer;
 
         for (int i = 0; i < buttonNames.size(); ++i) {
             auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
-                                                 "UI/buttonInactive.png", "UI/buttonActive.png",
-                                                 buttonNames[i], 32);
-            optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
+                                                 "UI/Pauza/"+buttonImageNames[i]+".png",
+                                                 "UI/Pauza/"+buttonImageNames[i]+"_Kolor.png",
+                                                 "", 32, glm::vec3(), GameFont::KanitLight, -1);
+            optionButton->ChangePosition(50, currentYPos);
             currentYPos += buttonOffset;
 
             buttonBuffer.push_back(optionButton);
         }
 
-        pause->AddImage("Background", 0, 0, "UI/pause.png");
+        pause->AddImage("Background", 0, 0, "UI/Pauza/PauzaBG.png", -0.95);
 
         for(int i=0; i<buttonNames.size(); i++) {
             auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
@@ -149,7 +157,9 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                 catch (std::exception e) {
                     spdlog::info("Failed to read a file content at path: " + path.string());
                 }
-                savePointMenu->saveDates.push_back(savePointMenu->Menu::AddText("SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 125, 30));
+                savePointMenu->saveDates.push_back(savePointMenu->AddText(
+                        "SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 130,
+                        38, glm::vec3(0.1f), GameFont::MarckScript));
 
                 xpos += 350;
             }

@@ -8,10 +8,12 @@
 #include "Components/Component.h"
 
 class Text;
+class Image;
 
 class PlayerUI : public Component {
 private:
     std::shared_ptr<Text> cashText;
+    std::shared_ptr<Image> cashBackground;
 public:
     PlayerUI(const std::shared_ptr<GameObject> &parent, int id);
 
