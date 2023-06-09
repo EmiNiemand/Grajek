@@ -39,6 +39,7 @@ struct Sound
 class MusicPattern {
 public:
     InstrumentName instrumentName;
+    int id;
     std::vector<std::shared_ptr<Sound>> sounds;
 };
 
