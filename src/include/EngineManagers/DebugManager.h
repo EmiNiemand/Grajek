@@ -21,6 +21,7 @@ private:
 	bool transformExtracted;
     std::string searchName;
 	std::shared_ptr<GameObject> selected;
+    std::shared_ptr<GameObject> player;
 
     int selectedFolderId;
     std::string selectedFolderName;

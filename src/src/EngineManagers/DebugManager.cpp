@@ -20,6 +20,7 @@ DebugManager::DebugManager() {
     transformExtracted = false;
     safetySwitch = false;
     folderPaths = FindModelFolders();
+    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
     if (!folderPaths.empty()) {
         selectedFolderId = 0;
         selectedFolderName = folderPaths[0].path().filename().string();
@@ -305,6 +306,10 @@ void DebugManager::DisplaySystemInfo() {
 
 void DebugManager::SaveMenu()
 {
+    static std::shared_ptr<GameObject> newObject;
+    newObject.reset();
+    if(!player)
+    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
@@ -314,7 +319,7 @@ void DebugManager::SaveMenu()
         SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
     if (ImGui::SmallButton("Add new default house")){
-        SceneManager::GetInstance()->CreatePrefabObject("House");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("House");
     }
     //Folders combo
     selectedFolderName = folderPaths[selectedFolderId].path().filename().string();
@@ -337,7 +342,6 @@ void DebugManager::SaveMenu()
         }
         ImGui::EndCombo();
     }
-    //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
     if(modelPaths.empty()){
         ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"There are no models in the folder!");
     } else {
@@ -361,17 +365,25 @@ void DebugManager::SaveMenu()
             std::string path = "Buildings/";
             path += selectedFolderName + "/";
             path += modelPaths[selectedModelId].path().filename().string();
-            SceneManager::GetInstance()->CreatePrefabObject("House", path);
+            newObject = SceneManager::GetInstance()->CreatePrefabObject("House", path);
         }
     }
     if (ImGui::SmallButton("Add new default shop")){
-        SceneManager::GetInstance()->CreatePrefabObject("Shop");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("Shop");
     }
     if (ImGui::SmallButton("Add new default savePoint")){
-        SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
     }
     if (ImGui::SmallButton("Add new default InvisibleBlock")){
-        SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
+    }
+    if(newObject){
+        if(player){
+            newObject->transform->SetLocalPosition(player->transform->GetLocalPosition());
+        }
+        selected = newObject;
+        transformExtracted = false;
+        displaySelected = true;
     }
     ImGui::End();
 }
