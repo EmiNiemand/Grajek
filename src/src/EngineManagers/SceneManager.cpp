@@ -295,24 +295,26 @@ std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStatic
     return objects;
 }
 
-void SceneManager::CreatePrefabObject(const std::string name) {
+std::shared_ptr<GameObject> SceneManager::CreatePrefabObject(const std::string name) {
+    std::shared_ptr<GameObject> newObject;
     if(name == "House"){
         spdlog::info("Created object from prefab House.");
-        Prefab::Instantiate<House>();
+        newObject = Prefab::Instantiate<House>();
     } else if(name == "Shop"){
         spdlog::info("Created object from prefab Shop");
-        Prefab::Instantiate<Shop>();
+        newObject = Prefab::Instantiate<Shop>();
     } else if(name == "SavePoint"){
         spdlog::info("Created object from prefab SavePoint");
-        Prefab::Instantiate<SavePoint>();
+        newObject = Prefab::Instantiate<SavePoint>();
     } else if(name == "InvisibleBlock"){
         spdlog::info("Created object from prefab InvisibleBlock");
-        Prefab::Instantiate<InvisibleBlock>();
+        newObject = Prefab::Instantiate<InvisibleBlock>();
     }else {
         spdlog::info("Failed to find prefab with name: " + name);
     }
+    return newObject;
 }
-void SceneManager::CreatePrefabObject(const std::string name,const std::string modelPath) {
+std::shared_ptr<GameObject> SceneManager::CreatePrefabObject(const std::string name, const std::string modelPath) {
     std::shared_ptr<GameObject> newGameObject;
     if(name == "House"){
         spdlog::info("Created object from prefab House. Using model: " + modelPath);
@@ -322,4 +324,5 @@ void SceneManager::CreatePrefabObject(const std::string name,const std::string m
     } else {
         spdlog::info("Failed to find prefab with name: " + name);
     }
+    return newGameObject;
 }
