@@ -121,43 +121,45 @@ void Game::InitializeGame() const {
     hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
     hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
 
-    auto opponent = GameObject::Instantiate("Opponent", activeScene);
-    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
-    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
-    // 2      *   *
-    // 1    *   *
-    // 0  *
-    auto opponentComponent = opponent->AddComponent<Opponent>();
-    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
-    opponentComponent->dialogue->texts.push_back({{""},
-                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
-                                                      {""}});
-    opponentComponent->dialogue->texts.push_back({{""},
-                                                  {"Walcz!."},
-                                                  {""}});
-    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
-                             {"Masz tu moja odznake Jazz Badge."},
-                             {""}});
-    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
-                             {"Pokonaj kolejnego lidera w Electro Gymie."},
-                             {""}});
-    opponentComponent->lossDialogue->texts.push_back({{""},
-                                                     {"Przegrales."},
-                                                     {""}});
+//    auto opponent = GameObject::Instantiate("Opponent", activeScene);
+//    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
+//    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
+//    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
+//    // 2      *   *
+//    // 1    *   *
+//    // 0  *
+//    auto opponentComponent = opponent->AddComponent<Opponent>();
+//    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+//                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
+//    opponentComponent->dialogue->texts.push_back({{""},
+//                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
+//                                                      {""}});
+//    opponentComponent->dialogue->texts.push_back({{""},
+//                                                  {"Walcz!."},
+//                                                  {""}});
+//    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
+//                             {"Masz tu moja odznake Jazz Badge."},
+//                             {""}});
+//    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
+//                             {"Pokonaj kolejnego lidera w Electro Gymie."},
+//                             {""}});
+//    opponentComponent->lossDialogue->texts.push_back({{""},
+//                                                     {"Przegrales."},
+//                                                     {""}});
 
-    auto dialog = GameObject::Instantiate("Dialog", activeScene);
-    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
-    dialog->AddComponent<Renderer>()->LoadModel("texturedModels/przeciwnik.obj");
-    dialog->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
-    dialog->AddComponent<Dialogue>();
-    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
-                                                       {"Tak to ja."},
-                                                       {""}});
-    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
-                                                       {"Walcz ze mna."},
-                                                       {""}});
+//    auto dialog = GameObject::Instantiate("Dialog", activeScene);
+//    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
+//    auto dialogAnimator = dialog->AddComponent<Animator>();
+//    dialogAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
+//    dialogAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+//    dialog->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
+//    dialog->AddComponent<Dialogue>();
+//    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+//                                                       {"Tak to ja."},
+//                                                       {""}});
+//    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+//                                                       {"Walcz ze mna."},
+//                                                       {""}});
 
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);

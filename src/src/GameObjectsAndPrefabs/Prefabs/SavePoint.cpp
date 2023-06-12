@@ -13,18 +13,18 @@ SavePoint::~SavePoint() = default;
 
 std::shared_ptr<GameObject> SavePoint::Create() {
     auto savePoint = shared_from_this();
-    savePoint->AddComponent<Renderer>()->LoadModel("SavePoint/SavePoint.obj");
+    savePoint->AddComponent<Renderer>()->LoadModel("Buildings/Environment/PostersColumn.obj");
+    savePoint->transform->SetLocalScale(glm::vec3(0.25));
     savePoint->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
-    savePoint->GetComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
     std::shared_ptr<GameObject> s = GameObject::Instantiate("S", savePoint);
-    s->AddComponent<Renderer>()->LoadModel("SavePoint/S.obj");
+    s->AddComponent<Renderer>()->LoadModel("Buildings/Environment/SSS.obj");
     s->AddComponent<GameObjectAnimator>()->Setup(s->transform, {
             {AnimatedProperty::Rotation, glm::vec3(0.0f, -360.0f, 0.0f), 5.0f},
     }, true);
 
     auto savePointTrigger = GameObject::Instantiate("SavePointTrigger", savePoint);
     savePointTrigger->AddComponent<BoxCollider>()->SetOffset({0, 0.5, 0});
-    savePointTrigger->GetComponent<BoxCollider>()->SetSize({1, 1, 1});
+    savePointTrigger->GetComponent<BoxCollider>()->SetSize({2, 2, 2});
     savePointTrigger->GetComponent<BoxCollider>()->isTrigger = true;
     savePointTrigger->AddComponent<SavePointTrigger>();
 
