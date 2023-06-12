@@ -28,9 +28,9 @@ void CharacterLogic::Start() {
     characterAnimator->LoadAnimationModel(modelPath);
     characterAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(40, 60);
-    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
-    middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(50, 65);
+    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 45);
+    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 35);
+    middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
     Component::Start();
 }
@@ -170,11 +170,13 @@ void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& instrumen
 void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pattern) {
     playerPattern = pattern;
 
-    if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern->id) != favPatterns.end()) {
-        if (previousPlayerPattern == pattern)
-            playerSatisfaction += 3.75;
-        else
-            playerSatisfaction += 7.5f;
+    if (playerPattern != nullptr) {
+        if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern->id) != favPatterns.end()) {
+            if (previousPlayerPattern == pattern)
+                playerSatisfaction += 3.75;
+            else
+                playerSatisfaction += 7.5f;
+        }
     } else {
         playerSatisfaction -= 5.0f;
     }
@@ -228,10 +230,12 @@ void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &instrument
 void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pattern) {
     enemyPattern = pattern;
 
-    if (std::find(favPatterns.begin(), favPatterns.end(), enemyPattern->id) != favPatterns.end())
-        enemySatisfaction += 15;
-    else
-        enemySatisfaction -= 5;
+    if (enemyPattern != nullptr) {
+        if (std::find(favPatterns.begin(), favPatterns.end(), enemyPattern->id) != favPatterns.end())
+            enemySatisfaction += 5.0f;
+    } else {
+        enemySatisfaction -= 5.0f;
+    }
 
     enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
 }
@@ -267,16 +271,6 @@ const float CharacterLogic::GetEnemySatisfaction() const {
  */
 void CharacterLogic::CalculateSatisfaction() {
     if (playerSatisfaction == 0.0f) {
-        if (previousPlayerGenre != playerGenre && previousPlayerInstrumentName != playerInstrumentName) {
-            repeatingModifier = 0.0f;
-        } else {
-            if (previousPlayerGenre == playerGenre)
-                repeatingModifier += 3.0f;
-
-            if (previousPlayerInstrumentName == playerInstrumentName)
-                repeatingModifier += 2.0f;
-        }
-
         if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
             playerSatisfaction += 30.0f;
 
@@ -286,6 +280,18 @@ void CharacterLogic::CalculateSatisfaction() {
 
         previousPlayerGenre = playerGenre;
         previousPlayerInstrumentName = playerInstrumentName;
+
+        playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
+    } else {
+        if (previousPlayerGenre != playerGenre && previousPlayerInstrumentName != playerInstrumentName) {
+            repeatingModifier = 0.0f;
+        } else {
+            if (previousPlayerGenre == playerGenre)
+                repeatingModifier += 3.0f;
+
+            if (previousPlayerInstrumentName == playerInstrumentName)
+                repeatingModifier += 2.0f;
+        }
 
         playerSatisfaction = std::clamp(playerSatisfaction - repeatingModifier, 0.0f, 100.0f);
     }
