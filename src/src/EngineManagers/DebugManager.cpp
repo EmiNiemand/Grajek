@@ -385,6 +385,15 @@ void DebugManager::SaveMenu()
         transformExtracted = false;
         displaySelected = true;
     }
+    if(displaySelected && selected){
+        if(ImGui::SmallButton("Add new default InvisibleBlock at 'selected' object location")){
+            newObject = SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
+            newObject->transform->SetLocalPosition(selected->transform->GetLocalPosition());
+            selected = newObject;
+            transformExtracted = false;
+            displaySelected = true;
+        }
+    }
     ImGui::End();
 }
 
