@@ -52,7 +52,7 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
     // -----------
     switch (instrumentName) {
         case Clap:
-            instrument->Setup(instrumentName, MusicGenre::Rhytmic);
+            instrument->Setup(instrumentName, MusicGenre::Rhythmic);
             instrument->AddSamples({
                "res/sounds/direct/clap/clapWeak.wav",
                "res/sounds/direct/clap/clapStrong.wav"});

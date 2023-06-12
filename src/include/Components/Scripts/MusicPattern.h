@@ -11,7 +11,7 @@
 #include "Components/Audio/AudioSource.h"
 
 enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
-enum MusicGenre { Rhytmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
+enum MusicGenre { Rhythmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
 
 /// It seems like it could be merged with Sound, but not really;
 /// Sound is additionally characterized by delay and duration,

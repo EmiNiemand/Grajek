@@ -164,7 +164,7 @@ void Game::InitializeGame() const {
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
-    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
+    AIManager::GetInstance()->InitializeSpawner(5, 15, 1000);
 
     camera->SetTarget(nullptr);
 }

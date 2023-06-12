@@ -39,6 +39,10 @@ void CharacterMovement::FixedUpdate() {
 
     currentPosition = parent->transform->GetLocalPosition();
 
+    // FIXME: Temporary fix
+    if (currentPosition.y < 0)
+        currentPosition.y = 0.01f;
+
     if (movementState == NearPlayerPosition) {
         steeringForce = glm::normalize(playerPosition - currentPosition);
 
@@ -77,9 +81,11 @@ void CharacterMovement::FixedUpdate() {
             if (maxDistanceToCharacter < DISTANCE_TO_COLLISION) {
                 rotationAngle = std::acos(glm::dot(steeringForce, steeringDirection)) / AVOIDANCE_ROTATION_FACTOR;
 
-                steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
+                if (rotationAngle > 0.4f) {
+                    steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
 
-                steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
+                    steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
+                }
             }
 
             maxDistanceToCharacter = FLT_MAX;
@@ -98,6 +104,7 @@ void CharacterMovement::FixedUpdate() {
             time += GloomEngine::GetInstance()->deltaTime;
 
             if (time > MOVEMENT_TIMEOUT) {
+                time = 0.0f;
                 subEndPointsIterator = -1;
                 pathIterator = -1;
                 movementState = NearPlayerSubPoint;

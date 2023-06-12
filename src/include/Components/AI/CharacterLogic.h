@@ -13,13 +13,16 @@
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 
+constexpr float SATISFACTION_REDUCER = 2.0f;
+constexpr float PREVIOUS_SESSION_TIMEOUT = 5.0f;
+
 class GameObject;
 class CharacterAnimations;
 class CharacterMovement;
 class Indicator;
 
 class CharacterLogic : public Component {
-    AI_LOGICSTATE logicState = None;
+    AI_LOGICSTATE logicState = Wandering;
     // Animations
     std::shared_ptr<CharacterAnimations> characterAnimations = nullptr;
     std::string modelPath {};
@@ -36,6 +39,7 @@ class CharacterLogic : public Component {
     InstrumentName previousPlayerInstrumentName {};
     MusicGenre previousPlayerGenre {};
     std::shared_ptr<MusicPattern> previousPlayerPattern = nullptr;
+    float time = 0.0f;
     float repeatingModifier = 0.0f;
     float lowerSatisfactionLimit = 0.0f;
     float middleSatisfactionLimit = 0.0f;
@@ -50,7 +54,7 @@ public:
     // Favorite instruments and patterns
     std::vector<InstrumentName> favInstrumentsNames {};
     std::vector<MusicGenre> favGenres {};
-    std::vector<std::shared_ptr<MusicPattern>> favPatterns {};
+    std::vector<int> favPatterns {};
 
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;

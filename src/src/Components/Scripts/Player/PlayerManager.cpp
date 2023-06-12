@@ -79,7 +79,7 @@ void PlayerManager::Awake() {
 
     // Set up Equipment
     // ----------------
-    equipment->Setup(0, 0);
+    equipment->Setup(0);
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Set up Player's UI
@@ -437,7 +437,7 @@ void PlayerManager::PollInput() {
 }
 
 void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
-    equipment->Setup(data->money, data->reputation);
+    equipment->Setup(data->money);
     playerUI->UpdateCash(data->money, false);
     parent->transform->SetLocalPosition(data->playerPosition);
     parent->UpdateSelfAndChildren();

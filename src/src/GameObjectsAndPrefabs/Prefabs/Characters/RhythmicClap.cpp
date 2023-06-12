@@ -2,22 +2,23 @@
 // Created by Adrian on 07.05.2023.
 //
 
-#include "GameObjectsAndPrefabs/Prefabs/Characters/JazzClap.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/RhythmicClap.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/UI/Indicator.h"
+#include "Components/Scripts/Instrument.h"
 #include "EngineManagers/RandomnessManager.h"
 
-JazzClap::JazzClap(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+RhythmicClap::RhythmicClap(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
         Prefab(name, id, parent, tag) {
-    prefabName = "CharacterJazzClapPrefab";
+    prefabName = "CharacterRhythmicClapPrefab";
 }
 
-JazzClap::~JazzClap() = default;
+RhythmicClap::~RhythmicClap() = default;
 
-std::shared_ptr<GameObject> JazzClap::Create() {
+std::shared_ptr<GameObject> RhythmicClap::Create() {
     auto character = shared_from_this();
     auto cubeRigidbody = character->AddComponent<Rigidbody>();
     // Setting values
@@ -44,11 +45,16 @@ std::shared_ptr<GameObject> JazzClap::Create() {
 
     characterLogic->SetAnimationModelToLoad("Crowd/" + model + "/" + model + ".dae");
 
-    //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
-    characterLogic->favGenres.push_back(Jazz);
-
-    //    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
+//    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
     characterLogic->favInstrumentsNames.push_back(Clap);
+
+//    enum MusicGenre { Rhythmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
+    characterLogic->favGenres.push_back(Rhythmic);
+
+    auto instrument = Instrument::GetInstrument(Clap);
+
+    for (const auto& pat : instrument->patterns)
+        characterLogic->favPatterns.push_back(pat->id);
 
     return character;
 }

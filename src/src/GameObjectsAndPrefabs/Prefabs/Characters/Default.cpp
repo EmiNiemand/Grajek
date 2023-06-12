@@ -9,6 +9,7 @@
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterPathfinding.h"
 #include "Components/UI/Indicator.h"
+#include "Components/Scripts/Instrument.h"
 #include "EngineManagers/RandomnessManager.h"
 
 Default::Default(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
@@ -45,18 +46,34 @@ std::shared_ptr<GameObject> Default::Create() {
 
     characterLogic->SetAnimationModelToLoad("Crowd/" + model + "/" + model + ".dae");
 
-    //    enum MusicGenre { Jazz = 80, RnB = 100, SynthPop=120, Rock=140 };
+//    enum MusicGenre { Rhythmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
     characterLogic->favGenres.push_back(Jazz);
     characterLogic->favGenres.push_back(RnB);
     characterLogic->favGenres.push_back(SynthPop);
     characterLogic->favGenres.push_back(Rock);
+    characterLogic->favGenres.push_back(Rhythmic);
 
-    //    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
+//    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
     characterLogic->favInstrumentsNames.push_back(Clap);
     characterLogic->favInstrumentsNames.push_back(Drums);
     characterLogic->favInstrumentsNames.push_back(Trumpet);
     characterLogic->favInstrumentsNames.push_back(Launchpad);
     characterLogic->favInstrumentsNames.push_back(Guitar);
+
+    auto instrument = Instrument::GetInstrument(Drums);
+
+    for (const auto& pat : instrument->patterns)
+        characterLogic->favPatterns.push_back(pat->id);
+
+    instrument = Instrument::GetInstrument(Clap);
+
+    for (const auto& pat : instrument->patterns)
+        characterLogic->favPatterns.push_back(pat->id);
+
+    instrument = Instrument::GetInstrument(Trumpet);
+
+    for (const auto& pat : instrument->patterns)
+        characterLogic->favPatterns.push_back(pat->id);
 
     return character;
 }

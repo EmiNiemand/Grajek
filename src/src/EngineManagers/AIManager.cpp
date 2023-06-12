@@ -8,7 +8,7 @@
 #include "Components/AI/CharacterLogic.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/RockDrums.h"
-#include "GameObjectsAndPrefabs/Prefabs/Characters/JazzClap.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/RhythmicClap.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -50,7 +50,7 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
                 Prefab::Instantiate<RockDrums>();
                 break;
             case 1:
-                Prefab::Instantiate<JazzClap>();
+                Prefab::Instantiate<RhythmicClap>();
                 break;
             default:
                 Prefab::Instantiate<Default>();
@@ -252,7 +252,7 @@ void AIManager::SpawnCharacters(const std::stop_token& token, const bool& player
                     ch = Prefab::Instantiate<RockDrums>();
                     break;
                 case 1:
-                    ch = Prefab::Instantiate<JazzClap>();
+                    ch = Prefab::Instantiate<RhythmicClap>();
                     break;
                 default:
                     ch = Prefab::Instantiate<Default>();
