@@ -68,6 +68,8 @@ bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
     if(!Menu::ShowMenu()) return false;
 
+    GloomEngine::GetInstance()->timeScale = 1;
+
     if (!instruments.empty()) {
         for (const auto & instrument : instruments) {
             instrument->GetParent()->children.begin()->second->DisableSelfAndChildren();

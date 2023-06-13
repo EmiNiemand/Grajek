@@ -74,9 +74,10 @@ void SceneManager::LoadScene(const std::string& scene) {
     }
 }
 
-void SceneManager::ClearScene() const {
+void SceneManager::ClearScene() {
     if (!activeScene) return;
     activeScene->RemoveAllChildren();
+    parents.clear();
     Animator::animationModels.clear();
     Animator::animations.clear();
     Renderer::models.clear();

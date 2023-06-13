@@ -27,7 +27,6 @@ public:
     std::shared_ptr<Image> loadingScreen;
     bool deleteLoadingScreen = false;
 
-
     std::unordered_map<std::string, std::shared_ptr<GameObject>> parents;
 
 public:
@@ -39,7 +38,7 @@ public:
 
     void InitializeScene();
     void LoadScene(const std::string& scene);
-    void ClearScene() const;
+    void ClearScene();
     void Free();
 
 
