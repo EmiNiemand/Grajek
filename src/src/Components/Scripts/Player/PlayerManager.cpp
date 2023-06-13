@@ -295,14 +295,14 @@ void PlayerManager::OnSoundStop(int index) {
     session->StopSample(index);
 }
 
-void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat) {
+void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat, float accuracy) {
      AIManager::GetInstance()->NotifyPlayerPlayedPattern(pat);
 
     if (!pat) return;
 
     float satisfaction = AIManager::GetInstance()->GetCombinedPlayerSatisfaction();
-    //spdlog::info("Crowd satisfaction: "+std::to_string(satisfaction));
-    equipment->AddReward(satisfaction / 100.0f);
+
+    equipment->AddReward(accuracy * satisfaction / 100.0f);
 
      if(sessionOpponent)
          sessionOpponent->PlayerPlayedPattern(satisfaction);

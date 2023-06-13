@@ -159,7 +159,7 @@ void MusicSession::CalcAccuracyAndReset(const std::shared_ptr<MusicPattern> &goo
 }
 
 void MusicSession::PatternSuccess(std::shared_ptr<MusicPattern> pattern, float accuracy) {
-    playerManager->PlayedPattern(pattern);
+    playerManager->PlayedPattern(pattern, accuracy);
     //TODO: play some kind of success sound
     // sessionUI.DiscoveredPattern();
 
