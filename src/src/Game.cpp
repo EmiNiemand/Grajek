@@ -91,36 +91,6 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({3, 0, -5});
-    bench->transform->SetLocalRotation({0, 0, 0});
-    bench->transform->SetLocalScale({0.5, 0.5, 0.5});
-    bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
-    bench->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
-    auto portalRadioSound = bench->AddComponent<AudioSource>();
-    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
-    portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
-    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
-    portalRadioSound->SetMaxDistance(20.0f);
-    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
-    portalRadioSound->IsLooping(true);
-    portalRadioSound->PlaySoundAfterStart(true);
-
-    std::shared_ptr<GameObject> bench2 = GameObject::Instantiate("Bench", activeScene);
-    bench2->transform->SetLocalPosition({10, 0, 0});
-    bench2->transform->SetLocalRotation({0, 180, 0});
-    bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
-    bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench2->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
-    bench2->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
-
-    std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
-    hydrant->transform->SetLocalPosition({16, 0, 15});
-    hydrant->transform->SetLocalRotation({0, 130, 0});
-    hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
-    hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
-
 //    auto opponent = GameObject::Instantiate("Opponent", activeScene);
 //    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
 //    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
