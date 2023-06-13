@@ -18,7 +18,7 @@ constexpr float DISTANCE_TO_POINT = 1.8f;
 constexpr float DISTANCE_TO_COLLISION = 2.0f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.8f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.3f;
-constexpr float MOVEMENT_TIMEOUT = 2.75f;
+constexpr float MOVEMENT_TIMEOUT = 3.0f;
 
 class GameObject;
 class Rigidbody;
@@ -28,6 +28,7 @@ class CharacterPathfinding;
 class CharacterMovement : public Component {
     AI_MOVEMENTSTATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
+    float timeSinceLastPoint = 0.0f;
     // Collisions
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
     float collisionGridSize = 0.0f;
@@ -39,7 +40,6 @@ class CharacterMovement : public Component {
     glm::mat4 steeringMatrix {};
     float maxDistanceToCharacter = FLT_MAX;
     float distance = 0.0f;
-    float time = 0.0f;
     // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
     const bool *aiGrid = nullptr;
@@ -52,7 +52,7 @@ class CharacterMovement : public Component {
     glm::vec3 previousEndPoint {};
     std::vector<glm::vec3> subEndPoints {};
     int subEndPointsIterator = -1;
-    // Parameters for Rigidbody
+    // Rigidbody parameters
     std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
     float maxSpeed = 0.08f;

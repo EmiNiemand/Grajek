@@ -7,8 +7,7 @@
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
-#include "GameObjectsAndPrefabs/Prefabs/Characters/RockDrums.h"
-#include "GameObjectsAndPrefabs/Prefabs/Characters/RhythmicClap.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -36,6 +35,8 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 #ifdef DEBUG
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
+
+    currentCharacters = min;
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
@@ -43,22 +44,15 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     int random;
 
     for (int i = 0; i < min; i++) {
-        random = RandomnessManager::GetInstance()->GetInt(0, 2);
+        random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-        switch (random) {
-            case 0:
-                Prefab::Instantiate<RockDrums>();
-                break;
-            case 1:
-                Prefab::Instantiate<RhythmicClap>();
-                break;
-            default:
-                Prefab::Instantiate<Default>();
-                break;
-        }
+        if (random <= 3)
+            Prefab::Instantiate<JazzTrumpet>();
+        else
+            Prefab::Instantiate<Default>();
     }
 
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, min, maxCharacters, spawnDelay);
+    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, &currentCharacters, maxCharacters, spawnDelay);
 }
 
 void AIManager::Free() {
@@ -209,12 +203,40 @@ const float AIManager::GetCombinedEnemySatisfaction() {
 
 /**
  * @annotation
+ * Returns max characters value
+ * @returns int - maxCharacters
+ */
+const int AIManager::GetMaxCharacters() const {
+    return maxCharacters;
+}
+
+/**
+ * @annotation
+ * Removes Character completely from the manager.
+ * @param componentId - component id
+ */
+void AIManager::RemoveCharacter(const std::shared_ptr<GameObject>& character) {
+    mutex.lock();
+
+    GloomEngine::GetInstance()->AddGameObjectToDestroyBuffer(character);
+
+    --currentCharacters;
+
+    mutex.unlock();
+}
+
+/**
+ * @annotation
  * Removes CharacterLogic from the manager.
  * @param componentId - component id
  */
 void AIManager::RemoveCharacterLogic(const int& componentId) {
+    mutex.lock();
+
     if (charactersLogics.contains(componentId))
         charactersLogics.erase(componentId);
+
+    mutex.unlock();
 }
 
 /**
@@ -223,8 +245,12 @@ void AIManager::RemoveCharacterLogic(const int& componentId) {
  * @param componentId - component id
  */
 void AIManager::RemoveCharacterMovement(const int& componentId) {
+    mutex.lock();
+
     if (charactersMovements.contains(componentId))
         charactersMovements.erase(componentId);
+
+    mutex.unlock();
 }
 
 /**
@@ -236,34 +262,26 @@ void AIManager::RemoveCharacterMovement(const int& componentId) {
  * @param maxCharacters - max amount of characters
  * @param spawnDelay - time delay between spawns
  */
-void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& currentCharacters,
+void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int* currentCharacters,
                                 const int& maxCharacters, const int& spawnDelay) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
-    int random, charactersAmount = currentCharacters;
+    int random;
     std::shared_ptr<GameObject> ch;
 
     while(!token.stop_requested()) {
-        if (charactersAmount < maxCharacters) {
-            random = RandomnessManager::GetInstance()->GetInt(0, 2);
+        if (*currentCharacters < maxCharacters) {
+            random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-            switch (random) {
-                case 0:
-                    ch = Prefab::Instantiate<RockDrums>();
-                    break;
-                case 1:
-                    ch = Prefab::Instantiate<RhythmicClap>();
-                    break;
-                default:
-                    ch = Prefab::Instantiate<Default>();
-                    break;
-
-            }
+            if (random <= 3)
+                ch = Prefab::Instantiate<JazzTrumpet>();
+            else
+                ch = Prefab::Instantiate<Default>();
 
             if (playerIsPlaying)
                 ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 
-            ++charactersAmount;
+            ++(*currentCharacters);
         }
 
         std::this_thread::sleep_for(delay);

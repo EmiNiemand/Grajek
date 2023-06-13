@@ -2,7 +2,7 @@
 // Created by Adrian on 07.05.2023.
 //
 
-#include "GameObjectsAndPrefabs/Prefabs/Characters/RhythmicClap.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/AI/CharacterLogic.h"
@@ -11,14 +11,14 @@
 #include "Components/Scripts/Instrument.h"
 #include "EngineManagers/RandomnessManager.h"
 
-RhythmicClap::RhythmicClap(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
+JazzTrumpet::JazzTrumpet(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
         Prefab(name, id, parent, tag) {
-    prefabName = "CharacterRhythmicClapPrefab";
+    prefabName = "CharacterJazzTrumpetPrefab";
 }
 
-RhythmicClap::~RhythmicClap() = default;
+JazzTrumpet::~JazzTrumpet() = default;
 
-std::shared_ptr<GameObject> RhythmicClap::Create() {
+std::shared_ptr<GameObject> JazzTrumpet::Create() {
     auto character = shared_from_this();
     auto cubeRigidbody = character->AddComponent<Rigidbody>();
     // Setting values
@@ -34,27 +34,27 @@ std::shared_ptr<GameObject> RhythmicClap::Create() {
     character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();
 
-    int i = RandomnessManager::GetInstance()->GetInt(1, 5);
+    int modelIndex = RandomnessManager::GetInstance()->GetInt(1, 5);
 
     std::string model;
 
-    if (i < 10)
-        model = "JazzMan00" + std::to_string(i);
+    if (modelIndex < 10)
+        model = "JazzMan00" + std::to_string(modelIndex);
     else
-        model = "JazzMan0" + std::to_string(i);
+        model = "JazzMan0" + std::to_string(modelIndex);
 
     characterLogic->SetAnimationModelToLoad("Crowd/" + model + "/" + model + ".dae");
 
-//    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
-    characterLogic->favInstrumentsNames.push_back(Clap);
-
 //    enum MusicGenre { Rhythmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
-    characterLogic->favGenres.push_back(Rhythmic);
+    characterLogic->favGenres.push_back(Jazz);
 
-    auto instrument = Instrument::GetInstrument(Clap);
+//    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
+    characterLogic->favInstrumentsNames.push_back(Trumpet);
+
+    auto instrument = Instrument::GetInstrument(Trumpet);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.push_back(pat->id);
+        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     return character;
 }

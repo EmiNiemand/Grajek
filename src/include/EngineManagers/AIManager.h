@@ -12,7 +12,7 @@
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterPathfinding.h"
 
-constexpr int AI_GRID_SIZE = 1000;
+constexpr int AI_GRID_SIZE = 300;
 
 class GloomEngine;
 class CharacterLogic;
@@ -22,6 +22,7 @@ class CharacterPathfinding;
 class AIManager {
     bool playerIsPlaying = false;
     bool enemyIsPlaying = false;
+    int currentCharacters = 0;
     int maxCharacters = 0;
     int spawnDelay = 0;
     std::jthread characterSpawner;
@@ -30,7 +31,7 @@ class AIManager {
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& currentCharacters,
+    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int* currentCharacters,
                                 const int& maxCharacters, const int& spawnDelay);
 
 public:
@@ -58,9 +59,10 @@ public:
     void NotifyEnemyStopsPlaying();
     void NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedEnemySatisfaction();
+    [[nodiscard]] const int GetMaxCharacters() const;
+    void RemoveCharacter(const std::shared_ptr<GameObject>& gameObject);
     void RemoveCharacterLogic(const int& componentId);
     void RemoveCharacterMovement(const int &componentId);
-    [[nodiscard]] inline int GetMaxCharacters() const { return maxCharacters;}
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H

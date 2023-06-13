@@ -35,45 +35,50 @@ std::shared_ptr<GameObject> Default::Create() {
     character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();
 
-    int i = RandomnessManager::GetInstance()->GetInt(1, 6);
+    int modelIndex = RandomnessManager::GetInstance()->GetInt(1, 6);
 
     std::string model;
 
-    if (i < 10)
-        model = "BasicMan00" + std::to_string(i);
+    if (modelIndex < 10)
+        model = "BasicMan00" + std::to_string(modelIndex);
     else
-        model = "BasicMan0" + std::to_string(i);
+        model = "BasicMan0" + std::to_string(modelIndex);
 
     characterLogic->SetAnimationModelToLoad("Crowd/" + model + "/" + model + ".dae");
 
+    int randomIndex;
 //    enum MusicGenre { Rhythmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
-    characterLogic->favGenres.push_back(Jazz);
-    characterLogic->favGenres.push_back(RnB);
-    characterLogic->favGenres.push_back(SynthPop);
-    characterLogic->favGenres.push_back(Rock);
-    characterLogic->favGenres.push_back(Rhythmic);
+    std::vector<MusicGenre> randomGenres {Jazz, RnB, SynthPop, Rock, Rhythmic};
+
+    for (int i = 0; i < 3; ++i) {
+        randomIndex = RandomnessManager::GetInstance()->GetInt(0, (int)randomGenres.size() - 1);
+        characterLogic->favGenres.push_back(randomGenres[randomIndex]);
+        randomGenres.erase(randomGenres.cbegin() + randomIndex);
+    }
 
 //    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
-    characterLogic->favInstrumentsNames.push_back(Clap);
-    characterLogic->favInstrumentsNames.push_back(Drums);
-    characterLogic->favInstrumentsNames.push_back(Trumpet);
-    characterLogic->favInstrumentsNames.push_back(Launchpad);
-    characterLogic->favInstrumentsNames.push_back(Guitar);
+    std::vector<InstrumentName> randomInsNames {Clap, Drums, Trumpet, Launchpad, Guitar};
+
+    for (int i = 0; i < 3; ++i) {
+        randomIndex = RandomnessManager::GetInstance()->GetInt(0, (int)randomInsNames.size() - 1);
+        characterLogic->favInstrumentsNames.push_back(randomInsNames[randomIndex]);
+        randomInsNames.erase(randomInsNames.cbegin() + randomIndex);
+    }
 
     auto instrument = Instrument::GetInstrument(Drums);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.push_back(pat->id);
+        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     instrument = Instrument::GetInstrument(Clap);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.push_back(pat->id);
+        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     instrument = Instrument::GetInstrument(Trumpet);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.push_back(pat->id);
+        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     return character;
 }

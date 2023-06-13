@@ -97,14 +97,14 @@ void CharacterMovement::FixedUpdate() {
 
         if (distance < DISTANCE_TO_POINT) {
             --pathIterator;
-            time = 0.0f;
+            timeSinceLastPoint = 0.0f;
         }
 
         if (movementState == OnPathToPlayer) {
-            time += GloomEngine::GetInstance()->deltaTime;
+            timeSinceLastPoint += GloomEngine::GetInstance()->fixedDeltaTime;
 
-            if (time > MOVEMENT_TIMEOUT) {
-                time = 0.0f;
+            if (timeSinceLastPoint > MOVEMENT_TIMEOUT) {
+                timeSinceLastPoint = 0.0f;
                 subEndPointsIterator = -1;
                 pathIterator = -1;
                 movementState = NearPlayerSubPoint;
