@@ -4,6 +4,7 @@
 #ifdef DEBUG
 #include "EngineManagers/DebugManager.h"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "windows.h"
@@ -19,6 +20,7 @@ DebugManager::DebugManager() {
     transformExtracted = false;
     safetySwitch = false;
     folderPaths = FindModelFolders();
+    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
     if (!folderPaths.empty()) {
         selectedFolderId = 0;
         selectedFolderName = folderPaths[0].path().filename().string();
@@ -40,6 +42,9 @@ void DebugManager::Initialize(GLFWwindow* window, const char* glsl_version) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -61,27 +66,36 @@ void DebugManager::Render() {
     DisplaySystemInfo();
     SaveMenu();
     {
-        ImGui::Begin("Debug Window");
+        ImGui::Begin("Hierarchy Tree");
 
-        ImGui::Text("Hierarchy Tree");
-        ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
+
+        ImGui::InputText("##Search",&searchName);
         ImGui::SameLine();
-        if (ImGui::SmallButton("Open")) {
-            displaySelected = true;
-            safetySwitch = false;
-            selected = SceneManager::GetInstance()->activeScene;
+        if(ImGui::SmallButton("Reset Search")){
+            searchName = "";
+        }
+        if(searchName.empty() || SceneManager::GetInstance()->activeScene->GetName().find(searchName) != std::string::npos) {
+            ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
+            ImGui::SameLine();
+            if (ImGui::SmallButton("Open")) {
+                displaySelected = true;
+                safetySwitch = false;
+                selected = SceneManager::GetInstance()->activeScene;
+            }
         }
         ImGui::Indent();
         std::string label;
         for (const auto& child : SceneManager::GetInstance()->activeScene->children) {
             label = "Open##" + std::to_string(child.first);
-            ImGui::Text("%s", child.second->GetName().c_str());
-            ImGui::SameLine();
-            if (ImGui::SmallButton(label.c_str())) {
-                displaySelected = true;
-                transformExtracted = false;
-                selected = child.second;
-                safetySwitch = false;
+            if(searchName.empty() || child.second->GetName().find(searchName) != std::string::npos) {
+                ImGui::Text("%s", child.second->GetName().c_str());
+                ImGui::SameLine();
+                if (ImGui::SmallButton(label.c_str())) {
+                    displaySelected = true;
+                    transformExtracted = false;
+                    selected = child.second;
+                    safetySwitch = false;
+                }
             }
             ProcessChildren(child.second);
         }
@@ -229,14 +243,17 @@ void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
     std::string label;
     for (const auto& child : gameObject->children)
     {
-        label = "Open##" + std::to_string(child.first);
-        ImGui::Text("%s", child.second->GetName().c_str());
-        ImGui::SameLine();
-        if (ImGui::SmallButton(label.c_str())) {
-            displaySelected = true;
-            safetySwitch = false;
-            transformExtracted = false;
-            selected = child.second;
+        if(searchName.empty() || child.second->GetName().find(searchName) != std::string::npos)
+        {
+            label = "Open##" + std::to_string(child.first);
+            ImGui::Text("%s", child.second->GetName().c_str());
+            ImGui::SameLine();
+            if (ImGui::SmallButton(label.c_str())) {
+                displaySelected = true;
+                safetySwitch = false;
+                transformExtracted = false;
+                selected = child.second;
+            }
         }
         ProcessChildren(child.second);
     }
@@ -289,6 +306,10 @@ void DebugManager::DisplaySystemInfo() {
 
 void DebugManager::SaveMenu()
 {
+    static std::shared_ptr<GameObject> newObject;
+    newObject.reset();
+    if(!player)
+    player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
     ImGui::Begin("Save Menu");
     if (ImGui::SmallButton("Save")) {
         std::filesystem::path path = std::filesystem::current_path();
@@ -298,7 +319,7 @@ void DebugManager::SaveMenu()
         SceneManager::GetInstance()->SaveStaticObjects(path.string(),"map0");
     }
     if (ImGui::SmallButton("Add new default house")){
-        SceneManager::GetInstance()->CreatePrefabObject("House");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("House");
     }
     //Folders combo
     selectedFolderName = folderPaths[selectedFolderId].path().filename().string();
@@ -321,7 +342,6 @@ void DebugManager::SaveMenu()
         }
         ImGui::EndCombo();
     }
-    //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
     if(modelPaths.empty()){
         ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"There are no models in the folder!");
     } else {
@@ -345,17 +365,34 @@ void DebugManager::SaveMenu()
             std::string path = "Buildings/";
             path += selectedFolderName + "/";
             path += modelPaths[selectedModelId].path().filename().string();
-            SceneManager::GetInstance()->CreatePrefabObject("House", path);
+            newObject = SceneManager::GetInstance()->CreatePrefabObject("House", path);
         }
     }
     if (ImGui::SmallButton("Add new default shop")){
-        SceneManager::GetInstance()->CreatePrefabObject("Shop");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("Shop");
     }
     if (ImGui::SmallButton("Add new default savePoint")){
-        SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("SavePoint");
     }
     if (ImGui::SmallButton("Add new default InvisibleBlock")){
-        SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
+        newObject = SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
+    }
+    if(newObject){
+        if(player){
+            newObject->transform->SetLocalPosition(player->transform->GetLocalPosition());
+        }
+        selected = newObject;
+        transformExtracted = false;
+        displaySelected = true;
+    }
+    if(displaySelected && selected){
+        if(ImGui::SmallButton("Add new default InvisibleBlock at 'selected' object location")){
+            newObject = SceneManager::GetInstance()->CreatePrefabObject("InvisibleBlock");
+            newObject->transform->SetLocalPosition(selected->transform->GetLocalPosition());
+            selected = newObject;
+            transformExtracted = false;
+            displaySelected = true;
+        }
     }
     ImGui::End();
 }
