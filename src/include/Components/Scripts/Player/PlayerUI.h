@@ -14,6 +14,8 @@ class PlayerUI : public Component {
 private:
     std::shared_ptr<Text> cashText;
     std::shared_ptr<Image> cashBackground;
+    int cashAmount;
+
 public:
     PlayerUI(const std::shared_ptr<GameObject> &parent, int id);
 
