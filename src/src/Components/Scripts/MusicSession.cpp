@@ -159,7 +159,7 @@ void MusicSession::CalcAccuracyAndReset(const std::shared_ptr<MusicPattern> &goo
 }
 
 void MusicSession::PatternSuccess(std::shared_ptr<MusicPattern> pattern, float accuracy) {
-    playerManager->PlayedPattern(pattern);
+    playerManager->PlayedPattern(pattern, accuracy);
     //TODO: play some kind of success sound
     // sessionUI.DiscoveredPattern();
 
@@ -170,13 +170,13 @@ void MusicSession::PatternTimeout() {
     recordedSounds.clear();
     potentialPatterns.clear();
 
-    playerManager->PlayedPattern(nullptr);
+    playerManager->PlayedPattern(nullptr, 0);
     //TODO: play timeout sound
 }
 
 void MusicSession::PatternFail() {
     sessionUI->UpdateAccuracy(0);
-    playerManager->PlayedPattern(nullptr);
+    playerManager->PlayedPattern(nullptr, 0);
     //TODO: play some kind of failure sound (record scratch)
 }
 

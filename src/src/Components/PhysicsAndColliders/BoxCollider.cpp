@@ -339,20 +339,18 @@ void BoxCollider::SetGridPoints() {
     SetCollidersGridPoints(colGridPoints);
 
     if (!isTrigger && !isDynamic && parent->GetName() != "Player" && parent->GetName() != "Ground") {
-        const float aiCellSize = AIManager::GetInstance()->aiCellSize;
-
         glm::ivec2 aiGridPoints[4] = {
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector + zVector)) / aiCellSize),
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (xVector - zVector)) / aiCellSize),
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector + zVector)) / aiCellSize),
-                glm::ivec2((glm::vec2(pos.x, pos.z) + (-xVector - zVector)) / aiCellSize)
+                glm::ivec2(glm::vec2(pos.x, pos.z) + (xVector + zVector)),
+                glm::ivec2(glm::vec2(pos.x, pos.z) + (xVector - zVector)),
+                glm::ivec2(glm::vec2(pos.x, pos.z) + (-xVector + zVector)),
+                glm::ivec2(glm::vec2(pos.x, pos.z) + (-xVector - zVector))
         };
 
         SetAIGridPoints(aiGridPoints);
     }
 }
 
-void BoxCollider::SetCollidersGridPoints(const glm::ivec2* points) {
+void BoxCollider::SetCollidersGridPoints(const glm::ivec2 points[4]) {
     if (points[0] == points[1] &&
         points[1] == points[2] &&
         points[2] == points[3]) {
@@ -384,7 +382,7 @@ void BoxCollider::SetCollidersGridPoints(const glm::ivec2* points) {
     }
 }
 
-void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
+void BoxCollider::SetAIGridPoints(const glm::ivec2 points[4]) {
     if (points[0] == points[1] &&
         points[1] == points[2] &&
         points[2] == points[3]) {
@@ -407,8 +405,8 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX - 1; x <= maxX + 1; ++x) {
-        for (int y = minY - 1; y <= maxY + 1; ++y) {
+    for (int x = minX - 2; x <= maxX + 2; ++x) {
+        for (int y = minY - 2; y <= maxY + 2; ++y) {
             AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = true;
         }
     }

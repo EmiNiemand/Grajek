@@ -35,7 +35,7 @@ public:
     void OnDestroy() override;
 
     void CheckCollision(const std::shared_ptr<BoxCollider>& other);
-    std::vector<glm::vec3> GetBoxPoints();
+    static std::vector<glm::vec3> GetBoxPoints();
 
     const glm::vec3 &GetSize() const;
     void SetSize(const glm::vec3 &size);
@@ -49,8 +49,8 @@ private:
     void HandleCollision(const std::shared_ptr<BoxCollider>& other);
 
     void SetGridPoints();
-    void SetCollidersGridPoints(const glm::ivec2* points);
-    void SetAIGridPoints(const glm::ivec2* points);
+    void SetCollidersGridPoints(const glm::ivec2 points[4]);
+    static void SetAIGridPoints(const glm::ivec2 points[4]);
 };
 
 #endif //OPENGLGP_BOXCOLLIDER_H

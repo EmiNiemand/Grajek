@@ -161,9 +161,8 @@ void AudioSource::PauseSound() const {
  * Stops the sound.
  */
 void AudioSource::StopSound() const {
-    if (currentState == AL_PLAYING) {
+    if (currentState == AL_PLAYING)
         alSourceStop(sourceId);
-    }
 }
 
 /**
@@ -202,11 +201,7 @@ void AudioSource::SetPitch(const float& val) const {
  * @param val - [0.0 - x], default 1.0.
  */
 void AudioSource::SetGain(const float& val) {
-    if (val < 0.0f) {
-        gain = 0.0f;
-    } else {
-        gain = val;
-    }
+    gain = std::clamp(val, 0.0f, 1.0f);
 
     alSourcef(sourceId, AL_GAIN, val);
 }

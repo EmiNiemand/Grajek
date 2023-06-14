@@ -28,10 +28,10 @@ void CharacterLogic::Start() {
     characterAnimator->LoadAnimationModel(modelPath);
     characterAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 45);
-    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 35);
+    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
     middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::Start();
 }
 
@@ -59,23 +59,12 @@ void CharacterLogic::Update() {
         }
     }
 
-    if (logicState == ListeningToPlayer) {
-        if (playerSatisfaction >= upperSatisfactionLimit) {
+    if (logicState == ListeningToPlayer || logicState == ListeningToEnemy) {
+        if (playerSatisfaction >= upperSatisfactionLimit || enemySatisfaction >= upperSatisfactionLimit) {
             characterAnimations->SetNewState(Cheering);
-        } else if (playerSatisfaction >= middleSatisfactionLimit) {
+        } else if (playerSatisfaction >= middleSatisfactionLimit || enemySatisfaction >= middleSatisfactionLimit) {
             characterAnimations->SetNewState(Idle);
-        } else if (playerSatisfaction >= lowerSatisfactionLimit)  {
-            characterAnimations->SetNewState(Booing);
-        } else {
-            logicState = WalkingAway;
-            characterMovement->SetState(ReturningToPreviousTarget);
-        }
-    } else if (logicState == ListeningToEnemy) {
-        if (enemySatisfaction >= upperSatisfactionLimit) {
-            characterAnimations->SetNewState(Cheering);
-        } else if (enemySatisfaction >= middleSatisfactionLimit) {
-            characterAnimations->SetNewState(Idle);
-        } else if (enemySatisfaction >= lowerSatisfactionLimit)  {
+        } else if (playerSatisfaction >= lowerSatisfactionLimit || enemySatisfaction >= lowerSatisfactionLimit)  {
             characterAnimations->SetNewState(Booing);
         } else {
             logicState = WalkingAway;
@@ -90,18 +79,17 @@ void CharacterLogic::AIUpdate() {
     if (logicState == AlertedByPlayer || logicState == AlertedByEnemy) {
         CalculateSatisfaction();
 
-        if (playerSatisfaction > minSatisfaction) {
+        if (playerSatisfaction > lowerSatisfactionLimit) {
 //            characterIndicator->Indicate();
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
+        } else if (enemySatisfaction > lowerSatisfactionLimit) {
+//            characterIndicator->Indicate();
+            logicState = MovingToEnemy;
+            characterMovement->SetState(SettingPathToEnemy);
         }
-//        else if (enemySatisfaction > minSatisfaction) {
-////            characterIndicator->Indicate();
-//            logicState = MovingToEnemy;
-//            characterMovement->SetState(SettingPathToEnemy);
-//        }
     } else if (logicState == WalkingAway) {
-        if (playerSatisfaction > minSatisfaction) {
+        if (playerSatisfaction > middleSatisfactionLimit) {
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
         }
@@ -111,13 +99,21 @@ void CharacterLogic::AIUpdate() {
         playerSatisfaction = std::clamp(playerSatisfaction - SATISFACTION_REDUCER, 0.0f, 100.0f);
         enemySatisfaction = std::clamp(enemySatisfaction - SATISFACTION_REDUCER, 0.0f, 100.0f);
 
-        time += GloomEngine::GetInstance()->deltaTime;
+        timeSinceSession += GloomEngine::GetInstance()->AIDeltaTime;
 
-        if (time > PREVIOUS_SESSION_TIMEOUT) {
-            time = 0.0f;
+        if (timeSinceSession > PREVIOUS_SESSION_TIMEOUT) {
+            timeSinceSession = 0.0f;
             previousPlayerGenre = {};
             previousPlayerInstrumentName = {};
-            previousPlayerPattern = nullptr;
+        }
+    }
+
+    if (!parent->isOnFrustum) {
+        timeSinceOnFrustum += GloomEngine::GetInstance()->AIDeltaTime;
+
+        if (timeSinceOnFrustum > AI_DESPAWN_TIMEOUT) {
+            timeSinceOnFrustum = 0.0f;
+            AIManager::GetInstance()->RemoveCharacter(parent);
         }
     }
 
@@ -139,6 +135,8 @@ void CharacterLogic::OnDestroy() {
     favGenres.clear();
     favPatterns.clear();
     playerPattern = nullptr;
+    playerTransform = nullptr;
+    enemyPattern = nullptr;
     Component::OnDestroy();
 }
 
@@ -171,17 +169,23 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
     playerPattern = pattern;
 
     if (playerPattern != nullptr) {
-        if (std::find(favPatterns.begin(), favPatterns.end(), playerPattern->id) != favPatterns.end()) {
-            if (previousPlayerPattern == pattern)
-                playerSatisfaction += 3.75;
-            else
-                playerSatisfaction += 7.5f;
+        bool isFavorite = false;
+
+        for (auto& pat : favPatterns) {
+            if (pat.first == playerPattern->id) {
+                playerSatisfaction += 3.0f - pat.second;
+                pat.second = std::clamp(pat.second + 0.5f, 0.0f, 2.5f);
+                isFavorite = true;
+            } else {
+                pat.second = std::clamp(pat.second - 0.25f, 0.0f, 2.5f);
+            }
         }
+
+        if (!isFavorite)
+            playerSatisfaction += 1.0f;
     } else {
         playerSatisfaction -= 5.0f;
     }
-
-    previousPlayerPattern = pattern;
 
     playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
 }
@@ -193,7 +197,14 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
  */
 void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
     if (isPlayerPlaying) {
-        logicState = AlertedByPlayer;
+        playerPosition = playerTransform->GetLocalPosition();
+
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetGlobalPosition())) {
+            logicState = AlertedByPlayer;
+
+            for (auto &pat: favPatterns)
+                pat.second = 0.0f;
+        }
     } else {
         if (logicState != Wandering)
             characterMovement->SetState(ReturningToPreviousTarget);
@@ -208,6 +219,9 @@ void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
  * @returns float - player satisfaction
  */
 const float CharacterLogic::GetPlayerSatisfaction() const {
+    if (playerSatisfaction < lowerSatisfactionLimit)
+        return 0.0f;
+
     return playerSatisfaction;
 }
 
@@ -231,10 +245,19 @@ void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &patter
     enemyPattern = pattern;
 
     if (enemyPattern != nullptr) {
-        if (std::find(favPatterns.begin(), favPatterns.end(), enemyPattern->id) != favPatterns.end())
-            enemySatisfaction += 5.0f;
+        bool isFavorite = false;
+
+        for (auto& pat : favPatterns) {
+            if (pat.first == enemyPattern->id)
+                isFavorite = true;
+        }
+
+        if (isFavorite)
+            enemySatisfaction += 2.0f;
+        else
+            enemySatisfaction += 1.0f;
     } else {
-        enemySatisfaction -= 5.0f;
+        enemySatisfaction -= 4.0f;
     }
 
     enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
@@ -275,7 +298,7 @@ void CharacterLogic::CalculateSatisfaction() {
             playerSatisfaction += 30.0f;
 
         if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), playerInstrumentName)
-            != favInstrumentsNames.end())
+                != favInstrumentsNames.end())
             playerSatisfaction += 20.0f;
 
         previousPlayerGenre = playerGenre;
@@ -287,16 +310,16 @@ void CharacterLogic::CalculateSatisfaction() {
             repeatingModifier = 0.0f;
         } else {
             if (previousPlayerGenre == playerGenre)
-                repeatingModifier += 3.0f;
+                repeatingModifier += 6.0f;
 
             if (previousPlayerInstrumentName == playerInstrumentName)
-                repeatingModifier += 2.0f;
+                repeatingModifier += 4.0f;
         }
 
         playerSatisfaction = std::clamp(playerSatisfaction - repeatingModifier, 0.0f, 100.0f);
     }
 
-    enemySatisfaction = 0.0f;
+    enemySatisfaction = -1.0f;
 
     if (std::find(favGenres.begin(), favGenres.end(), enemyGenre) != favGenres.end())
         enemySatisfaction += 30.0f;

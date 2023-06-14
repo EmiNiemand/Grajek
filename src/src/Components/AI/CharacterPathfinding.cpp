@@ -8,7 +8,6 @@
 
 CharacterPathfinding::CharacterPathfinding()  {
     aiGrid = AIManager::GetInstance()->aiGrid;
-    aiCellSize = AIManager::GetInstance()->aiCellSize;
     openList.reserve(1000);
     closedList.reserve(10000);
 }
@@ -22,7 +21,7 @@ CharacterPathfinding::~CharacterPathfinding() = default;
  * @returns glm::vec3 - local position
  */
 inline const glm::vec3 CharacterPathfinding::GridToLocal(const glm::vec2& position) const {
-    return {(position.x - AI_GRID_SIZE / 2.0f) * aiCellSize, 0, (position.y - AI_GRID_SIZE / 2.0f) * aiCellSize};
+    return {(position.x - AI_GRID_SIZE / 2.0f) * AI_CELL_SIZE, 0, (position.y - AI_GRID_SIZE / 2.0f) * AI_CELL_SIZE};
 }
 
 /**
@@ -32,7 +31,7 @@ inline const glm::vec3 CharacterPathfinding::GridToLocal(const glm::vec2& positi
  * @returns glm::ivec2 - grid position
  */
 inline const glm::ivec2 CharacterPathfinding::LocalToGrid(const glm::vec2& position) const {
-    return {position.x / aiCellSize + AI_GRID_SIZE / 2.0f, position.y / aiCellSize + AI_GRID_SIZE / 2.0f};
+    return {position.x / AI_CELL_SIZE + AI_GRID_SIZE / 2.0f, position.y / AI_CELL_SIZE + AI_GRID_SIZE / 2.0f};
 }
 
 /**

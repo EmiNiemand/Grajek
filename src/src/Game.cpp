@@ -116,7 +116,7 @@ void Game::InitializeGame() const {
 //    opponentComponent->lossDialogue->texts.push_back({{""},
 //                                                     {"Przegrales."},
 //                                                     {""}});
-
+//
 //    auto dialog = GameObject::Instantiate("Dialog", activeScene);
 //    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
 //    auto dialogAnimator = dialog->AddComponent<Animator>();
@@ -136,7 +136,7 @@ void Game::InitializeGame() const {
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
-    AIManager::GetInstance()->InitializeSpawner(5, 15, 1000);
+    AIManager::GetInstance()->InitializeSpawner(10, 10, 100);
 
     camera->SetTarget(nullptr);
 }

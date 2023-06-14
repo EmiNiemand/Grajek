@@ -23,28 +23,32 @@ class Indicator;
 
 class CharacterLogic : public Component {
     AI_LOGICSTATE logicState = Wandering;
+    float timeSinceSession = 0.0f;
+    float timeSinceOnFrustum = 0.0f;
     // Animations
     std::shared_ptr<CharacterAnimations> characterAnimations = nullptr;
     std::string modelPath {};
     // Movement and indicators
     std::shared_ptr<CharacterMovement> characterMovement = nullptr;
     std::shared_ptr<Indicator> characterIndicator = nullptr;
-    // Player instruments and satisfaction
+    // Player values and modifiers
+    std::shared_ptr<Transform> playerTransform = nullptr;
+    glm::vec3 playerPosition {};
     InstrumentName playerInstrumentName {};
     MusicGenre playerGenre {};
     std::shared_ptr<MusicPattern> playerPattern = nullptr;
+    InstrumentName previousPlayerInstrumentName {};
+    MusicGenre previousPlayerGenre {};
+    float values = 0.0f;
+    float repeatingModifier = 0.0f;
+    // Enemy instruments
     InstrumentName enemyInstrumentName {};
     MusicGenre enemyGenre {};
     std::shared_ptr<MusicPattern> enemyPattern = nullptr;
-    InstrumentName previousPlayerInstrumentName {};
-    MusicGenre previousPlayerGenre {};
-    std::shared_ptr<MusicPattern> previousPlayerPattern = nullptr;
-    float time = 0.0f;
-    float repeatingModifier = 0.0f;
+    // Satisfaction
     float lowerSatisfactionLimit = 0.0f;
     float middleSatisfactionLimit = 0.0f;
     float upperSatisfactionLimit = 0.0f;
-    float minSatisfaction = 0.0f;
     float playerSatisfaction = 0.0f;
     float enemySatisfaction = 0.0f;
 
@@ -54,7 +58,8 @@ public:
     // Favorite instruments and patterns
     std::vector<InstrumentName> favInstrumentsNames {};
     std::vector<MusicGenre> favGenres {};
-    std::vector<int> favPatterns {};
+    // int - pattern.id, float - repeating modifier
+    std::vector<std::pair<int, float>> favPatterns {};
 
     CharacterLogic(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterLogic() override;

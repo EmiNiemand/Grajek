@@ -12,7 +12,11 @@
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterPathfinding.h"
 
-constexpr int AI_GRID_SIZE = 1000;
+constexpr int AI_GRID_SIZE = 600;
+constexpr float AI_AWARE_DISTANCE = 30.0f;
+constexpr int AI_SPAWN_GRID_DISTANCE = 25;
+constexpr float AI_DESPAWN_TIMEOUT = 3.75f;
+constexpr float AI_CELL_SIZE = 1.0f;
 
 class GloomEngine;
 class CharacterLogic;
@@ -22,6 +26,7 @@ class CharacterPathfinding;
 class AIManager {
     bool playerIsPlaying = false;
     bool enemyIsPlaying = false;
+    int currentCharacters = 0;
     int maxCharacters = 0;
     int spawnDelay = 0;
     std::jthread characterSpawner;
@@ -30,7 +35,7 @@ class AIManager {
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& currentCharacters,
+    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
                                 const int& maxCharacters, const int& spawnDelay);
 
 public:
@@ -39,8 +44,8 @@ public:
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> charactersLogics;
     std::unordered_map<int, std::shared_ptr<CharacterMovement>> charactersMovements;
     std::shared_ptr<CharacterPathfinding> pathfinding;
-    const float aiCellSize = 1.0f;
     bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
+    bool isInitializing = true;
 
     AIManager(AIManager &other) = delete;
     void operator=(const AIManager&) = delete;
@@ -58,9 +63,10 @@ public:
     void NotifyEnemyStopsPlaying();
     void NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedEnemySatisfaction();
+    [[nodiscard]] const int GetMaxCharacters() const;
+    void RemoveCharacter(const std::shared_ptr<GameObject>& gameObject);
     void RemoveCharacterLogic(const int& componentId);
     void RemoveCharacterMovement(const int &componentId);
-    [[nodiscard]] inline int GetMaxCharacters() const { return maxCharacters;}
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H

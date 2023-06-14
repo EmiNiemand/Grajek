@@ -7,8 +7,7 @@
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
-#include "GameObjectsAndPrefabs/Prefabs/Characters/RockDrums.h"
-#include "GameObjectsAndPrefabs/Prefabs/Characters/RhythmicClap.h"
+#include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -36,29 +35,34 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 #ifdef DEBUG
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
+
+    isInitializing = true;
+    currentCharacters = min;
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
 
+    /*
+     * if gracz znajduje sie w strefie przed dzielnica jazzowa
+     *
+     * wtedy waga dla jazzmanow jest zwiekszona z 3 do 6
+     *
+     */
+
     int random;
 
     for (int i = 0; i < min; i++) {
-        random = RandomnessManager::GetInstance()->GetInt(0, 2);
+        random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-        switch (random) {
-            case 0:
-                Prefab::Instantiate<RockDrums>();
-                break;
-            case 1:
-                Prefab::Instantiate<RhythmicClap>();
-                break;
-            default:
-                Prefab::Instantiate<Default>();
-                break;
-        }
+        if (random <= 3)
+            Prefab::Instantiate<JazzTrumpet>();
+        else
+            Prefab::Instantiate<Default>();
     }
 
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, min, maxCharacters, spawnDelay);
+    isInitializing = false;
+
+    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters, spawnDelay);
 }
 
 void AIManager::Free() {
@@ -67,6 +71,7 @@ void AIManager::Free() {
         characterSpawner.join();
     }
     charactersLogics.clear();
+    charactersMovements.clear();
 }
 
 /**
@@ -76,9 +81,9 @@ void AIManager::Free() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    mutex.lock();
-
     playerIsPlaying = true;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerInstrumentAndGenre(ins, gen);
@@ -93,9 +98,9 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyPlayerStopsPlaying() {
-    mutex.lock();
-
     playerIsPlaying = false;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics)
         ch.second->SetPlayerPlayingStatus(false);
@@ -124,6 +129,20 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
  */
 const float AIManager::GetCombinedPlayerSatisfaction() {
     float satisfaction = 0.0f;
+    // TODO: improve varied satisfaction
+//    float satisfactionModifier;
+//
+//    switch (currentPlayerInstrument) {
+//        case Clap:
+//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(10, 45);
+//            break;
+//        case Drums:
+//            satisfactionModifier = 63.0f;
+//            break;
+//        default:
+//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(0, 45);
+//            break;
+//    }
 
     mutex.lock();
 
@@ -131,7 +150,7 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
         satisfaction += ch.second->GetPlayerSatisfaction();
 
     if (!charactersLogics.empty())
-        satisfaction /= (float)charactersLogics.size();
+        satisfaction /= (float)charactersLogics.size(); // * satisfactionModifier / 100.0f;
 
     mutex.unlock();
 
@@ -145,9 +164,9 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    mutex.lock();
-
     enemyIsPlaying = true;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics) {
         ch.second->SetEnemyInstrumentAndGenre(ins, gen);
@@ -162,9 +181,9 @@ void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicG
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyEnemyStopsPlaying() {
-    mutex.lock();
-
     enemyIsPlaying = false;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics)
         ch.second->SetEnemyPlayingStatus(false);
@@ -209,12 +228,40 @@ const float AIManager::GetCombinedEnemySatisfaction() {
 
 /**
  * @annotation
+ * Returns max characters value
+ * @returns int - maxCharacters
+ */
+const int AIManager::GetMaxCharacters() const {
+    return maxCharacters;
+}
+
+/**
+ * @annotation
+ * Removes Character completely from the manager.
+ * @param componentId - component id
+ */
+void AIManager::RemoveCharacter(const std::shared_ptr<GameObject>& character) {
+    GloomEngine::GetInstance()->AddGameObjectToDestroyBuffer(character);
+
+    mutex.lock();
+
+    --currentCharacters;
+
+    mutex.unlock();
+}
+
+/**
+ * @annotation
  * Removes CharacterLogic from the manager.
  * @param componentId - component id
  */
 void AIManager::RemoveCharacterLogic(const int& componentId) {
+    mutex.lock();
+
     if (charactersLogics.contains(componentId))
         charactersLogics.erase(componentId);
+
+    mutex.unlock();
 }
 
 /**
@@ -223,8 +270,12 @@ void AIManager::RemoveCharacterLogic(const int& componentId) {
  * @param componentId - component id
  */
 void AIManager::RemoveCharacterMovement(const int& componentId) {
+    mutex.lock();
+
     if (charactersMovements.contains(componentId))
         charactersMovements.erase(componentId);
+
+    mutex.unlock();
 }
 
 /**
@@ -236,34 +287,26 @@ void AIManager::RemoveCharacterMovement(const int& componentId) {
  * @param maxCharacters - max amount of characters
  * @param spawnDelay - time delay between spawns
  */
-void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, const int& currentCharacters,
+void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
                                 const int& maxCharacters, const int& spawnDelay) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
-    int random, charactersAmount = currentCharacters;
+    int random;
     std::shared_ptr<GameObject> ch;
 
     while(!token.stop_requested()) {
-        if (charactersAmount < maxCharacters) {
-            random = RandomnessManager::GetInstance()->GetInt(0, 2);
+        if (currentCharacters < maxCharacters) {
+            random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-            switch (random) {
-                case 0:
-                    ch = Prefab::Instantiate<RockDrums>();
-                    break;
-                case 1:
-                    ch = Prefab::Instantiate<RhythmicClap>();
-                    break;
-                default:
-                    ch = Prefab::Instantiate<Default>();
-                    break;
-
-            }
+            if (random <= 3)
+                ch = Prefab::Instantiate<JazzTrumpet>();
+            else
+                ch = Prefab::Instantiate<Default>();
 
             if (playerIsPlaying)
                 ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 
-            ++charactersAmount;
+            ++currentCharacters;
         }
 
         std::this_thread::sleep_for(delay);
