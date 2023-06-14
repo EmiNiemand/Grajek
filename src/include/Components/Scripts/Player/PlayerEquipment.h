@@ -11,7 +11,7 @@ class Instrument;
 
 class PlayerEquipment : public Component {
 private:
-	inline static int maxCashReward = 10;
+	inline static float maxCashReward = 10.0f;
 
 public:
     std::set<std::shared_ptr<Instrument>> instruments;

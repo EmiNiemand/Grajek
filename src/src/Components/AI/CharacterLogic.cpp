@@ -31,6 +31,7 @@ void CharacterLogic::Start() {
     lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
     middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::Start();
 }
 
@@ -134,6 +135,7 @@ void CharacterLogic::OnDestroy() {
     favGenres.clear();
     favPatterns.clear();
     playerPattern = nullptr;
+    playerTransform = nullptr;
     enemyPattern = nullptr;
     Component::OnDestroy();
 }
@@ -195,7 +197,7 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
  */
 void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
     if (isPlayerPlaying) {
-        playerPosition = AIManager::GetInstance()->GetPlayerPosition();
+        playerPosition = playerTransform->GetLocalPosition();
 
         if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetGlobalPosition())) {
             logicState = AlertedByPlayer;

@@ -32,6 +32,7 @@ class CharacterLogic : public Component {
     std::shared_ptr<CharacterMovement> characterMovement = nullptr;
     std::shared_ptr<Indicator> characterIndicator = nullptr;
     // Player values and modifiers
+    std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     InstrumentName playerInstrumentName {};
     MusicGenre playerGenre {};

@@ -49,8 +49,8 @@ private:
     void HandleCollision(const std::shared_ptr<BoxCollider>& other);
 
     void SetGridPoints();
-    void SetCollidersGridPoints(const glm::ivec2* points);
-    static void SetAIGridPoints(const glm::ivec2* points);
+    void SetCollidersGridPoints(const glm::ivec2 points[4]);
+    static void SetAIGridPoints(const glm::ivec2 points[4]);
 };
 
 #endif //OPENGLGP_BOXCOLLIDER_H

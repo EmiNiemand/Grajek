@@ -59,7 +59,6 @@ void GloomEngine::Initialize() {
     RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
-
     HIDManager::GetInstance();
 
 #ifdef DEBUG

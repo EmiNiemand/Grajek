@@ -26,6 +26,7 @@ void CharacterMovement::Awake() {
     otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
     pathfinding = AIManager::GetInstance()->pathfinding;
     rigidbody = parent->GetComponent<Rigidbody>();
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     subEndPoints.resize(AI_GRID_SIZE / 10);
     if (isInitializing)
         SetRandomSpawnPointNearPlayer();
@@ -45,16 +46,13 @@ void CharacterMovement::FixedUpdate() {
         steeringForce = glm::normalize(playerPosition - currentPosition);
 
         ApplyRotation(steeringForce);
-    } else if (pathIterator >= 0) {
+    }
+
+    if (pathIterator >= 0) {
         cellPos = glm::ivec2((int) (currentPosition.x / collisionGridSize) + GRID_SIZE / 2,
                              (int) (currentPosition.z / collisionGridSize) + GRID_SIZE / 2);
 
         cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
-
-        if (subEndPointsIterator < 0 && pathIterator < 6)
-            speed = std::lerp(speed, 0.0f, smoothingParam);
-        else
-            speed = std::lerp(speed, maxSpeed, smoothingParam);
 
         steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
 
@@ -95,18 +93,20 @@ void CharacterMovement::FixedUpdate() {
             --pathIterator;
             timeSinceLastPoint = 0.0f;
         }
+    }
 
-        if (movementState == OnPathToPlayer) {
-            timeSinceLastPoint += GloomEngine::GetInstance()->fixedDeltaTime;
+    if (movementState == OnPathToPlayer) {
+        timeSinceLastPoint += GloomEngine::GetInstance()->fixedDeltaTime;
 
-            if (timeSinceLastPoint > MOVEMENT_TIMEOUT) {
-                timeSinceLastPoint = 0.0f;
-                subEndPointsIterator = -1;
-                pathIterator = -1;
-                movementState = NearPlayerSubPoint;
-            }
+        if (timeSinceLastPoint > MOVEMENT_TIMEOUT) {
+            timeSinceLastPoint = 0.0f;
+            subEndPointsIterator = -1;
+            pathIterator = -1;
+            movementState = NearPlayerSubPoint;
         }
-    } else if (subEndPointsIterator < 0) {
+    }
+
+    if (subEndPointsIterator < 0) {
         if (movementState == NearPlayerSubPoint)
             movementState = NearPlayerPosition;
         else if (movementState == NearEnemySubPoint)
@@ -201,6 +201,7 @@ void CharacterMovement::OnDestroy() {
     rigidbody = nullptr;
     pathfinding = nullptr;
     collisionGrid = nullptr;
+    playerTransform = nullptr;
     Component::OnDestroy();
 }
 
@@ -231,7 +232,7 @@ inline void CharacterMovement::ApplyRotation(const glm::vec3& force) {
  * Sets random spawn point on AI grid near player position.
  */
 void CharacterMovement::SetRandomSpawnPointNearPlayer() {
-    playerPosition = AIManager::GetInstance()->GetPlayerPosition();
+    playerPosition = playerTransform->GetLocalPosition();
     int minX, maxX, minY, maxY;
     glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z};
 
@@ -258,7 +259,7 @@ void CharacterMovement::SetRandomSpawnPointNearPlayer() {
  * Sets random spawn point on AI grid.
  */
 void CharacterMovement::SetRandomSpawnPoint() {
-    playerPosition = AIManager::GetInstance()->GetPlayerPosition();
+    playerPosition = playerTransform->GetLocalPosition();
     int minX, maxX, minY, maxY, upDown, leftRight;
     glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z};
 
@@ -338,7 +339,7 @@ const glm::vec3 CharacterMovement::GetRandomPoint() {
 void CharacterMovement::SetNewPathToPlayer() {
     previousEndPoint = endPoint;
 
-    playerPosition = AIManager::GetInstance()->GetPlayerPosition();
+    playerPosition = playerTransform->GetLocalPosition();
 
     glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
 

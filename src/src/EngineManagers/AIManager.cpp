@@ -41,7 +41,6 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
-    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
 
     /*
      * if gracz znajduje sie w strefie przed dzielnica jazzowa
@@ -73,11 +72,6 @@ void AIManager::Free() {
     }
     charactersLogics.clear();
     charactersMovements.clear();
-    playerTransform = nullptr;
-}
-
-const glm::vec3 AIManager::GetPlayerPosition() const {
-    return playerTransform->GetLocalPosition();
 }
 
 /**
@@ -88,7 +82,6 @@ const glm::vec3 AIManager::GetPlayerPosition() const {
  */
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
     playerIsPlaying = true;
-    currentPlayerInstrument = ins;
 
     mutex.lock();
 

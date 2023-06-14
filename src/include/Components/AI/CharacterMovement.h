@@ -46,6 +46,7 @@ class CharacterMovement : public Component {
     const bool *aiGrid = nullptr;
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
+    std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     glm::vec3 currentPosition {};
     glm::vec3 endPoint {};

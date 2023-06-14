@@ -308,8 +308,8 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat, floa
 
     equipment->AddReward(accuracy / 10.0f * satisfaction / 100.0f);
 
-     if(sessionOpponent)
-         sessionOpponent->PlayerPlayedPattern(satisfaction);
+    if(sessionOpponent)
+        sessionOpponent->PlayerPlayedPattern(satisfaction);
 
     playerUI->UpdateCash(equipment->cash);
 }

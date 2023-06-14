@@ -12,7 +12,6 @@ struct Node;
 
 class CharacterPathfinding {
     const bool *aiGrid;
-    float aiCellSize;
     glm::ivec2 startGridPos {};
     glm::ivec2 endGridPos {};
     glm::ivec2 gridIndex {};
