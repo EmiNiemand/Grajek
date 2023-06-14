@@ -6,6 +6,7 @@
 #include "glm/vec2.hpp"
 
 class Button;
+class Image;
 
 class ShopMenu : public Menu {
 private:
@@ -13,6 +14,7 @@ private:
     short secondInstrumentIndex = 0, thirdInstrumentIndex = 0, fourthInstrumentIndex = 0;
 
 public:
+    std::shared_ptr<Image> buyImage;
     bool triggerActive = false;
 
 public:

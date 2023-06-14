@@ -194,8 +194,8 @@ void OptionsMenu::ChangeValue(float y) {
             windowResolutionIterator = 3;
             button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolution")->GetComponent<Button>();
             button->ChangePosition(button->x, windowResolutionButtonY[windowResolutionIterator]);
-            OptionsManager::GetInstance()->width = mode->width;
-            OptionsManager::GetInstance()->height = mode->height;
+            OptionsManager::GetInstance()->width = 1920;
+            OptionsManager::GetInstance()->height = 1080;
             PostProcessingManager::GetInstance()->WindowResize();
             glfwSetWindowMonitor(GloomEngine::GetInstance()->window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
             windowFullScreenIterator++;

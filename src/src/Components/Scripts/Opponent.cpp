@@ -30,7 +30,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         sample->SetPositionOffset(parent->transform->GetLocalPosition());
     }
     satisfaction = satisfaction1;
-    bet = bet1 * 2;
+    bet = bet1;
 
     // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
@@ -123,11 +123,15 @@ void Opponent::Update() {
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             if (button1->isActive) {
+                if (playerManager->GetCash() < bet) {
+                    dialogue->texts[1].text2 = "Nie masz tyle kasy.";
+                    rejectDialogueActive = true;
+                    return;
+                }
                 dialogue->texts[1].text2 = "Walcz!";
                 acceptDialogueActive = true;
                 return;
             } else {
-                dialogue->image->enabled = false;
                 dialogue->texts[1].text2 = "Nie to nie.";
                 rejectDialogueActive = true;
                 return;

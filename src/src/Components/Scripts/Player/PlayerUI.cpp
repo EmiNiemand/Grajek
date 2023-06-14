@@ -116,6 +116,7 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         auto thirdInstrument = shopMenuComponent->Menu::AddButton("ThirdInstrument", 1525, 250,"UI/Sklep/LaunbhPad.png","UI/Sklep/LaunbhPadZRamka.png");
         auto fourthInstrument = shopMenuComponent->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png","UI/Sklep/GitaraZRamka.png");
         shopMenuComponent->Menu::AddImage("ExitImage", 1600, 50, "UI/Sklep/Przycisk2.png");
+        shopMenuComponent->buyImage = shopMenuComponent->Menu::AddImage("BuyImage", 1300, 50, "UI/Sklep/buyInstrument.png");
         shopMenuComponent->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
         shopMenuComponent->Menu::AddImage("ShopHead", 700, 630, "UI/Sklep/Head.png", -0.05f);
         firstInstrumentCost->GetParent()->SetParent(firstInstrument->GetParent());
