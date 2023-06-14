@@ -15,7 +15,6 @@
 
 constexpr float SATISFACTION_REDUCER = 2.0f;
 constexpr float PREVIOUS_SESSION_TIMEOUT = 5.0f;
-constexpr float DESPAWN_TIMEOUT = 7.5f;
 
 class GameObject;
 class CharacterAnimations;
@@ -33,6 +32,7 @@ class CharacterLogic : public Component {
     std::shared_ptr<CharacterMovement> characterMovement = nullptr;
     std::shared_ptr<Indicator> characterIndicator = nullptr;
     // Player values and modifiers
+    glm::vec3 playerPosition {};
     InstrumentName playerInstrumentName {};
     MusicGenre playerGenre {};
     std::shared_ptr<MusicPattern> playerPattern = nullptr;
@@ -45,7 +45,6 @@ class CharacterLogic : public Component {
     MusicGenre enemyGenre {};
     std::shared_ptr<MusicPattern> enemyPattern = nullptr;
     // Satisfaction
-    float minSatisfaction = 0.0f;
     float lowerSatisfactionLimit = 0.0f;
     float middleSatisfactionLimit = 0.0f;
     float upperSatisfactionLimit = 0.0f;

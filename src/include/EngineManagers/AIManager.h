@@ -13,6 +13,9 @@
 #include "Components/AI/CharacterPathfinding.h"
 
 constexpr int AI_GRID_SIZE = 300;
+constexpr float AI_AWARE_DISTANCE = 30.0f;
+constexpr int AI_SPAWN_GRID_DISTANCE = 25;
+constexpr float AI_DESPAWN_TIMEOUT = 3.75f;
 
 class GloomEngine;
 class CharacterLogic;
@@ -20,6 +23,8 @@ class CharacterMovement;
 class CharacterPathfinding;
 
 class AIManager {
+    std::shared_ptr<Transform> playerTransform = nullptr;
+    InstrumentName currentPlayerInstrument {};
     bool playerIsPlaying = false;
     bool enemyIsPlaying = false;
     int currentCharacters = 0;
@@ -31,7 +36,7 @@ class AIManager {
     inline static AIManager* aiManager;
     explicit AIManager();
 
-    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int* currentCharacters,
+    static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
                                 const int& maxCharacters, const int& spawnDelay);
 
 public:
@@ -42,6 +47,7 @@ public:
     std::shared_ptr<CharacterPathfinding> pathfinding;
     const float aiCellSize = 1.0f;
     bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
+    bool isInitializing = true;
 
     AIManager(AIManager &other) = delete;
     void operator=(const AIManager&) = delete;
@@ -51,6 +57,7 @@ public:
     void Free();
 
     void InitializeSpawner(const int& min, const int& max, const int& delay);
+    [[nodiscard]] const glm::vec3 GetPlayerPosition() const;
     void NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);

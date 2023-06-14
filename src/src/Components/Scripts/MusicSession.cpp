@@ -170,13 +170,13 @@ void MusicSession::PatternTimeout() {
     recordedSounds.clear();
     potentialPatterns.clear();
 
-    playerManager->PlayedPattern(nullptr);
+    playerManager->PlayedPattern(nullptr, 0);
     //TODO: play timeout sound
 }
 
 void MusicSession::PatternFail() {
     sessionUI->UpdateAccuracy(0);
-    playerManager->PlayedPattern(nullptr);
+    playerManager->PlayedPattern(nullptr, 0);
     //TODO: play some kind of failure sound (record scratch)
 }
 

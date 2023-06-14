@@ -41,15 +41,21 @@ void AudioManager::InitializeAudio() {
     if (audioDevice) {
         audioContext = alcCreateContext(audioDevice, nullptr);
         alcMakeContextCurrent(audioContext);
+
+        SetAudioSettings();
+
+        spdlog::info("Successfully initialized OpenAL-Soft on " +
+                     (std::string)alcGetString(audioDevice, ALC_ALL_DEVICES_SPECIFIER));
+
+        isInitialized = true;
     }
 
+    deviceChanger = std::jthread(CheckAudioDevice, &audioDevice, std::ref(isInitialized));
+}
+
+void AudioManager::SetAudioSettings() {
     alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
     alDisable(AL_STOP_SOURCES_ON_DISCONNECT_SOFT);
-
-    spdlog::info("Successfully initialized OpenAL-Soft on " +
-                (std::string)alcGetString(audioDevice, ALC_ALL_DEVICES_SPECIFIER));
-
-    deviceChanger = std::jthread(CheckAudioDevice, &audioDevice);
 }
 
 /**
@@ -87,7 +93,7 @@ void AudioManager::Free() {
  * @param token - stop token
  * @param device - pointer to device pointer
  */
-void AudioManager::CheckAudioDevice(const std::stop_token& token, ALCdevice** device) {
+void AudioManager::CheckAudioDevice(const std::stop_token& token, ALCdevice** device, bool& isInitialized) {
     using namespace std::chrono;
 
     ALCint status;
@@ -103,14 +109,25 @@ void AudioManager::CheckAudioDevice(const std::stop_token& token, ALCdevice** de
             if (!alcResetDeviceSOFT(*device, nullptr)) {
                 spdlog::error("Audio device reconnecting failed! Trying to open new device...");
 
-                if (!alcReopenDeviceSOFT(*device, nullptr, nullptr))
+                if (!alcReopenDeviceSOFT(*device, nullptr, nullptr)) {
                     spdlog::error("Opening new audio device failed! Trying again in 500 ms...");
-                else
+                } else {
                     spdlog::info("Successfully opened new device on " +
-                                 (std::string)alcGetString(*device, ALC_ALL_DEVICES_SPECIFIER));
+                                 (std::string) alcGetString(*device, ALC_ALL_DEVICES_SPECIFIER));
+
+                    if (!isInitialized) {
+                        isInitialized = true;
+                        SetAudioSettings();
+                    }
+                }
             } else {
                 spdlog::info("Successfully reconnected OpenAL-Soft on " +
                              (std::string)alcGetString(*device, ALC_ALL_DEVICES_SPECIFIER));
+
+                if (!isInitialized) {
+                    isInitialized = true;
+                    SetAudioSettings();
+                }
             }
         }
 

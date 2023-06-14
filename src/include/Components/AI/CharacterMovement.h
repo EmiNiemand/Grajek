@@ -29,6 +29,7 @@ class CharacterMovement : public Component {
     AI_MOVEMENTSTATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     float timeSinceLastPoint = 0.0f;
+    bool isInitializing = false;
     // Collisions
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
     float collisionGridSize = 0.0f;
@@ -43,7 +44,6 @@ class CharacterMovement : public Component {
     // Paths and points
     std::shared_ptr<CharacterPathfinding> pathfinding = nullptr;
     const bool *aiGrid = nullptr;
-    float aiCellSize = 1.0f;
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
     glm::vec3 playerPosition {};
@@ -62,6 +62,7 @@ class CharacterMovement : public Component {
 
     inline void ApplyForces(const glm::vec3 &force);
     inline void ApplyRotation(const glm::vec3 &force);
+    void SetRandomSpawnPointNearPlayer();
     void SetRandomSpawnPoint();
     const glm::vec3 GetRandomPoint();
     void SetRandomEndPoint();

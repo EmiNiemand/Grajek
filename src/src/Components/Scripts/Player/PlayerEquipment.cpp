@@ -38,7 +38,7 @@ std::set<InstrumentName> PlayerEquipment::GetInstrumentNames() {
 }
 
 void PlayerEquipment::AddReward(float crowdSatisfaction) {
-    cash += (int)(crowdSatisfaction * maxCashReward * RandomnessManager::GetInstance()->GetFloat(1.0f, 3.0f));
+    cash += (int)(crowdSatisfaction * maxCashReward);
 }
 
 int PlayerEquipment::GetCash() const { return cash; }

@@ -302,7 +302,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat, floa
 
     float satisfaction = AIManager::GetInstance()->GetCombinedPlayerSatisfaction();
 
-    equipment->AddReward(accuracy * satisfaction / 100.0f);
+    equipment->AddReward(accuracy / 10.0f * satisfaction / 100.0f);
 
      if(sessionOpponent)
          sessionOpponent->PlayerPlayedPattern(satisfaction);

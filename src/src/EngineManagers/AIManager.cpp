@@ -36,10 +36,19 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
 
+    isInitializing = true;
     currentCharacters = min;
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
+
+    /*
+     * if gracz znajduje sie w strefie przed dzielnica jazzowa
+     *
+     * wtedy waga dla jazzmanow jest zwiekszona z 3 do 6
+     *
+     */
 
     int random;
 
@@ -52,7 +61,9 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
             Prefab::Instantiate<Default>();
     }
 
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, &currentCharacters, maxCharacters, spawnDelay);
+    isInitializing = false;
+
+    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters, spawnDelay);
 }
 
 void AIManager::Free() {
@@ -61,6 +72,12 @@ void AIManager::Free() {
         characterSpawner.join();
     }
     charactersLogics.clear();
+    charactersMovements.clear();
+    playerTransform = nullptr;
+}
+
+const glm::vec3 AIManager::GetPlayerPosition() const {
+    return playerTransform->GetLocalPosition();
 }
 
 /**
@@ -70,9 +87,10 @@ void AIManager::Free() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    mutex.lock();
-
     playerIsPlaying = true;
+    currentPlayerInstrument = ins;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerInstrumentAndGenre(ins, gen);
@@ -87,9 +105,9 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyPlayerStopsPlaying() {
-    mutex.lock();
-
     playerIsPlaying = false;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics)
         ch.second->SetPlayerPlayingStatus(false);
@@ -118,6 +136,20 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
  */
 const float AIManager::GetCombinedPlayerSatisfaction() {
     float satisfaction = 0.0f;
+    // TODO: improve varied satisfaction
+//    float satisfactionModifier;
+//
+//    switch (currentPlayerInstrument) {
+//        case Clap:
+//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(10, 45);
+//            break;
+//        case Drums:
+//            satisfactionModifier = 63.0f;
+//            break;
+//        default:
+//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(0, 45);
+//            break;
+//    }
 
     mutex.lock();
 
@@ -125,7 +157,7 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
         satisfaction += ch.second->GetPlayerSatisfaction();
 
     if (!charactersLogics.empty())
-        satisfaction /= (float)charactersLogics.size();
+        satisfaction /= (float)charactersLogics.size(); // * satisfactionModifier / 100.0f;
 
     mutex.unlock();
 
@@ -139,9 +171,9 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    mutex.lock();
-
     enemyIsPlaying = true;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics) {
         ch.second->SetEnemyInstrumentAndGenre(ins, gen);
@@ -156,9 +188,9 @@ void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicG
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyEnemyStopsPlaying() {
-    mutex.lock();
-
     enemyIsPlaying = false;
+
+    mutex.lock();
 
     for (auto&& ch : charactersLogics)
         ch.second->SetEnemyPlayingStatus(false);
@@ -216,9 +248,9 @@ const int AIManager::GetMaxCharacters() const {
  * @param componentId - component id
  */
 void AIManager::RemoveCharacter(const std::shared_ptr<GameObject>& character) {
-    mutex.lock();
-
     GloomEngine::GetInstance()->AddGameObjectToDestroyBuffer(character);
+
+    mutex.lock();
 
     --currentCharacters;
 
@@ -262,7 +294,7 @@ void AIManager::RemoveCharacterMovement(const int& componentId) {
  * @param maxCharacters - max amount of characters
  * @param spawnDelay - time delay between spawns
  */
-void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int* currentCharacters,
+void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
                                 const int& maxCharacters, const int& spawnDelay) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
@@ -270,7 +302,7 @@ void AIManager::SpawnCharacters(const std::stop_token& token, const bool& player
     std::shared_ptr<GameObject> ch;
 
     while(!token.stop_requested()) {
-        if (*currentCharacters < maxCharacters) {
+        if (currentCharacters < maxCharacters) {
             random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
             if (random <= 3)
@@ -281,7 +313,7 @@ void AIManager::SpawnCharacters(const std::stop_token& token, const bool& player
             if (playerIsPlaying)
                 ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 
-            ++(*currentCharacters);
+            ++currentCharacters;
         }
 
         std::this_thread::sleep_for(delay);

@@ -407,8 +407,8 @@ void BoxCollider::SetAIGridPoints(const glm::ivec2* points) {
         if (maxY < points[i].y) maxY = points[i].y;
     }
 
-    for (int x = minX - 1; x <= maxX + 1; ++x) {
-        for (int y = minY - 1; y <= maxY + 1; ++y) {
+    for (int x = minX - 2; x <= maxX + 2; ++x) {
+        for (int y = minY - 2; y <= maxY + 2; ++y) {
             AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = true;
         }
     }

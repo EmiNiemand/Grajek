@@ -28,8 +28,7 @@ void CharacterLogic::Start() {
     characterAnimator->LoadAnimationModel(modelPath);
     characterAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     characterAnimations = std::make_shared<CharacterAnimations>(characterAnimator);
-    minSatisfaction = RandomnessManager::GetInstance()->GetFloat(30, 45);
-    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 35);
+    lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
     middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
     Component::Start();
@@ -79,17 +78,17 @@ void CharacterLogic::AIUpdate() {
     if (logicState == AlertedByPlayer || logicState == AlertedByEnemy) {
         CalculateSatisfaction();
 
-        if (playerSatisfaction > minSatisfaction) {
+        if (playerSatisfaction > lowerSatisfactionLimit) {
 //            characterIndicator->Indicate();
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
-        } else if (enemySatisfaction > minSatisfaction) {
+        } else if (enemySatisfaction > lowerSatisfactionLimit) {
 //            characterIndicator->Indicate();
             logicState = MovingToEnemy;
             characterMovement->SetState(SettingPathToEnemy);
         }
     } else if (logicState == WalkingAway) {
-        if (playerSatisfaction > minSatisfaction) {
+        if (playerSatisfaction > middleSatisfactionLimit) {
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
         }
@@ -111,7 +110,7 @@ void CharacterLogic::AIUpdate() {
     if (!parent->isOnFrustum) {
         timeSinceOnFrustum += GloomEngine::GetInstance()->AIDeltaTime;
 
-        if (timeSinceOnFrustum > DESPAWN_TIMEOUT) {
+        if (timeSinceOnFrustum > AI_DESPAWN_TIMEOUT) {
             timeSinceOnFrustum = 0.0f;
             AIManager::GetInstance()->RemoveCharacter(parent);
         }
@@ -135,6 +134,7 @@ void CharacterLogic::OnDestroy() {
     favGenres.clear();
     favPatterns.clear();
     playerPattern = nullptr;
+    enemyPattern = nullptr;
     Component::OnDestroy();
 }
 
@@ -195,10 +195,14 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
  */
 void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
     if (isPlayerPlaying) {
-        logicState = AlertedByPlayer;
+        playerPosition = AIManager::GetInstance()->GetPlayerPosition();
 
-        for (auto& pat : favPatterns)
-            pat.second = 0.0f;
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetGlobalPosition())) {
+            logicState = AlertedByPlayer;
+
+            for (auto &pat: favPatterns)
+                pat.second = 0.0f;
+        }
     } else {
         if (logicState != Wandering)
             characterMovement->SetState(ReturningToPreviousTarget);
@@ -213,6 +217,9 @@ void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
  * @returns float - player satisfaction
  */
 const float CharacterLogic::GetPlayerSatisfaction() const {
+    if (playerSatisfaction < lowerSatisfactionLimit)
+        return 0.0f;
+
     return playerSatisfaction;
 }
 
