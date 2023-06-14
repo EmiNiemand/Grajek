@@ -19,6 +19,7 @@ constexpr float DISTANCE_TO_COLLISION = 2.0f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.8f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.3f;
 constexpr float MOVEMENT_TIMEOUT = 3.0f;
+constexpr float MOVEMENT_SMOOTHING = 0.5f;
 
 class GameObject;
 class Rigidbody;
@@ -28,7 +29,7 @@ class CharacterPathfinding;
 class CharacterMovement : public Component {
     AI_MOVEMENTSTATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
-    float timeSinceLastPoint = 0.0f;
+    float timeSinceLastPlayerPoint = 0.0f;
     bool isInitializing = false;
     // Collisions
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
@@ -58,15 +59,14 @@ class CharacterMovement : public Component {
     float speed = 0.0f;
     float maxSpeed = 0.08f;
     float speedMultiplier = 1.0f;
-    float smoothingParam = 0.5f;
     float rotationAngle = 0.0f;
 
     inline void ApplyForces(const glm::vec3 &force);
     inline void ApplyRotation(const glm::vec3 &force);
     void SetRandomSpawnPointNearPlayer();
     void SetRandomSpawnPoint();
-    const glm::vec3 GetRandomPoint();
     void SetRandomEndPoint();
+    const glm::vec3 GetRandomPoint();
     void SetNewPathToPlayer();
     void ReturnToPreviousPath();
     void SetSubEndPoints();
@@ -80,7 +80,7 @@ public:
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
-    void Awake() override;
+    void Start() override;
     void FixedUpdate() override;
     void AIUpdate() override;
     void OnCreate() override;

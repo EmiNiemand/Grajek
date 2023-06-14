@@ -6,6 +6,7 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
@@ -41,20 +42,20 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
+    glm::vec3 playerPosition = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->
+            transform->GetLocalPosition();
 
-    /*
-     * if gracz znajduje sie w strefie przed dzielnica jazzowa
-     *
-     * wtedy waga dla jazzmanow jest zwiekszona z 3 do 6
-     *
-     */
-
-    int random;
+    int random, jazzManSpawnRate;
 
     for (int i = 0; i < min; i++) {
         random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-        if (random <= 3)
+        if (glm::distance(playerPosition, JAZZ_HOOD_CENTER) < JAZZ_HOOD_DISTANCE)
+            jazzManSpawnRate = 2 * JAZZ_MAN_SPAWN_RATE;
+        else
+            jazzManSpawnRate = JAZZ_MAN_SPAWN_RATE;
+
+        if (random <= jazzManSpawnRate)
             Prefab::Instantiate<JazzTrumpet>();
         else
             Prefab::Instantiate<Default>();
@@ -291,14 +292,23 @@ void AIManager::SpawnCharacters(const std::stop_token& token, const bool& player
                                 const int& maxCharacters, const int& spawnDelay) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
-    int random;
+    int random, jazzManSpawnRate;
     std::shared_ptr<GameObject> ch;
+    std::shared_ptr<Transform> playerTransform = GloomEngine::GetInstance()->
+            FindGameObjectWithName("Player")->transform;
+    glm::vec3 playerPosition {};
 
     while(!token.stop_requested()) {
         if (currentCharacters < maxCharacters) {
+            playerPosition = playerTransform->GetLocalPosition();
             random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-            if (random <= 3)
+            if (glm::distance(playerPosition, JAZZ_HOOD_CENTER) < JAZZ_HOOD_DISTANCE)
+                jazzManSpawnRate = 2 * JAZZ_MAN_SPAWN_RATE;
+            else
+                jazzManSpawnRate = JAZZ_MAN_SPAWN_RATE;
+
+            if (random <= jazzManSpawnRate)
                 ch = Prefab::Instantiate<JazzTrumpet>();
             else
                 ch = Prefab::Instantiate<Default>();

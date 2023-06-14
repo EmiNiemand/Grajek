@@ -130,13 +130,10 @@ void CharacterLogic::OnDestroy() {
     characterAnimations.reset();
     characterMovement.reset();
     characterIndicator.reset();
-    playerPattern.reset();
     favInstrumentsNames.clear();
     favGenres.clear();
     favPatterns.clear();
-    playerPattern = nullptr;
     playerTransform = nullptr;
-    enemyPattern = nullptr;
     Component::OnDestroy();
 }
 
@@ -166,13 +163,11 @@ void CharacterLogic::SetPlayerInstrumentAndGenre(const InstrumentName& instrumen
  * @param pattern - music pattern
  */
 void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& pattern) {
-    playerPattern = pattern;
-
-    if (playerPattern != nullptr) {
+    if (pattern != nullptr) {
         bool isFavorite = false;
 
         for (auto& pat : favPatterns) {
-            if (pat.first == playerPattern->id) {
+            if (pat.first == pattern->id) {
                 playerSatisfaction += 3.0f - pat.second;
                 pat.second = std::clamp(pat.second + 0.5f, 0.0f, 2.5f);
                 isFavorite = true;
@@ -242,13 +237,11 @@ void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &instrument
  * @param pattern - music pattern
  */
 void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pattern) {
-    enemyPattern = pattern;
-
-    if (enemyPattern != nullptr) {
+    if (pattern != nullptr) {
         bool isFavorite = false;
 
         for (auto& pat : favPatterns) {
-            if (pat.first == enemyPattern->id)
+            if (pat.first == pattern->id)
                 isFavorite = true;
         }
 

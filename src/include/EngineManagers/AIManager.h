@@ -15,8 +15,12 @@
 constexpr int AI_GRID_SIZE = 600;
 constexpr float AI_AWARE_DISTANCE = 30.0f;
 constexpr int AI_SPAWN_GRID_DISTANCE = 25;
-constexpr float AI_DESPAWN_TIMEOUT = 3.75f;
+constexpr float AI_DESPAWN_TIMEOUT = 2.0f;
 constexpr float AI_CELL_SIZE = 1.0f;
+
+constexpr glm::vec3 JAZZ_HOOD_CENTER {-64.0f, 0, -24.0f};
+constexpr float JAZZ_HOOD_DISTANCE = 75.0f;
+constexpr int JAZZ_MAN_SPAWN_RATE = 3;
 
 class GloomEngine;
 class CharacterLogic;
