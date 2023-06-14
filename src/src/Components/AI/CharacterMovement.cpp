@@ -28,10 +28,12 @@ void CharacterMovement::Start() {
     rigidbody = parent->GetComponent<Rigidbody>();
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     subEndPoints.resize(AI_GRID_SIZE / 10);
+
     if (isInitializing)
         SetRandomSpawnPointNearPlayer();
     else
         SetRandomSpawnPoint();
+
     Component::Start();
 }
 
@@ -49,9 +51,9 @@ void CharacterMovement::FixedUpdate() {
         cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
 
         if (pathIterator < 6 && subEndPointsIterator < 0)
-            speed = std::lerp(speed, 0.0f, MOVEMENT_SMOOTHING);
+            speed = std::lerp(speed, 0.0f, MOVEMENT_SMOOTHING_PARAM);
         else
-            speed = std::lerp(speed, maxSpeed, MOVEMENT_SMOOTHING);
+            speed = std::lerp(speed, MOVEMENT_MAX_SPEED, MOVEMENT_SMOOTHING_PARAM);
 
         steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
 
@@ -92,7 +94,6 @@ void CharacterMovement::FixedUpdate() {
             timeSinceLastPlayerPoint = 0.0f;
         }
     }
-
 
     if (movementState == NearPlayerPosition) {
         steeringForce = glm::normalize(playerPosition - currentPosition);
@@ -328,7 +329,7 @@ const glm::vec3 CharacterMovement::GetRandomPoint() {
     else if (rotationAngle > 135.0f && rotationAngle < 225.0f)
         maxY = newEndPoint.y;
     else if (rotationAngle > 45.0f && rotationAngle < 135.0f)
-         maxX = newEndPoint.x;
+        maxX = newEndPoint.x;
     else
         minY = newEndPoint.y;
 
@@ -354,12 +355,12 @@ void CharacterMovement::SetNewPathToPlayer() {
 
     glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
 
-    int minX = -2, maxX = 2, minY = -2, maxY = 2;
+    int boundariesXY = 2;
     bool isAvailable = false;
 
-    for (int y = minY; y <= maxY; y += 2) {
-        for (int x = minX; x <= maxX; x += 2) {
-            if (y == minY || y == maxY || x == minX || x == maxX) {
+    for (int y = -boundariesXY; y <= boundariesXY; y += 2) {
+        for (int x = -boundariesXY; x <= boundariesXY; x += 2) {
+            if (y == -boundariesXY || y == boundariesXY || x == -boundariesXY || x == boundariesXY) {
                 newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
 
                 if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
@@ -373,16 +374,14 @@ void CharacterMovement::SetNewPathToPlayer() {
         if (isAvailable)
             break;
 
-        if (y >= maxY) {
-            minX -= 2, maxX += 2, minY -= 2, maxY += 2;
-            y = minY;
+        if (y >= boundariesXY) {
+            boundariesXY += 2;
+            y = -boundariesXY;
         }
     }
 
     speedMultiplier = 2.0f;
     endPoint = {newEndPoint.x, 0, newEndPoint.y};
-
-    SetSubEndPoints();
 }
 
 /**
@@ -414,9 +413,8 @@ void CharacterMovement::SetSubEndPoints() {
         return;
 
     glm::ivec2 newEndPoint = {}, mulEndPoint = {};
-    int X = 1, Y = 1;
-    float multiplier = 1.0f / ((float)subPointsAmount + 1.0f);
-    float multiplierCounter = (float)subPointsAmount - multiplier;
+    int boundariesXY = 1;
+    float multiplier = 1.0f / ((float)subPointsAmount + 1.0f), multiplierCounter = (float)subPointsAmount - multiplier;
 
     while (multiplierCounter > 0.1f && subEndPointsIterator > 1) {
         --subEndPointsIterator;
@@ -425,23 +423,23 @@ void CharacterMovement::SetSubEndPoints() {
 
         if (aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
             while (true) {
-                newEndPoint = {mulEndPoint.x + X, mulEndPoint.y + Y};
+                newEndPoint = {mulEndPoint.x + boundariesXY, mulEndPoint.y + boundariesXY};
                 if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
-                newEndPoint = {mulEndPoint.x - X, mulEndPoint.y + Y};
+                newEndPoint = {mulEndPoint.x - boundariesXY, mulEndPoint.y + boundariesXY};
                 if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
-                newEndPoint = {mulEndPoint.x + X, mulEndPoint.y - Y};
+                newEndPoint = {mulEndPoint.x + boundariesXY, mulEndPoint.y - boundariesXY};
                 if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
-                newEndPoint = {mulEndPoint.x - X, mulEndPoint.y - Y};
+                newEndPoint = {mulEndPoint.x - boundariesXY, mulEndPoint.y - boundariesXY};
                 if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
                     break;
 
-                ++X, ++Y;
+                ++boundariesXY;
             }
         }
 

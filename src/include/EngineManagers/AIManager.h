@@ -12,24 +12,30 @@
 #include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterPathfinding.h"
 
+// Global AI consts
 constexpr int AI_GRID_SIZE = 600;
 constexpr float AI_AWARE_DISTANCE = 30.0f;
 constexpr int AI_SPAWN_GRID_DISTANCE = 25;
 constexpr float AI_DESPAWN_TIMEOUT = 2.0f;
 constexpr float AI_CELL_SIZE = 1.0f;
-
-constexpr glm::vec3 JAZZ_HOOD_CENTER {-64.0f, 0, -24.0f};
+// Jazz Hood consts
 constexpr float JAZZ_HOOD_DISTANCE = 75.0f;
-constexpr int JAZZ_MAN_SPAWN_RATE = 3;
+constexpr int JAZZ_MAN_INCREASED_SPAWN_RATE = 5;
+constexpr int JAZZ_MAN_DEFAULT_SPAWN_RATE = 2;
 
 class GloomEngine;
 class CharacterLogic;
 class CharacterMovement;
 class CharacterPathfinding;
+class BoxCollider;
 
 class AIManager {
+    // Hoods
+    glm::vec3 jazzHoodCenter {};
+    // Player and enemy status
     bool playerIsPlaying = false;
     bool enemyIsPlaying = false;
+    // Settings
     int currentCharacters = 0;
     int maxCharacters = 0;
     int spawnDelay = 0;
@@ -40,7 +46,7 @@ class AIManager {
     explicit AIManager();
 
     static void SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
-                                const int& maxCharacters, const int& spawnDelay);
+                                const int& maxCharacters, const int& spawnDelay, const glm::vec3& jazzHoodCenter);
 
 public:
     //TODO: Implement!
@@ -71,6 +77,7 @@ public:
     void RemoveCharacter(const std::shared_ptr<GameObject>& gameObject);
     void RemoveCharacterLogic(const int& componentId);
     void RemoveCharacterMovement(const int &componentId);
+
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H

@@ -1,4 +1,24 @@
 [
+  {
+    "coliderOffset.x": 0.0,
+    "coliderOffset.y": 1.0,
+    "coliderOffset.z": 0.0,
+    "coliderSize.x": 1.0,
+    "coliderSize.y": 1.0,
+    "coliderSize.z": 1.0,
+    "modelPath": "",
+    "name": "InvisibleBlock",
+    "position.x": -63.0,
+    "position.y": 0.01,
+    "position.z": -27.0,
+    "rotation.x": 0.0,
+    "rotation.y": 0.0,
+    "rotation.z": 0.0,
+    "scale.x": 1.0,
+    "scale.y": 1.0,
+    "scale.z": 1.0,
+    "uniqueName": "JazzHoodCenter"
+  },
 {
 "coliderOffset.x": 0.0,
 "coliderOffset.y": 4.0,

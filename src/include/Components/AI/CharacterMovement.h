@@ -14,12 +14,15 @@
 #include <unordered_map>
 #include <numbers>
 
-constexpr float DISTANCE_TO_POINT = 1.8f;
-constexpr float DISTANCE_TO_COLLISION = 2.0f;
-constexpr float AVOIDANCE_ROTATION_FACTOR = 1.8f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.3f;
+// Forces consts
+constexpr float DISTANCE_TO_POINT = 2.0f;
+constexpr float DISTANCE_TO_COLLISION = 1.65f;
+constexpr float AVOIDANCE_ROTATION_FACTOR = 1.75f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.25f;
+// Movement consts
 constexpr float MOVEMENT_TIMEOUT = 3.0f;
-constexpr float MOVEMENT_SMOOTHING = 0.5f;
+constexpr float MOVEMENT_SMOOTHING_PARAM = 0.5f;
+constexpr float MOVEMENT_MAX_SPEED = 0.075f;
 
 class GameObject;
 class Rigidbody;
@@ -57,7 +60,6 @@ class CharacterMovement : public Component {
     // Rigidbody parameters
     std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
-    float maxSpeed = 0.08f;
     float speedMultiplier = 1.0f;
     float rotationAngle = 0.0f;
 

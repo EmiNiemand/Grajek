@@ -305,7 +305,6 @@ void BoxCollider::HandleCollision(const std::shared_ptr<BoxCollider> &other) {
     }
 }
 
-
 void BoxCollider::SetGridPoints() {
     glm::mat4 model = GetModelMatrix();
 

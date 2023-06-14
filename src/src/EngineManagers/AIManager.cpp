@@ -42,6 +42,8 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
+    jazzHoodCenter = GloomEngine::GetInstance()->FindGameObjectWithName("JazzHoodCenter")->
+            transform->GetLocalPosition();
     glm::vec3 playerPosition = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->
             transform->GetLocalPosition();
 
@@ -50,10 +52,10 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     for (int i = 0; i < min; i++) {
         random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-        if (glm::distance(playerPosition, JAZZ_HOOD_CENTER) < JAZZ_HOOD_DISTANCE)
-            jazzManSpawnRate = 2 * JAZZ_MAN_SPAWN_RATE;
+        if (glm::distance(playerPosition, jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
+            jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
         else
-            jazzManSpawnRate = JAZZ_MAN_SPAWN_RATE;
+            jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
 
         if (random <= jazzManSpawnRate)
             Prefab::Instantiate<JazzTrumpet>();
@@ -63,7 +65,8 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 
     isInitializing = false;
 
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters, spawnDelay);
+    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters,
+                                    spawnDelay, jazzHoodCenter);
 }
 
 void AIManager::Free() {
@@ -289,24 +292,22 @@ void AIManager::RemoveCharacterMovement(const int& componentId) {
  * @param spawnDelay - time delay between spawns
  */
 void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
-                                const int& maxCharacters, const int& spawnDelay) {
+                                const int& maxCharacters, const int& spawnDelay, const glm::vec3& jazzHoodCenter) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
     int random, jazzManSpawnRate;
     std::shared_ptr<GameObject> ch;
     std::shared_ptr<Transform> playerTransform = GloomEngine::GetInstance()->
             FindGameObjectWithName("Player")->transform;
-    glm::vec3 playerPosition {};
 
     while(!token.stop_requested()) {
         if (currentCharacters < maxCharacters) {
-            playerPosition = playerTransform->GetLocalPosition();
             random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-            if (glm::distance(playerPosition, JAZZ_HOOD_CENTER) < JAZZ_HOOD_DISTANCE)
-                jazzManSpawnRate = 2 * JAZZ_MAN_SPAWN_RATE;
+            if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
+                jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
             else
-                jazzManSpawnRate = JAZZ_MAN_SPAWN_RATE;
+                jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
 
             if (random <= jazzManSpawnRate)
                 ch = Prefab::Instantiate<JazzTrumpet>();
