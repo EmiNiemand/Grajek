@@ -11,21 +11,19 @@ class Instrument;
 
 class PlayerEquipment : public Component {
 private:
-	inline static int maxCashReward = 5;
-	inline static int maxRepReward = 10;
+	inline static int maxCashReward = 4;
 
 public:
     std::set<std::shared_ptr<Instrument>> instruments;
 
     int cash = 0;
-    int rep = 0;
 
     PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id);
     ~PlayerEquipment() override;
 
     void OnDestroy() override;
 
-    void Setup(int startCash=0, int startRep=0);
+    void Setup(int startCash=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     std::shared_ptr<Instrument> GetInstrumentWithName(InstrumentName name);
     std::set<InstrumentName> GetInstrumentNames();
@@ -33,7 +31,6 @@ public:
     void AddReward(float crowdSatisfaction);
 
     int GetCash() const;
-    int GetRep() const;
 };
 
 

@@ -134,10 +134,10 @@ void Text::Draw() {
         GLfloat w = ch.Size.x;
         GLfloat h = ch.Size.y;
         // Update VBO for each character
-        this->mesh->vertices[0].position = {xpos/960-1,	   (ypos+h)/540-1, -1};
-        this->mesh->vertices[1].position = {xpos/960-1,	   ypos/540-1, -1};
-        this->mesh->vertices[2].position = {(xpos+w)/960-1, (ypos+h)/540-1, -1};
-        this->mesh->vertices[3].position = {(xpos+w)/960-1, ypos/540-1, -1};
+        this->mesh->vertices[0].position = {xpos/960-1,	   (ypos+h)/540-1, z};
+        this->mesh->vertices[1].position = {xpos/960-1,	   ypos/540-1, z};
+        this->mesh->vertices[2].position = {(xpos+w)/960-1, (ypos+h)/540-1, z};
+        this->mesh->vertices[3].position = {(xpos+w)/960-1, ypos/540-1, z};
 
         // Render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);

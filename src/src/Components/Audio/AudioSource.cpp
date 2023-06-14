@@ -20,6 +20,10 @@ void AudioSource::Start() {
 
     if (player != nullptr)
         playerPos = player->transform;
+
+    if (startWithTheGame)
+        alSourcePlay(sourceId);
+
     Component::Start();
 }
 
@@ -81,6 +85,15 @@ void AudioSource::Free() {
     alSourcei(sourceId, AL_BUFFER, NULL);
     alDeleteBuffers(4, buffersIds);
     alDeleteSources(1, &sourceId);
+}
+
+/**
+ * @annotation
+ * Sets audio to play when calling Start() method (e.g. after loading the game).
+ * @param state - true or false
+ */
+void AudioSource::PlaySoundAfterStart(const bool &state) {
+    startWithTheGame = state;
 }
 
 /**
@@ -257,4 +270,6 @@ void AudioSource::SetCone(const glm::vec3& direction, const glm::vec2& cone) con
     alSourcef(sourceId, AL_CONE_OUTER_ANGLE, cone.y);
 }
 
-float AudioSource::GetGain() const { return gain; }
+const float AudioSource::GetGain() const {
+    return gain;
+}

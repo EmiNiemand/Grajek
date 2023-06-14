@@ -79,7 +79,7 @@ void PlayerManager::Awake() {
 
     // Set up Equipment
     // ----------------
-    equipment->Setup(0, 0);
+    equipment->Setup(0);
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Set up Player's UI
@@ -270,6 +270,7 @@ void PlayerManager::OnSessionToggle() {
         session->Stop();
         session.reset();
         AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+        animator->SetAnimation("MainHero/MainHeroIdle.dae");
         return;
     }
     if (sessionStarter) {
@@ -320,9 +321,11 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     sessionStarter->Stop();
     sessionStarter.reset();
     activeMenu.reset();
+    auto chosenInstrument = equipment->GetInstrumentWithName(instrument);
     session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
-    session->Setup(equipment->GetInstrumentWithName(instrument), sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
-    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, equipment->GetInstrumentWithName(instrument)->genre);
+    session->Setup(chosenInstrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+    AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, chosenInstrument->genre);
+    animator->SetAnimation("MainHero/MainHero"+chosenInstrument->NameToString()+".dae");
 
     if (sessionOpponent)
         sessionOpponent->PlayerStartedMusicSession();
@@ -438,7 +441,7 @@ void PlayerManager::PollInput() {
 }
 
 void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
-    equipment->Setup(data->money, data->reputation);
+    equipment->Setup(data->money);
     playerUI->UpdateCash(data->money, false);
     parent->transform->SetLocalPosition(data->playerPosition);
     parent->UpdateSelfAndChildren();

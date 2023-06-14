@@ -1,9 +1,12 @@
 {
-"money": 7100,
-"playerPosition.x": -13.924513816833496,
-"playerPosition.y": -0.10529583692550659,
-"playerPosition.z": 8.66107177734375,
+"money": 10000,
+"playerPosition.x": -14.138343811035156,
+"playerPosition.y": -0.03334677964448929,
+"playerPosition.z": 10.161876678466797,
 "reputation": 0,
-"saveDate": "06.06.2023 09:20",
+"saveDate": "13.06.2023 19:48",
+"session.backingTrack": false,
+"session.metronomeSound": false,
+"session.metronomeVisuals": false,
 "shopkeeperEvent": false
 }

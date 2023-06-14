@@ -2,14 +2,14 @@
 #include "Components/Scripts/Instrument.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "LowLevelClasses/GameData.h"
+#include "EngineManagers/RandomnessManager.h"
 
 PlayerEquipment::PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 PlayerEquipment::~PlayerEquipment() = default;
 
-void PlayerEquipment::Setup(int startCash, int startRep) {
+void PlayerEquipment::Setup(int startCash) {
     cash = startCash;
-    rep = startRep;
 }
 
 bool PlayerEquipment::BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument) {
@@ -38,13 +38,10 @@ std::set<InstrumentName> PlayerEquipment::GetInstrumentNames() {
 }
 
 void PlayerEquipment::AddReward(float crowdSatisfaction) {
-    cash += (int)(crowdSatisfaction * maxCashReward);
-    rep += (int)(crowdSatisfaction * maxRepReward);
+    cash += (int)(crowdSatisfaction * maxCashReward * RandomnessManager::GetInstance()->GetFloat(1.0f, 3.0f));
 }
 
 int PlayerEquipment::GetCash() const { return cash; }
-
-int PlayerEquipment::GetRep() const { return rep; }
 
 void PlayerEquipment::OnDestroy() {
     instruments.clear();

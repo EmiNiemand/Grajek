@@ -6,7 +6,7 @@
 #define GLOOMENGINE_CHARACTERSTATES_H
 
 enum AI_LOGICSTATE {
-    None,
+    Wandering,
     AlertedByPlayer,
     MovingToPlayer,
     ListeningToPlayer,

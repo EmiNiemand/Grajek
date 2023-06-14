@@ -6,6 +6,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Scripts/Menus/ShopTrigger.h"
 #include "Components/UI/Popup.h"
+#include "Components/UI/Image.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -68,6 +69,8 @@ bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
     if(!Menu::ShowMenu()) return false;
 
+    GloomEngine::GetInstance()->timeScale = 1;
+
     if (!instruments.empty()) {
         for (const auto & instrument : instruments) {
             instrument->GetParent()->children.begin()->second->DisableSelfAndChildren();
@@ -75,7 +78,10 @@ bool ShopMenu::ShowMenu() {
         activeButton = instruments[0];
         activeButton->isActive = true;
         activeButton->GetParent()->children.begin()->second->EnableSelfAndChildren();
+    } else {
+        buyImage->enabled = false;
     }
+
     return true;
 }
 
@@ -121,6 +127,7 @@ void ShopMenu::OnClick() {
                     Setup(610, 340, "UI/Sklep/Popup.png", "UI/buttonInactive.png", "UI/buttonActive.png");
         }
         DeleteButton(activeButton);
+        if (instruments.empty()) buyImage->enabled = false;
         spdlog::info("[SM] Bought instrument!");
     } else {
         spdlog::info("[SM] Not enough money for instrument");

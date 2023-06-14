@@ -51,7 +51,7 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    char data[4];
+    char data[5] = {' ', ' ', ' ', ' ', '\0'};
 
     //
     // "RIFF" header
@@ -61,8 +61,8 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strncmp(data, "RIFF", 4) != 0) {
-        spdlog::error("Invalid WAVE file (header doesn't contain RIFF)!");
+    if (std::strcmp(data, "RIFF") != 0) {
+        spdlog::error("Invalid WAVE file (header doesn't contain \"RIFF\")!");
         return;
     }
 
@@ -76,8 +76,8 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strncmp(data, "WAVE", 4) != 0) {
-        spdlog::error("Invalid WAVE file (header doesn't contain WAVE)!");
+    if (std::strcmp(data, "WAVE") != 0) {
+        spdlog::error("Invalid WAVE file (header doesn't contain \"WAVE\")!");
         return;
     }
 
@@ -89,8 +89,8 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strncmp(data, "fmt ", 4) != 0) {
-        spdlog::error("Invalid WAVE file (header doesn't contain fmt )!");
+    if (std::strcmp(data, "fmt ") != 0) {
+        spdlog::error("Invalid WAVE file (header doesn't contain \"fmt \")!");
         return;
     }
 
@@ -138,8 +138,8 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
         return;
     }
 
-    if (std::strncmp(data, "data", 4) != 0) {
-        spdlog::error("Invalid WAVE file (header doesn't contain data)!");
+    if (std::strcmp(data, "data") != 0) {
+        spdlog::error("Invalid WAVE file (header doesn't contain \"data\")!");
         return;
     }
 
@@ -179,25 +179,21 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
  * Initializes buffers queue and loads first chunks of data.
  */
 void AudioLoader::FillBuffersQueue() {
-    ALfloat* data = new ALfloat[BUFFER_SIZE];
-
     for (int i = 0; i < NUM_BUFFERS; ++i) {
         if (samplesSizeToLoad < BUFFER_SIZE) {
-            file.read(reinterpret_cast<char *>(data), samplesSizeToLoad);
+            file.read(reinterpret_cast<char *>(samples), samplesSizeToLoad);
             file.seekg(dataStartSectionPointer);
-            alBufferData(buffers[i], format, data, samplesSizeToLoad, sampleRate);
+            alBufferData(buffers[i], format, samples, samplesSizeToLoad, sampleRate);
             alSourceQueueBuffers(source, 1, &buffers[i]);
             samplesSizeToLoad = subChunkSize;
             break;
         } else {
-            file.read(reinterpret_cast<char *>(data), BUFFER_SIZE);
-            alBufferData(buffers[i], format, data, BUFFER_SIZE, sampleRate);
+            file.read(reinterpret_cast<char *>(samples), BUFFER_SIZE);
+            alBufferData(buffers[i], format, samples, BUFFER_SIZE, sampleRate);
             alSourceQueueBuffers(source, 1, &buffers[i]);
             samplesSizeToLoad -= BUFFER_SIZE;
         }
     }
-
-    delete []data;
 }
 
 /**
@@ -207,7 +203,6 @@ void AudioLoader::FillBuffersQueue() {
  * @returns bool - true if there is more data to load, otherwise false
  */
 const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
-    ALfloat* data = new ALfloat[BUFFER_SIZE];
     ALuint bufferId;
 
     bool isPlaying = true;
@@ -216,22 +211,21 @@ const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
         alSourceUnqueueBuffers(source, 1, &bufferId);
 
         if (samplesSizeToLoad < BUFFER_SIZE) {
-            file.read(reinterpret_cast<char *>(data), samplesSizeToLoad);
+            file.read(reinterpret_cast<char *>(samples), samplesSizeToLoad);
             file.seekg(dataStartSectionPointer);
-            alBufferData(bufferId, format, data, samplesSizeToLoad, sampleRate);
+            alBufferData(bufferId, format, samples, samplesSizeToLoad, sampleRate);
             alSourceQueueBuffers(source, 1, &bufferId);
             samplesSizeToLoad = subChunkSize;
             isPlaying = false;
             break;
         } else {
-            file.read(reinterpret_cast<char *>(data), BUFFER_SIZE);
-            alBufferData(bufferId, format, data, BUFFER_SIZE, sampleRate);
+            file.read(reinterpret_cast<char *>(samples), BUFFER_SIZE);
+            alBufferData(bufferId, format, samples, BUFFER_SIZE, sampleRate);
             alSourceQueueBuffers(source, 1, &bufferId);
             samplesSizeToLoad -= BUFFER_SIZE;
         }
     }
 
-    delete []data;
     return isPlaying;
 }
 

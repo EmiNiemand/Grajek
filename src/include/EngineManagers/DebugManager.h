@@ -19,7 +19,9 @@ private:
     bool safetySwitch;
 	//flag to check if position of the GameObject was already extracted. 
 	bool transformExtracted;
+    std::string searchName;
 	std::shared_ptr<GameObject> selected;
+    std::shared_ptr<GameObject> player;
 
     int selectedFolderId;
     std::string selectedFolderName;
@@ -44,6 +46,7 @@ public:
 	static DebugManager* GetInstance();
 
 	void Initialize(GLFWwindow* window, const char* glsl_version);
+    void Start();
 	void Render();
     void Free() const;
 

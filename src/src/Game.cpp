@@ -71,7 +71,7 @@ void Game::InitializeGame() const {
     Animator::LoadAnimation("MainHero/MainHeroRun.dae");
     Animator::LoadAnimation("MainHero/MainHeroClap.dae");
     Animator::LoadAnimation("MainHero/MainHeroTrumpet.dae");
-    Animator::LoadAnimation("MainHero/MainHeroPercussion.dae");
+    Animator::LoadAnimation("MainHero/MainHeroDrums.dae");
 
     // Set up player
     // -------------
@@ -81,8 +81,8 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> ground = Prefab::Instantiate<Die>("Ground");
     ground->transform->SetLocalPosition({0, -4, 0});
-    ground->transform->SetLocalScale({100, 2, 100});
-    ground->GetComponent<Renderer>()->textScale = glm::vec2(100, 100);
+    ground->transform->SetLocalScale({150, 2, 150});
+    ground->GetComponent<Renderer>()->textScale = glm::vec2(150, 150);
 
     // Set up lights
     // -------------
@@ -91,80 +91,52 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    std::shared_ptr<GameObject> bench = GameObject::Instantiate("Bench", activeScene);
-    bench->transform->SetLocalPosition({0, 0, -7});
-    bench->transform->SetLocalRotation({0, 180, 0});
-    bench->transform->SetLocalScale({0.5, 0.5, 0.5});
-    bench->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
-    bench->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
-    auto portalRadioSound = bench->AddComponent<AudioSource>();
-    portalRadioSound->LoadAudioData("res/sounds/positional/portal_radio.wav", AudioType::Positional);
-    portalRadioSound->SetPositionOffset({1.3f, 0.0f, 3.0f});
-    portalRadioSound->SetDistanceMode(AudioDistanceMode::Continuous);
-    portalRadioSound->SetMaxDistance(20.0f);
-    portalRadioSound->SetCone({0.0f, 0.0f, 1.0f}, {110.0f, 200.0f});
-    portalRadioSound->IsLooping(true);
-    portalRadioSound->PlaySound();
+//    auto opponent = GameObject::Instantiate("Opponent", activeScene);
+//    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
+//    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
+//    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
+//    // 2      *   *
+//    // 1    *   *
+//    // 0  *
+//    auto opponentComponent = opponent->AddComponent<Opponent>();
+//    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+//                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
+//    opponentComponent->dialogue->texts.push_back({{""},
+//                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
+//                                                      {""}});
+//    opponentComponent->dialogue->texts.push_back({{""},
+//                                                  {"Walcz!."},
+//                                                  {""}});
+//    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
+//                             {"Masz tu moja odznake Jazz Badge."},
+//                             {""}});
+//    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
+//                             {"Pokonaj kolejnego lidera w Electro Gymie."},
+//                             {""}});
+//    opponentComponent->lossDialogue->texts.push_back({{""},
+//                                                     {"Przegrales."},
+//                                                     {""}});
 
-    std::shared_ptr<GameObject> bench2 = GameObject::Instantiate("Bench", activeScene);
-    bench2->transform->SetLocalPosition({10, 0, 0});
-    bench2->transform->SetLocalRotation({0, 180, 0});
-    bench2->transform->SetLocalScale({0.5, 0.5, 0.5});
-    bench2->AddComponent<Renderer>()->LoadModel("texturedModels/lawka.obj");
-    bench2->AddComponent<BoxCollider>()->SetOffset({4.5, 1, -2.5});
-    bench2->GetComponent<BoxCollider>()->SetSize({1.5, 2, 3});
-
-    std::shared_ptr<GameObject> hydrant = GameObject::Instantiate("Hydrant", activeScene);
-    hydrant->transform->SetLocalPosition({16, 0, 15});
-    hydrant->transform->SetLocalRotation({0, 130, 0});
-    hydrant->transform->SetLocalScale({0.5, 0.5, 0.5});
-    hydrant->AddComponent<Renderer>()->LoadModel("texturedModels/hydrant.obj");
-
-    auto opponent = GameObject::Instantiate("Opponent", activeScene);
-    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
-    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    opponent->transform->SetLocalPosition(glm::vec3(12, 0, -10));
-    // 2      *   *
-    // 1    *   *
-    // 0  *
-    auto opponentComponent = opponent->AddComponent<Opponent>();
-    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
-    opponentComponent->dialogue->texts.push_back({{""},
-                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
-                                                      {""}});
-    opponentComponent->dialogue->texts.push_back({{""},
-                                                  {"Walcz!."},
-                                                  {""}});
-    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
-                             {"Masz tu moja odznake Jazz Badge."},
-                             {""}});
-    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
-                             {"Pokonaj kolejnego lidera w Electro Gymie."},
-                             {""}});
-    opponentComponent->lossDialogue->texts.push_back({{""},
-                                                     {"Przegrales."},
-                                                     {""}});
-
-    auto dialog = GameObject::Instantiate("Dialog", activeScene);
-    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
-    dialog->AddComponent<Renderer>()->LoadModel("texturedModels/przeciwnik.obj");
-    dialog->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
-    dialog->AddComponent<Dialogue>();
-    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
-                                                       {"Tak to ja."},
-                                                       {""}});
-    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
-                                                       {"Walcz ze mna."},
-                                                       {""}});
+//    auto dialog = GameObject::Instantiate("Dialog", activeScene);
+//    dialog->transform->SetLocalPosition(glm::vec3(17, 0, 2));
+//    auto dialogAnimator = dialog->AddComponent<Animator>();
+//    dialogAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
+//    dialogAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+//    dialog->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
+//    dialog->AddComponent<Dialogue>();
+//    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+//                                                       {"Tak to ja."},
+//                                                       {""}});
+//    dialog->GetComponent<Dialogue>()->texts.push_back({{""},
+//                                                       {"Walcz ze mna."},
+//                                                       {""}});
 
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
-    AIManager::GetInstance()->InitializeSpawner(20, 20, 100);
+    AIManager::GetInstance()->InitializeSpawner(5, 15, 1000);
 
     camera->SetTarget(nullptr);
 }

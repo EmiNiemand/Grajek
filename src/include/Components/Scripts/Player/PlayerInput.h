@@ -40,9 +40,32 @@ public:
 
     // Here value corresponds to index of sound being played
     inline static std::unordered_map<Key, int> PlaySound = {
+            {Key::KEY_E, 0},
             {Key::KEY_R, 0},
+            {Key::KEY_T, 0},
+            {Key::KEY_D, 0},
+            {Key::KEY_F, 0},
+            {Key::KEY_G, 0},
+            {Key::KEY_4, 0},
+            {Key::KEY_5, 0},
+
+            {Key::KEY_Y, 1},
             {Key::KEY_U, 1},
-            {Key::KEY_P, 2}
+            {Key::KEY_I, 1},
+            {Key::KEY_H, 1},
+            {Key::KEY_J, 1},
+            {Key::KEY_K, 1},
+            {Key::KEY_7, 1},
+            {Key::KEY_8, 1},
+
+            {Key::KEY_0, 2},
+            {Key::KEY_MINUS, 2},
+            {Key::KEY_O, 2},
+            {Key::KEY_P, 2},
+            {Key::KEY_LEFT_BRACKET, 2},
+            {Key::KEY_L, 2},
+            {Key::KEY_SEMICOLON, 2},
+            {Key::KEY_APOSTROPHE, 2}
     };
     inline static std::unordered_map<Key, int> CheatSheet = {
             {Key::KEY_TAB, 0}

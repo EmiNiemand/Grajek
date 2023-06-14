@@ -96,7 +96,8 @@ void Animator::Update() {
         return;
     }
 
-    AnimationManager::GetInstance()->AddToBuffer(std::dynamic_pointer_cast<Animator>(shared_from_this()));
+    if (GloomEngine::GetInstance()->timeScale > 0.000000001f)
+        AnimationManager::GetInstance()->AddToBuffer(std::dynamic_pointer_cast<Animator>(shared_from_this()));
 
     Drawable::Update();
 }
@@ -145,6 +146,7 @@ void Animator::UpdateAnimation(float deltaTime) {
     }
     currentTime = fmod(currentTime, currentAnimation.GetDuration());
     CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
+
 }
 
 void Animator::PlayAnimation(Animation pAnimation) {

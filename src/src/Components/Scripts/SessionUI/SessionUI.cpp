@@ -137,7 +137,7 @@ void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
 
 void SessionUI::BackingTrackSetup(const std::string& trackName) {
     backingTrack = GameObject::Instantiate("BackingTrack", parent)->AddComponent<AudioSource>();
-    backingTrack->LoadAudioData(("res/sounds/direct/"+trackName+".wav").c_str(), AudioType::Direct);
+    backingTrack->LoadAudioData("res/sounds/direct/"+trackName+".wav", AudioType::Direct);
     backingTrack->IsLooping(true);
     backingTrack->PlaySound();
 
@@ -187,7 +187,7 @@ bool SessionUI::ToggleMetronomeVisuals() {
     metronomeVisualEnabled = !metronomeVisualEnabled;
     metronomeAnimator->paused = !metronomeVisualEnabled;
 
-    metronomeImage->SetAlpha(metronomeVisualEnabled ? 1:0);
+    if(!metronomeVisualEnabled) metronomeImage->SetAlpha(0);
 
     metronomeVisualsIndicator[true]->SetAlpha(metronomeVisualEnabled ? 1:0);
     metronomeVisualsIndicator[false]->SetAlpha(metronomeVisualEnabled ? 0:1);

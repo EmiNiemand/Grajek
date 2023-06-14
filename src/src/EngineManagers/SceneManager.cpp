@@ -74,9 +74,10 @@ void SceneManager::LoadScene(const std::string& scene) {
     }
 }
 
-void SceneManager::ClearScene() const {
+void SceneManager::ClearScene() {
     if (!activeScene) return;
     activeScene->RemoveAllChildren();
+    parents.clear();
     Animator::animationModels.clear();
     Animator::animations.clear();
     Renderer::models.clear();
@@ -108,7 +109,7 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
     spdlog::info("Loaded map objects successfully.");
 
-    std::shared_ptr<GameObject> map = GameObject::Instantiate("Map");
+    auto map = GameObject::Instantiate("map");
 
     std::shared_ptr<GameObject> newGameObject;
     for (const auto &object: staticObjectsData) {
@@ -126,7 +127,18 @@ void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const
             newGameObject = Prefab::Instantiate<InvisibleBlock>(object->uniqueName);
         }
         if(newGameObject) {
-            newGameObject->SetParent(map);
+
+            std::size_t found = object->uniqueName.find('_');
+            std::string parentName = object->uniqueName.substr(0, found);
+
+            if (found != std::string::npos) {
+                if (!parents.contains(parentName)) {
+                    auto p = GameObject::Instantiate(parentName, map);
+                    parents.insert({parentName, p});
+                }
+                newGameObject->SetParent(parents.at(parentName));
+            }
+
             //if(!object->uniqueName.empty())
             newGameObject->transform->SetLocalPosition(object->position);
             newGameObject->transform->SetLocalRotation(object->rotation);
@@ -284,24 +296,26 @@ std::map<int, std::shared_ptr<SaveableStaticObject>> SceneManager::FindAllStatic
     return objects;
 }
 
-void SceneManager::CreatePrefabObject(const std::string name) {
+std::shared_ptr<GameObject> SceneManager::CreatePrefabObject(const std::string name) {
+    std::shared_ptr<GameObject> newObject;
     if(name == "House"){
         spdlog::info("Created object from prefab House.");
-        Prefab::Instantiate<House>();
+        newObject = Prefab::Instantiate<House>();
     } else if(name == "Shop"){
         spdlog::info("Created object from prefab Shop");
-        Prefab::Instantiate<Shop>();
+        newObject = Prefab::Instantiate<Shop>();
     } else if(name == "SavePoint"){
         spdlog::info("Created object from prefab SavePoint");
-        Prefab::Instantiate<SavePoint>();
+        newObject = Prefab::Instantiate<SavePoint>();
     } else if(name == "InvisibleBlock"){
         spdlog::info("Created object from prefab InvisibleBlock");
-        Prefab::Instantiate<InvisibleBlock>();
+        newObject = Prefab::Instantiate<InvisibleBlock>();
     }else {
         spdlog::info("Failed to find prefab with name: " + name);
     }
+    return newObject;
 }
-void SceneManager::CreatePrefabObject(const std::string name,const std::string modelPath) {
+std::shared_ptr<GameObject> SceneManager::CreatePrefabObject(const std::string name, const std::string modelPath) {
     std::shared_ptr<GameObject> newGameObject;
     if(name == "House"){
         spdlog::info("Created object from prefab House. Using model: " + modelPath);
@@ -311,4 +325,5 @@ void SceneManager::CreatePrefabObject(const std::string name,const std::string m
     } else {
         spdlog::info("Failed to find prefab with name: " + name);
     }
+    return newGameObject;
 }

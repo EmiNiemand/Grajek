@@ -19,6 +19,7 @@ void Instrument::AddPatterns(std::vector<std::shared_ptr<MusicPattern>> newPatte
 void Instrument::GeneratePattern(std::vector<RawSample> newPattern) {
     auto pattern = std::make_shared<MusicPattern>();
     pattern->instrumentName = name;
+    pattern->id = patterns.size();
     // Make sure that first sample has zero delay, otherwise pattern recognition won't work
     newPattern.begin()->delay = 0;
     for (auto soundRaw : newPattern) {
@@ -51,7 +52,7 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
     // -----------
     switch (instrumentName) {
         case Clap:
-            instrument->Setup(instrumentName, MusicGenre::Rhytmic);
+            instrument->Setup(instrumentName, MusicGenre::Rhythmic);
             instrument->AddSamples({
                "res/sounds/direct/clap/clapWeak.wav",
                "res/sounds/direct/clap/clapStrong.wav"});

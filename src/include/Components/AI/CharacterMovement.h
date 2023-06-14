@@ -17,7 +17,7 @@
 constexpr float DISTANCE_TO_POINT = 1.8f;
 constexpr float DISTANCE_TO_COLLISION = 2.0f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.8f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.25f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.3f;
 constexpr float MOVEMENT_TIMEOUT = 2.75f;
 
 class GameObject;

@@ -18,14 +18,17 @@
 #include "LowLevelClasses/GameData.h"
 #include <fstream>
 
-//TODO: what the hell happened here o.0
+//TODO: move menus creation to Prefabs or appropriate methods
+//      in every Menu subclass (eg. Setup())
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
     cashText->LoadFont("$: 0", 20, 1010, 64, glm::vec3(1));
-    auto backgroundMoney =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
-    backgroundMoney->LoadTexture(0, 0, "UI/MoneyBackground.png", -1);
-    backgroundMoney->SetPosition(0, 1080-backgroundMoney->GetHeight());
+    cashText->z = -0.85;
+    cashBackground =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
+    cashBackground->LoadTexture(0, 0, "UI/MoneyBackground.png", -0.8);
+    cashBackground->SetPosition(0, 1080 - cashBackground->GetHeight());
+    cashAmount = 0;
 
     auto menus = GameObject::Instantiate("Menus", parent);
 
@@ -38,23 +41,30 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                 "Main Menu",
                 "Exit"
         };
+        std::vector<std::string> buttonImageNames = {
+                "Resume",
+                "Options",
+                "MainMenu",
+                "Exit"
+        };
 
-        int buttonOffset = -100;
-        int currentYPos = 540 - buttonOffset*(buttonNames.size()-2)/2;
+        int buttonOffset = -140;
+        int currentYPos = 650;
 
         std::vector<std::shared_ptr<Button>> buttonBuffer;
 
         for (int i = 0; i < buttonNames.size(); ++i) {
             auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
-                                                 "UI/buttonInactive.png", "UI/buttonActive.png",
-                                                 buttonNames[i], 32);
-            optionButton->ChangePosition(960 - optionButton->GetWidth()/2, currentYPos - optionButton->GetHeight()/2);
+                                                 "UI/Pauza/"+buttonImageNames[i]+".png",
+                                                 "UI/Pauza/"+buttonImageNames[i]+"_Kolor.png",
+                                                 "", 32, glm::vec3(), GameFont::KanitLight, -1);
+            optionButton->ChangePosition(50, currentYPos);
             currentYPos += buttonOffset;
 
             buttonBuffer.push_back(optionButton);
         }
 
-        pause->AddImage("Background", 0, 0, "UI/pause.png");
+        pause->AddImage("Background", 0, 0, "UI/Pauza/PauzaBG.png", -0.95);
 
         for(int i=0; i<buttonNames.size(); i++) {
             auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
@@ -105,8 +115,10 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         auto secondInstrument = shopMenuComponent->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png","UI/Sklep/TrabkaZRamka.png");
         auto thirdInstrument = shopMenuComponent->Menu::AddButton("ThirdInstrument", 1525, 250,"UI/Sklep/LaunbhPad.png","UI/Sklep/LaunbhPadZRamka.png");
         auto fourthInstrument = shopMenuComponent->Menu::AddButton("FourthInstrument", 600, 700, "UI/Sklep/Gitara.png","UI/Sklep/GitaraZRamka.png");
-        auto exitButton = shopMenuComponent->Menu::AddImage("ExitImage", 1600, 50, "UI/Sklep/Przycisk2.png");
-        auto shopBackground = shopMenuComponent->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
+        shopMenuComponent->Menu::AddImage("ExitImage", 1600, 50, "UI/Sklep/Przycisk2.png");
+        shopMenuComponent->buyImage = shopMenuComponent->Menu::AddImage("BuyImage", 1300, 50, "UI/Sklep/buyInstrument.png");
+        shopMenuComponent->Menu::AddImage("ShopBackground", 0, 0, "UI/Sklep/Sklep.png");
+        shopMenuComponent->Menu::AddImage("ShopHead", 700, 630, "UI/Sklep/Head.png", -0.05f);
         firstInstrumentCost->GetParent()->SetParent(firstInstrument->GetParent());
         secondInstrumentCost->GetParent()->SetParent(secondInstrument->GetParent());
         thirdInstrumentCost->GetParent()->SetParent(thirdInstrument->GetParent());
@@ -149,7 +161,9 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                 catch (std::exception e) {
                     spdlog::info("Failed to read a file content at path: " + path.string());
                 }
-                savePointMenu->saveDates.push_back(savePointMenu->Menu::AddText("SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 125, 30));
+                savePointMenu->saveDates.push_back(savePointMenu->AddText(
+                        "SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 130,
+                        38, glm::vec3(0.1f), GameFont::MarckScript));
 
                 xpos += 350;
             }
@@ -178,17 +192,30 @@ void PlayerUI::OnDestroy() {
 void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
 	cashText->text = "$ " + std::to_string(newAmount);
 
+    int cashDiff = newAmount - cashAmount;
+    cashAmount = newAmount;
+
     if(!playAnimation) return;
 
     auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
-    addMoneyImage->LoadTexture(0, 0, "UI/MoneyAddedBackground.png", -1);
+    addMoneyImage->LoadTexture(0, 0, "UI/MoneyAddedBackground.png", -0.7f);
     addMoneyImage->SetPosition(0, 1080 - addMoneyImage->GetHeight());
     // Animator is added to image so that it's automatically destroyed after animation is done
     auto addMoneyAnimator = addMoneyImage->GetParent()->AddComponent<UIAnimator>();
     addMoneyAnimator->Setup(addMoneyImage, {
-            {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 0.1f},
+            {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 0.2f},
             {AnimatedProperty::Position, glm::vec3(220, 1080 - addMoneyImage->GetHeight(), 0), 1.0f},
             {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight(), 0), 0.5f}
     });
-    //TODO: add text animation when it gets implemented
+    auto addMoneyText = GameObject::Instantiate("AddMoneyText", parent)->AddComponent<Text>();
+    addMoneyText->LoadFont((cashDiff>0?"+":"") + std::to_string(cashDiff),
+                           0, 0, 48);
+    addMoneyText->SetPosition(0, 1080 - addMoneyImage->GetHeight()/2 - 12);
+    addMoneyText->z = -0.75f;
+    auto addMoneyTextAnimator = addMoneyText->GetParent()->AddComponent<UIAnimator>();
+    addMoneyTextAnimator->Setup(addMoneyText, {
+            {AnimatedProperty::Position, glm::vec3(260, 1080 - addMoneyImage->GetHeight()/2 - 12, 0), 0.2f},
+            {AnimatedProperty::Position, glm::vec3(260, 1080 - addMoneyImage->GetHeight()/2 - 12, 0), 1.0f},
+            {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight()/2 - 12, 0), 0.5f}
+    });
 }
