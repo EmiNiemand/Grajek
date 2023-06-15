@@ -6,6 +6,7 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
+#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
@@ -41,20 +42,22 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     maxCharacters = max;
     spawnDelay = delay;
     pathfinding = std::make_shared<CharacterPathfinding>();
+    jazzHoodCenter = GloomEngine::GetInstance()->FindGameObjectWithName("JazzHoodCenter")->
+            transform->GetLocalPosition();
+    glm::vec3 playerPosition = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->
+            transform->GetLocalPosition();
 
-    /*
-     * if gracz znajduje sie w strefie przed dzielnica jazzowa
-     *
-     * wtedy waga dla jazzmanow jest zwiekszona z 3 do 6
-     *
-     */
-
-    int random;
+    int random, jazzManSpawnRate;
 
     for (int i = 0; i < min; i++) {
         random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-        if (random <= 3)
+        if (glm::distance(playerPosition, jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
+            jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
+        else
+            jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
+
+        if (random <= jazzManSpawnRate)
             Prefab::Instantiate<JazzTrumpet>();
         else
             Prefab::Instantiate<Default>();
@@ -62,7 +65,8 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
 
     isInitializing = false;
 
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters, spawnDelay);
+    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters,
+                                    spawnDelay, jazzHoodCenter);
 }
 
 void AIManager::Free() {
@@ -288,17 +292,24 @@ void AIManager::RemoveCharacterMovement(const int& componentId) {
  * @param spawnDelay - time delay between spawns
  */
 void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
-                                const int& maxCharacters, const int& spawnDelay) {
+                                const int& maxCharacters, const int& spawnDelay, const glm::vec3& jazzHoodCenter) {
 
     auto delay = std::chrono::milliseconds(spawnDelay);
-    int random;
+    int random, jazzManSpawnRate;
     std::shared_ptr<GameObject> ch;
+    std::shared_ptr<Transform> playerTransform = GloomEngine::GetInstance()->
+            FindGameObjectWithName("Player")->transform;
 
     while(!token.stop_requested()) {
         if (currentCharacters < maxCharacters) {
             random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-            if (random <= 3)
+            if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
+                jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
+            else
+                jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
+
+            if (random <= jazzManSpawnRate)
                 ch = Prefab::Instantiate<JazzTrumpet>();
             else
                 ch = Prefab::Instantiate<Default>();

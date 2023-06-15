@@ -36,7 +36,6 @@ class CharacterLogic : public Component {
     glm::vec3 playerPosition {};
     InstrumentName playerInstrumentName {};
     MusicGenre playerGenre {};
-    std::shared_ptr<MusicPattern> playerPattern = nullptr;
     InstrumentName previousPlayerInstrumentName {};
     MusicGenre previousPlayerGenre {};
     float values = 0.0f;
@@ -44,7 +43,6 @@ class CharacterLogic : public Component {
     // Enemy instruments
     InstrumentName enemyInstrumentName {};
     MusicGenre enemyGenre {};
-    std::shared_ptr<MusicPattern> enemyPattern = nullptr;
     // Satisfaction
     float lowerSatisfactionLimit = 0.0f;
     float middleSatisfactionLimit = 0.0f;

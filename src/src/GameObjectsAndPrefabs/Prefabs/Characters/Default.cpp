@@ -24,8 +24,8 @@ std::shared_ptr<GameObject> Default::Create() {
     auto cubeRigidbody = character->AddComponent<Rigidbody>();
     // Setting values
     auto collider = character->GetComponent<BoxCollider>();
-    collider->SetOffset({0, 1.5, 0});
-    collider->SetSize({1, 2, 1});
+    collider->SetOffset({0, 1.5, 0.1});
+    collider->SetSize({0.5, 2, 0.8});
     collider->isDynamic = true;
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
 
@@ -50,7 +50,7 @@ std::shared_ptr<GameObject> Default::Create() {
 //    enum MusicGenre { Rhythmic = 60, Jazz = 70, RnB = 80, SynthPop=100, Rock=120 };
     std::vector<MusicGenre> randomGenres {Jazz, RnB, SynthPop, Rock, Rhythmic};
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 4; ++i) {
         randomIndex = RandomnessManager::GetInstance()->GetInt(0, (int)randomGenres.size() - 1);
         characterLogic->favGenres.push_back(randomGenres[randomIndex]);
         randomGenres.erase(randomGenres.cbegin() + randomIndex);
@@ -59,7 +59,7 @@ std::shared_ptr<GameObject> Default::Create() {
 //    enum InstrumentName { Clap, Drums, Trumpet, Launchpad, Guitar };
     std::vector<InstrumentName> randomInsNames {Clap, Drums, Trumpet, Launchpad, Guitar};
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 4; ++i) {
         randomIndex = RandomnessManager::GetInstance()->GetInt(0, (int)randomInsNames.size() - 1);
         characterLogic->favInstrumentsNames.push_back(randomInsNames[randomIndex]);
         randomInsNames.erase(randomInsNames.cbegin() + randomIndex);

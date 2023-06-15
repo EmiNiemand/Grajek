@@ -195,7 +195,8 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
     int cashDiff = newAmount - cashAmount;
     cashAmount = newAmount;
 
-    if(!playAnimation) return;
+    if (cashDiff < 1) return;
+    if (!playAnimation) return;
 
     auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
     addMoneyImage->LoadTexture(0, 0, "UI/MoneyAddedBackground.png", -0.7f);

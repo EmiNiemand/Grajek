@@ -80,7 +80,7 @@ void Animator::SetAnimation(const std::string &name) {
     currentTime = -fmod(blendingTimeInSeconds * (float)currentAnimation.GetTicksPerSecond(), currentAnimation.GetDuration());
     blendingTimeInTicks = currentTime;
 
-    if (previousAnimation.name.empty()) {
+    if (previousAnimation.name.empty() || !blend) {
         previousAnimationTime = 0;
         currentTime = 0;
     }
