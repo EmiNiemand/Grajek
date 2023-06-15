@@ -10,7 +10,7 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
                              bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
     // Load backing track
     // ------------------
-    BackingTrackSetup("drums/backingTrack");
+    BackingTrackSetup("trumpet/backingTrack");
 
     SessionUI::Setup(bpm, samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 
@@ -23,9 +23,9 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
     GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
             ->LoadTexture(0, 0, "UI/Sesja/widokTrabka.png");
 
-    valveInitPos[0] = {1100, 100};
-    valveInitPos[1] = {1430, 100};
-    valveInitPos[2] = {1760, 100};
+    valveInitPos[0] = {1100, 0};
+    valveInitPos[1] = {1300, 0};
+    valveInitPos[2] = {1500, 0};
     float positionAnimationDuration = 1.25f;
 
     // Set up samples
@@ -40,7 +40,7 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
             {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.2f},
     }, AnimationBehaviour::Resetable);
     sampleAnimators[0][1]->Setup(sampleImages[0], {
-            {AnimatedProperty::Position, glm::vec3(valveInitPos[0].x, sampleImages[0]->GetHeight(), 0), positionAnimationDuration}
+            {AnimatedProperty::Position, glm::vec3(valveInitPos[0].x, -sampleImages[0]->GetHeight(), 0), positionAnimationDuration}
     }, AnimationBehaviour::Resetable);
 
     // Medium-pitched sound
@@ -53,7 +53,7 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
             {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.2f},
     }, AnimationBehaviour::Resetable);
     sampleAnimators[1][1]->Setup(sampleImages[1], {
-            {AnimatedProperty::Position, glm::vec3(valveInitPos[1].x, sampleImages[1]->GetHeight(), 0), positionAnimationDuration}
+            {AnimatedProperty::Position, glm::vec3(valveInitPos[1].x, -sampleImages[1]->GetHeight(), 0), positionAnimationDuration}
     }, AnimationBehaviour::Resetable);
 
     // High-pitched sound
@@ -66,11 +66,11 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
             {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.2f},
     }, AnimationBehaviour::Resetable);
     sampleAnimators[2][1]->Setup(sampleImages[2], {
-            {AnimatedProperty::Position, glm::vec3(valveInitPos[2].x, sampleImages[2]->GetHeight(), 0), positionAnimationDuration}
+            {AnimatedProperty::Position, glm::vec3(valveInitPos[2].x, -sampleImages[2]->GetHeight(), 0), positionAnimationDuration}
     }, AnimationBehaviour::Resetable);
 
     for (int i = 0; i < 3; ++i) {
-        sampleImages[i]->pivot = {0.5, 1};
+        sampleImages[i]->pivot = {0.5, 0};
         sampleImages[i]->SetPosition(valveInitPos[i].x, valveInitPos[i].y);
     }
 }
