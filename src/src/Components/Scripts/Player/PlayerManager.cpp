@@ -349,7 +349,7 @@ void PlayerManager::StartSessionWithOpponent(const std::shared_ptr<Opponent>& op
 void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
     sessionOpponent = nullptr;
     OnSessionToggle();
-    equipment->cash += moneyBet * (wonSession ? 2:-1);
+    equipment->cash += moneyBet * (wonSession ? 1:-1);
     playerUI->UpdateCash(equipment->cash);
 }
 

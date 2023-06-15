@@ -195,7 +195,7 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
     int cashDiff = newAmount - cashAmount;
     cashAmount = newAmount;
 
-    if (cashDiff < 1) return;
+    if (cashDiff != 0) return;
     if (!playAnimation) return;
 
     auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
