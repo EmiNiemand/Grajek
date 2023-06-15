@@ -150,6 +150,7 @@ int PlayerManager::GetCash() {
 #pragma region Animation Events
 void PlayerManager::UpdateAnimations() {
 	if(!rb) return;
+    if(session || sessionStarter) return;
 
 	float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
@@ -270,7 +271,9 @@ void PlayerManager::OnSessionToggle() {
         session->Stop();
         session.reset();
         AIManager::GetInstance()->NotifyPlayerStopsPlaying();
+        animator->LoadAnimationModel("MainHero/MainHeroIdle.dae");
         animator->SetAnimation("MainHero/MainHeroIdle.dae");
+        animator->blend = true;
         return;
     }
     if (sessionStarter) {
@@ -325,6 +328,8 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     session = GameObject::Instantiate("SessionUI", parent)->AddComponent<MusicSession>();
     session->Setup(chosenInstrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, chosenInstrument->genre);
+    animator->LoadAnimationModel("MainHero/MainHero"+chosenInstrument->NameToString()+".dae");
+    animator->blend = false;
     animator->SetAnimation("MainHero/MainHero"+chosenInstrument->NameToString()+".dae");
 
     if (sessionOpponent)
