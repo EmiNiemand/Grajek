@@ -20,11 +20,12 @@ private:
     float blendingTimeInTicks = 0;
 
 public:
+    Animation previousAnimation;
+    Animation currentAnimation;
 	float speed = 1;
     float previousAnimationTime = 0;
     float currentTime;
-    Animation previousAnimation;
-    Animation currentAnimation;
+    bool blend = true;
 
     inline static std::unordered_map<int, std::shared_ptr<AnimationModel>> animationModels;
     inline static std::unordered_map<int, Animation> animations;
