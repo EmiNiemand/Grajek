@@ -8,6 +8,7 @@
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/Audio/AudioSource.h"
 
 PlayerMovement::PlayerMovement(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -15,6 +16,8 @@ PlayerMovement::~PlayerMovement() = default;
 
 void PlayerMovement::Start() {
     rb = parent->GetComponent<Rigidbody>();
+    stepSound = parent->AddComponent<AudioSource>();
+    stepSound->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
     Component::Start();
 }
 
@@ -50,4 +53,21 @@ void PlayerMovement::FixedUpdate() {
 void PlayerMovement::Move(glm::vec2 inputVector) {
     // Need to invert horizontal/Z axis
     moveVector = inputVector * glm::vec2(1, -1);
+
+    // Step sound
+    if (moveVector != glm::vec2(0)) {
+        if (!stepSoundActive) {
+            stepSound->PlaySound();
+            stepSound->SetGain(0.5);
+            stepSound->IsLooping(true);
+        }
+        stepSoundActive = true;
+    } else {
+        if (stepSoundActive) {
+            stepSound->StopSound();
+            stepSound->SetGain(0);
+            stepSound->IsLooping(false);
+        }
+        stepSoundActive = false;
+    }
 }

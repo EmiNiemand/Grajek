@@ -46,10 +46,6 @@ PlayerManager::PlayerManager(const std::shared_ptr<GameObject> &parent, int id)
 void PlayerManager::Awake() {
     moveInput = glm::vec2(0);
     inputEnabled = true;
-    // tOdO add step sound
-//    stepSound = parent->AddComponent<AudioSource>();
-//    stepSound->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
-//    if (animator->currentTime)
 
     // Add Components
     // --------------
@@ -128,6 +124,7 @@ void PlayerManager::Update() {
 	UpdateAnimations();
 
     Component::Update();
+//    spdlog::info(animator->currentTime);
 }
 
 #pragma region Equipment Events

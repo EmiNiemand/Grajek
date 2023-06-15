@@ -9,6 +9,7 @@
 #include "glm/vec2.hpp"
 
 class Rigidbody;
+class AudioSource;
 
 class PlayerMovement : public Component {
 private:
@@ -19,6 +20,9 @@ private:
     float smoothingParam = 0.2f;
     bool isMoving = false;
     float rotationAngle = 0.0f;
+
+    std::shared_ptr<AudioSource> stepSound;
+    bool stepSoundActive = false;
 
 public:
     PlayerMovement(const std::shared_ptr<GameObject> &parent, int id);
