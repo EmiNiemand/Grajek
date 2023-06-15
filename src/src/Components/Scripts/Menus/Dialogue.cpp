@@ -21,7 +21,7 @@ void Dialogue::Awake() {
     parent->GetComponent<BoxCollider>()->isTrigger = true;
 
     image = GameObject::Instantiate("ButtonImage", parent)->AddComponent<Image>();
-    image->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png");
+    image->LoadTexture(1600, 50, "UI/interactionTalk.png");
 
     dialogue = GameObject::Instantiate("Dialogue", parent->children.begin()->second);
     text1 = GameObject::Instantiate("DialogueText1", dialogue)->AddComponent<Text>();
