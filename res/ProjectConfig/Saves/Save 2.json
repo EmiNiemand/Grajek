@@ -12,5 +12,5 @@
 "session.backingTrack": false,
 "session.metronomeSound": false,
 "session.metronomeVisuals": false,
-"shopkeeperEvent": false
+"shopkeeperEvent": true
 }
