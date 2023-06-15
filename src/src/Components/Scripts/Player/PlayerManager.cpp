@@ -329,6 +329,10 @@ void PlayerManager::CreateMusicSession(InstrumentName instrument) {
     session->Setup(chosenInstrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
     AIManager::GetInstance()->NotifyPlayerStartsPlaying(instrument, chosenInstrument->genre);
     animator->LoadAnimationModel("MainHero/MainHero"+chosenInstrument->NameToString()+".dae");
+
+    // Attention: here blending gets disabled based on the fact that the OnSessionToggle() method
+    //            (that enables it back) must be called at the end of session. Otherwise, blending
+    //            will stay disabled through the rest of the game.
     animator->blend = false;
     animator->SetAnimation("MainHero/MainHero"+chosenInstrument->NameToString()+".dae");
 
