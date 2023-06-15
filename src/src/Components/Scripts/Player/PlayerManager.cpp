@@ -350,6 +350,7 @@ void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
     sessionOpponent = nullptr;
     OnSessionToggle();
     equipment->cash += moneyBet * (wonSession ? 2:-1);
+    playerUI->UpdateCash(equipment->cash);
 }
 
 void PlayerManager::OnCheatSheetToggle() {
