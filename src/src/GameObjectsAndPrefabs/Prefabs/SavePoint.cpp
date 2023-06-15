@@ -17,7 +17,7 @@ std::shared_ptr<GameObject> SavePoint::Create() {
     savePoint->transform->SetLocalScale(glm::vec3(0.25));
     savePoint->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     std::shared_ptr<GameObject> s = GameObject::Instantiate("S", savePoint);
-    s->AddComponent<Renderer>()->LoadModel("Buildings/Environment/SSS.obj");
+    s->AddComponent<Renderer>()->LoadModel("Buildings/Environment/floppyDisk.obj");
     s->AddComponent<GameObjectAnimator>()->Setup(s->transform, {
             {AnimatedProperty::Rotation, glm::vec3(0.0f, -360.0f, 0.0f), 5.0f},
     }, true);

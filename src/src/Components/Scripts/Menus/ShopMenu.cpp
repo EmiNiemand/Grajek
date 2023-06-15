@@ -130,6 +130,8 @@ void ShopMenu::OnClick() {
         if (instruments.empty()) buyImage->enabled = false;
         spdlog::info("[SM] Bought instrument!");
     } else {
+        GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
+                Setup(610, 340, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
         spdlog::info("[SM] Not enough money for instrument");
     }
 }

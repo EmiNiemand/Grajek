@@ -14,19 +14,7 @@ class UIAnimator;
 
 class Shopkeeper : public Component, public IDataPersistance {
 private:
-    bool sessionActive = false;
-    bool shopkeeperEvent = false;
-    std::shared_ptr<Image> image;
-    std::shared_ptr<Text> text1;
-    std::shared_ptr<Text> text2;
-    std::shared_ptr<Text> text3;
-    std::shared_ptr<GameObject> dialogue;
-    std::shared_ptr<GameObject> shopkeeperModel;
-    std::shared_ptr<GameObject> door;
-    std::shared_ptr<PlayerManager> playerManager;
-    short dialogueIndex = 0;
-
-    // Session
+    std::vector<std::shared_ptr<AudioSource>> sampleSources;
     std::shared_ptr<Image> background;
     std::shared_ptr<Image> circle1;
     std::shared_ptr<Image> circle2;
@@ -35,7 +23,21 @@ private:
     std::shared_ptr<UIAnimator> circleScale2;
     std::shared_ptr<UIAnimator> circleColor1;
     std::shared_ptr<UIAnimator> circleColor2;
-    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::shared_ptr<Image> image;
+    std::shared_ptr<Text> text1;
+    std::shared_ptr<Text> text2;
+    std::shared_ptr<Text> text3;
+    std::shared_ptr<GameObject> dialogue;
+    std::shared_ptr<GameObject> shopkeeperModel;
+    std::shared_ptr<GameObject> door;
+    std::shared_ptr<PlayerManager> playerManager;
+    std::shared_ptr<Image> instrumentControl;
+    std::shared_ptr<Image> cheatSheet;
+    short dialogueIndex = 0;
+    short pattern = 0;
+    bool shopkeeperEvent = false;
+    bool instrumentControlActive = false;
+    bool cheatSheetActive = false;
 
 public:
     std::vector<Strings> texts;
