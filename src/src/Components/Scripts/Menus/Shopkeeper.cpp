@@ -43,17 +43,17 @@ void Shopkeeper::Start() {
     animator->LoadAnimationModel("Crowd/JazzMan001/JazzMan001.dae");
     animator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
-    texts.push_back({{"Jestem Sklepu."},
-                               {"Mozesz sie poruszac WSAD."},
-                               {"Kupuj instrumenty."}});
-    texts.push_back({{"Graj spacja."},
-                               {"Rozwalaj wrogow."},
+    texts.push_back({{"Witaj przybyszu. Jestem sklepikarzem w tym miescie. Pomoge tobie."},
+                               {"Mozesz sie poruszac WSADem lub strzalkami."},
+                               {"Kupuj instrumenty. Mam nadzieje, ze zdazysz kupic wszystkie instrumenty przed poczatkiem konkursu."}});
+    texts.push_back({{"Wystepuj przed publicznoscia, aby zarabiac pieniadze."},
+                               {"Nacisnij spacje, zeby zaczac grac."},
                                {""}});
-    texts.push_back({{"Wybierz instrument."},
-                     {""},
+    texts.push_back({{"Pierwszym krokiem jest wybor instrumentu, na ktorym chcesz grac."},
+                     {"Pamietaj, ze kazdy lubi inny instrument i gatunek muzyki."},
                      {""}});
-    texts.push_back({{"Klaszcz klawiszami R i U."},
-                     {""},
+    texts.push_back({{"Na kazdym instrumencie gra sie inaczej."},
+                     {"Klaszcz klawiszami R i U."},
                      {""}});
     texts.push_back({{"Zniszcz krola muzyki."},
                      {"Nacisnij spacje, zeby wyjsc."},
@@ -82,7 +82,7 @@ void Shopkeeper::Start() {
     sampleSources.back()->LoadAudioData("res/sounds/direct/clap/clapWeak.wav", AudioType::Direct);
     sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", dialogue)->AddComponent<AudioSource>());
     sampleSources.back()->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
-    door = GloomEngine::GetInstance()->FindGameObjectWithName("Door");
+    door = GloomEngine::GetInstance()->FindGameObjectWithName("Door1");
     Component::Start();
 }
 
@@ -110,7 +110,42 @@ void Shopkeeper::Update() {
         if (dialogueIndex == 1) {
             background = GameObject::Instantiate("ShopkeeperBackground", image->GetParent()->parent)->AddComponent<Image>();
             background->LoadTexture(0, 0, "UI/backgroundOpacity90.png", 0.5f);
-            GameObject::Instantiate("ShopkeeperClapImage", background->GetParent())->AddComponent<Image>()->LoadTexture(832, 558, "UI/Icons/small/iconClap.png");
+            clapImage = GameObject::Instantiate("ShopkeeperClapImage", background->GetParent())->AddComponent<Image>();
+            clapImage->LoadTexture(832, 558, "UI/Icons/small/iconClap.png");
+            circle1 = GameObject::Instantiate("ShopkeeperCircle1", background->GetParent())->AddComponent<Image>();
+            circle1->LoadTexture(700, 700, "UI/Sesja/circle.png");
+            circle1->pivot = {0.5, 0.5};
+            circle1->SetPosition(700, 700);
+            circle2 = GameObject::Instantiate("ShopkeeperCircle2", background->GetParent())->AddComponent<Image>();
+            circle2->LoadTexture(1200, 700, "UI/Sesja/circle.png");
+            circle2->pivot = {0.5, 0.5};
+            circle2->SetPosition(1200, 700);
+
+            circleScale1 = GameObject::Instantiate("CircleAnimator", background->GetParent())->AddComponent<UIAnimator>();
+            circleScale1->Setup(circle1, {
+                    {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                    {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+            }, AnimationBehaviour::Resetable);
+            circleColor1 = GameObject::Instantiate("CircleAnimator", background->GetParent())->AddComponent<UIAnimator>();
+            circleColor1->Setup(circle1, {
+                    {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
+                    {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+            }, AnimationBehaviour::Resetable);
+
+            circleScale2 = GameObject::Instantiate("CircleAnimator", background->GetParent())->AddComponent<UIAnimator>();
+            circleScale2->Setup(circle2, {
+                    {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
+                    {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
+            }, AnimationBehaviour::Resetable);
+            circleColor2 = GameObject::Instantiate("CircleAnimator", background->GetParent())->AddComponent<UIAnimator>();
+            circleColor2->Setup(circle2, {
+                    {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
+                    {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
+            }, AnimationBehaviour::Resetable);
+
+            background->GetParent()->DisableSelfAndChildren();
+            background->enabled = true;
+            clapImage->enabled = true;
         } else {
             GameObject::Destroy(background->GetParent());
         }
@@ -142,40 +177,21 @@ void Shopkeeper::Update() {
         if (dialogueIndex != 3 && dialogueIndex != 4) return;
         if (dialogueIndex == 3) NextDialogue();
         sampleSources[0]->ForcePlaySound();
-        auto circleAnimator = GameObject::Instantiate("CircleAnimator", background->GetParent());
-        auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", background->GetParent());
-        circleAnimator->AddComponent<UIAnimator>()->Setup(circle1, {
-                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
-                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
-        });
-        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle1, {
-                {AnimatedProperty::Color, glm::vec3(0.0f, 0.0f, 1.0f), 0.125f},
-                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
-        });
+        circleScale1->Reset();
+        circleColor1->Reset();
     }
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_U)) {
         if (dialogueIndex != 3 && dialogueIndex != 4) return;
         if (dialogueIndex == 3) NextDialogue();
         sampleSources[1]->ForcePlaySound();
-        auto circleAnimator = GameObject::Instantiate("CircleAnimator", background->GetParent());
-        auto circleAnimator2 = GameObject::Instantiate("CircleAnimator", background->GetParent());
-        circleAnimator->AddComponent<UIAnimator>()->Setup(circle2, {
-                {AnimatedProperty::Scale, glm::vec3(1.5f), 0.125f},
-                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.125f}
-        });
-        circleAnimator2->AddComponent<UIAnimator>()->Setup(circle2, {
-                {AnimatedProperty::Color, glm::vec3(1.0f, 0.0f, 0.0f), 0.125f},
-                {AnimatedProperty::Color, glm::vec3(1.0f), 0.125f}
-        });
+        circleScale2->Reset();
+        circleColor2->Reset();
     }
     if (dialogueIndex == 1 || dialogueIndex == 3 || dialogueIndex == 4 || dialogueIndex == 5) return;
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
         if (dialogueIndex == 2) {
-            GameObject::Destroy(background->GetParent()->children.begin()->second);
-            circle1 = GameObject::Instantiate("ShopkeeperCircle1", background->GetParent())->AddComponent<Image>();
-            circle1->LoadTexture(650, 600, "UI/Sesja/circle.png");
-            circle2 = GameObject::Instantiate("ShopkeeperCircle2", background->GetParent())->AddComponent<Image>();
-            circle2->LoadTexture(1150, 600, "UI/Sesja/circle.png");
+            GameObject::Destroy(clapImage->GetParent());
+            background->GetParent()->EnableSelfAndChildren();
         }
         NextDialogue();
     }
@@ -194,6 +210,11 @@ void Shopkeeper::OnDestroy() {
     background.reset();
     circle1.reset();
     circle2.reset();
+    circleScale1.reset();
+    circleScale2.reset();
+    circleColor1.reset();
+    circleColor2.reset();
+    clapImage.reset();
     sampleSources.clear();
     Component::OnDestroy();
 }
