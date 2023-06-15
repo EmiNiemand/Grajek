@@ -18,17 +18,6 @@ Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Comp
 Shopkeeper::~Shopkeeper() = default;
 
 void Shopkeeper::Start() {
-
-
-
-
-    // TODO delete
-    return;
-
-
-
-
-
     if (shopkeeperEvent) return;
 
     // create shopkeeper
@@ -87,18 +76,6 @@ void Shopkeeper::Start() {
 }
 
 void Shopkeeper::Update() {
-
-
-
-
-
-    // TODO delete
-    return;
-
-
-
-
-
     if (shopkeeperEvent) return;
     if (parent->children.empty()) {
         shopkeeperEvent = true;
