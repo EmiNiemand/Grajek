@@ -10,6 +10,7 @@
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterAnimations.h"
 #include "Components/UI/Indicator.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -31,7 +32,6 @@ void CharacterLogic::Start() {
     lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
     middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
-    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::Start();
 }
 
@@ -45,7 +45,7 @@ void CharacterLogic::Update() {
             case OnPathToTarget:
                 characterAnimations->SetNewState(Walking);
                 break;
-            case NearTargetSubPoint:
+            case NearTargetPosition:
                 characterAnimations->SetNewState(Idle);
                 break;
             case NearEnemyPosition:
@@ -64,7 +64,7 @@ void CharacterLogic::Update() {
             characterAnimations->SetNewState(Cheering);
         } else if (playerSatisfaction >= middleSatisfactionLimit || enemySatisfaction >= middleSatisfactionLimit) {
             characterAnimations->SetNewState(Idle);
-        } else if (playerSatisfaction >= lowerSatisfactionLimit || enemySatisfaction >= lowerSatisfactionLimit)  {
+        } else if (playerSatisfaction >= lowerSatisfactionLimit || enemySatisfaction >= lowerSatisfactionLimit) {
             characterAnimations->SetNewState(Booing);
         } else {
             logicState = WalkingAway;
@@ -106,6 +106,8 @@ void CharacterLogic::AIUpdate() {
             previousPlayerGenre = {};
             previousPlayerInstrumentName = {};
         }
+    } else {
+        timeSinceSession = 0.0f;
     }
 
     if (!parent->isOnFrustum) {
@@ -113,8 +115,11 @@ void CharacterLogic::AIUpdate() {
 
         if (timeSinceOnFrustum > AI_DESPAWN_TIMEOUT) {
             timeSinceOnFrustum = 0.0f;
-            AIManager::GetInstance()->RemoveCharacter(parent);
+            GameObject::Destroy(parent);
+            AIManager::GetInstance()->SpawnCharacter();
         }
+    } else {
+        timeSinceOnFrustum = 0.0f;
     }
 
     Component::AIUpdate();
@@ -122,6 +127,7 @@ void CharacterLogic::AIUpdate() {
 
 void CharacterLogic::OnCreate() {
     AIManager::GetInstance()->charactersLogics.insert({id, std::dynamic_pointer_cast<CharacterLogic>(shared_from_this())});
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::OnCreate();
 }
 
@@ -169,10 +175,10 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
         for (auto& pat : favPatterns) {
             if (pat.first == pattern->id) {
                 playerSatisfaction += 3.0f - pat.second;
-                pat.second = std::clamp(pat.second + 0.5f, 0.0f, 2.5f);
+                pat.second = std::clamp(pat.second + 0.75f, 0.0f, 5.0f);
                 isFavorite = true;
             } else {
-                pat.second = std::clamp(pat.second - 0.25f, 0.0f, 2.5f);
+                pat.second = std::clamp(pat.second - 0.5f, -1.0f, 5.0f);
             }
         }
 
@@ -322,7 +328,13 @@ void CharacterLogic::CalculateSatisfaction() {
         enemySatisfaction += 20.0f;
 
     enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
-//    TODO: dunno, do something here
-//    if (playerSatisfaction > enemySatisfaction)
+}
 
+/**
+ * @annotation
+ * Returns current logic state.
+ * @returns AI_LOGIC_STATE - logic state
+ */
+const AI_LOGIC_STATE CharacterLogic::GetLogicState() const {
+    return logicState;
 }

@@ -22,7 +22,7 @@ class CharacterMovement;
 class Indicator;
 
 class CharacterLogic : public Component {
-    AI_LOGICSTATE logicState = Wandering;
+    AI_LOGIC_STATE logicState = Wandering;
     float timeSinceSession = 0.0f;
     float timeSinceOnFrustum = 0.0f;
     // Animations
@@ -77,6 +77,7 @@ public:
     void SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat);
     void SetEnemyPlayingStatus(const bool& isEnemyPlaying);
     const float GetEnemySatisfaction() const;
+    const AI_LOGIC_STATE GetLogicState() const;
 
 };
 
