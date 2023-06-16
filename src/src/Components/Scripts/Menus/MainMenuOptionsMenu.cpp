@@ -67,7 +67,7 @@ void MainMenuOptionsMenu::Start() {
 bool MainMenuOptionsMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeButton")->GetComponent<Button>();
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionButton")->GetComponent<Button>();
     activeButton->isActive = true;
     return true;
 }
@@ -79,12 +79,15 @@ void MainMenuOptionsMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 void MainMenuOptionsMenu::OnClick() {
-    if(activeButton->GetParent()->GetName() == "SaveButton") {
+    if (activeButton->GetParent()->GetName() == "SaveButton") {
         auto mainMenuManager = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenuManager")->GetComponent<MainMenuManager>();
         OptionsManager::GetInstance()->Save();
         HideMenu();
         mainMenuManager->activeMenu = mainMenuManager->mainMenu;
         mainMenuManager->mainMenu->ShowMenu();
+    }
+    if (activeButton->GetParent()->GetName() == "CancelButton") {
+        // TODO do
     }
     Menu::OnClick();
 }
