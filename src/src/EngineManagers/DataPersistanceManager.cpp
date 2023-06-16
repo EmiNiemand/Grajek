@@ -37,7 +37,7 @@ void DataPersistanceManager::LoadGame(const std::string &dataDirectoryPath, cons
         object->LoadData(gameData);
     }
 #ifdef DEBUG
-    spdlog::info("Loading game: " + std::to_string(gameData->money) + ", " + std::to_string(gameData->reputation)
+    spdlog::info("Loading game: " + std::to_string(gameData->money)
                  + ", [" + std::to_string(gameData->playerPosition.x) + ", " + std::to_string(gameData->playerPosition.y)
                  + ", " + std::to_string(gameData->playerPosition.z) + "]");
 #endif
@@ -53,7 +53,7 @@ void DataPersistanceManager::SaveGame(const std::string &dataDirectoryPath, cons
     FileDataHandler fileDataHandler(dataDirectoryPath, dataFileName);
     fileDataHandler.SaveGame(gameData);
 #ifdef DEBUG
-    spdlog::info("Saving game: " + std::to_string(gameData->money) + ", " + std::to_string(gameData->reputation)
+    spdlog::info("Saving game: " + std::to_string(gameData->money)
     + ", [" + std::to_string(gameData->playerPosition.x) + ", " + std::to_string(gameData->playerPosition.y)
     + ", " + std::to_string(gameData->playerPosition.z) + "]");
 #endif

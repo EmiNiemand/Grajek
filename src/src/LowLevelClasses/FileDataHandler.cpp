@@ -61,7 +61,6 @@ void FileDataHandler::SaveGame(std::shared_ptr<GameData> gameData) {
 
 void FileDataHandler::to_json(nlohmann::json &json, const std::shared_ptr<GameData>& gameData) {
     json["money"] = gameData->money;
-    json["reputation"] = gameData->reputation;
     json["playerPosition.x"] = gameData->playerPosition.x;
     json["playerPosition.y"] = gameData->playerPosition.y;
     json["playerPosition.z"] = gameData->playerPosition.z;
@@ -78,7 +77,6 @@ void FileDataHandler::to_json(nlohmann::json &json, const std::shared_ptr<GameDa
 
 void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_ptr<GameData>& gameData) {
     json.at("money").get_to(gameData->money);
-    json.at("reputation").get_to(gameData->reputation);
     json.at("playerPosition.x").get_to(gameData->playerPosition.x);
     json.at("playerPosition.y").get_to(gameData->playerPosition.y);
     json.at("playerPosition.z").get_to(gameData->playerPosition.z);
@@ -92,6 +90,3 @@ void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_pt
     if(json.contains("instrument.Launchpad")) gameData->instruments.insert(InstrumentName::Launchpad);
     if(json.contains("instrument.Guitar")) gameData->instruments.insert(InstrumentName::Guitar);
 }
-
-
-

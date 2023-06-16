@@ -21,7 +21,7 @@ private:
 
 private:
     DataPersistanceManager();
-    std::vector<std::shared_ptr<IDataPersistance>> FindAllDataPersistanceObjects();
+    static std::vector<std::shared_ptr<IDataPersistance>> FindAllDataPersistanceObjects();
 
 public:
     DataPersistanceManager(DataPersistanceManager &other) = delete;

@@ -195,7 +195,7 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
     int cashDiff = newAmount - cashAmount;
     cashAmount = newAmount;
 
-    if (cashDiff == 0) return;
+    if (cashDiff < 1) return;
     if (!playAnimation) return;
 
     auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
@@ -209,9 +209,9 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
             {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight(), 0), 0.5f}
     });
     auto addMoneyText = GameObject::Instantiate("AddMoneyText", parent)->AddComponent<Text>();
-    addMoneyText->LoadFont((cashDiff>0?"+":"") + std::to_string(cashDiff),
+    addMoneyText->LoadFont((cashDiff>0?"+$":"") + std::to_string(cashDiff),
                            0, 0, 48);
-    addMoneyText->SetPosition(0, 1080 - addMoneyImage->GetHeight()/2 - 12);
+    addMoneyText->SetPosition(0, 1080 - addMoneyImage->GetHeight()/2 - 6);
     addMoneyText->z = -0.75f;
     auto addMoneyTextAnimator = addMoneyText->GetParent()->AddComponent<UIAnimator>();
     addMoneyTextAnimator->Setup(addMoneyText, {

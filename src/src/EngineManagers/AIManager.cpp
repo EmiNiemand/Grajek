@@ -6,7 +6,6 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
-#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
@@ -117,7 +116,7 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
     for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == AlertedByPlayer || state == ListeningToPlayer || state == MovingToPlayer)
+        if (state == ListeningToPlayer)
             ch.second->SetPlayerPattern(pat);
     }
 }
@@ -135,13 +134,13 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == AlertedByPlayer || state == ListeningToPlayer || state == MovingToPlayer) {
+        if (state == ListeningToPlayer) {
             satisfaction += ch.second->GetPlayerSatisfaction();
             characterCounter += 1.0f;
         }
     }
 
-    if (!charactersLogics.empty()) {
+    if (characterCounter != 0.0f) {
         satisfaction /= characterCounter;
 
         switch (currentPlayerInstrument) {
@@ -203,7 +202,7 @@ void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pa
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == AlertedByEnemy || state == ListeningToEnemy || state == MovingToEnemy)
+        if (state == ListeningToEnemy)
             ch.second->SetEnemyPattern(pat);
     }
 }
@@ -221,13 +220,13 @@ const float AIManager::GetCombinedEnemySatisfaction() {
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == AlertedByEnemy || state == ListeningToEnemy || state == MovingToEnemy) {
+        if (state == ListeningToEnemy) {
             satisfaction += ch.second->GetEnemySatisfaction();
             characterCounter += 1.0f;
         }
     }
 
-    if (!charactersLogics.empty())
+    if (characterCounter != 0.0f)
         satisfaction /= characterCounter;
 
     return satisfaction;
