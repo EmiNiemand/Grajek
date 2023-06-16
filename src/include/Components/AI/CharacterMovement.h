@@ -15,10 +15,10 @@
 #include <numbers>
 
 // Forces consts
-constexpr float DISTANCE_TO_POINT = 2.0f;
-constexpr float DISTANCE_TO_COLLISION = 1.65f;
-constexpr float AVOIDANCE_ROTATION_FACTOR = 1.75f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.25f;
+constexpr float DISTANCE_TO_POINT = 1.8f;
+constexpr float DISTANCE_TO_COLLISION = 1.40f;
+constexpr float AVOIDANCE_ROTATION_FACTOR = 1.55f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.15f;
 // Movement consts
 constexpr float MOVEMENT_TIMEOUT = 3.0f;
 constexpr float MOVEMENT_SMOOTHING_PARAM = 0.5f;
@@ -30,7 +30,7 @@ class CharacterLogic;
 class CharacterPathfinding;
 
 class CharacterMovement : public Component {
-    AI_MOVEMENTSTATE movementState = NearTargetPosition;
+    AI_MOVEMENT_STATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     float timeSinceLastPlayerPoint = 0.0f;
     bool isInitializing = false;
@@ -53,10 +53,10 @@ class CharacterMovement : public Component {
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     glm::vec3 currentPosition {};
-    glm::vec3 endPoint {};
-    glm::vec3 previousEndPoint {};
-    std::vector<glm::vec3> subEndPoints {};
-    int subEndPointsIterator = -1;
+    glm::ivec2 endPoint {};
+    glm::ivec2 previousEndPoint {};
+    glm::ivec2 maxSpawnCoords {};
+    glm::ivec2 minSpawnCoords {};
     // Rigidbody parameters
     std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
@@ -68,11 +68,9 @@ class CharacterMovement : public Component {
     void SetRandomSpawnPointNearPlayer();
     void SetRandomSpawnPoint();
     void SetRandomEndPoint();
-    const glm::vec3 GetRandomPoint();
     void SetNewPathToPlayer();
     void ReturnToPreviousPath();
-    void SetSubEndPoints();
-    void CalculatePath();
+    void CalculatePath(const glm::ivec2& toPoint);
 
 protected:
     const bool IsPositionAvailable(const glm::ivec2 &position);
@@ -88,8 +86,8 @@ public:
     void OnCreate() override;
     void OnDestroy() override;
 
-    void SetState(const AI_MOVEMENTSTATE& newState);
-    const AI_MOVEMENTSTATE GetState() const;
+    void SetState(const AI_MOVEMENT_STATE& newState);
+    const AI_MOVEMENT_STATE GetState() const;
 
 };
 

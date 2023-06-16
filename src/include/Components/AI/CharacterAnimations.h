@@ -13,7 +13,7 @@ class Animator;
 
 class CharacterAnimations {
 private:
-    AI_ANIMATIONSTATE currentState = Idle;
+    AI_ANIMATION_STATE currentState = Idle;
 
     std::weak_ptr<Animator> animator;
 
@@ -21,7 +21,7 @@ public:
     explicit CharacterAnimations(const std::weak_ptr<Animator> &animator);
     virtual ~CharacterAnimations();
 
-    void SetNewState(AI_ANIMATIONSTATE state);
+    void SetNewState(AI_ANIMATION_STATE state);
 
 private:
     void SetNewAnimation();

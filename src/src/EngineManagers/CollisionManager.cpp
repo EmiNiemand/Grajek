@@ -42,7 +42,7 @@ void CollisionManager::ManageCollision() {
     glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform->GetGlobalPosition();
     playerPosition = glm::ivec2((int)(playerPos.x / gridSize) + GRID_SIZE / 2, (int)(playerPos.z / gridSize) + GRID_SIZE / 2);
 
-    int threadsNumber = AIManager::GetInstance()->GetMaxCharacters() / 10;
+    int threadsNumber = AIManager::GetInstance()->GetCharactersAmount() / 10;
 
     threadsNumber = threadsNumber == 0 ? 1 : threadsNumber;
     threadsNumber = threadsNumber > maxNumberOfThreads + 1 ? (int)maxNumberOfThreads + 1 : threadsNumber;

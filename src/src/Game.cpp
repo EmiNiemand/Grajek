@@ -136,10 +136,9 @@ void Game::InitializeGame() const {
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
-    AIManager::GetInstance()->InitializeSpawner(10, 10, 100);
+    AIManager::GetInstance()->InitializeSpawner(1);
 #else
-    AIManager::GetInstance()->InitializeSpawner(15, 15, 100);
-//    AIManager::GetInstance()->InitializeSpawner(50, 100, 10);
+    AIManager::GetInstance()->InitializeSpawner(50);
 #endif
 
     camera->SetTarget(nullptr);
