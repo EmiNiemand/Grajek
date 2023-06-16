@@ -365,7 +365,7 @@ void CharacterMovement::CalculatePath(const glm::ivec2& toPoint) {
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},toPoint);
 
     if (path == nullptr)
-        pathIterator = -1;
+        movementState = NearTargetPosition;
     else
         pathIterator = (int)path->size() - 1;
 }
