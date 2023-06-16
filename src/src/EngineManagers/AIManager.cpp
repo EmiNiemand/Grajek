@@ -87,6 +87,8 @@ void AIManager::Free() {
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
     playerIsPlaying = true;
 
+    currentPlayerInstrument = ins;
+
     for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerInstrumentAndGenre(ins, gen);
         ch.second->SetPlayerPlayingStatus(true);
@@ -130,21 +132,6 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
 
-    // TODO: improve varied satisfaction
-//    float satisfactionModifier;
-//
-//    switch (currentPlayerInstrument) {
-//        case Clap:
-//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(10, 45);
-//            break;
-//        case Drums:
-//            satisfactionModifier = 63.0f;
-//            break;
-//        default:
-//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(0, 45);
-//            break;
-//    }
-
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
@@ -154,8 +141,27 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
         }
     }
 
-    if (!charactersLogics.empty())
-        satisfaction /= characterCounter; // * satisfactionModifier / 100.0f;
+    if (!charactersLogics.empty()) {
+        satisfaction /= characterCounter;
+
+        switch (currentPlayerInstrument) {
+            case Clap:
+                satisfaction *= CLAP_MODIFIER;
+                break;
+            case Drums:
+                satisfaction *= DRUMS_MODIFIER;
+                break;
+            case Trumpet:
+                satisfaction *= TRUMPET_MODIFIER;
+                break;
+            case Launchpad:
+                satisfaction *= LAUNCHPAD_MODIFIER;
+                break;
+            case Guitar:
+                satisfaction *= GUITAR_MODIFIER;
+                break;
+        }
+    }
 
     return satisfaction;
 }
@@ -211,21 +217,6 @@ const float AIManager::GetCombinedEnemySatisfaction() {
     float satisfaction = 0.0f;
     float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
-
-    // TODO: improve varied satisfaction
-//    float satisfactionModifier;
-//
-//    switch (currentPlayerInstrument) {
-//        case Clap:
-//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(10, 45);
-//            break;
-//        case Drums:
-//            satisfactionModifier = 63.0f;
-//            break;
-//        default:
-//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(0, 45);
-//            break;
-//    }
 
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
