@@ -54,6 +54,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     dialogue->texts.push_back({{"Let's say, whoever wins, gets " + std::to_string(bet)},
                                {""},
                                {""}});
+    dialogue->texts.push_back({{""},{""},{""}});
     winDialogue->texts.push_back({{"That was fantastic! Thanks for playing with me bud."},
                                   {std::to_string(bet) + " well earned. Good luck with other buskers!"},
                                   {""}});
@@ -95,6 +96,7 @@ void Opponent::Update() {
 
     auto hid = HIDManager::GetInstance();
 
+    // ??
     if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex)
         dialogue->image->enabled = true;
 
@@ -133,22 +135,23 @@ void Opponent::Update() {
             return;
         }
         if (hid->IsKeyDown(Key::KEY_ENTER)) {
+            //dialogue->NextDialogue();
             chooseMenuActive = false;
             chooseMenu->DisableSelfAndChildren();
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             if (button1->isActive) {
                 if (playerManager->GetCash() < bet) {
-                    dialogue->texts[1].text1 = "Sorry, but you don't have enough money.";
-                    dialogue->texts[1].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
+                    dialogue->texts[2].text1 = "Sorry, but you don't have enough money.";
+                    dialogue->texts[2].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
                     rejectDialogueActive = true;
                     return;
                 }
-                dialogue->texts[1].text1 = "Alright then, let's go!";
+                dialogue->texts[2].text1 = "Alright then, let's go!";
                 acceptDialogueActive = true;
                 return;
             } else {
-                dialogue->texts[1].text1 = "Understandable, have a great day!";
+                dialogue->texts[2].text1 = "Understandable, have a great day!";
                 rejectDialogueActive = true;
                 return;
             }

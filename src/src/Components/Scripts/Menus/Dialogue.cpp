@@ -70,6 +70,9 @@ void Dialogue::Update() {
 }
 
 void Dialogue::ShowDialogue() {
+    text1->text = "";
+    text2->text = "";
+    text3->text = "";
     text1->text = texts[0].text1;
     text2->text = texts[0].text2;
     text3->text = texts[0].text3;
@@ -90,6 +93,9 @@ void Dialogue::HideDialogue() {
 
 void Dialogue::NextDialogue() {
     dialogueIndex++;
+    text1->text = "";
+    text2->text = "";
+    text3->text = "";
     text1->text = texts[dialogueIndex].text1;
     text2->text = texts[dialogueIndex].text2;
     text3->text = texts[dialogueIndex].text3;
