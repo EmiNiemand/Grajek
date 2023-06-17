@@ -30,9 +30,6 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument, bool sess
     auto sessionUIInstance = GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI");
     sessionUIInstance = GameObject::Instantiate("Session", sessionUIInstance);
 
-    GameObject::Instantiate("Background", sessionUIInstance)
-            ->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity60.png", 0.8);
-
     switch (instrument->name) {
         case Clap:      sessionUI = sessionUIInstance->AddComponent<ClapSessionUI>(); break;
         case Drums:     sessionUI = sessionUIInstance->AddComponent<DrumsSessionUI>(); break;
