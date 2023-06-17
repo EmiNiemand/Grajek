@@ -97,6 +97,11 @@ void Game::InitializeGame() const {
     opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
     opponent->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
     opponent->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+
+    auto jazzDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    jazzDialogueIndicator->SetParent(opponent);
+    jazzDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    jazzDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
     // 2      *   *
     // 1    *   *
     // 0  *

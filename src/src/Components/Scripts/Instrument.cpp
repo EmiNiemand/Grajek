@@ -161,6 +161,25 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
             instrument->GeneratePattern({
                 {0, 0, 2}, {1, 0, 1},
                 {2, 0, 0.5}, {1, 0, 0.5}});
+
+            // SECRETS
+            // Smoke On The Water
+            // 2     ----    -
+            // 1   --      --
+            // 0 --      --
+            instrument->GeneratePattern({
+                {0, 0, 1}, {1, 0, 1},
+                {2, 0, 2},
+                {0, 0, 1}, {1, 0, 1},
+                {2, 0, 0.5}});
+            // 2        ----
+            // 1 ---  --    --
+            // 0    --        --
+            instrument->GeneratePattern({
+                {1, 0, 1.5},
+                {0, 0, 1}, {1, 0, 1},
+                {2, 0, 2}, {1, 0, 1},
+                {0, 0, 2}});
             break;
         case Launchpad:
             // 2   * *
