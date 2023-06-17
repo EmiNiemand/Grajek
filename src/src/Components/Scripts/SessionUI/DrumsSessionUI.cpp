@@ -15,9 +15,13 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
 
     SessionUI::Setup(bpm, samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 
-    // Add cheat sheet
+    // Set up cheat sheet
     // ------------------
     SetCheatSheet("UI/Sesja/drumPatterns.png");
+
+    // Set up instrument control
+    // ------------------
+    SetInstrumentControl("UI/Sesja/drumsControl.png");
 
     // Load theme
     // ----------

@@ -7,6 +7,7 @@
 #include "Components/Scripts/Menus/ShopTrigger.h"
 #include "Components/UI/Popup.h"
 #include "Components/UI/Image.h"
+#include "EngineManagers/SceneManager.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -42,6 +43,12 @@ void ShopMenu::Awake() {
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
     else
         instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
+
+    sound = parent->AddComponent<AudioSource>();
+    sound->LoadAudioData("res/sounds/direct/shop.wav", AudioType::Direct);
+    sound->SetGain(0);
+    sound->IsLooping(true);
+    sound->ForcePlaySound();
     Component::Awake();
 }
 
@@ -69,6 +76,9 @@ bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
     if(!Menu::ShowMenu()) return false;
 
+    sound->SetGain(1);
+    sound->PlaySound();
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0);
     GloomEngine::GetInstance()->timeScale = 1;
 
     if (!instruments.empty()) {
@@ -130,6 +140,8 @@ void ShopMenu::OnClick() {
         if (instruments.empty()) buyImage->enabled = false;
         spdlog::info("[SM] Bought instrument!");
     } else {
+        GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
+                Setup(610, 340, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
         spdlog::info("[SM] Not enough money for instrument");
     }
 }
@@ -143,3 +155,8 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
     GameObject::Destroy(button->GetParent());
 }
 
+void ShopMenu::HideMenu() {
+    Menu::HideMenu();
+    sound->SetGain(0.0f);
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.35f);
+}

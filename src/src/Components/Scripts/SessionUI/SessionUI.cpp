@@ -44,7 +44,7 @@ void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
-    instrumentControl->LoadTexture(451, -1100, instrumentControlPath, -1);
+    instrumentControl->LoadTexture(450, -1100, instrumentControlPath, -1);
 }
 
 void SessionUI::PlaySound(int index) {
@@ -59,7 +59,7 @@ void SessionUI::ToggleCheatSheet() {
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, 0, 0.0f), 0.5f}
                 });
     } else {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -76,12 +76,12 @@ void SessionUI::ToggleInstrumentControl() {
     if (instrumentControlActive) {
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(451.0f, -50.0f, 0.0f), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(960 - instrumentControl->GetWidth()/2, 0, 0.0f), 0.5f}
         });
     } else {
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(960 - instrumentControl->GetWidth()/2, -1100.0f, 0.0f), 0.5f}
         });
     }
 }
@@ -139,7 +139,7 @@ void SessionUI::BackingTrackSetup(const std::string& trackName) {
     backingTrack = GameObject::Instantiate("BackingTrack", parent)->AddComponent<AudioSource>();
     backingTrack->LoadAudioData("res/sounds/direct/"+trackName+".wav", AudioType::Direct);
     backingTrack->IsLooping(true);
-    backingTrack->PlaySound();
+    backingTrack->PlaySoundAfterStart(true);
 
     backingTrackIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
     backingTrackIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});

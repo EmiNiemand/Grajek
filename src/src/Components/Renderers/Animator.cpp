@@ -80,7 +80,8 @@ void Animator::SetAnimation(const std::string &name) {
     currentTime = -fmod(blendingTimeInSeconds * (float)currentAnimation.GetTicksPerSecond(), currentAnimation.GetDuration());
     blendingTimeInTicks = currentTime;
 
-    if (previousAnimation.name.empty() || !blend) {
+
+    if (previousAnimation.name.empty() || !blend || previousAnimationTime < 0) {
         previousAnimationTime = 0;
         currentTime = 0;
     }
@@ -141,9 +142,11 @@ void Animator::Draw(std::shared_ptr<Shader> shader) {
 
 void Animator::UpdateAnimation(float deltaTime) {
     currentTime += (float)currentAnimation.GetTicksPerSecond() * deltaTime * speed;
+
     if (currentTime == 0) {
         currentTime = 0.001f;
     }
+
     currentTime = fmod(currentTime, currentAnimation.GetDuration());
     CalculateBoneTransform(&currentAnimation.GetRootNode(), glm::mat4(1.0f));
 

@@ -14,6 +14,7 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
+#include "Components/Audio/AudioSource.h"
 #include "Components/UI/Image.h"
 
 #include <fstream>
@@ -67,6 +68,11 @@ void SceneManager::LoadScene(const std::string& scene) {
         GloomEngine::GetInstance()->game->activeCamera = Camera::activeCamera;
         GloomEngine::GetInstance()->game->activeScene = activeScene;
         GloomEngine::GetInstance()->game->InitializeGame();
+        auto audio = activeScene->AddComponent<AudioSource>();
+        audio->LoadAudioData("res/sounds/direct/town.wav", AudioType::Direct);
+        audio->IsLooping(true);
+        audio->SetGain(0.35f);
+        audio->PlaySoundAfterStart(true);
     } else if (scene == "MainMenu") {
         ClearScene();
         activeScene = GameObject::Instantiate("MainMenuScene", nullptr, Tags::SCENE);

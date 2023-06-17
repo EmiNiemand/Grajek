@@ -34,6 +34,8 @@ public:
 
     void FixedUpdate() override;
     void Move(glm::vec2 moveVector);
+    void StopWalkingSound();
+
 };
 
 

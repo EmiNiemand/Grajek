@@ -7,6 +7,7 @@
 
 class Button;
 class Image;
+class AudioSource;
 
 class ShopMenu : public Menu {
 private:
@@ -15,6 +16,7 @@ private:
 
 public:
     std::shared_ptr<Image> buyImage;
+    std::shared_ptr<AudioSource> sound;
     bool triggerActive = false;
 
 public:
@@ -26,6 +28,7 @@ public:
 
     void ChangeActiveButton(glm::vec2 moveVector) override;
     bool ShowMenu() override;
+    void HideMenu() override;
     void OnClick() override;
 private:
     void DeleteButton(std::shared_ptr<Button> button);

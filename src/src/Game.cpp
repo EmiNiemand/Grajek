@@ -52,7 +52,7 @@ void Game::InitializeGame() const {
     // Set up camera
     // -------------
     std::shared_ptr<Camera> camera = activeCamera->AddComponent<Camera>();
-    camera->cameraOffset = glm::vec3(0, 30, 30);
+    camera->cameraOffset = glm::vec3(0, 25, 25);
 
     // Set up cubemap
     // --------------
@@ -136,7 +136,7 @@ void Game::InitializeGame() const {
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
-    AIManager::GetInstance()->InitializeSpawner(1);
+    AIManager::GetInstance()->InitializeSpawner(50);
 #else
     AIManager::GetInstance()->InitializeSpawner(50);
 #endif
