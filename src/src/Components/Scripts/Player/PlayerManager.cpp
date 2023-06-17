@@ -75,12 +75,13 @@ void PlayerManager::Awake() {
 
     // Set up Equipment
     // ----------------
-    equipment->Setup(0);
+    equipment->cash = 0;
     BuyInstrument(0, Instrument::GetInstrument(InstrumentName::Clap));
 
     // Set up Player's UI
     // ------------------
     playerUI->UpdateCash(equipment->GetCash(), false);
+    //TODO: update badges
 
     // Set up Music Session
     // --------------------
@@ -452,8 +453,14 @@ void PlayerManager::PollInput() {
 }
 
 void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
-    equipment->Setup(data->money);
+    equipment->cash = data->money;
+
+    for (auto badge : data->badges) {
+        equipment->badges.at(badge.first) = badge.second;
+    }
+
     playerUI->UpdateCash(data->money, false);
+    //TODO: add update badges and use method after defeating enemy
     parent->transform->SetLocalPosition(data->playerPosition);
     parent->UpdateSelfAndChildren();
     Camera::activeCamera->transform->SetLocalPosition(
@@ -467,6 +474,11 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
 
 void PlayerManager::SaveData(std::shared_ptr<GameData> &data) {
     data->money = equipment->GetCash();
+
+    for (auto badge : equipment->badges) {
+        data->badges.at(badge.first) = badge.second;
+    }
+
     data->playerPosition = parent->transform->GetLocalPosition();
     for(const auto& instrument : equipment->instruments)
         data->instruments.insert(instrument->name);

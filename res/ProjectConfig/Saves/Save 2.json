@@ -1,4 +1,8 @@
 {
+"badge.Drums": false,
+"badge.Guitar": false,
+"badge.Launchpad": false,
+"badge.Trumpet": false,
 "instrument.Drums": 0,
 "money": 9000,
 "playerPosition.x": -65.79426574707031,

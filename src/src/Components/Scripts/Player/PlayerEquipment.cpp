@@ -4,13 +4,14 @@
 #include "LowLevelClasses/GameData.h"
 #include "EngineManagers/RandomnessManager.h"
 
-PlayerEquipment::PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
+
+PlayerEquipment::PlayerEquipment(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {
+    for (int type = (int)PlayerBadges::DRUMS; type <= (int)PlayerBadges::GUITAR; ++type) {
+        badges.insert({static_cast<PlayerBadges>(type), false});
+    }
+}
 
 PlayerEquipment::~PlayerEquipment() = default;
-
-void PlayerEquipment::Setup(int startCash) {
-    cash = startCash;
-}
 
 bool PlayerEquipment::BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument) {
     if(price > cash || instruments.contains(instrument))

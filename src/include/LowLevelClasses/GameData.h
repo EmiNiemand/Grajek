@@ -9,12 +9,15 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Components/Scripts/MusicPattern.h"
 #include <set>
+#include <map>
 
 class GameData {
 public:
     int money;
     glm::vec3 playerPosition;
     std::set<InstrumentName> instruments;
+    std::map<PlayerBadges, bool> badges;
+
     bool sessionMetronomeSound;
     bool sessionMetronomeVisuals;
     bool sessionBackingTrack;
