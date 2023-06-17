@@ -6,6 +6,7 @@
 #include "Interfaces/IDataPersistance.h"
 #include "Components/Scripts/MusicPattern.h"
 #include <set>
+#include <map>
 
 class Instrument;
 
@@ -15,6 +16,7 @@ private:
 
 public:
     std::set<std::shared_ptr<Instrument>> instruments;
+    std::map<PlayerBadges, bool> badges;
 
     int cash = 0;
 
@@ -23,7 +25,6 @@ public:
 
     void OnDestroy() override;
 
-    void Setup(int startCash=0);
     bool BuyInstrument(int price, const std::shared_ptr<Instrument>& instrument);
     std::shared_ptr<Instrument> GetInstrumentWithName(InstrumentName name);
     std::set<InstrumentName> GetInstrumentNames();

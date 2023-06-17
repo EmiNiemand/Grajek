@@ -9,4 +9,7 @@ GameData::GameData() {
     playerPosition = glm::vec3(0, 0.5, 0);
     shopkeeperEvent = false;
     saveDate = "";
+    for (int type = (int)PlayerBadges::DRUMS; type <= (int)PlayerBadges::GUITAR; ++type) {
+        badges.insert({static_cast<PlayerBadges>(type), false});
+    }
 }

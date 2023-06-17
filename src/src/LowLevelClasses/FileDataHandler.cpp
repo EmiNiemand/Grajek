@@ -73,6 +73,10 @@ void FileDataHandler::to_json(nlohmann::json &json, const std::shared_ptr<GameDa
     if(gameData->instruments.contains(InstrumentName::Trumpet)) json["instrument.Trumpet"] = 0;
     if(gameData->instruments.contains(InstrumentName::Launchpad)) json["instrument.Launchpad"] = 0;
     if(gameData->instruments.contains(InstrumentName::Guitar)) json["instrument.Guitar"] = 0;
+    json["badge.Drums"] = gameData->badges.at(PlayerBadges::DRUMS);
+    json["badge.Trumpet"] = gameData->badges.at(PlayerBadges::TRUMPET);
+    json["badge.Launchpad"] = gameData->badges.at(PlayerBadges::LAUNCHPAD);
+    json["badge.Guitar"] = gameData->badges.at(PlayerBadges::GUITAR);
 }
 
 void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_ptr<GameData>& gameData) {
@@ -89,4 +93,8 @@ void FileDataHandler::from_json(const nlohmann::json &json, const std::shared_pt
     if(json.contains("instrument.Trumpet")) gameData->instruments.insert(InstrumentName::Trumpet);
     if(json.contains("instrument.Launchpad")) gameData->instruments.insert(InstrumentName::Launchpad);
     if(json.contains("instrument.Guitar")) gameData->instruments.insert(InstrumentName::Guitar);
+    json.at("badge.Drums").get_to(gameData->badges.at(PlayerBadges::DRUMS));
+    json.at("badge.Trumpet").get_to(gameData->badges.at(PlayerBadges::TRUMPET));
+    json.at("badge.Launchpad").get_to(gameData->badges.at(PlayerBadges::LAUNCHPAD));
+    json.at("badge.Guitar").get_to(gameData->badges.at(PlayerBadges::GUITAR));
 }

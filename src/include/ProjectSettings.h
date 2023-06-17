@@ -49,4 +49,11 @@ enum class AudioDistanceMode {
     Paused,
 };
 
+enum class PlayerBadges {
+    DRUMS,
+    TRUMPET,
+    LAUNCHPAD,
+    GUITAR
+};
+
 #endif //OPENGLGP_PROJECTSETTINGS_H
