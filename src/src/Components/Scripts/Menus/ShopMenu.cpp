@@ -48,7 +48,7 @@ void ShopMenu::Awake() {
     sound->LoadAudioData("res/sounds/direct/shop.wav", AudioType::Direct);
     sound->SetGain(0);
     sound->IsLooping(true);
-    sound->PlaySound();
+    sound->ForcePlaySound();
     Component::Awake();
 }
 
@@ -77,6 +77,7 @@ bool ShopMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
     sound->SetGain(1);
+    sound->PlaySound();
     SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0);
     GloomEngine::GetInstance()->timeScale = 1;
 

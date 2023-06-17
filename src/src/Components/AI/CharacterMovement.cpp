@@ -124,6 +124,8 @@ void CharacterMovement::AIUpdate() {
                 movementState = NearTargetPosition;
             break;
         case SettingPathToPlayer:
+            AIManager::GetInstance()->charactersMovements.insert(
+                    {id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
             SetNewPathToPlayer();
             break;
         case OnPathToPlayer:
@@ -140,6 +142,7 @@ void CharacterMovement::AIUpdate() {
                 movementState = NearEnemyPosition;
             break;
         case ReturningToPreviousTarget:
+            AIManager::GetInstance()->RemoveCharacterMovement(id);
             ReturnToPreviousPath();
             break;
         default:
@@ -150,14 +153,12 @@ void CharacterMovement::AIUpdate() {
 }
 
 void CharacterMovement::OnCreate() {
-    AIManager::GetInstance()->charactersMovements.insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     isInitializing = AIManager::GetInstance()->isInitializing;
     Component::OnCreate();
 }
 
 void CharacterMovement::OnDestroy() {
-    AIManager::GetInstance()->RemoveCharacterMovement(id);
     if (path != nullptr) {
         path->clear();
         delete path;
@@ -329,7 +330,10 @@ void CharacterMovement::SetNewPathToPlayer() {
         }
     }
 
-    speedMultiplier = 2.0f;
+    distance = glm::distance(glm::vec2(currentPosition.x, currentPosition.z),
+                             glm::vec2(newEndPoint.x, newEndPoint.y));
+
+    speedMultiplier = 2.0f + distance / 100.0f;
     previousEndPoint = endPoint;
     endPoint = {newEndPoint.x, newEndPoint.y};
     movementState = OnPathToPlayer;

@@ -72,7 +72,7 @@ void SceneManager::LoadScene(const std::string& scene) {
         audio->LoadAudioData("res/sounds/direct/town.wav", AudioType::Direct);
         audio->IsLooping(true);
         audio->SetGain(0.2f);
-        audio->PlaySound();
+        audio->PlaySoundAfterStart(true);
     } else if (scene == "MainMenu") {
         ClearScene();
         activeScene = GameObject::Instantiate("MainMenuScene", nullptr, Tags::SCENE);

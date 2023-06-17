@@ -151,9 +151,7 @@ void AudioSource::ForcePlaySound() {
  * Pauses the sound.
  */
 void AudioSource::PauseSound() const {
-    if (currentState == AL_PLAYING) {
-        alSourcePause(sourceId);
-    }
+    alSourcePause(sourceId);
 }
 
 /**
@@ -161,8 +159,7 @@ void AudioSource::PauseSound() const {
  * Stops the sound.
  */
 void AudioSource::StopSound() const {
-    if (currentState == AL_PLAYING)
-        alSourceStop(sourceId);
+    alSourceStop(sourceId);
 }
 
 /**

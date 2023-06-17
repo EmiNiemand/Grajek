@@ -55,7 +55,7 @@ void PlayerMovement::Move(glm::vec2 inputVector) {
     moveVector = inputVector * glm::vec2(1, -1);
 
     // Step sound
-    if (moveVector != glm::vec2(0)) {
+    if (moveVector != glm::vec2(0.0f)) {
         if (!stepSoundActive) {
             stepSound->PlaySound();
             stepSound->SetGain(0.5);
@@ -70,4 +70,10 @@ void PlayerMovement::Move(glm::vec2 inputVector) {
         }
         stepSoundActive = false;
     }
+}
+
+void PlayerMovement::StopWalkingSound() {
+    stepSound->StopSound();
+    stepSound->SetGain(0);
+    stepSound->IsLooping(false);
 }

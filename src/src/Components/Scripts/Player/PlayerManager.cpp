@@ -179,12 +179,14 @@ void PlayerManager::OnInteract() {
 
     if (shopMenu->ShowMenu()) {
         activeMenu = shopMenu;
+        movement->StopWalkingSound();
         return;
     }
     else shopMenu->HideMenu();
 
     if (savePointMenu->ShowMenu()) {
         activeMenu = savePointMenu;
+        movement->StopWalkingSound();
         return;
     }
     else savePointMenu->HideMenu();
