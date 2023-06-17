@@ -27,6 +27,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Shop.h"
+#include "GameObjectsAndPrefabs/Prefabs/ConeIndicator.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
@@ -129,7 +130,10 @@ void Game::InitializeGame() const {
     gateDialogue->GetComponent<Dialogue>()->texts.push_back({{"Brama jest jeszcze zamknieta."},
                                                        {"Poczekaj na rozpoczecie konkursu"},
                                                        {""}});
-
+    auto gateDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    gateDialogueIndicator->SetParent(gateDialogue);
+    gateDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    gateDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));

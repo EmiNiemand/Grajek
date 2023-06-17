@@ -80,7 +80,10 @@ void ShadowManager::PrepareShadow() {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
 
-        RendererManager::GetInstance()->DrawObjects(shadowShader);
+        for (int i = 0; i < RendererManager::GetInstance()->bufferIterator; ++i) {
+            std::shared_ptr<Drawable> object = RendererManager::GetInstance()->drawBuffer[i];
+            if (object->drawShadows) object->Draw(shadowShader);
+        }
 
         glDisable(GL_CULL_FACE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

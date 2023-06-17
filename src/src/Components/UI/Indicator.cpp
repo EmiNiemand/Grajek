@@ -10,6 +10,7 @@
 #include "EngineManagers/RendererManager.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Animations/GameObjectAnimator.h"
+#include "GameObjectsAndPrefabs/Prefab.h"
 
 Indicator::Indicator(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) { }
 
