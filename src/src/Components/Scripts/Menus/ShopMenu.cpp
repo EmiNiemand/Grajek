@@ -7,6 +7,7 @@
 #include "Components/Scripts/Menus/ShopTrigger.h"
 #include "Components/UI/Popup.h"
 #include "Components/UI/Image.h"
+#include "EngineManagers/SceneManager.h"
 
 ShopMenu::ShopMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
@@ -76,6 +77,7 @@ bool ShopMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
     sound->SetGain(1);
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0);
     GloomEngine::GetInstance()->timeScale = 1;
 
     if (!instruments.empty()) {
@@ -155,4 +157,5 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
 void ShopMenu::HideMenu() {
     Menu::HideMenu();
     sound->SetGain(0);
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2);
 }
