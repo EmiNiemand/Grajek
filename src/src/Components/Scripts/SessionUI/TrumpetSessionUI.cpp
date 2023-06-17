@@ -14,9 +14,13 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
 
     SessionUI::Setup(bpm, samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 
+    // Set up instrument control
+    // ------------------
+    SetInstrumentControl("UI/Sesja/trumpetControl.png");
+
     // Add cheat sheet
     // ------------------
-    SetCheatSheet("UI/Sesja/drumPatterns.png");
+    SetCheatSheet("UI/Sesja/trumpetPatterns.png");
 
     // Load theme
     // ----------

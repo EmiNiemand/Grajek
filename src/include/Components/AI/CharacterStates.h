@@ -5,7 +5,7 @@
 #ifndef GLOOMENGINE_CHARACTERSTATES_H
 #define GLOOMENGINE_CHARACTERSTATES_H
 
-enum AI_LOGICSTATE {
+enum AI_LOGIC_STATE {
     Wandering,
     AlertedByPlayer,
     MovingToPlayer,
@@ -16,22 +16,20 @@ enum AI_LOGICSTATE {
     WalkingAway,
 };
 
-enum AI_MOVEMENTSTATE {
+enum AI_MOVEMENT_STATE {
+    Waiting,
     SettingPathToPlayer,
     OnPathToPlayer,
-    NearPlayerSubPoint,
     NearPlayerPosition,
     SettingPathToEnemy,
     OnPathToEnemy,
-    NearEnemySubPoint,
     NearEnemyPosition,
     OnPathToTarget,
-    NearTargetSubPoint,
     NearTargetPosition,
     ReturningToPreviousTarget,
 };
 
-enum AI_ANIMATIONSTATE {
+enum AI_ANIMATION_STATE {
     Idle,
     Walking,
     Running,

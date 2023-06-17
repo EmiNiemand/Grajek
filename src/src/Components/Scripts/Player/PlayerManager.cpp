@@ -306,7 +306,7 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat, floa
 
     float satisfaction = AIManager::GetInstance()->GetCombinedPlayerSatisfaction();
 
-    equipment->AddReward(accuracy / 10.0f * satisfaction / 100.0f);
+    equipment->AddReward(accuracy * satisfaction / 100.0f);
 
     if(sessionOpponent)
         sessionOpponent->PlayerPlayedPattern(satisfaction);
@@ -349,7 +349,8 @@ void PlayerManager::StartSessionWithOpponent(const std::shared_ptr<Opponent>& op
 void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
     sessionOpponent = nullptr;
     OnSessionToggle();
-    equipment->cash = moneyBet * (wonSession ? 1:-1);
+    equipment->cash += moneyBet * (wonSession ? 1:-1);
+    playerUI->UpdateCash(equipment->cash);
 }
 
 void PlayerManager::OnCheatSheetToggle() {

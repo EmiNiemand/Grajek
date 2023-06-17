@@ -13,7 +13,6 @@
 class GameData {
 public:
     int money;
-    int reputation;
     glm::vec3 playerPosition;
     std::set<InstrumentName> instruments;
     bool sessionMetronomeSound;

@@ -23,7 +23,7 @@
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
-    cashText->LoadFont("$: 0", 20, 1010, 64, glm::vec3(1));
+    cashText->LoadFont("$: 0", 10, 1010, 64, glm::vec3(1));
     cashText->z = -0.85;
     cashBackground =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
     cashBackground->LoadTexture(0, 0, "UI/MoneyBackground.png", -0.8);
@@ -211,12 +211,12 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
     auto addMoneyText = GameObject::Instantiate("AddMoneyText", parent)->AddComponent<Text>();
     addMoneyText->LoadFont((cashDiff>0?"+":"") + std::to_string(cashDiff),
                            0, 0, 48);
-    addMoneyText->SetPosition(0, 1080 - addMoneyImage->GetHeight()/2 - 12);
+    addMoneyText->SetPosition(0, 1080 - addMoneyImage->GetHeight()/2 - 16);
     addMoneyText->z = -0.75f;
     auto addMoneyTextAnimator = addMoneyText->GetParent()->AddComponent<UIAnimator>();
     addMoneyTextAnimator->Setup(addMoneyText, {
-            {AnimatedProperty::Position, glm::vec3(260, 1080 - addMoneyImage->GetHeight()/2 - 12, 0), 0.2f},
-            {AnimatedProperty::Position, glm::vec3(260, 1080 - addMoneyImage->GetHeight()/2 - 12, 0), 1.0f},
-            {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight()/2 - 12, 0), 0.5f}
+            {AnimatedProperty::Position, glm::vec3(250, 1080 - addMoneyImage->GetHeight()/2 - 16, 0), 0.2f},
+            {AnimatedProperty::Position, glm::vec3(250, 1080 - addMoneyImage->GetHeight()/2 - 16, 0), 1.0f},
+            {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight()/2 - 16, 0), 0.5f}
     });
 }

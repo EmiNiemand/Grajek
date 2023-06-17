@@ -6,7 +6,6 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
-#include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
@@ -32,24 +31,30 @@ AIManager* AIManager::GetInstance() {
  * @param max - max amount of entities
  * @param delay - time delay between spawns
  */
-void AIManager::InitializeSpawner(const int& min, const int& max, const int& delay) {
+void AIManager::InitializeSpawner(const int& maxCharacters) {
 #ifdef DEBUG
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
 
+    glm::vec3 coords;
     isInitializing = true;
-    currentCharacters = min;
-    maxCharacters = max;
-    spawnDelay = delay;
+    charactersAmount = maxCharacters;
     pathfinding = std::make_shared<CharacterPathfinding>();
     jazzHoodCenter = GloomEngine::GetInstance()->FindGameObjectWithName("JazzHoodCenter")->
             transform->GetLocalPosition();
-    glm::vec3 playerPosition = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->
-            transform->GetLocalPosition();
 
-    int random, jazzManSpawnRate;
+    coords = GloomEngine::GetInstance()->FindGameObjectWithName("MinSpawnCoords")->transform->GetLocalPosition();
+    minSpawnCoords.x = std::clamp((int)coords.x, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
+    minSpawnCoords.y = std::clamp((int)coords.z, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
 
-    for (int i = 0; i < min; i++) {
+    coords = GloomEngine::GetInstance()->FindGameObjectWithName("MaxSpawnCoords")->transform->GetLocalPosition();
+    maxSpawnCoords.x = std::clamp((int)coords.x, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
+    maxSpawnCoords.y = std::clamp((int)coords.z, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
+
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
+    playerPosition = playerTransform->GetLocalPosition();
+
+    for (int i = 0; i < charactersAmount; i++) {
         random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
         if (glm::distance(playerPosition, jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
@@ -64,18 +69,12 @@ void AIManager::InitializeSpawner(const int& min, const int& max, const int& del
     }
 
     isInitializing = false;
-
-    characterSpawner = std::jthread(SpawnCharacters, playerIsPlaying, std::ref(currentCharacters), maxCharacters,
-                                    spawnDelay, jazzHoodCenter);
 }
 
 void AIManager::Free() {
-    if (characterSpawner.joinable()) {
-        characterSpawner.request_stop();
-        characterSpawner.join();
-    }
     charactersLogics.clear();
     charactersMovements.clear();
+    playerTransform = nullptr;
 }
 
 /**
@@ -87,14 +86,12 @@ void AIManager::Free() {
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
     playerIsPlaying = true;
 
-    mutex.lock();
+    currentPlayerInstrument = ins;
 
     for (auto&& ch : charactersLogics) {
         ch.second->SetPlayerInstrumentAndGenre(ins, gen);
         ch.second->SetPlayerPlayingStatus(true);
     }
-
-    mutex.unlock();
 }
 
 /**
@@ -104,12 +101,8 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
 void AIManager::NotifyPlayerStopsPlaying() {
     playerIsPlaying = false;
 
-    mutex.lock();
-
     for (auto&& ch : charactersLogics)
         ch.second->SetPlayerPlayingStatus(false);
-
-    mutex.unlock();
 }
 
 /**
@@ -118,12 +111,14 @@ void AIManager::NotifyPlayerStopsPlaying() {
  * @param pat - pointer to MusicPattern played by player
  */
 void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
-    mutex.lock();
+    AI_LOGIC_STATE state;
 
-    for (auto&& ch : charactersLogics)
-        ch.second->SetPlayerPattern(pat);
+    for (auto &&ch: charactersLogics) {
+        state = ch.second->GetLogicState();
 
-    mutex.unlock();
+        if (state == ListeningToPlayer)
+            ch.second->SetPlayerPattern(pat);
+    }
 }
 
 /**
@@ -133,30 +128,39 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
  */
 const float AIManager::GetCombinedPlayerSatisfaction() {
     float satisfaction = 0.0f;
-    // TODO: improve varied satisfaction
-//    float satisfactionModifier;
-//
-//    switch (currentPlayerInstrument) {
-//        case Clap:
-//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(10, 45);
-//            break;
-//        case Drums:
-//            satisfactionModifier = 63.0f;
-//            break;
-//        default:
-//            satisfactionModifier = RandomnessManager::GetInstance()->GetFloat(0, 45);
-//            break;
-//    }
+    float characterCounter = 0.0f;
+    AI_LOGIC_STATE state;
 
-    mutex.lock();
+    for (auto&& ch : charactersLogics) {
+        state = ch.second->GetLogicState();
 
-    for (auto&& ch : charactersLogics)
-        satisfaction += ch.second->GetPlayerSatisfaction();
+        if (state == ListeningToPlayer) {
+            satisfaction += ch.second->GetPlayerSatisfaction();
+            characterCounter += 1.0f;
+        }
+    }
 
-    if (!charactersLogics.empty())
-        satisfaction /= (float)charactersLogics.size(); // * satisfactionModifier / 100.0f;
+    if (characterCounter != 0.0f) {
+        satisfaction /= characterCounter;
 
-    mutex.unlock();
+        switch (currentPlayerInstrument) {
+            case Clap:
+                satisfaction *= CLAP_MODIFIER;
+                break;
+            case Drums:
+                satisfaction *= DRUMS_MODIFIER;
+                break;
+            case Trumpet:
+                satisfaction *= TRUMPET_MODIFIER;
+                break;
+            case Launchpad:
+                satisfaction *= LAUNCHPAD_MODIFIER;
+                break;
+            case Guitar:
+                satisfaction *= GUITAR_MODIFIER;
+                break;
+        }
+    }
 
     return satisfaction;
 }
@@ -170,14 +174,10 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
 void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
     enemyIsPlaying = true;
 
-    mutex.lock();
-
     for (auto&& ch : charactersLogics) {
-        ch.second->SetEnemyInstrumentAndGenre(ins, gen);
-        ch.second->SetEnemyPlayingStatus(true);
+        ch.second->SetPlayerInstrumentAndGenre(ins, gen);
+        ch.second->SetPlayerPlayingStatus(true);
     }
-
-    mutex.unlock();
 }
 
 /**
@@ -187,12 +187,8 @@ void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicG
 void AIManager::NotifyEnemyStopsPlaying() {
     enemyIsPlaying = false;
 
-    mutex.lock();
-
     for (auto&& ch : charactersLogics)
         ch.second->SetEnemyPlayingStatus(false);
-
-    mutex.unlock();
 }
 
 /**
@@ -201,12 +197,14 @@ void AIManager::NotifyEnemyStopsPlaying() {
  * @param pat - pointer to MusicPattern played by enemy
  */
 void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
-    mutex.lock();
+    AI_LOGIC_STATE state;
 
-    for (auto&& ch : charactersLogics)
-        ch.second->SetEnemyPattern(pat);
+    for (auto&& ch : charactersLogics) {
+        state = ch.second->GetLogicState();
 
-    mutex.unlock();
+        if (state == ListeningToEnemy)
+            ch.second->SetEnemyPattern(pat);
+    }
 }
 
 /**
@@ -216,16 +214,20 @@ void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pa
  */
 const float AIManager::GetCombinedEnemySatisfaction() {
     float satisfaction = 0.0f;
+    float characterCounter = 0.0f;
+    AI_LOGIC_STATE state;
 
-    mutex.lock();
+    for (auto&& ch : charactersLogics) {
+        state = ch.second->GetLogicState();
 
-    for (auto&& ch : charactersLogics)
-        satisfaction += ch.second->GetEnemySatisfaction();
+        if (state == ListeningToEnemy) {
+            satisfaction += ch.second->GetEnemySatisfaction();
+            characterCounter += 1.0f;
+        }
+    }
 
-    if (!charactersLogics.empty())
-        satisfaction /= (float)charactersLogics.size();
-
-    mutex.unlock();
+    if (characterCounter != 0.0f)
+        satisfaction /= characterCounter;
 
     return satisfaction;
 }
@@ -235,23 +237,8 @@ const float AIManager::GetCombinedEnemySatisfaction() {
  * Returns max characters value
  * @returns int - maxCharacters
  */
-const int AIManager::GetMaxCharacters() const {
-    return maxCharacters;
-}
-
-/**
- * @annotation
- * Removes Character completely from the manager.
- * @param componentId - component id
- */
-void AIManager::RemoveCharacter(const std::shared_ptr<GameObject>& character) {
-    GloomEngine::GetInstance()->AddGameObjectToDestroyBuffer(character);
-
-    mutex.lock();
-
-    --currentCharacters;
-
-    mutex.unlock();
+const int AIManager::GetCharactersAmount() const {
+    return charactersAmount;
 }
 
 /**
@@ -260,12 +247,8 @@ void AIManager::RemoveCharacter(const std::shared_ptr<GameObject>& character) {
  * @param componentId - component id
  */
 void AIManager::RemoveCharacterLogic(const int& componentId) {
-    mutex.lock();
-
     if (charactersLogics.contains(componentId))
         charactersLogics.erase(componentId);
-
-    mutex.unlock();
 }
 
 /**
@@ -274,52 +257,29 @@ void AIManager::RemoveCharacterLogic(const int& componentId) {
  * @param componentId - component id
  */
 void AIManager::RemoveCharacterMovement(const int& componentId) {
-    mutex.lock();
-
     if (charactersMovements.contains(componentId))
         charactersMovements.erase(componentId);
-
-    mutex.unlock();
 }
 
 /**
  * @annotation
- * Spawns character with the given time delay.
- * @param token - stop token
- * @param playerIsPlaying - references player status from manager
- * @param currentCharacters - already spawned amount of characters
- * @param maxCharacters - max amount of characters
- * @param spawnDelay - time delay between spawns
+ * Spawns new characters.
  */
-void AIManager::SpawnCharacters(const std::stop_token& token, const bool& playerIsPlaying, int& currentCharacters,
-                                const int& maxCharacters, const int& spawnDelay, const glm::vec3& jazzHoodCenter) {
+void AIManager::SpawnCharacter() {
+    std::weak_ptr<GameObject> ch;
 
-    auto delay = std::chrono::milliseconds(spawnDelay);
-    int random, jazzManSpawnRate;
-    std::shared_ptr<GameObject> ch;
-    std::shared_ptr<Transform> playerTransform = GloomEngine::GetInstance()->
-            FindGameObjectWithName("Player")->transform;
+    random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-    while(!token.stop_requested()) {
-        if (currentCharacters < maxCharacters) {
-            random = RandomnessManager::GetInstance()->GetInt(1, 10);
+    if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
+        jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
+    else
+        jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
 
-            if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
-                jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
-            else
-                jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
+    if (random <= jazzManSpawnRate)
+        ch = Prefab::Instantiate<JazzTrumpet>();
+    else
+        ch = Prefab::Instantiate<Default>();
 
-            if (random <= jazzManSpawnRate)
-                ch = Prefab::Instantiate<JazzTrumpet>();
-            else
-                ch = Prefab::Instantiate<Default>();
-
-            if (playerIsPlaying)
-                ch->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
-
-            ++currentCharacters;
-        }
-
-        std::this_thread::sleep_for(delay);
-    }
+    if (playerIsPlaying)
+        ch.lock()->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
 }
