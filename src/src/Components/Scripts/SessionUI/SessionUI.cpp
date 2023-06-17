@@ -139,7 +139,7 @@ void SessionUI::BackingTrackSetup(const std::string& trackName) {
     backingTrack = GameObject::Instantiate("BackingTrack", parent)->AddComponent<AudioSource>();
     backingTrack->LoadAudioData("res/sounds/direct/"+trackName+".wav", AudioType::Direct);
     backingTrack->IsLooping(true);
-    backingTrack->PlaySound();
+    backingTrack->PlaySoundAfterStart(true);
 
     backingTrackIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
     backingTrackIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});

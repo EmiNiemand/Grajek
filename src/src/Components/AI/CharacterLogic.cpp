@@ -21,8 +21,6 @@ CharacterLogic::CharacterLogic(const std::shared_ptr<GameObject> &parent, int id
 CharacterLogic::~CharacterLogic() = default;
 
 void CharacterLogic::Start() {
-    characterMovement = parent->GetComponent<CharacterMovement>();
-    characterIndicator = parent->GetComponent<Indicator>();
     auto animatorObject = GameObject::Instantiate("Animator", parent);
     animatorObject->transform->SetLocalRotation({0, 180, 0});
     auto characterAnimator = animatorObject->AddComponent<Animator>();
@@ -32,6 +30,8 @@ void CharacterLogic::Start() {
     lowerSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(25, 40);
     middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
+    characterMovement = parent->GetComponent<CharacterMovement>();
+    characterIndicator = parent->GetComponent<Indicator>();
     Component::Start();
 }
 
@@ -207,7 +207,7 @@ void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
                 pat.second = 0.0f;
         }
     } else {
-        if (logicState != Wandering)
+        if (logicState != Wandering && characterMovement != nullptr)
             characterMovement->SetState(ReturningToPreviousTarget);
 
         logicState = Wandering;
@@ -271,7 +271,7 @@ void CharacterLogic::SetEnemyPlayingStatus(const bool& isEnemyPlaying) {
     if (isEnemyPlaying) {
         logicState = AlertedByEnemy;
     } else {
-        if (logicState != Wandering)
+        if (logicState != Wandering && characterMovement != nullptr)
             characterMovement->SetState(ReturningToPreviousTarget);
 
         logicState = Wandering;

@@ -136,7 +136,7 @@ void Game::InitializeGame() const {
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
-    AIManager::GetInstance()->InitializeSpawner(1);
+    AIManager::GetInstance()->InitializeSpawner(50);
 #else
     AIManager::GetInstance()->InitializeSpawner(50);
 #endif
