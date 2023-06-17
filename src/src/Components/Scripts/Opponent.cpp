@@ -96,14 +96,16 @@ void Opponent::Update() {
 
     auto hid = HIDManager::GetInstance();
 
-    // ??
-    if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex)
+    // Hide win dialogue
+    if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex) {
         dialogue->image->enabled = true;
+        winDialogue->HideDialogue();
+    }
 
     // Show first dialogue
     if (hid->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
-        dialogue->enabled = true;
         dialogueActive = true;
+        dialogue->ShowDialogue();
         return;
     }
 
@@ -135,7 +137,6 @@ void Opponent::Update() {
             return;
         }
         if (hid->IsKeyDown(Key::KEY_ENTER)) {
-            //dialogue->NextDialogue();
             chooseMenuActive = false;
             chooseMenu->DisableSelfAndChildren();
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
@@ -145,16 +146,16 @@ void Opponent::Update() {
                     dialogue->texts[2].text1 = "Sorry, but you don't have enough money.";
                     dialogue->texts[2].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
                     rejectDialogueActive = true;
-                    return;
+                } else {
+                    dialogue->texts[2].text1 = "Alright then, let's go!";
+                    acceptDialogueActive = true;
                 }
-                dialogue->texts[2].text1 = "Alright then, let's go!";
-                acceptDialogueActive = true;
-                return;
             } else {
                 dialogue->texts[2].text1 = "Understandable, have a great day!";
                 rejectDialogueActive = true;
-                return;
             }
+            dialogue->NextDialogue();
+            return;
         }
     }
 
@@ -207,8 +208,11 @@ void Opponent::Update() {
         return;
     }
 
-    if (hid->IsKeyDown(Key::KEY_ENTER) && lossDialogue->active)
+    // Hide lose dialogue
+    if (hid->IsKeyDown(Key::KEY_ENTER) && lossDialogue->active) {
         dialogue->image->enabled = true;
+        lossDialogue->HideDialogue();
+    }
 
     Component::Update();
 }
