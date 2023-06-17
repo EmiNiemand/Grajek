@@ -76,7 +76,7 @@ bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
     if(!Menu::ShowMenu()) return false;
 
-    sound->SetGain(1);
+    sound->SetGain(1.0f);
     SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0);
     GloomEngine::GetInstance()->timeScale = 1;
 
@@ -156,6 +156,6 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
 
 void ShopMenu::HideMenu() {
     Menu::HideMenu();
-    sound->SetGain(0);
-    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2);
+    sound->SetGain(0.0f);
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.35f);
 }
