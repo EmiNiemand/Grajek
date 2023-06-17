@@ -157,6 +157,6 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
 
 void ShopMenu::HideMenu() {
     Menu::HideMenu();
-    sound->SetGain(0);
-    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2);
+    sound->SetGain(0.0f);
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.35f);
 }

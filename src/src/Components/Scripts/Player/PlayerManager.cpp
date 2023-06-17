@@ -266,7 +266,7 @@ void PlayerManager::OnSessionToggle() {
     if(savePointManager) savePointManager->NotifyMenuIsNotActive();
 
     if (session) {
-        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2f);
+        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.35f);
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
@@ -277,7 +277,7 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
     if (sessionStarter) {
-        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2f);
+        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.35f);
         sessionStarter->Stop();
         sessionStarter.reset();
         GloomEngine::GetInstance()->timeScale = 1;
