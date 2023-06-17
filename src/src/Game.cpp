@@ -119,21 +119,54 @@ void Game::InitializeGame() const {
                                                      {"Przegrales."},
                                                      {""}});
 
-    auto gateDialogue = GameObject::Instantiate("GateDialogue", activeScene);
-    gateDialogue->transform->SetLocalPosition(glm::vec3(-6, 0, -27));
-    gateDialogue->transform->SetLocalScale(glm::vec3(0.6f));
-    auto dialogAnimator = gateDialogue->AddComponent<Animator>();
-    dialogAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
-    dialogAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
-    gateDialogue->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
-    gateDialogue->AddComponent<Dialogue>();
-    gateDialogue->GetComponent<Dialogue>()->texts.push_back({{"Brama jest jeszcze zamknieta."},
-                                                       {"Poczekaj na rozpoczecie konkursu"},
-                                                       {""}});
-    auto gateDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    gateDialogueIndicator->SetParent(gateDialogue);
-    gateDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
-    gateDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    auto dialogue = GameObject::Instantiate("GateDialogue", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-1, 0, -27));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    auto dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    auto dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
+                                                       {"Come back when a music competition begins."},
+                                                       {"In a meantime - why don't you explore the rest of the city?"}});
+    auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    dialogue = GameObject::Instantiate("PatternDialogue1", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-23.5, 0, -8));
+    dialogue->transform->SetLocalRotation(glm::vec3(0, 90, 0));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan003/BasicMan003.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"Sprobuj zagrac pattern tego lata."},
+                               {"ram pam bum pam"},
+                               {"ram pam bum pam"}});
+    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    dialogue = GameObject::Instantiate("CrowdDialogue", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-5, 0, -3));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan001/BasicMan001.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"Pamietaj, zeby nie grac dlugo czas tego samego patternu."},
+                                        {"Ludzie zaczna sie nudzic."},
+                                        {""}});
+    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));

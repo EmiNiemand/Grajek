@@ -33,8 +33,8 @@ void Shopkeeper::Start() {
     animator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
     texts.push_back({{"Hi! Welcome to Rhythmtown. I am your friendly local instrument shopkeeper."},
-                               {"Let me show you some basics. Use [W][A][S][D] or arrows to move around."},
-                               {""}});
+                               {"Let me show you some basics. Use [W][A][S][D] or arrows to move around,"},
+                               {"but please don't go anywhere yet. I still have some things to say."}});
     texts.push_back({{"Ah, you're here to take part in the competition?"},
                                {"If you want to battle with current Music King,"},
                                {"you need to know how to play on drums, trumpet, launchpad and guitar."}});
