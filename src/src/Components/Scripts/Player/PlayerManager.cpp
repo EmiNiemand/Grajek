@@ -264,6 +264,7 @@ void PlayerManager::OnSessionToggle() {
     if(savePointManager) savePointManager->NotifyMenuIsNotActive();
 
     if (session) {
+        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2f);
         Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
         session->Stop();
         session.reset();
@@ -274,6 +275,7 @@ void PlayerManager::OnSessionToggle() {
         return;
     }
     if (sessionStarter) {
+        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2f);
         sessionStarter->Stop();
         sessionStarter.reset();
         GloomEngine::GetInstance()->timeScale = 1;
@@ -282,6 +284,7 @@ void PlayerManager::OnSessionToggle() {
 
     if(dialogueManager) dialogueManager->NotifyMenuIsActive();
     if(savePointManager) savePointManager->NotifyMenuIsActive();
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.0f);
     GloomEngine::GetInstance()->timeScale = 0;
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     sessionStarter->Setup(equipment->instruments);
