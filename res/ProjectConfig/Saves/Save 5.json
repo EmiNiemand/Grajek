@@ -1,0 +1,19 @@
+{
+"badge.Drums": true,
+"badge.Guitar": true,
+"badge.Launchpad": true,
+"badge.Trumpet": true,
+"instrument.Drums": 0,
+"instrument.Guitar": 0,
+"instrument.Launchpad": 0,
+"instrument.Trumpet": 0,
+"money": 1953,
+"playerPosition.x": -15.572460174560547,
+"playerPosition.y": -0.038233086466789246,
+"playerPosition.z": -15.353317260742188,
+"saveDate": "17.06.2023 18:44",
+"session.backingTrack": false,
+"session.metronomeSound": false,
+"session.metronomeVisuals": false,
+"shopkeeperEvent": true
+}

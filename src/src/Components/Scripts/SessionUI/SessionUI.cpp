@@ -18,6 +18,9 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     metronomeVisualEnabled = !sessionMetronomeVisuals;
     backingTrackEnabled = !sessionBackingTrack;
 
+    GameObject::Instantiate("Background", parent)
+            ->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/vignetteBackground.png", 0.8);
+
     MetronomeSetup("UI/Sesja/Ramka.png", bpm);
     AccuracyFeedbackSetup();
 
@@ -29,7 +32,7 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
     for (const auto& sample: samples)
     {
         sampleSources.push_back(GameObject::Instantiate("SampleSource", parent)->AddComponent<AudioSource>());
-        sampleSources.back()->LoadAudioData(sample->clipPath.c_str(), AudioType::Direct);
+        sampleSources.back()->LoadAudioData(sample->clipPath, AudioType::Direct);
 
         sampleImages.push_back(GameObject::Instantiate("SampleImage", parent)
                                     ->AddComponent<Image>());

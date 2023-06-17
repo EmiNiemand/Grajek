@@ -35,9 +35,9 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
 
     auto badgesParent = GameObject::Instantiate("Badges", parent);
     {
-        int xPos = 10, yPos = 1080 - cashBackground->GetHeight() - 20;
+        int xPos = 10, yPos = 1080 - cashBackground->GetHeight() - 60;
         float zPos = -0.85;
-        int xSplit = 10, ySplit = 10;
+        int xSplit = 65, ySplit = 10;
 
         badges = {
             {PlayerBadges::DRUMS, nullptr}, {PlayerBadges::TRUMPET, nullptr},
