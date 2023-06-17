@@ -32,7 +32,6 @@ private:
     float timer = 0.0f;
     short sampleIndex = 0;
     short bet = 0;
-    bool triggerActive = false;
     bool defeated = false;
     bool dialogueActive = false;
     bool chooseMenuActive = false;

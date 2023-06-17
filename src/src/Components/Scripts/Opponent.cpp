@@ -48,6 +48,18 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     winDialogue->forced = true;
     lossDialogue = GameObject::Instantiate("OpponentLossDialogue", parent)->AddComponent<Dialogue>();
     lossDialogue->forced = true;
+    dialogue->texts.push_back({{"Yo, wanna see, who plays " + instrument->NameToString() + " better?"},
+                               {"Then why don't we make a little bet to spice things up!"},
+                               {""}});
+    dialogue->texts.push_back({{"Let's say, whoever wins, gets " + std::to_string(bet)},
+                               {""},
+                               {""}});
+    winDialogue->texts.push_back({{"That was fantastic! Thanks for playing with me bud."},
+                                  {std::to_string(bet) + " well earned. Good luck with other buskers!"},
+                                  {""}});
+    lossDialogue->texts.push_back({{"Unfortunately, you need a bit more practice bud."},
+                                   {"Definitely come back later though! You have a lot of potential."},
+                                   {"I feel that our battle could be legendary."}});
 
     // Setup choose menu
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
@@ -102,6 +114,9 @@ void Opponent::Update() {
         button2->isActive = true;
         chooseMenu->EnableSelfAndChildren();
         DialogueManager::GetInstance()->NotifyMenuIsActive();
+        dialogue->NextDialogue();
+        dialogue->texts[1].text1 = "Let's say, whoever wins, gets " + std::to_string(bet);
+        dialogue->texts[1].text2 = "";
         return;
     }
 
@@ -124,15 +139,16 @@ void Opponent::Update() {
             dialogue->image->enabled = false;
             if (button1->isActive) {
                 if (playerManager->GetCash() < bet) {
-                    dialogue->texts[1].text2 = "Nie masz tyle kasy.";
+                    dialogue->texts[1].text1 = "Sorry, but you don't have enough money.";
+                    dialogue->texts[1].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
                     rejectDialogueActive = true;
                     return;
                 }
-                dialogue->texts[1].text2 = "Walcz!";
+                dialogue->texts[1].text1 = "Alright then, let's go!";
                 acceptDialogueActive = true;
                 return;
             } else {
-                dialogue->texts[1].text2 = "Nie to nie.";
+                dialogue->texts[1].text1 = "Understandable, have a great day!";
                 rejectDialogueActive = true;
                 return;
             }
