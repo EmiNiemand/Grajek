@@ -42,6 +42,12 @@ void ShopMenu::Awake() {
         DeleteButton(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
     else
         instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
+
+    sound = parent->AddComponent<AudioSource>();
+    sound->LoadAudioData("res/sounds/direct/shop.wav", AudioType::Direct);
+    sound->SetGain(0);
+    sound->IsLooping(true);
+    sound->PlaySound();
     Component::Awake();
 }
 
@@ -69,6 +75,7 @@ bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
     if(!Menu::ShowMenu()) return false;
 
+    sound->SetGain(1);
     GloomEngine::GetInstance()->timeScale = 1;
 
     if (!instruments.empty()) {
@@ -145,3 +152,7 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
     GameObject::Destroy(button->GetParent());
 }
 
+void ShopMenu::HideMenu() {
+    Menu::HideMenu();
+    sound->SetGain(0);
+}
