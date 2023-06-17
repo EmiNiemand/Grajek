@@ -71,7 +71,7 @@ void SceneManager::LoadScene(const std::string& scene) {
         auto audio = activeScene->AddComponent<AudioSource>();
         audio->LoadAudioData("res/sounds/direct/town.wav", AudioType::Direct);
         audio->IsLooping(true);
-        audio->SetGain(0.35f);
+        audio->SetGain(0.2f);
         audio->PlaySoundAfterStart(true);
     } else if (scene == "MainMenu") {
         ClearScene();

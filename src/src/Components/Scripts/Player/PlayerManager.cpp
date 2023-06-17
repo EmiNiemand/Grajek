@@ -124,7 +124,6 @@ void PlayerManager::Update() {
 	UpdateAnimations();
 
     Component::Update();
-//    spdlog::info(animator->currentTime);
 }
 
 #pragma region Equipment Events
@@ -179,14 +178,14 @@ void PlayerManager::OnInteract() {
 
     if (shopMenu->ShowMenu()) {
         activeMenu = shopMenu;
-        movement->StopWalkingSound();
+        OnMove({0, 0});
         return;
     }
     else shopMenu->HideMenu();
 
     if (savePointMenu->ShowMenu()) {
         activeMenu = savePointMenu;
-        movement->StopWalkingSound();
+        OnMove({0, 0});
         return;
     }
     else savePointMenu->HideMenu();
