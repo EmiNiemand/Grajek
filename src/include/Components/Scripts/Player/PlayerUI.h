@@ -6,6 +6,7 @@
 #define GLOOMENGINE_PLAYERUI_H
 
 #include "Components/Component.h"
+#include <map>
 
 class Text;
 class Image;
@@ -14,6 +15,7 @@ class PlayerUI : public Component {
 private:
     std::shared_ptr<Text> cashText;
     std::shared_ptr<Image> cashBackground;
+    std::map<PlayerBadges, std::shared_ptr<Image>> badges;
     int cashAmount;
 
 public:
@@ -22,6 +24,7 @@ public:
     void OnDestroy() override;
 
     void UpdateCash(int newAmount, bool playAnimation=true);
+    void UpdateBadges(const std::map<PlayerBadges, bool>& badgesStates);
 };
 
 

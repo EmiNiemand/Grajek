@@ -23,12 +23,35 @@
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
-    cashText->LoadFont("$: 0", 10, 1010, 64, glm::vec3(1));
+    cashText->LoadFont("$ 0", 10, 1010, 64, glm::vec3(1));
     cashText->z = -0.85;
+
     cashBackground =  GameObject::Instantiate("UI", parent)->AddComponent<Image>();
     cashBackground->LoadTexture(0, 0, "UI/MoneyBackground.png", -0.8);
     cashBackground->SetPosition(0, 1080 - cashBackground->GetHeight());
     cashAmount = 0;
+
+    //TODO: Add badges background
+
+    auto badgesParent = GameObject::Instantiate("Badges", parent);
+    {
+        int xPos = 10, yPos = 1080 - cashBackground->GetHeight() - 20;
+        float zPos = -0.85;
+        int xSplit = 10, ySplit = 10;
+
+        badges = {
+            {PlayerBadges::DRUMS, nullptr}, {PlayerBadges::TRUMPET, nullptr},
+            {PlayerBadges::LAUNCHPAD, nullptr}, {PlayerBadges::GUITAR, nullptr}
+        };
+        for(auto badge : badges) {
+            badge.second = GameObject::Instantiate("DrumsBadge", badgesParent)->AddComponent<Image>();
+            badge.second->SetAlpha(0);
+        }
+        badges[PlayerBadges::DRUMS]->LoadTexture(xPos + xSplit*0, yPos + ySplit*0, "UI/Badges/DrumBadge.png", zPos);
+        badges[PlayerBadges::TRUMPET]->LoadTexture(xPos + xSplit*1, yPos + ySplit*0, "UI/Badges/TrumpetBadge.png", zPos);
+        badges[PlayerBadges::LAUNCHPAD]->LoadTexture(xPos + xSplit*2, yPos + ySplit*0, "UI/Badges/LaunchpadBadge.png", zPos);
+        badges[PlayerBadges::GUITAR]->LoadTexture(xPos + xSplit*3, yPos + ySplit*0, "UI/Badges/GuitarBadge.png", zPos);
+    }
 
     auto menus = GameObject::Instantiate("Menus", parent);
 
@@ -184,18 +207,13 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     }
 }
 
-void PlayerUI::OnDestroy() {
-    cashText.reset();
-    Component::OnDestroy();
-}
-
 void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
 	cashText->text = "$ " + std::to_string(newAmount);
 
     int cashDiff = newAmount - cashAmount;
     cashAmount = newAmount;
 
-    if (cashDiff < 1) return;
+    if (cashDiff == 0) return;
     if (!playAnimation) return;
 
     auto addMoneyImage = GameObject::Instantiate("AddMoneyImage", parent)->AddComponent<Image>();
@@ -219,4 +237,15 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
             {AnimatedProperty::Position, glm::vec3(250, 1080 - addMoneyImage->GetHeight()/2 - 16, 0), 1.0f},
             {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight()/2 - 16, 0), 0.5f}
     });
+}
+
+void PlayerUI::UpdateBadges(const std::map<PlayerBadges, bool>& badgesStates) {
+    for(auto state : badgesStates) {
+        if(state.second) badges[state.first]->SetAlpha(1);
+    }
+}
+
+void PlayerUI::OnDestroy() {
+    cashText.reset();
+    Component::OnDestroy();
 }

@@ -74,6 +74,7 @@ public:
     // Session methods
     void StartSessionWithOpponent(const std::shared_ptr<Opponent>& opponent);
     void EndSessionWithOpponent(bool wonSession, float moneyBet);
+    void ReceiveBadge(PlayerBadges badge);
     // Argument pat is null when player failed playing pattern
     void PlayedPattern(const std::shared_ptr<MusicPattern>& pat, float accuracy);
     void CreateMusicSession(InstrumentName instrument);

@@ -81,7 +81,7 @@ void PlayerManager::Awake() {
     // Set up Player's UI
     // ------------------
     playerUI->UpdateCash(equipment->GetCash(), false);
-    //TODO: update badges
+    playerUI->UpdateBadges(equipment->badges);
 
     // Set up Music Session
     // --------------------
@@ -358,6 +358,11 @@ void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
     playerUI->UpdateCash(equipment->cash);
 }
 
+void PlayerManager::ReceiveBadge(PlayerBadges badge) {
+    equipment->badges[badge] = true;
+    playerUI->UpdateBadges(equipment->badges);
+}
+
 void PlayerManager::OnCheatSheetToggle() {
     if (!session) return;
     session->ToggleCheatSheet();
@@ -460,7 +465,7 @@ void PlayerManager::LoadData(std::shared_ptr<GameData> data) {
     }
 
     playerUI->UpdateCash(data->money, false);
-    //TODO: add update badges and use method after defeating enemy
+    playerUI->UpdateBadges(equipment->badges);
     parent->transform->SetLocalPosition(data->playerPosition);
     parent->UpdateSelfAndChildren();
     Camera::activeCamera->transform->SetLocalPosition(
