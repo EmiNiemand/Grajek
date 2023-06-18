@@ -287,6 +287,11 @@ void Shopkeeper::Update() {
             if (key.second == 0) pattern++;
             else if (key.second == 1) {
                 if (pattern == 2) {
+                    for (int i = 0; i < 2; ++i) {
+                        for (int j = 0; j < 2; ++j) {
+                            GameObject::Destroy(sampleAnimators[i][j]->GetParent());
+                        }
+                    }
                     GameObject::Destroy(background->GetParent());
                     NextDialogue();
                 }
@@ -308,13 +313,6 @@ void Shopkeeper::OnDestroy() {
     door.reset();
     playerManager.reset();
     background.reset();
-    for (int i = 0; i < 2; ++i) {
-        sampleSources[i].reset();
-        sampleImages[i].reset();
-        for (int j = 0; j < 2; ++j) {
-            sampleAnimators[i][j].reset();
-        }
-    }
     sampleAnimators.clear();
     clapIcon.reset();
     sampleSources.clear();
