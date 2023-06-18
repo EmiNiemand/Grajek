@@ -12,6 +12,7 @@
 #include "EngineManagers/OptionsManager.h"
 #include "Components/Scripts/Menus/MainMenuManager.h"
 #include "Components/Scripts/Menus/MainMenu.h"
+#include "EngineManagers/SceneManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {
     auto optionsManager = OptionsManager::GetInstance();
@@ -41,22 +42,25 @@ OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Me
 OptionsMenu::~OptionsMenu() = default;
 
 void OptionsMenu::Start() {
-    musicVolumeValue = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeValue")->GetComponent<Button>();
-    windowResolutionValue = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionValue")->GetComponent<Button>();
-    windowFullScreenValue = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreenValue")->GetComponent<Button>();
-    shadowResolutionValue = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolutionValue")->GetComponent<Button>();
+    std::string mainMenu = "";
+    if (SceneManager::GetInstance()->activeScene->GetName() == "MainMenuScene")
+        mainMenu = "MainMenu";
+    musicVolumeValue = GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "MusicVolumeValue")->GetComponent<Button>();
+    windowResolutionValue = GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "WindowResolutionValue")->GetComponent<Button>();
+    windowFullScreenValue = GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "WindowFullScreenValue")->GetComponent<Button>();
+    shadowResolutionValue = GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "ShadowResolutionValue")->GetComponent<Button>();
     musicVolumeValue->ChangeText(musicVolumeValues[musicVolumeIterator]);
     windowResolutionValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
     windowFullScreenValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
     shadowResolutionValue->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
-    musicVolumeButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeLeft")->GetComponent<Button>());
-    musicVolumeButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeRight")->GetComponent<Button>());
-    windowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionLeft")->GetComponent<Button>());
-    windowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionRight")->GetComponent<Button>());
-    windowFullScreenButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreenLeft")->GetComponent<Button>());
-    windowFullScreenButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreenRight")->GetComponent<Button>());
-    shadowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolutionLeft")->GetComponent<Button>());
-    shadowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolutionRight")->GetComponent<Button>());
+    musicVolumeButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "MusicVolumeLeft")->GetComponent<Button>());
+    musicVolumeButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "MusicVolumeRight")->GetComponent<Button>());
+    windowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "WindowResolutionLeft")->GetComponent<Button>());
+    windowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "WindowResolutionRight")->GetComponent<Button>());
+    windowFullScreenButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "WindowFullScreenLeft")->GetComponent<Button>());
+    windowFullScreenButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "WindowFullScreenRight")->GetComponent<Button>());
+    shadowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "ShadowResolutionLeft")->GetComponent<Button>());
+    shadowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "ShadowResolutionRight")->GetComponent<Button>());
 
     if (musicVolumeIterator == 0) musicVolumeButtons[0]->isActive = false;
     if (musicVolumeIterator == 8) musicVolumeButtons[1]->isActive = false;
@@ -74,7 +78,10 @@ void OptionsMenu::Start() {
 bool OptionsMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionButton")->GetComponent<Button>();
+    if (SceneManager::GetInstance()->activeScene->GetName() == "MainMenuScene")
+        activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenuWindowResolutionButton")->GetComponent<Button>();
+    else
+        activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionButton")->GetComponent<Button>();
     activeButton->isActive = true;
     auto optionsManager = OptionsManager::GetInstance();
     previousMusicVolume = optionsManager->musicVolume;
@@ -92,7 +99,11 @@ void OptionsMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 void OptionsMenu::OnClick() {
-    if (activeButton->GetParent()->GetName() == "SaveButton") {
+    std::string mainMenu = "";
+    if (SceneManager::GetInstance()->activeScene->GetName() == "MainMenuScene")
+        mainMenu = "MainMenu";
+
+    if (activeButton->GetParent()->GetName() == mainMenu + "SaveButton") {
         OptionsManager::GetInstance()->Save();
         if (GloomEngine::GetInstance()->FindGameObjectWithName("Player")) {
             GloomEngine::GetInstance()->FindGameObjectWithName(
@@ -104,7 +115,7 @@ void OptionsMenu::OnClick() {
             mainMenuManager->mainMenu->ShowMenu();
         }
     }
-    if (activeButton->GetParent()->GetName() == "CancelButton") {
+    if (activeButton->GetParent()->GetName() == mainMenu + "CancelButton") {
         CancelSettings();
         if (GloomEngine::GetInstance()->FindGameObjectWithName("Player")) {
             GloomEngine::GetInstance()->FindGameObjectWithName(
@@ -122,8 +133,11 @@ void OptionsMenu::OnClick() {
 void OptionsMenu::ChangeValue(float x) {
     auto activeButtonName = activeButton->GetParent()->GetName();
     auto optionManager = OptionsManager::GetInstance();
+    std::string mainMenu = "";
+    if (SceneManager::GetInstance()->activeScene->GetName() == "MainMenuScene")
+        mainMenu = "MainMenu";
 
-    if (activeButtonName == "MusicVolumeButton") {
+    if (activeButtonName == mainMenu + "MusicVolumeButton") {
         std::shared_ptr<AudioListener> audioListener;
         float gain = 0.5f;
         if (GloomEngine::GetInstance()->FindGameObjectWithName("Player")) {
@@ -151,7 +165,7 @@ void OptionsMenu::ChangeValue(float x) {
         musicVolumeValue->ChangeText(musicVolumeValues[musicVolumeIterator]);
         sound->ForcePlaySound();
     }
-	else if (activeButtonName == "WindowResolutionButton") {
+	else if (activeButtonName == mainMenu + "WindowResolutionButton") {
         const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (x == -1.0f) {
             if (optionManager->width == 1920) {
@@ -204,7 +218,7 @@ void OptionsMenu::ChangeValue(float x) {
         sound->ForcePlaySound();
     }
 
-	else if (activeButtonName == "WindowFullScreenButton") {
+	else if (activeButtonName == mainMenu + "WindowFullScreenButton") {
         const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (x == -1.0f) {
             if (windowFullScreenIterator == 0) return;
@@ -236,7 +250,7 @@ void OptionsMenu::ChangeValue(float x) {
         sound->ForcePlaySound();
     }
 
-	else if (activeButtonName == "ShadowResolutionButton") {
+	else if (activeButtonName == mainMenu + "ShadowResolutionButton") {
         auto shadowManager = ShadowManager::GetInstance();
         if (x == -1.0f) {
             if (shadowManager->shadowResolution <= 1024) return;

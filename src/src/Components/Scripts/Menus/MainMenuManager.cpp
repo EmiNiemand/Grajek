@@ -19,7 +19,7 @@ MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, int 
 void MainMenuManager::Start() {
     mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>();
     loadGameMenu = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>();
-    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<OptionsMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenuOptionsMenu")->GetComponent<OptionsMenu>();
     creditsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("CreditsMenu")->GetComponent<CreditsMenu>();
     activeMenu = mainMenu;
     Component::Start();

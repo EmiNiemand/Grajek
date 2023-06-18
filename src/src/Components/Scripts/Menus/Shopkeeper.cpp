@@ -13,6 +13,7 @@
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/Animations/UIAnimator.h"
 #include "Components/Scripts/Player/PlayerInput.h"
+#include "EngineManagers/RandomnessManager.h"
 
 Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -79,10 +80,10 @@ void Shopkeeper::Start() {
     text1 = GameObject::Instantiate("DialogueText1", dialogue)->AddComponent<Text>();
     text2 = GameObject::Instantiate("DialogueText2", dialogue)->AddComponent<Text>();
     text3 = GameObject::Instantiate("DialogueText3", dialogue)->AddComponent<Text>();
-    text1->LoadFont(texts[0].text1, 250, 200, 32);
-    text2->LoadFont(texts[0].text2, 250, 150, 32);
-    text3->LoadFont(texts[0].text3, 250, 100, 32);
-    GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png");
+    text1->LoadFont(texts[0].text1, 250, 200, 32, glm::vec3(1));
+    text2->LoadFont(texts[0].text2, 250, 150, 32, glm::vec3(1));
+    text3->LoadFont(texts[0].text3, 250, 100, 32, glm::vec3(1));
+    GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png");
     image->enabled = false;
     playerManager->inputEnabled = false;
     sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", dialogue)->AddComponent<AudioSource>());

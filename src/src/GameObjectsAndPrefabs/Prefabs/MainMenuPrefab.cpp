@@ -85,25 +85,25 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     }
 
     // Options Menu
-    auto optionsMenu = GameObject::Instantiate("OptionsMenu", mainMenuScene)->AddComponent<OptionsMenu>();
-    auto windowResolutionButton = optionsMenu->AddButton("WindowResolutionButton", 60, 895, "UI/Settings/Resolution.png", "UI/Settings/ResolutionKolorowe.png");
-    auto windowFullScreenButton = optionsMenu->AddButton("WindowFullScreenButton", 60, 660, "UI/Settings/Fullscreen.png", "UI/Settings/FullscreenKolorowe.png");
-    auto musicVolumeButton = optionsMenu->AddButton("MusicVolumeButton", 60, 425, "UI/Settings/Volume.png", "UI/Settings/VolumeKolorowe.png");
-    auto shadowResolutionButton = optionsMenu->AddButton("ShadowResolutionButton", 60, 190, "UI/Settings/Shadows.png", "UI/Settings/ShadowKolorowe.png");
-    auto saveButton = optionsMenu->AddButton("SaveButton", 500, 30, "UI/Settings/Save.png", "UI/Settings/SaveKolorowe.png");
-    auto cancelButton = optionsMenu->AddButton("CancelButton", 1050, 30, "UI/Settings/Cancel.png", "UI/Settings/CancelKolorowe.png");
-    optionsMenu->AddButton("WindowResolutionValue", 833, 887, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
-    optionsMenu->AddButton("WindowFullScreenValue", 833, 648, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
-    optionsMenu->AddButton("MusicVolumeValue", 833, 415, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
-    optionsMenu->AddButton("ShadowResolutionValue", 833, 177, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
-    optionsMenu->AddButton("WindowResolutionLeft", 740, 867, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
-    optionsMenu->AddButton("WindowResolutionRight", 1735, 867, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
-    optionsMenu->AddButton("WindowFullScreenLeft", 740, 628, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
-    optionsMenu->AddButton("WindowFullScreenRight", 1735, 628, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
-    optionsMenu->AddButton("MusicVolumeLeft", 740, 395, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
-    optionsMenu->AddButton("MusicVolumeRight", 1735, 395, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
-    optionsMenu->AddButton("ShadowResolutionLeft", 740, 157, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
-    optionsMenu->AddButton("ShadowResolutionRight", 1735, 157, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+    auto optionsMenu = GameObject::Instantiate("MainMenuOptionsMenu", mainMenuScene)->AddComponent<OptionsMenu>();
+    auto windowResolutionButton = optionsMenu->AddButton("MainMenuWindowResolutionButton", 60, 895, "UI/Settings/Resolution.png", "UI/Settings/ResolutionKolorowe.png");
+    auto windowFullScreenButton = optionsMenu->AddButton("MainMenuWindowFullScreenButton", 60, 660, "UI/Settings/Fullscreen.png", "UI/Settings/FullscreenKolorowe.png");
+    auto musicVolumeButton = optionsMenu->AddButton("MainMenuMusicVolumeButton", 60, 425, "UI/Settings/Volume.png", "UI/Settings/VolumeKolorowe.png");
+    auto shadowResolutionButton = optionsMenu->AddButton("MainMenuShadowResolutionButton", 60, 190, "UI/Settings/Shadows.png", "UI/Settings/ShadowKolorowe.png");
+    auto saveButton = optionsMenu->AddButton("MainMenuSaveButton", 500, 30, "UI/Settings/Save.png", "UI/Settings/SaveKolorowe.png");
+    auto cancelButton = optionsMenu->AddButton("MainMenuCancelButton", 1050, 30, "UI/Settings/Cancel.png", "UI/Settings/CancelKolorowe.png");
+    optionsMenu->AddButton("MainMenuWindowResolutionValue", 833, 887, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+    optionsMenu->AddButton("MainMenuWindowFullScreenValue", 833, 648, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+    optionsMenu->AddButton("MainMenuMusicVolumeValue", 833, 415, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+    optionsMenu->AddButton("MainMenuShadowResolutionValue", 833, 177, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+    optionsMenu->AddButton("MainMenuWindowResolutionLeft", 740, 867, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuWindowResolutionRight", 1735, 867, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuWindowFullScreenLeft", 740, 628, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuWindowFullScreenRight", 1735, 628, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuMusicVolumeLeft", 740, 395, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuMusicVolumeRight", 1735, 395, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuShadowResolutionLeft", 740, 157, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+    optionsMenu->AddButton("MainMenuShadowResolutionRight", 1735, 157, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
     optionsMenu->AddImage("OptionsBackground", 0, 0, "UI/Settings/Settings.png");
     windowResolutionButton->previousButton = cancelButton;
     windowResolutionButton->nextButton = windowFullScreenButton;
