@@ -104,17 +104,13 @@ void Game::InitializeGame() const {
     drummer->transform->SetLocalRotation(glm::vec3(0, 135, 0));
     drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto drumDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    drumDialogueIndicator->SetParent(drummer);
-    drumDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
-    drumDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
-    drumDialogueIndicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 0, 0);
     // 2      *   *
     // 1    *   *
     // 0  *
     auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
     drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                             {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50, PlayerBadges::DRUMS);
+                                    {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50,
+                                    glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
 
 
     auto trumpeter = GameObject::Instantiate("JazzOpponent", activeScene);
@@ -126,17 +122,13 @@ void Game::InitializeGame() const {
     trumpeter->transform->SetLocalRotation(glm::vec3(0, 45, 0));
     trumpeter->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto jazzDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    jazzDialogueIndicator->SetParent(trumpeter);
-    jazzDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
-    jazzDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
-    jazzDialogueIndicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 0, 0);
     // 2      *   *
     // 1    *   *
     // 0  *
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
     trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50, PlayerBadges::TRUMPET);
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50,
+                                              glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
 
 
     // Town people

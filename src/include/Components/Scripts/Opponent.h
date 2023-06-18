@@ -53,6 +53,7 @@ public:
     std::shared_ptr<Dialogue> winDialogue;
     std::shared_ptr<Dialogue> lossDialogue;
     std::shared_ptr<SessionUI> sessionUI;
+    std::shared_ptr<GameObject> indicator;
 
 public:
     Opponent(const std::shared_ptr<GameObject> &parent, int id);
@@ -61,7 +62,7 @@ public:
     void OnDestroy() override;
     void Start() override;
     void Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
-               short bet1, PlayerBadges badge1 = (PlayerBadges)(-1));
+               short bet1, glm::vec3 indicatorColor = glm::vec3(1, 1, 0) ,PlayerBadges badge1 = (PlayerBadges)(-1));
     void Update() override;
     void PlayerPlayedPattern(float satisfaction1);
     void PlayerStartedMusicSession();
