@@ -16,6 +16,7 @@
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/UI/Image.h"
+#include "EngineManagers/RandomnessManager.h"
 
 #include <fstream>
 
@@ -48,7 +49,7 @@ void SceneManager::InitializeScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
-    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreen.png");
+    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreens/"+std::to_string(RandomnessManager::GetInstance()->GetInt(1, 2))+".png");
     loadingScreen->Draw();
     deleteLoadingScreen = true;
     glfwSwapBuffers(GloomEngine::GetInstance()->window);
