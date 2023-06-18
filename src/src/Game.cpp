@@ -117,7 +117,7 @@ void Game::InitializeGame() const {
     dialogue->transform->SetLocalScale(glm::vec3(0.5f));
     dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
     auto dialogueAnimator = dialogue->AddComponent<Animator>();
-    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
+    dialogueAnimator->LoadAnimationModel("Crowd/BobTheBuilder/Builder.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
     dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
@@ -182,7 +182,7 @@ void Game::InitializeGame() const {
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
-//    AIManager::GetInstance()->InitializeSpawner(50);
+    AIManager::GetInstance()->InitializeSpawner(1);
 #else
     AIManager::GetInstance()->InitializeSpawner(50);
 #endif
