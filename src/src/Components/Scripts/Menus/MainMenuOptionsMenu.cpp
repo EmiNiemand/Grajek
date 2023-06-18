@@ -119,10 +119,12 @@ void MainMenuOptionsMenu::ChangeValue(float x) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 240, 135);
                 optionManager->width = 1440;
                 optionManager->height = 810;
+                PostProcessingManager::GetInstance()->WindowResize();
             } else if (optionManager->width == 1440) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 480, 270);
                 optionManager->width = 960;
                 optionManager->height = 540;
+                PostProcessingManager::GetInstance()->WindowResize();
             } else return;
             windowResolutionIterator--;
         } else {
@@ -130,10 +132,12 @@ void MainMenuOptionsMenu::ChangeValue(float x) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 240, 135);
                 optionManager->width = 1440;
                 optionManager->height = 810;
+                PostProcessingManager::GetInstance()->WindowResize();
             } else if (optionManager->width == 1440) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 0, 0);
                 optionManager->width = 1920;
                 optionManager->height = 1080;
+                PostProcessingManager::GetInstance()->WindowResize();
             } else return;
             windowResolutionIterator++;
         }
@@ -175,8 +179,8 @@ void MainMenuOptionsMenu::ChangeValue(float x) {
             GLFWmonitor* monitor = glfwGetPrimaryMonitor();
             const GLFWvidmode* mode = glfwGetVideoMode(monitor);
             windowResolutionIterator = 2;
-            optionManager->width = mode->width;
-            optionManager->height = mode->height;
+            optionManager->width = 1920;
+            optionManager->height = 1080;
             PostProcessingManager::GetInstance()->WindowResize();
             glfwSetWindowMonitor(GloomEngine::GetInstance()->window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
             windowFullScreenIterator++;

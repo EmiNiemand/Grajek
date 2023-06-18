@@ -96,7 +96,7 @@ void PlayerManager::Awake() {
     //       PlayerUI (or wherever instantiating gets moved) creation
     //       below these.
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
-    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
     activeMenu = nullptr;

@@ -12,10 +12,10 @@
 #include "EngineManagers/OptionsManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {
-    musicVolumeIterator = (short)(OptionsManager::GetInstance()->musicVolume / 0.125f + 1);
-    windowResolutionIterator = (short)(OptionsManager::GetInstance()->width / 480 - 1);
-    windowFullScreenIterator = (short)(OptionsManager::GetInstance()->fullScreen + 1);
-    shadowResolutionIterator = (short)(OptionsManager::GetInstance()->shadowResolution / 2048 + 1);
+    musicVolumeIterator = (short)(OptionsManager::GetInstance()->musicVolume / 0.125f);
+    windowResolutionIterator = (short)(OptionsManager::GetInstance()->width / 480 - 2);
+    windowFullScreenIterator = (short)(OptionsManager::GetInstance()->fullScreen);
+    shadowResolutionIterator = (short)(OptionsManager::GetInstance()->shadowResolution / 2048);
     GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(OptionsManager::GetInstance()->musicVolume);
     if (OptionsManager::GetInstance()->fullScreen) {
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
@@ -36,208 +36,192 @@ OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Me
 OptionsMenu::~OptionsMenu() = default;
 
 void OptionsMenu::Start() {
-    auto button = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolume")->GetComponent<Button>();
-    button->ChangePosition(button->x, musicVolumeButtonY[musicVolumeIterator]);
-    button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolution")->GetComponent<Button>();
-    button->ChangePosition(button->x, windowResolutionButtonY[windowResolutionIterator]);
-    button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreen")->GetComponent<Button>();
-    button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
-    button = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolution")->GetComponent<Button>();
-    button->ChangePosition(button->x, shadowResolutionButtonY[shadowResolutionIterator]);
+    musicVolumeValue = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeValue")->GetComponent<Button>();
+    windowResolutionValue = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionValue")->GetComponent<Button>();
+    windowFullScreenValue = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreenValue")->GetComponent<Button>();
+    shadowResolutionValue = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolutionValue")->GetComponent<Button>();
+    musicVolumeValue->ChangeText(musicVolumeValues[musicVolumeIterator]);
+    windowResolutionValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
+    windowFullScreenValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
+    shadowResolutionValue->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
+    musicVolumeButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeLeft")->GetComponent<Button>());
+    musicVolumeButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolumeRight")->GetComponent<Button>());
+    windowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionLeft")->GetComponent<Button>());
+    windowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionRight")->GetComponent<Button>());
+    windowFullScreenButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreenLeft")->GetComponent<Button>());
+    windowFullScreenButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreenRight")->GetComponent<Button>());
+    shadowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolutionLeft")->GetComponent<Button>());
+    shadowResolutionButtons.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolutionRight")->GetComponent<Button>());
 
-    GameObject::Instantiate("Background", parent)->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity90.png");
-    scroll = parent->AddComponent<AudioSource>();
-    scroll->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
-
+    if (musicVolumeIterator == 0) musicVolumeButtons[0]->isActive = false;
+    if (musicVolumeIterator == 8) musicVolumeButtons[1]->isActive = false;
+    if (windowResolutionIterator == 0) windowResolutionButtons[0]->isActive = false;
+    if (windowResolutionIterator == 2) windowResolutionButtons[1]->isActive = false;
+    if (windowFullScreenIterator == 0) windowFullScreenButtons[0]->isActive = false;
+    if (windowFullScreenIterator == 1) windowFullScreenButtons[1]->isActive = false;
+    if (shadowResolutionIterator == 0) shadowResolutionButtons[0]->isActive = false;
+    if (shadowResolutionIterator == 2) shadowResolutionButtons[1]->isActive = false;
+    sound = parent->AddComponent<AudioSource>();
+    sound->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
     Component::Start();
 }
 
 bool OptionsMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
-    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("BackToPauseMenu")->GetComponent<Button>();
+    activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolutionButton")->GetComponent<Button>();
     activeButton->isActive = true;
-    GloomEngine::GetInstance()->FindGameObjectWithName("PreviousValue")->GetComponent<Button>()->ChangeText("");
-    GloomEngine::GetInstance()->FindGameObjectWithName("CurrentValue")->GetComponent<Button>()->ChangeText("");
-    GloomEngine::GetInstance()->FindGameObjectWithName("NextValue")->GetComponent<Button>()->ChangeText("");
     return true;
 }
 
 void OptionsMenu::ChangeActiveButton(glm::vec2 moveVector) {
-	auto previousValue = GloomEngine::GetInstance()->FindGameObjectWithName("PreviousValue")->GetComponent<Button>();
-	auto currentValue = GloomEngine::GetInstance()->FindGameObjectWithName("CurrentValue")->GetComponent<Button>();
-	auto nextValue = GloomEngine::GetInstance()->FindGameObjectWithName("NextValue")->GetComponent<Button>();
-
-    if (moveVector.y != 0.0f) {
-        ChangeValue(moveVector.y);
-        return;
-    }
-    if (moveVector.x == 1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
-        activeButton->isActive = true;
-    }
-    if (moveVector.x == -1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
-        activeButton->isActive = true;
-    }
-    if (activeButton->GetParent()->GetName() == "MusicVolume") {
-        previousValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume + 0.125f]);
-        currentValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume]);
-        nextValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume - 0.125f]);
-    } else if (activeButton->GetParent()->GetName() == "WindowResolution") {
-        previousValue->ChangeText(windowResolutionValues[windowResolutionIterator + 1]);
-        currentValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
-        nextValue->ChangeText(windowResolutionValues[windowResolutionIterator - 1]);
-    } else if (activeButton->GetParent()->GetName() == "WindowFullScreen") {
-        previousValue->ChangeText(windowFullScreenValues[windowFullScreenIterator + 1]);
-        currentValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
-        nextValue->ChangeText(windowFullScreenValues[windowFullScreenIterator - 1]);
-    } else if (activeButton->GetParent()->GetName() == "ShadowResolution") {
-        previousValue->ChangeText(shadowResolutionValues[shadowResolutionIterator + 1]);
-        currentValue->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
-        nextValue->ChangeText(shadowResolutionValues[shadowResolutionIterator - 1]);
-    }
+    Menu::ChangeActiveButton(moveVector);
+    if (moveVector.x != 0.0f)
+        ChangeValue(moveVector.x);
 }
 
-void OptionsMenu::ChangeValue(float y) {
-	std::shared_ptr<Button> button;
-	auto previousValue = GloomEngine::GetInstance()->FindGameObjectWithName("PreviousValue")->GetComponent<Button>();
-	auto currentValue = GloomEngine::GetInstance()->FindGameObjectWithName("CurrentValue")->GetComponent<Button>();
-	auto nextValue = GloomEngine::GetInstance()->FindGameObjectWithName("NextValue")->GetComponent<Button>();
+void OptionsMenu::OnClick() {
+    if (activeButton->GetParent()->GetName() == "SaveButton") {
+        OptionsManager::GetInstance()->Save();
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
+    }
+    if (activeButton->GetParent()->GetName() == "CancelButton") {
+        // TODO do
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
+    }
+    Menu::OnClick();
+}
 
-	auto activeButtonName = activeButton->GetParent()->GetName();
-    if (activeButtonName == "MusicVolume") {
+void OptionsMenu::ChangeValue(float x) {
+    auto activeButtonName = activeButton->GetParent()->GetName();
+    auto optionManager = OptionsManager::GetInstance();
+
+    if (activeButtonName == "MusicVolumeButton") {
 		auto audioListener = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>();
 		float gain = audioListener->GetGain();
-        if (y == -1.0f) {
+        if (x == -1.0f) {
             if (gain <= 0.0f) return;
             audioListener->SetGain(gain - 0.125f);
-            OptionsManager::GetInstance()->musicVolume -= 0.125f;
+            optionManager->musicVolume -= 0.125f;
             musicVolumeIterator--;
         } else {
             if (gain >= 1.0f) return;
             audioListener->SetGain(gain + 0.125f);
-            OptionsManager::GetInstance()->musicVolume += 0.125f;
+            optionManager->musicVolume += 0.125f;
             musicVolumeIterator++;
         }
-        previousValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume + 0.125f]);
-        currentValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume]);
-        nextValue->ChangeText(musicVolumeValues[OptionsManager::GetInstance()->musicVolume - 0.125f]);
-        button = GloomEngine::GetInstance()->FindGameObjectWithName("MusicVolume")->GetComponent<Button>();
-        button->ChangePosition(button->x, musicVolumeButtonY[musicVolumeIterator]);
-        scroll->ForcePlaySound();
+        musicVolumeButtons[0]->isActive = true;
+        musicVolumeButtons[1]->isActive = true;
+        if (musicVolumeIterator == 0) musicVolumeButtons[0]->isActive = false;
+        if (musicVolumeIterator == 8) musicVolumeButtons[1]->isActive = false;
+        musicVolumeValue->ChangeText(musicVolumeValues[musicVolumeIterator]);
+        sound->ForcePlaySound();
     }
-	else if (activeButtonName == "WindowResolution") {
-        if (y == -1.0f) {
-            if (OptionsManager::GetInstance()->width == 1920) {
+	else if (activeButtonName == "WindowResolutionButton") {
+        if (x == -1.0f) {
+            if (optionManager->width == 1920) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 240, 135);
-                OptionsManager::GetInstance()->width = 1440;
-                OptionsManager::GetInstance()->height = 810;
+                optionManager->width = 1440;
+                optionManager->height = 810;
                 PostProcessingManager::GetInstance()->WindowResize();
-            } else if (OptionsManager::GetInstance()->width == 1440) {
+            } else if (optionManager->width == 1440) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 480, 270);
-                OptionsManager::GetInstance()->width = 960;
-                OptionsManager::GetInstance()->height = 540;
+                optionManager->width = 960;
+                optionManager->height = 540;
                 PostProcessingManager::GetInstance()->WindowResize();
             } else return;
             windowResolutionIterator--;
         } else {
-            if (OptionsManager::GetInstance()->width == 960) {
+            if (optionManager->width == 960) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 240, 135);
-                OptionsManager::GetInstance()->width = 1440;
-                OptionsManager::GetInstance()->height = 810;
+                optionManager->width = 1440;
+                optionManager->height = 810;
                 PostProcessingManager::GetInstance()->WindowResize();
-            } else if (OptionsManager::GetInstance()->width == 1440) {
+            } else if (optionManager->width == 1440) {
                 glfwSetWindowPos(GloomEngine::GetInstance()->window, 0, 0);
-                OptionsManager::GetInstance()->width = 1920;
-                OptionsManager::GetInstance()->height = 1080;
+                optionManager->width = 1920;
+                optionManager->height = 1080;
                 PostProcessingManager::GetInstance()->WindowResize();
             } else return;
             windowResolutionIterator++;
         }
-        if (windowFullScreenIterator == 2) {
+        if (windowFullScreenIterator == 1) {
             auto gloomEngine = GloomEngine::GetInstance();
             glfwSetWindowMonitor(gloomEngine->window, NULL,
-								 (1920 - OptionsManager::GetInstance()->width) / 2,
-								 (1080 - OptionsManager::GetInstance()->height) / 2,
-								 OptionsManager::GetInstance()->width,
-								 OptionsManager::GetInstance()->height, 0);
+								 (1920 - optionManager->width) / 2,
+								 (1080 - optionManager->height) / 2,
+                                 optionManager->width,
+                                 optionManager->height, 0);
             windowFullScreenIterator--;
-            OptionsManager::GetInstance()->fullScreen = false;
-            button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreen")->GetComponent<Button>();
-            button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
+            optionManager->fullScreen = false;
+            windowFullScreenButtons[0]->isActive = true;
+            windowFullScreenButtons[1]->isActive = true;
+            if (windowFullScreenIterator == 0) windowFullScreenButtons[0]->isActive = false;
+            if (windowFullScreenIterator == 1) windowFullScreenButtons[1]->isActive = false;
+            windowFullScreenValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
         }
-        previousValue->ChangeText(windowResolutionValues[windowResolutionIterator + 1]);
-        currentValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
-        nextValue->ChangeText(windowResolutionValues[windowResolutionIterator - 1]);
-        button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolution")->GetComponent<Button>();
-		button->ChangePosition(button->x, windowResolutionButtonY[windowResolutionIterator]);
-        scroll->ForcePlaySound();
+        windowResolutionButtons[0]->isActive = true;
+        windowResolutionButtons[1]->isActive = true;
+        if (windowResolutionIterator == 0) windowResolutionButtons[0]->isActive = false;
+        if (windowResolutionIterator == 2) windowResolutionButtons[1]->isActive = false;
+        PostProcessingManager::GetInstance()->WindowResize();
+        windowResolutionValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
+        sound->ForcePlaySound();
     }
 
-	else if (activeButtonName == "WindowFullScreen") {
-        if (y == -1.0f) {
-            if (windowFullScreenIterator == 1) return;
+	else if (activeButtonName == "WindowFullScreenButton") {
+        if (x == -1.0f) {
+            if (windowFullScreenIterator == 0) return;
             glfwSetWindowMonitor(GloomEngine::GetInstance()->window, NULL,
-								 (1920 - OptionsManager::GetInstance()->width) / 2,
-								 (1080 - OptionsManager::GetInstance()->height) / 2,
-								 OptionsManager::GetInstance()->width,
-								 OptionsManager::GetInstance()->height, 0);
+								 (1920 - optionManager->width) / 2,
+								 (1080 - optionManager->height) / 2,
+                                 optionManager->width,
+                                 optionManager->height, 0);
             windowFullScreenIterator--;
-            OptionsManager::GetInstance()->fullScreen = false;
+            optionManager->fullScreen = false;
         } else {
-            if (windowFullScreenIterator == 2) return;
+            if (windowFullScreenIterator == 1) return;
             GLFWmonitor* monitor = glfwGetPrimaryMonitor();
             const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-            windowResolutionIterator = 3;
-            button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowResolution")->GetComponent<Button>();
-            button->ChangePosition(button->x, windowResolutionButtonY[windowResolutionIterator]);
-            OptionsManager::GetInstance()->width = 1920;
-            OptionsManager::GetInstance()->height = 1080;
+            windowResolutionIterator = 2;
+            optionManager->width = 1920;
+            optionManager->height = 1080;
             PostProcessingManager::GetInstance()->WindowResize();
             glfwSetWindowMonitor(GloomEngine::GetInstance()->window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
             windowFullScreenIterator++;
-            OptionsManager::GetInstance()->fullScreen = true;
+            optionManager->fullScreen = true;
+            windowResolutionValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
+            windowResolutionButtons[0]->isActive = true;
+            windowResolutionButtons[1]->isActive = false;
         }
-        previousValue->ChangeText(windowFullScreenValues[windowFullScreenIterator + 1]);
-        currentValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
-        nextValue->ChangeText(windowFullScreenValues[windowFullScreenIterator - 1]);
-        button = GloomEngine::GetInstance()->FindGameObjectWithName("WindowFullScreen")->GetComponent<Button>();
-		button->ChangePosition(button->x, windowFullScreenButtonY[windowFullScreenIterator]);
-        scroll->ForcePlaySound();
+        windowFullScreenButtons[0]->isActive = true;
+        windowFullScreenButtons[1]->isActive = true;
+        if (windowFullScreenIterator == 0) windowFullScreenButtons[0]->isActive = false;
+        if (windowFullScreenIterator == 1) windowFullScreenButtons[1]->isActive = false;
+        windowFullScreenValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
+        sound->ForcePlaySound();
     }
 
-	else if (activeButtonName == "ShadowResolution") {
+	else if (activeButtonName == "ShadowResolutionButton") {
         auto shadowManager = ShadowManager::GetInstance();
-        if (y == -1.0f) {
+        if (x == -1.0f) {
             if (shadowManager->shadowResolution <= 1024) return;
             shadowManager->shadowResolution /= 2;
             shadowResolutionIterator--;
-            OptionsManager::GetInstance()->shadowResolution /= 2;
+            optionManager->shadowResolution /= 2;
         } else {
             if (shadowManager->shadowResolution >= 4096) return;
             shadowManager->shadowResolution *= 2;
             shadowResolutionIterator++;
-            OptionsManager::GetInstance()->shadowResolution *= 2;
+            optionManager->shadowResolution *= 2;
         }
+        shadowResolutionButtons[0]->isActive = true;
+        shadowResolutionButtons[1]->isActive = true;
+        if (shadowResolutionIterator == 0) shadowResolutionButtons[0]->isActive = false;
+        if (shadowResolutionIterator == 2) shadowResolutionButtons[1]->isActive = false;
         ChangeShadowResolution();
-        previousValue->ChangeText(shadowResolutionValues[shadowResolutionIterator + 1]);
-        currentValue->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
-        nextValue->ChangeText(shadowResolutionValues[shadowResolutionIterator - 1]);
-        button = GloomEngine::GetInstance()->FindGameObjectWithName("ShadowResolution")->GetComponent<Button>();
-		button->ChangePosition(button->x, shadowResolutionButtonY[shadowResolutionIterator]);
-        scroll->ForcePlaySound();
-    }
-}
-
-void OptionsMenu::OnClick() {
-    if(activeButton->GetParent()->GetName() == "BackToPauseMenu") {
-        OptionsManager::GetInstance()->Save();
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
-//        HideMenu();
-//        GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>()->ShowMenu();
+        shadowResolutionValue->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
+        sound->ForcePlaySound();
     }
 }
 
@@ -263,6 +247,14 @@ void OptionsMenu::ChangeShadowResolution() {
 }
 
 void OptionsMenu::OnDestroy() {
-    scroll.reset();
+    musicVolumeValue.reset();
+    windowResolutionValue.reset();
+    windowFullScreenValue.reset();
+    shadowResolutionValue.reset();
+    sound.reset();
+    musicVolumeButtons.clear();
+    windowResolutionButtons.clear();
+    windowFullScreenButtons.clear();
+    shadowResolutionButtons.clear();
     Menu::OnDestroy();
 }

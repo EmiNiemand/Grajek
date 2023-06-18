@@ -148,10 +148,12 @@ void Opponent::Update() {
                     rejectDialogueActive = true;
                 } else {
                     dialogue->texts[2].text1 = "Alright then, let's go!";
+                    dialogue->texts[2].text2 = "";
                     acceptDialogueActive = true;
                 }
             } else {
                 dialogue->texts[2].text1 = "Understandable, have a great day!";
+                dialogue->texts[2].text2 = "";
                 rejectDialogueActive = true;
             }
             dialogue->NextDialogue();
