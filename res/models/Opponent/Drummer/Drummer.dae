@@ -5,22 +5,22 @@
       <author>Blender User</author>
       <authoring_tool>Blender 3.3.0 commit date:2022-09-06, commit time:15:39, hash:0759f671ce1f</authoring_tool>
     </contributor>
-    <created>2023-06-18T10:49:23</created>
-    <modified>2023-06-18T10:49:23</modified>
+    <created>2023-06-18T10:58:54</created>
+    <modified>2023-06-18T10:58:54</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
   <library_effects>
     <effect id="Material_001-effect">
       <profile_COMMON>
-        <newparam sid="MainHeroTeksture_png-surface">
+        <newparam sid="DrummerTeksture_png-surface">
           <surface type="2D">
-            <init_from>MainHeroTeksture_png</init_from>
+            <init_from>DrummerTeksture_png</init_from>
           </surface>
         </newparam>
-        <newparam sid="MainHeroTeksture_png-sampler">
+        <newparam sid="DrummerTeksture_png-sampler">
           <sampler2D>
-            <source>MainHeroTeksture_png-surface</source>
+            <source>DrummerTeksture_png-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -29,7 +29,7 @@
               <color sid="emission">0 0 0 1</color>
             </emission>
             <diffuse>
-              <texture texture="MainHeroTeksture_png-sampler" texcoord="Cube_012-mesh-map-0"/>
+              <texture texture="DrummerTeksture_png-sampler" texcoord="Cube_012-mesh-map-0"/>
             </diffuse>
             <index_of_refraction>
               <float sid="ior">1.45</float>
@@ -40,8 +40,8 @@
     </effect>
   </library_effects>
   <library_images>
-    <image id="MainHeroTeksture_png" name="MainHeroTeksture_png">
-      <init_from>MainHeroTeksture.png</init_from>
+    <image id="DrummerTeksture_png" name="DrummerTeksture_png">
+      <init_from>DrummerTeksture.png</init_from>
     </image>
   </library_images>
   <library_materials>

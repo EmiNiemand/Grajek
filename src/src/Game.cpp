@@ -92,20 +92,23 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    auto opponent = GameObject::Instantiate("JazzOpponent", activeScene);
-    opponent->AddComponent<Renderer>()->LoadModel("Opponent/opponent.obj");
-    opponent->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    opponent->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
-    opponent->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+    auto drummer = GameObject::Instantiate("JazzOpponent", activeScene);
+    auto drummerAnimator = drummer->AddComponent<Animator>();
+    drummerAnimator->LoadAnimationModel("Opponent/Trumpeter/Trumpeter.dae");
+    drummerAnimator->SetAnimation("MainHero/MainHeroTrumpet.dae");
+    drummer->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
+    drummer->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
+    drummer->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+    drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
     auto jazzDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    jazzDialogueIndicator->SetParent(opponent);
+    jazzDialogueIndicator->SetParent(drummer);
     jazzDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
     jazzDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
     // 2      *   *
     // 1    *   *
     // 0  *
-    auto opponentComponent = opponent->AddComponent<Opponent>();
+    auto opponentComponent = drummer->AddComponent<Opponent>();
     opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                               {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
     opponentComponent->dialogue->texts.push_back({{""},
