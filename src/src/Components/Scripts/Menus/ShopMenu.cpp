@@ -58,6 +58,8 @@ void ShopMenu::OnDestroy() {
 }
 
 void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
+    if(!activeButton) return;
+
     activeButton->GetParent()->children.begin()->second->DisableSelfAndChildren();
     if (moveVector.y == 1.0f) {
         activeButton->isActive = false;
