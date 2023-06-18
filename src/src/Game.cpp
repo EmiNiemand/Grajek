@@ -88,7 +88,7 @@ void Game::InitializeGame() const {
     // -------------
     std::shared_ptr<GameObject> sun = GameObject::Instantiate("Sun", activeScene);
     sun->AddComponent<DirectionalLight>();
-    sun->transform->SetLocalPosition({20, 40, 20});
+    sun->transform->SetLocalPosition({40, 30, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
     auto opponent = GameObject::Instantiate("JazzOpponent", activeScene);

@@ -2,6 +2,7 @@
 #include "Components/Audio/AudioListener.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
+#include "Components/Renderers/Lights/SpotLight.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "LowLevelClasses/Bone.h"

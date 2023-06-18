@@ -53,14 +53,14 @@ void ShadowManager::PrepareShadow() {
 #endif
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        glm::vec3 lightPos = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetGlobalPosition();
+//        glm::vec3 lightPos = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetGlobalPosition();
 //    lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)shadowWidth / (GLfloat)shadowHeight, 0.1f, 10.0f); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
         lightProjection = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, nearPlane, farPlane);
 
         glm::vec3 playerPos = GloomEngine::GetInstance()->FindGameObjectWithName(
                 "Player")->transform->GetGlobalPosition();
-        glm::vec3 upVector = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetUp();
-        lightView = glm::lookAt(playerPos + lightPos, playerPos, upVector);
+//        glm::vec3 upVector = RendererManager::GetInstance()->directionalLights[0]->GetParent()->transform->GetUp();
+        lightView = glm::lookAt(playerPos, playerPos, {0.0f, 1.0f, 0.0f});
         lightSpaceMatrix = lightProjection * lightView;
 
         // render scene from light's point of view

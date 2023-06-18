@@ -22,49 +22,35 @@ mat3 sy = mat3(
     1.0, 0.0, -1.0
 );
 
-
-// Blur
-
-float Pi = 6.28318530718; // Pi*2
-
-// GAUSSIAN BLUR SETTINGS
-float Directions = 64.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
-float Quality = 16.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
-float Size = 8.0; // BLUR SIZE (Radius)
-
-int   size       = 5;
-float separation = 3;
-float threshold  = 0.4;
-float amount     = 1;
+int SIZE = 5;
+float SEPARATION = 3.0f;
+float THRESHOLD = 0.5f;
+float AMOUNT = 2.0f;
 
 void main()
 {
-
-    vec2 texSize = textureSize(colorTexture, 0).xy;
-
     float value = 0.0;
     float count = 0.0;
-
-    vec4 result = vec4(0);
 
     vec3 diffuse = texture(screenTexture, TexCoords.st).rgb;
     vec2 texSize = textureSize(screenTexture, 0).xy + 2;
     vec2 fragCoord = gl_FragCoord.xy;
     vec2 texCoord = fragCoord / texSize;
 
+    vec4 result = vec4(0);
     vec4 color = vec4(0.0);
 
-    // Blur
+    for (int i = -SIZE; i <= SIZE; ++i) {
+        for (int j = -SIZE; j <= SIZE; ++j) {
+            color = texture(screenTexture, (fragCoord + (vec2(i, j) * SEPARATION)) / texSize);
 
-    vec2 Radius = Size/texSize;
+            value = max(color.r, max(color.g, color.b));
+            if (value < THRESHOLD) { color = vec4(0); }
 
-    for( float d=0.0; d<Pi; d+=Pi/Directions) {
-        for(float i=1.0/Quality; i<=1.0; i+=1.0/Quality) {
-            color += texture( screenTexture, texCoord+vec2(cos(d),sin(d))*Radius*i);
+            result += color;
+            count  += 1.0;
         }
     }
-
-    color /= Quality * Directions - 15.0;
 
     mat3 I;
     for (int i=0; i<3; i++) {
@@ -82,10 +68,9 @@ void main()
     g = smoothstep(0.2, 0.8, g);
 
     vec3 edgeColor = vec3(0.1, 0.1, 0.1);
+    result /= count;
 
-
-    color = vec4(mix(color.xyz, edgeColor, g), 1.0);
-
+    color = mix(vec4(0), result, AMOUNT);
 
     float minSeparation = 0.5;
     float maxSeparation = 1.0;
@@ -96,7 +81,6 @@ void main()
 
     float near = 0.1f;
     float far = 7.5f;
-
 
     vec4 position = texture(texturePosition, texCoord);
 
