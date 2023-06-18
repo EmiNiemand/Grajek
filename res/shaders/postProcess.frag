@@ -11,25 +11,66 @@ uniform sampler2D textureColor;
 
 // prewitt
 mat3 sx = mat3(
-1.0, 1.0, 1.0,
-0.0, 0.0, 0.0,
--1.0, -1.0, -1.0
+    1.0, 1.0, 1.0,
+    0.0, 0.0, 0.0,
+    -1.0, -1.0, -1.0
 );
 
 mat3 sy = mat3(
-1.0, 0.0, -1.0,
-1.0, 0.0, -1.0,
-1.0, 0.0, -1.0
+    1.0, 0.0, -1.0,
+    1.0, 0.0, -1.0,
+    1.0, 0.0, -1.0
 );
+
+
+// Blur
+
+float Pi = 6.28318530718; // Pi*2
+
+// GAUSSIAN BLUR SETTINGS
+float Directions = 64.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
+float Quality = 16.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
+float Size = 8.0; // BLUR SIZE (Radius)
+
+int   size       = 5;
+float separation = 3;
+float threshold  = 0.4;
+float amount     = 1;
 
 void main()
 {
+
+    vec2 texSize = textureSize(colorTexture, 0).xy;
+
+    float value = 0.0;
+    float count = 0.0;
+
+    vec4 result = vec4(0);
+
     vec3 diffuse = texture(screenTexture, TexCoords.st).rgb;
+    vec2 texSize = textureSize(screenTexture, 0).xy + 2;
+    vec2 fragCoord = gl_FragCoord.xy;
+    vec2 texCoord = fragCoord / texSize;
+
+    vec4 color = vec4(0.0);
+
+    // Blur
+
+    vec2 Radius = Size/texSize;
+
+    for( float d=0.0; d<Pi; d+=Pi/Directions) {
+        for(float i=1.0/Quality; i<=1.0; i+=1.0/Quality) {
+            color += texture( screenTexture, texCoord+vec2(cos(d),sin(d))*Radius*i);
+        }
+    }
+
+    color /= Quality * Directions - 15.0;
+
     mat3 I;
     for (int i=0; i<3; i++) {
         for (int j=0; j<3; j++) {
             vec3 sam  = texelFetch(textureColor, ivec2(gl_FragCoord) + ivec2(i-1,j-1), 0 ).rgb;
-        I[i][j] = length(sam);
+            I[i][j] = length(sam);
         }
     }
 
@@ -43,6 +84,9 @@ void main()
     vec3 edgeColor = vec3(0.1, 0.1, 0.1);
 
 
+    color = vec4(mix(color.xyz, edgeColor, g), 1.0);
+
+
     float minSeparation = 0.5;
     float maxSeparation = 1.0;
     float minDistance = 0.0;
@@ -53,9 +97,6 @@ void main()
     float near = 0.1f;
     float far = 7.5f;
 
-    vec2 texSize = textureSize(screenTexture, 0).xy + 2;
-    vec2 fragCoord = gl_FragCoord.xy;
-    vec2 texCoord = fragCoord / texSize;
 
     vec4 position = texture(texturePosition, texCoord);
 
@@ -78,8 +119,7 @@ void main()
     float diff = smoothstep(minDistance, maxDistance, mx);
     vec3 lineColor = texture(screenTexture, texCoord).rgb * colorModifier;
 
-    vec4 color = vec4(mix(diffuse, edgeColor, g), 1.0);
+    color = vec4(mix(color.rgb, lineColor, clamp(diff, 0.0, 1.0)), 1.0);
 
-    FragColor.rgb = mix(color.rgb, lineColor, clamp(diff, 0.0, 1.0));
-    FragColor.a = 1.0f;
+    FragColor = color;
 }
