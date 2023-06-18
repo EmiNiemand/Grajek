@@ -27,6 +27,8 @@ private:
     std::shared_ptr<Button> button1, button2;
 
     std::shared_ptr<GameObject> chooseMenu;
+    PlayerBadges badge;
+
     float battleTime = 60.0f;
     float satisfaction = 0.0f;
     float timer = 0.0f;
@@ -58,7 +60,8 @@ public:
 
     void OnDestroy() override;
     void Start() override;
-    void Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1, short bet1);
+    void Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
+               short bet1, PlayerBadges badge1 = (PlayerBadges)(-1));
     void Update() override;
     void PlayerPlayedPattern(float satisfaction1);
     void PlayerStartedMusicSession();

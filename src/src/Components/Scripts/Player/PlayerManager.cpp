@@ -103,7 +103,11 @@ void PlayerManager::Awake() {
 
     sessionOpponent = nullptr;
 
+    // Audio
     audioSource = parent->AddComponent<AudioSource>();
+    audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
+    audioSource->SetGain(0.5);
+    audioSource->IsLooping(true);
 
     // Load game
     // ---------
@@ -155,9 +159,6 @@ void PlayerManager::UpdateAnimationsAndSounds() {
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
         animator->SetAnimation("MainHero/MainHeroRun.dae");
 		animator->speed = 2;
-        audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
-        audioSource->SetGain(0.5);
-        audioSource->IsLooping(true);
         audioSource->PlaySound();
 	}
 	else if (velocity <= 0.01 && previousVelocity > 0.01){

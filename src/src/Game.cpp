@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GloomEngine.h"
+#include "ProjectSettings.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
@@ -92,26 +93,53 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    auto drummer = GameObject::Instantiate("JazzOpponent", activeScene);
+
+    // Enemies
+    auto drummer = GameObject::Instantiate("DrumOpponent", activeScene);
     auto drummerAnimator = drummer->AddComponent<Animator>();
-    drummerAnimator->LoadAnimationModel("Opponent/Trumpeter/Trumpeter.dae");
-    drummerAnimator->SetAnimation("MainHero/MainHeroTrumpet.dae");
-    drummer->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    drummer->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
-    drummer->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+    drummerAnimator->LoadAnimationModel("Opponent/Drummer/Drummer.dae");
+    drummerAnimator->SetAnimation("MainHero/MainHeroDrums.dae");
+    drummer->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    drummer->transform->SetLocalPosition(glm::vec3(-54, 0, 18));
+    drummer->transform->SetLocalRotation(glm::vec3(0, 135, 0));
     drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto jazzDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    jazzDialogueIndicator->SetParent(drummer);
-    jazzDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
-    jazzDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    auto drumDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    drumDialogueIndicator->SetParent(drummer);
+    drumDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    drumDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    drumDialogueIndicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 0, 0);
     // 2      *   *
     // 1    *   *
     // 0  *
-    auto opponentComponent = drummer->AddComponent<Opponent>();
-    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
+    auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
+    drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+                             {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50, PlayerBadges::DRUMS);
 
+
+    auto trumpeter = GameObject::Instantiate("JazzOpponent", activeScene);
+    auto trumpeterAnimator = trumpeter->AddComponent<Animator>();
+    trumpeterAnimator->LoadAnimationModel("Opponent/Trumpeter/Trumpeter.dae");
+    trumpeterAnimator->SetAnimation("MainHero/MainHeroTrumpet.dae");
+    trumpeter->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    trumpeter->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
+    trumpeter->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+    trumpeter->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
+
+    auto jazzDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    jazzDialogueIndicator->SetParent(trumpeter);
+    jazzDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    jazzDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    jazzDialogueIndicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 0, 0);
+    // 2      *   *
+    // 1    *   *
+    // 0  *
+    auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
+    trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50, PlayerBadges::TRUMPET);
+
+
+    // Town people
     auto dialogue = GameObject::Instantiate("GateDialogue", activeScene);
     dialogue->transform->SetLocalPosition(glm::vec3(-1, 0, -27));
     dialogue->transform->SetLocalScale(glm::vec3(0.5f));
