@@ -7,7 +7,7 @@
 class Menu;
 class MainMenu;
 class LoadGameMenu;
-class MainMenuOptionsMenu;
+class OptionsMenu;
 class CreditsMenu;
 
 class MainMenuManager : public Component {
@@ -15,7 +15,7 @@ public:
     std::shared_ptr<Menu> activeMenu;
     std::shared_ptr<MainMenu> mainMenu;
     std::shared_ptr<LoadGameMenu> loadGameMenu;
-    std::shared_ptr<MainMenuOptionsMenu> optionsMenu;
+    std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<CreditsMenu> creditsMenu;
 
 public:
