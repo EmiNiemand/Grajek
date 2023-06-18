@@ -4,7 +4,7 @@
 #include "EngineManagers/SceneManager.h"
 #include "Components/Scripts/Menus/MainMenuManager.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
-#include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/CreditsMenu.h"
 
 MainMenu::MainMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}

@@ -17,7 +17,8 @@ Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Componen
 
 Opponent::~Opponent() = default;
 
-void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1, short bet1) {
+void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
+                     short bet1, PlayerBadges badge1) {
     // Setup pattern
     instrument = std::move(instrument1);
     instrument->GeneratePattern(musicPattern);
@@ -26,11 +27,14 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     for (const auto& sound: instrument->patterns.back()->sounds) {
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
-        sample->LoadAudioData(sound->sample->clipPath.c_str(), AudioType::Positional);
+        sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
         sample->SetPositionOffset(parent->transform->GetLocalPosition());
+        sample->SetMaxDistance(15);
     }
+
     satisfaction = satisfaction1;
     bet = bet1;
+    badge = badge1;
 
     // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
@@ -48,6 +52,19 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     winDialogue->forced = true;
     lossDialogue = GameObject::Instantiate("OpponentLossDialogue", parent)->AddComponent<Dialogue>();
     lossDialogue->forced = true;
+    dialogue->texts.push_back({{"Yo, wanna see, who plays " + instrument->NameToString() + " better?"},
+                               {"Then why don't we make a little bet to spice things up!"},
+                               {""}});
+    dialogue->texts.push_back({{"Let's say, whoever wins, gets " + std::to_string(bet)},
+                               {""},
+                               {""}});
+    dialogue->texts.push_back({{""},{""},{""}});
+    winDialogue->texts.push_back({{"That was fantastic! Thanks for playing with me bud."},
+                                  {std::to_string(bet) + " well earned. Good luck with other buskers!"},
+                                  {""}});
+    lossDialogue->texts.push_back({{"Unfortunately, you need a bit more practice bud."},
+                                   {"Definitely come back later though! You have a lot of potential."},
+                                   {"I feel that our battle could be legendary."}});
 
     // Setup choose menu
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
@@ -65,6 +82,10 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
 void Opponent::Start() {
     dialogue->enabled = false;
     playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    auto playerEquipment = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerEquipment>();
+    if (playerEquipment->badges.contains(badge) && playerEquipment->badges[badge]) {
+        defeated = true;
+    }
     Component::Start();
 }
 
@@ -83,17 +104,23 @@ void Opponent::Update() {
 
     auto hid = HIDManager::GetInstance();
 
-    if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex)
-        dialogue->image->enabled = true;
-
-    // Show first dialogue
-    if (hid->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
-        dialogue->enabled = true;
-        dialogueActive = true;
+    if (hid->IsKeyDown(Key::KEY_E) && defeated) {
+        winDialogue->ShowDialogue();
         return;
     }
 
-    if (defeated) return;
+    // Hide win dialogue
+    if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex) {
+        dialogue->image->enabled = true;
+        winDialogue->HideDialogue();
+    }
+
+    // Show first dialogue
+    if (hid->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
+        dialogueActive = true;
+        dialogue->ShowDialogue();
+        return;
+    }
 
     // Show choose menu
     if (hid->IsKeyDown(Key::KEY_ENTER) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
@@ -102,6 +129,9 @@ void Opponent::Update() {
         button2->isActive = true;
         chooseMenu->EnableSelfAndChildren();
         DialogueManager::GetInstance()->NotifyMenuIsActive();
+        dialogue->NextDialogue();
+        dialogue->texts[1].text1 = "Let's say, whoever wins, gets " + std::to_string(bet);
+        dialogue->texts[1].text2 = "";
         return;
     }
 
@@ -124,18 +154,21 @@ void Opponent::Update() {
             dialogue->image->enabled = false;
             if (button1->isActive) {
                 if (playerManager->GetCash() < bet) {
-                    dialogue->texts[1].text2 = "Nie masz tyle kasy.";
+                    dialogue->texts[2].text1 = "Sorry, but you don't have enough money.";
+                    dialogue->texts[2].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
                     rejectDialogueActive = true;
-                    return;
+                } else {
+                    dialogue->texts[2].text1 = "Alright then, let's go!";
+                    dialogue->texts[2].text2 = "";
+                    acceptDialogueActive = true;
                 }
-                dialogue->texts[1].text2 = "Walcz!";
-                acceptDialogueActive = true;
-                return;
             } else {
-                dialogue->texts[1].text2 = "Nie to nie.";
+                dialogue->texts[2].text1 = "Understandable, have a great day!";
+                dialogue->texts[2].text2 = "";
                 rejectDialogueActive = true;
-                return;
             }
+            dialogue->NextDialogue();
+            return;
         }
     }
 
@@ -175,9 +208,8 @@ void Opponent::Update() {
             if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
                 defeated = true;
                 winDialogue->ShowDialogue();
-                dialogue->texts.pop_back();
-                dialogue->texts[0].text2 = "To byla dobra bitwa. Pokonaj kolejnego przeciwnika.";
                 playerManager->EndSessionWithOpponent(false, bet);
+                if (badge != (PlayerBadges)(-1)) playerManager->ReceiveBadge(badge);
                 // TODO add sound when player beat boss
             }
             ui->DisableSelfAndChildren();
@@ -188,8 +220,11 @@ void Opponent::Update() {
         return;
     }
 
-    if (hid->IsKeyDown(Key::KEY_ENTER) && lossDialogue->active)
+    // Hide lose dialogue
+    if (hid->IsKeyDown(Key::KEY_ENTER) && lossDialogue->active) {
         dialogue->image->enabled = true;
+        lossDialogue->HideDialogue();
+    }
 
     Component::Update();
 }

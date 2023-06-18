@@ -96,14 +96,18 @@ void PlayerManager::Awake() {
     //       PlayerUI (or wherever instantiating gets moved) creation
     //       below these.
     pauseMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Pause")->GetComponent<PauseMenu>();
-    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("Options")->GetComponent<OptionsMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<OptionsMenu>();
     shopMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ShopMenu")->GetComponent<ShopMenu>();
     savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
     activeMenu = nullptr;
 
     sessionOpponent = nullptr;
 
+    // Audio
     audioSource = parent->AddComponent<AudioSource>();
+    audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
+    audioSource->SetGain(0.5);
+    audioSource->IsLooping(true);
 
     // Load game
     // ---------
@@ -155,9 +159,6 @@ void PlayerManager::UpdateAnimationsAndSounds() {
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
         animator->SetAnimation("MainHero/MainHeroRun.dae");
 		animator->speed = 2;
-        audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
-        audioSource->SetGain(0.5);
-        audioSource->IsLooping(true);
         audioSource->PlaySound();
 	}
 	else if (velocity <= 0.01 && previousVelocity > 0.01){

@@ -50,6 +50,8 @@ void GameObjectAnimator::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Game Object Animator", 0x800080);
 #endif
+
+    float deltaTime = GloomEngine::GetInstance()->deltaTime;
     // Switch checkpoints if current one finished
     // ------------------------------------------
     if(counter > checkpoint.duration) {
@@ -92,21 +94,21 @@ void GameObjectAnimator::Update() {
         case AnimatedProperty::Position:
             transform->SetLocalPosition(
                     transform->GetLocalPosition()
-                    + valueDelta * GloomEngine::GetInstance()->deltaTime);
+                    + valueDelta * deltaTime);
             break;
         case AnimatedProperty::Rotation:
             transform->SetLocalRotation(
                     transform->GetLocalRotation()
-                    + valueDelta * GloomEngine::GetInstance()->deltaTime);
+                    + valueDelta * deltaTime);
             break;
         case AnimatedProperty::Scale:
             transform->SetLocalScale(
                     transform->GetLocalScale()
-                    + valueDelta * GloomEngine::GetInstance()->deltaTime);
+                    + valueDelta * deltaTime);
             break;
     }
 
-    counter += GloomEngine::GetInstance()->deltaTime;
+    counter += deltaTime;
     Component::Update();
 }
 
