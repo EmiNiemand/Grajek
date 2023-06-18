@@ -289,6 +289,11 @@ void PlayerManager::OnSessionToggle() {
         sessionStarter->Stop();
         sessionStarter.reset();
         GloomEngine::GetInstance()->timeScale = 1;
+        //TODO: ugly workaround
+        float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
+        if(velocity > 0.01)
+            audioSource->PlaySound();
+
         return;
     }
 
@@ -296,6 +301,8 @@ void PlayerManager::OnSessionToggle() {
     if(savePointManager) savePointManager->NotifyMenuIsActive();
     SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.0f);
     GloomEngine::GetInstance()->timeScale = 0;
+    //TODO: ugly workaround
+    audioSource->StopSound();
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     sessionStarter->Setup(equipment->instruments);
 }
