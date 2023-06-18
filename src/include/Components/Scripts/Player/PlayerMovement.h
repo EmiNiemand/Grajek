@@ -18,11 +18,9 @@ private:
     float speed = 0.0f;
     float maxSpeed = 0.2f;
     float smoothingParam = 0.2f;
-    bool isMoving = false;
     float rotationAngle = 0.0f;
 
-    std::shared_ptr<AudioSource> stepSound;
-    bool stepSoundActive = false;
+    bool isMoving = false;
 
 public:
     PlayerMovement(const std::shared_ptr<GameObject> &parent, int id);
@@ -34,7 +32,6 @@ public:
 
     void FixedUpdate() override;
     void Move(glm::vec2 moveVector);
-    void StopWalkingSound();
 
 };
 

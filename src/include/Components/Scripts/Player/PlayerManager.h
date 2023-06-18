@@ -48,11 +48,12 @@ private:
 	// Player components
     std::shared_ptr<Animator> animator;
 	std::shared_ptr<Rigidbody> rb;
+    std::shared_ptr<AudioSource> audioSource;
 	//PlayerCollider collider;
 	//PlayerCamera camera;
 	// Local variables
     glm::vec2 moveInput;
-	float previousVelocity;
+    float previousVelocity;
 
 public:
     std::shared_ptr<Menu> activeMenu;
@@ -103,8 +104,8 @@ private:
     void OnMetronomeVisualsToggle();
     void OnBackingTrackToggle();
 
-	// Animation methods
-	void UpdateAnimations();
+	// Animation and Sound methods
+	void UpdateAnimationsAndSounds();
 
     // Movement methods
     void OnMove(glm::vec2 moveVector);

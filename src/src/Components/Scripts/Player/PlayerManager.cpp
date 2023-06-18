@@ -103,6 +103,8 @@ void PlayerManager::Awake() {
 
     sessionOpponent = nullptr;
 
+    audioSource = parent->AddComponent<AudioSource>();
+
     // Load game
     // ---------
     std::filesystem::path path = std::filesystem::current_path();
@@ -122,7 +124,7 @@ void PlayerManager::Update() {
     ZoneScopedNC("Player manager", 0x800080);
 #endif
     PollInput();
-	UpdateAnimations();
+    UpdateAnimationsAndSounds();
 
     Component::Update();
 }
@@ -144,8 +146,8 @@ int PlayerManager::GetCash() {
 }
 #pragma endregion
 
-#pragma region Animation Events
-void PlayerManager::UpdateAnimations() {
+#pragma region Animation, Sound Events
+void PlayerManager::UpdateAnimationsAndSounds() {
 	if(!rb) return;
     if(session || sessionStarter) return;
 
@@ -153,9 +155,14 @@ void PlayerManager::UpdateAnimations() {
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
         animator->SetAnimation("MainHero/MainHeroRun.dae");
 		animator->speed = 2;
+        audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
+        audioSource->SetGain(0.5);
+        audioSource->IsLooping(true);
+        audioSource->PlaySound();
 	}
 	else if (velocity <= 0.01 && previousVelocity > 0.01){
 		animator->SetAnimation("MainHero/MainHeroIdle.dae");
+        audioSource->StopSound();
 	}
     previousVelocity = velocity;
 }
@@ -506,5 +513,6 @@ void PlayerManager::OnDestroy() {
     animator.reset();
     rb.reset();
     activeMenu.reset();
+    audioSource.reset();
     Component::OnDestroy();
 }
