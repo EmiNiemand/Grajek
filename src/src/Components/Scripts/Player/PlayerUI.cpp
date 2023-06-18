@@ -100,30 +100,40 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     }
 
     // Set up options menu
-    auto options = GameObject::Instantiate("Options", menus)->AddComponent<OptionsMenu>();
+    auto optionsMenu = GameObject::Instantiate("OptionsMenu", menus)->AddComponent<OptionsMenu>();
     {
-        auto backToPauseMenu = options->AddButton("BackToPauseMenu", 380, 870, "UI/Opcje/Guzik.png", "UI/Opcje/GuzikZRamka.png");
-        auto musicVolume = options->AddButton("MusicVolume", 538, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto windowResolution = options->AddButton("WindowResolution", 790, 395, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto windowFullScreen = options->AddButton("WindowFullScreen", 1041, 175, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto shadowResolution = options->AddButton("ShadowResolution", 1296, 600, "UI/Opcje/Suwak.png", "UI/Opcje/SuwakZRamka.png");
-        auto previousValue = options->AddButton("PreviousValue", 767, 882, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-        auto currentValue = options->AddButton("CurrentValue", 767, 845, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 42);
-        auto nextValue = options->AddButton("NextValue", 767, 808, "UI/Opcje/Tekst.png", "UI/Opcje/Suwak.png", "", 30);
-        auto optionsBackground = options->AddImage("OptionsBackground", 285, 40, "UI/Opcje/Ustawienia.png");
-
-        backToPauseMenu->previousButton = shadowResolution;
-        backToPauseMenu->nextButton = musicVolume;
-        musicVolume->previousButton = backToPauseMenu;
-        musicVolume->nextButton = windowResolution;
-        windowResolution->previousButton = musicVolume;
-        windowResolution->nextButton = windowFullScreen;
-        windowFullScreen->previousButton = windowResolution;
-        windowFullScreen->nextButton = shadowResolution;
-        shadowResolution->previousButton = windowFullScreen;
-        shadowResolution->nextButton = backToPauseMenu;
-
-        options->GetParent()->DisableSelfAndChildren();
+        auto windowResolutionButton = optionsMenu->AddButton("WindowResolutionButton", 60, 895, "UI/Settings/Resolution.png", "UI/Settings/ResolutionKolorowe.png");
+        auto windowFullScreenButton = optionsMenu->AddButton("WindowFullScreenButton", 60, 660, "UI/Settings/Fullscreen.png", "UI/Settings/FullscreenKolorowe.png");
+        auto musicVolumeButton = optionsMenu->AddButton("MusicVolumeButton", 60, 425, "UI/Settings/Volume.png", "UI/Settings/VolumeKolorowe.png");
+        auto shadowResolutionButton = optionsMenu->AddButton("ShadowResolutionButton", 60, 190, "UI/Settings/Shadows.png", "UI/Settings/ShadowKolorowe.png");
+        auto saveButton = optionsMenu->AddButton("SaveButton", 500, 30, "UI/Settings/Save.png", "UI/Settings/SaveKolorowe.png");
+        auto cancelButton = optionsMenu->AddButton("CancelButton", 1050, 30, "UI/Settings/Cancel.png", "UI/Settings/CancelKolorowe.png");
+        optionsMenu->AddButton("WindowResolutionValue", 833, 887, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+        optionsMenu->AddButton("WindowFullScreenValue", 833, 648, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+        optionsMenu->AddButton("MusicVolumeValue", 833, 415, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+        optionsMenu->AddButton("ShadowResolutionValue", 833, 177, "UI/Settings/Pasek.png", "UI/Settings/Pasek.png", "", 32);
+        optionsMenu->AddButton("WindowResolutionLeft", 740, 867, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+        optionsMenu->AddButton("WindowResolutionRight", 1735, 867, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+        optionsMenu->AddButton("WindowFullScreenLeft", 740, 628, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+        optionsMenu->AddButton("WindowFullScreenRight", 1735, 628, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+        optionsMenu->AddButton("MusicVolumeLeft", 740, 395, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+        optionsMenu->AddButton("MusicVolumeRight", 1735, 395, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+        optionsMenu->AddButton("ShadowResolutionLeft", 740, 157, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
+        optionsMenu->AddButton("ShadowResolutionRight", 1735, 157, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
+        optionsMenu->AddImage("OptionsBackground", 0, 0, "UI/Settings/Settings.png");
+        windowResolutionButton->previousButton = cancelButton;
+        windowResolutionButton->nextButton = windowFullScreenButton;
+        windowFullScreenButton->previousButton = windowResolutionButton;
+        windowFullScreenButton->nextButton = musicVolumeButton;
+        musicVolumeButton->previousButton = windowFullScreenButton;
+        musicVolumeButton->nextButton = shadowResolutionButton;
+        shadowResolutionButton->previousButton = musicVolumeButton;
+        shadowResolutionButton->nextButton = saveButton;
+        saveButton->previousButton = shadowResolutionButton;
+        saveButton->nextButton = cancelButton;
+        cancelButton->previousButton = saveButton;
+        cancelButton->nextButton = windowResolutionButton;
+        optionsMenu->GetParent()->DisableSelfAndChildren();
     }
 
     // Set up shop menu

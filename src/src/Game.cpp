@@ -111,44 +111,78 @@ void Game::InitializeGame() const {
     auto opponentComponent = drummer->AddComponent<Opponent>();
     opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                               {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
-    opponentComponent->dialogue->texts.push_back({{""},
-                                                      {"Zaplac jezeli chcesz ze mna walczyc."},
-                                                      {""}});
-    opponentComponent->dialogue->texts.push_back({{""},
-                                                  {"Walcz!."},
-                                                  {""}});
-    opponentComponent->winDialogue->texts.push_back({{"Pokonales mnie."},
-                             {"Masz tu moja odznake Jazz Badge."},
-                             {""}});
-    opponentComponent->winDialogue->texts.push_back({{"Odblokowales dostep do nastepnej dzielnicy."},
-                             {"Pokonaj kolejnego lidera w Electro Gymie."},
-                             {""}});
-    opponentComponent->lossDialogue->texts.push_back({{""},
-                                                     {"Przegrales."},
-                                                     {""}});
 
-    auto gateDialogue = GameObject::Instantiate("GateDialogue", activeScene);
-    gateDialogue->transform->SetLocalPosition(glm::vec3(-6, 0, -27));
-    gateDialogue->transform->SetLocalScale(glm::vec3(0.6f));
-    auto dialogAnimator = gateDialogue->AddComponent<Animator>();
-    dialogAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
-    dialogAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
-    gateDialogue->AddComponent<BoxCollider>()->SetSize({2, 1, 2});
-    gateDialogue->AddComponent<Dialogue>();
-    gateDialogue->GetComponent<Dialogue>()->texts.push_back({{"Brama jest jeszcze zamknieta."},
-                                                       {"Poczekaj na rozpoczecie konkursu"},
+    auto dialogue = GameObject::Instantiate("GateDialogue", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-1, 0, -27));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    auto dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    auto dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
+                                                       {"Come back when a music competition begins."},
                                                        {""}});
-    auto gateDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    gateDialogueIndicator->SetParent(gateDialogue);
-    gateDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
-    gateDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    dialogue = GameObject::Instantiate("PatternDialogue1", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-23.5, 0, -8));
+    dialogue->transform->SetLocalRotation(glm::vec3(0, 90, 0));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan003/BasicMan003.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"[singing]"},
+                               {"Smoke on the water... a fire in the sky!"},
+                               {"Smoke on the water... burn it down!"}});
+    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    dialogue = GameObject::Instantiate("CrowdDialogue", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-5, 0, -3));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan001/BasicMan001.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"Pamietaj, zeby nie grac dlugo czas tego samego patternu."},
+                                        {"Ludzie zaczna sie nudzic."},
+                                        {""}});
+    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    dialogue = GameObject::Instantiate("ClappingDialogue", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-10, 0, 0));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan001/BasicMan001.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->texts.push_back({{"I just saw some dude trying to battle someone with drums by simply clapping!"},
+                                        {"I mean, it was impressive attempt, but there was no way he was going to win."},
+                                        {""}});
+    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
-    AIManager::GetInstance()->InitializeSpawner(50);
+//    AIManager::GetInstance()->InitializeSpawner(50);
 #else
     AIManager::GetInstance()->InitializeSpawner(50);
 #endif

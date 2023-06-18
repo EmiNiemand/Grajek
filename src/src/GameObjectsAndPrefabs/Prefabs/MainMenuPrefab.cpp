@@ -3,7 +3,7 @@
 #include "Components/UI/Button.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 #include "Components/Scripts/Menus/MainMenu.h"
-#include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/CreditsMenu.h"
 #include "LowLevelClasses/GameData.h"
 #include <fstream>
@@ -85,7 +85,7 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     }
 
     // Options Menu
-    auto optionsMenu = GameObject::Instantiate("OptionsMenu", mainMenuScene)->AddComponent<MainMenuOptionsMenu>();
+    auto optionsMenu = GameObject::Instantiate("OptionsMenu", mainMenuScene)->AddComponent<OptionsMenu>();
     auto windowResolutionButton = optionsMenu->AddButton("WindowResolutionButton", 60, 895, "UI/Settings/Resolution.png", "UI/Settings/ResolutionKolorowe.png");
     auto windowFullScreenButton = optionsMenu->AddButton("WindowFullScreenButton", 60, 660, "UI/Settings/Fullscreen.png", "UI/Settings/FullscreenKolorowe.png");
     auto musicVolumeButton = optionsMenu->AddButton("MusicVolumeButton", 60, 425, "UI/Settings/Volume.png", "UI/Settings/VolumeKolorowe.png");

@@ -7,7 +7,7 @@
 #include "EngineManagers/OptionsManager.h"
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
-#include "Components/Scripts/Menus/MainMenuOptionsMenu.h"
+#include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/CreditsMenu.h"
 
 #ifdef DEBUG
@@ -19,7 +19,7 @@ MainMenuManager::MainMenuManager(const std::shared_ptr<GameObject> &parent, int 
 void MainMenuManager::Start() {
     mainMenu = GloomEngine::GetInstance()->FindGameObjectWithName("MainMenu")->GetComponent<MainMenu>();
     loadGameMenu = GloomEngine::GetInstance()->FindGameObjectWithName("LoadGameMenu")->GetComponent<LoadGameMenu>();
-    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<MainMenuOptionsMenu>();
+    optionsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("OptionsMenu")->GetComponent<OptionsMenu>();
     creditsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("CreditsMenu")->GetComponent<CreditsMenu>();
     activeMenu = mainMenu;
     Component::Start();
