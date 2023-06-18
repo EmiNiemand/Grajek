@@ -309,10 +309,17 @@ void Shopkeeper::OnDestroy() {
     playerManager.reset();
     background.reset();
     for (int i = 0; i < 2; ++i) {
-        sampleSources[i].reset();
-        sampleImages[i].reset();
-        for (int j = 0; j < 2; ++j) {
-            sampleAnimators[i][j].reset();
+        if (!sampleSources.empty())
+            sampleSources[i].reset();
+
+        if (!sampleImages.empty())
+            sampleImages[i].reset();
+
+        if (!sampleAnimators.empty()) {
+            for (int j = 0; j < 2; ++j) {
+                if (!sampleAnimators[i].empty())
+                    sampleAnimators[i][j].reset();
+            }
         }
     }
     sampleAnimators.clear();

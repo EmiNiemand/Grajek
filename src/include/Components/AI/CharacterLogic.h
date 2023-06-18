@@ -19,7 +19,6 @@ constexpr float PREVIOUS_SESSION_TIMEOUT = 5.0f;
 class GameObject;
 class CharacterAnimations;
 class CharacterMovement;
-class Indicator;
 
 class CharacterLogic : public Component {
     AI_LOGIC_STATE logicState = Wandering;
@@ -30,7 +29,6 @@ class CharacterLogic : public Component {
     std::string modelPath {};
     // Movement and indicators
     std::shared_ptr<CharacterMovement> characterMovement = nullptr;
-    std::shared_ptr<Indicator> characterIndicator = nullptr;
     // Player values and modifiers
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};

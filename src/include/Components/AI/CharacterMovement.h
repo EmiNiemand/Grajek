@@ -16,15 +16,17 @@
 
 // Forces consts
 constexpr float DISTANCE_TO_POINT = 1.8f;
-constexpr float DISTANCE_TO_COLLISION = 1.40f;
+constexpr float DISTANCE_TO_COLLISION = 1.3f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.55f;
-constexpr float AVOIDANCE_FORCE_MODIFIER = 1.15f;
+constexpr float AVOIDANCE_FORCE_MODIFIER = 1.125f;
 // Movement consts
-constexpr float MOVEMENT_TIMEOUT = 3.0f;
+constexpr float MOVEMENT_TIMEOUT = 2.0f;
 constexpr float MOVEMENT_SMOOTHING_PARAM = 0.5f;
 constexpr float MOVEMENT_MAX_SPEED = 0.075f;
 
 class GameObject;
+class Transform;
+class BoxCollider;
 class Rigidbody;
 class CharacterLogic;
 class CharacterPathfinding;
@@ -32,8 +34,9 @@ class CharacterPathfinding;
 class CharacterMovement : public Component {
     AI_MOVEMENT_STATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
-    float timeSinceLastPlayerPoint = 0.0f;
+    float timeSinceLastPoint = 0.0f;
     bool isInitializing = false;
+    bool isStatic = false;
     // Collisions
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;
     float collisionGridSize = 0.0f;

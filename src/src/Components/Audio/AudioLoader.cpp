@@ -231,10 +231,33 @@ const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
 
 /**
  * @annotation
+ * Reloads the buffers with first chunks of data.
+ */
+void AudioLoader::ReloadBuffersQueue() {
+    file.seekg(dataStartSectionPointer);
+    samplesSizeToLoad = subChunkSize;
+
+    for (int i = 0; i < NUM_BUFFERS; ++i) {
+        if (samplesSizeToLoad < BUFFER_SIZE) {
+            file.read(reinterpret_cast<char *>(samples), samplesSizeToLoad);
+            file.seekg(dataStartSectionPointer);
+            alBufferData(buffers[i], format, samples, samplesSizeToLoad, sampleRate);
+            alSourceQueueBuffers(source, 1, &buffers[i]);
+            samplesSizeToLoad = subChunkSize;
+        } else {
+            file.read(reinterpret_cast<char *>(samples), BUFFER_SIZE);
+            alBufferData(buffers[i], format, samples, BUFFER_SIZE, sampleRate);
+            alSourceQueueBuffers(source, 1, &buffers[i]);
+            samplesSizeToLoad -= BUFFER_SIZE;
+        }
+    }
+}
+
+/**
+ * @annotation
  * Closes audio file.
  */
 void AudioLoader::CloseFile() {
     if (file.is_open())
         file.close();
 }
-

@@ -9,7 +9,6 @@
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterAnimations.h"
-#include "Components/UI/Indicator.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 
 #ifdef DEBUG
@@ -31,7 +30,6 @@ void CharacterLogic::Start() {
     middleSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(40, 65);
     upperSatisfactionLimit = RandomnessManager::GetInstance()->GetFloat(75, 85);
     characterMovement = parent->GetComponent<CharacterMovement>();
-    characterIndicator = parent->GetComponent<Indicator>();
     Component::Start();
 }
 
@@ -80,11 +78,9 @@ void CharacterLogic::AIUpdate() {
         CalculateSatisfaction();
 
         if (playerSatisfaction > lowerSatisfactionLimit) {
-//            characterIndicator->Indicate();
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
         } else if (enemySatisfaction > lowerSatisfactionLimit) {
-//            characterIndicator->Indicate();
             logicState = MovingToEnemy;
             characterMovement->SetState(SettingPathToEnemy);
         }
@@ -135,7 +131,6 @@ void CharacterLogic::OnDestroy() {
     AIManager::GetInstance()->RemoveCharacterLogic(id);
     characterAnimations.reset();
     characterMovement.reset();
-    characterIndicator.reset();
     favInstrumentsNames.clear();
     favGenres.clear();
     favPatterns.clear();
