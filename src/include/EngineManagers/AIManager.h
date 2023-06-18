@@ -23,10 +23,10 @@ constexpr int JAZZ_MAN_INCREASED_SPAWN_RATE = 5;
 constexpr int JAZZ_MAN_DEFAULT_SPAWN_RATE = 2;
 // Earnings modifiers
 constexpr float CLAP_MODIFIER = 1.0f;
-constexpr float DRUMS_MODIFIER = 1.5f;
-constexpr float TRUMPET_MODIFIER = 2.0f;
-constexpr float LAUNCHPAD_MODIFIER = 2.5f;
-constexpr float GUITAR_MODIFIER = 3.0f;
+constexpr float DRUMS_MODIFIER = 2.0f;
+constexpr float TRUMPET_MODIFIER = 3.0f;
+constexpr float LAUNCHPAD_MODIFIER = 4.0f;
+constexpr float GUITAR_MODIFIER = 5.0f;
 
 class GloomEngine;
 class CharacterLogic;
