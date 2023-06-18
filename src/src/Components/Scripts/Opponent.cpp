@@ -218,7 +218,7 @@ void Opponent::Update() {
             if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
                 defeated = true;
                 winDialogue->ShowDialogue();
-                playerManager->EndSessionWithOpponent(false, bet);
+                playerManager->EndSessionWithOpponent(true, bet);
                 if (badge != (PlayerBadges)(-1)) playerManager->ReceiveBadge(badge);
                 indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
                 // TODO add sound when player beat boss
