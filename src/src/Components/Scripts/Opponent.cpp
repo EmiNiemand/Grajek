@@ -1,6 +1,8 @@
 #include "GloomEngine.h"
 #include "Components/Scripts/Opponent.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "GameObjectsAndPrefabs/Prefabs/ConeIndicator.h"
+#include "Components/Renderers/Renderer.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
 #include "Components/Scripts/Menus/Dialogue.h"
@@ -17,7 +19,8 @@ Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Componen
 
 Opponent::~Opponent() = default;
 
-void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1, short bet1) {
+void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
+                     short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
     // Setup pattern
     instrument = std::move(instrument1);
     instrument->GeneratePattern(musicPattern);
@@ -26,11 +29,14 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     for (const auto& sound: instrument->patterns.back()->sounds) {
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
-        sample->LoadAudioData(sound->sample->clipPath.c_str(), AudioType::Positional);
+        sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
         sample->SetPositionOffset(parent->transform->GetLocalPosition());
+        sample->SetMaxDistance(15);
     }
+
     satisfaction = satisfaction1;
     bet = bet1;
+    badge = badge1;
 
     // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
@@ -41,6 +47,12 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     timeCounter = GameObject::Instantiate("OpponentTimeCounter", ui)->AddComponent<Image>();
     timeCounter->LoadTexture(460, 865, "UI/TimeCounter.png");
     ui->DisableSelfAndChildren();
+
+    indicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    indicator->SetParent(parent);
+    indicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    indicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    indicator->GetComponent<Renderer>()->material.color = indicatorColor;
 
     // Setup dialogues
     dialogue = GameObject::Instantiate("OpponentDialogue", parent)->AddComponent<Dialogue>();
@@ -78,6 +90,12 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
 void Opponent::Start() {
     dialogue->enabled = false;
     playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    auto playerEquipment = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerEquipment>();
+    if (playerEquipment->badges.contains(badge) && playerEquipment->badges[badge]) {
+        defeated = true;
+        indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
+
+    }
     Component::Start();
 }
 
@@ -96,6 +114,11 @@ void Opponent::Update() {
 
     auto hid = HIDManager::GetInstance();
 
+    if (hid->IsKeyDown(Key::KEY_E) && defeated) {
+        winDialogue->ShowDialogue();
+        return;
+    }
+
     // Hide win dialogue
     if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex) {
         dialogue->image->enabled = true;
@@ -108,8 +131,6 @@ void Opponent::Update() {
         dialogue->ShowDialogue();
         return;
     }
-
-    if (defeated) return;
 
     // Show choose menu
     if (hid->IsKeyDown(Key::KEY_ENTER) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
@@ -197,9 +218,9 @@ void Opponent::Update() {
             if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
                 defeated = true;
                 winDialogue->ShowDialogue();
-                dialogue->texts.pop_back();
-                dialogue->texts[0].text2 = "To byla dobra bitwa. Pokonaj kolejnego przeciwnika.";
-                playerManager->EndSessionWithOpponent(false, bet);
+                playerManager->EndSessionWithOpponent(true, bet);
+                if (badge != (PlayerBadges)(-1)) playerManager->ReceiveBadge(badge);
+                indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
                 // TODO add sound when player beat boss
             }
             ui->DisableSelfAndChildren();

@@ -15,14 +15,11 @@ class UIAnimator;
 class Shopkeeper : public Component, public IDataPersistance {
 private:
     std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::vector<std::shared_ptr<Image>> sampleImages;
+    std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
+
     std::shared_ptr<Image> background;
-    std::shared_ptr<Image> circle1;
-    std::shared_ptr<Image> circle2;
-    std::shared_ptr<Image> clapImage;
-    std::shared_ptr<UIAnimator> circleScale1;
-    std::shared_ptr<UIAnimator> circleScale2;
-    std::shared_ptr<UIAnimator> circleColor1;
-    std::shared_ptr<UIAnimator> circleColor2;
+    std::shared_ptr<Image> clapIcon;
     std::shared_ptr<Image> image;
     std::shared_ptr<Text> text1;
     std::shared_ptr<Text> text2;

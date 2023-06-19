@@ -80,12 +80,17 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
 }
 
 void TrumpetSessionUI::Update() {
+    float gain;
     for (int i=0; i<sampleSources.size(); ++i) {
         if(!soundsToFade[i]) continue;
 
-        float gain = sampleSources[i]->GetGain();
+        gain = sampleSources[i]->GetGain();
         sampleSources[i]->SetGain(gain-0.05f);
-        if(gain <= 0.1f) { sampleSources[i]->SetGain(0); soundsToFade[i] = false; continue; }
+        if (gain <= 0.05f) {
+            sampleSources[i]->SetGain(0);
+            soundsToFade[i] = false;
+            continue;
+        }
     }
 
     SessionUI::Update();

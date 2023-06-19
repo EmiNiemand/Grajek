@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GloomEngine.h"
+#include "ProjectSettings.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Renderers/Renderer.h"
@@ -92,32 +93,51 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalPosition({20, 40, 20});
     sun->transform->SetLocalRotation({-50, 70, 0});
 
-    auto drummer = GameObject::Instantiate("JazzOpponent", activeScene);
+
+    // Enemies
+    auto drummer = GameObject::Instantiate("DrumOpponent", activeScene);
     auto drummerAnimator = drummer->AddComponent<Animator>();
-    drummerAnimator->LoadAnimationModel("Opponent/Trumpeter/Trumpeter.dae");
-    drummerAnimator->SetAnimation("MainHero/MainHeroTrumpet.dae");
-    drummer->AddComponent<BoxCollider>()->SetSize({3, 1, 3});
-    drummer->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
-    drummer->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+    drummerAnimator->LoadAnimationModel("Opponent/Drummer/Drummer.dae");
+    drummerAnimator->SetAnimation("MainHero/MainHeroDrums.dae");
+    drummer->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    drummer->transform->SetLocalPosition(glm::vec3(-54, 0, 18));
+    drummer->transform->SetLocalRotation(glm::vec3(0, 135, 0));
     drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto jazzDialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
-    jazzDialogueIndicator->SetParent(drummer);
-    jazzDialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
-    jazzDialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
     // 2      *   *
     // 1    *   *
     // 0  *
-    auto opponentComponent = drummer->AddComponent<Opponent>();
-    opponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50);
+    auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
+    drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+                                    {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50,
+                                    glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
 
+
+    auto trumpeter = GameObject::Instantiate("JazzOpponent", activeScene);
+    auto trumpeterAnimator = trumpeter->AddComponent<Animator>();
+    trumpeterAnimator->LoadAnimationModel("Opponent/Trumpeter/Trumpeter.dae");
+    trumpeterAnimator->SetAnimation("MainHero/MainHeroTrumpet.dae");
+    trumpeter->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    trumpeter->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
+    trumpeter->transform->SetLocalRotation(glm::vec3(0, 45, 0));
+    trumpeter->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
+
+    // 2      *   *
+    // 1    *   *
+    // 0  *
+    auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
+    trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
+                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50,
+                                              glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
+
+
+    // Town people
     auto dialogue = GameObject::Instantiate("GateDialogue", activeScene);
     dialogue->transform->SetLocalPosition(glm::vec3(-1, 0, -27));
     dialogue->transform->SetLocalScale(glm::vec3(0.5f));
     dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
     auto dialogueAnimator = dialogue->AddComponent<Animator>();
-    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan002/BasicMan002.dae");
+    dialogueAnimator->LoadAnimationModel("Crowd/BobTheBuilder/Builder.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
     dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
@@ -182,7 +202,7 @@ void Game::InitializeGame() const {
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
-//    AIManager::GetInstance()->InitializeSpawner(50);
+    AIManager::GetInstance()->InitializeSpawner(10);
 #else
     AIManager::GetInstance()->InitializeSpawner(50);
 #endif

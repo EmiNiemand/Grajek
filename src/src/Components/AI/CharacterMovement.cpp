@@ -20,14 +20,18 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 CharacterMovement::~CharacterMovement() = default;
 
 void CharacterMovement::Start() {
+    rigidbody = parent->GetComponent<Rigidbody>();
     collisionGrid = CollisionManager::GetInstance()->grid;
     collisionGridSize = CollisionManager::GetInstance()->gridSize;
     otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
     aiGrid = AIManager::GetInstance()->aiGrid;
     pathfinding = AIManager::GetInstance()->pathfinding;
-    minSpawnCoords = AIManager::GetInstance()->minSpawnCoords;
-    maxSpawnCoords = AIManager::GetInstance()->maxSpawnCoords;
-    rigidbody = parent->GetComponent<Rigidbody>();
+
+    glm::vec3 coords;
+    coords = AIManager::GetInstance()->minSpawnCoords;
+    minSpawnCoords = {coords.x, coords.z};
+    coords = AIManager::GetInstance()->maxSpawnCoords;
+    maxSpawnCoords = {coords.x, coords.z};
 
     if (isInitializing)
         SetRandomSpawnPointNearPlayer();
@@ -89,7 +93,7 @@ void CharacterMovement::FixedUpdate() {
 
         if (distance < DISTANCE_TO_POINT) {
             --pathIterator;
-            timeSinceLastPlayerPoint = 0.0f;
+            timeSinceLastPoint = 0.0f;
         }
     }
 
@@ -98,15 +102,15 @@ void CharacterMovement::FixedUpdate() {
 
         ApplyRotation(steeringForce);
     } else {
-        timeSinceLastPlayerPoint += GloomEngine::GetInstance()->fixedDeltaTime;
+        timeSinceLastPoint += GloomEngine::GetInstance()->fixedDeltaTime;
 
-        if (timeSinceLastPlayerPoint > MOVEMENT_TIMEOUT) {
-            timeSinceLastPlayerPoint = 0.0f;
+        if (timeSinceLastPoint > MOVEMENT_TIMEOUT) {
+            timeSinceLastPoint = 0.0f;
             pathIterator = -1;
 
             if (movementState == OnPathToPlayer)
                 movementState = NearPlayerPosition;
-            else if (movementState == OnPathToTarget)
+            else
                 movementState = NearTargetPosition;
         }
     }
@@ -124,13 +128,18 @@ void CharacterMovement::AIUpdate() {
                 movementState = NearTargetPosition;
             break;
         case SettingPathToPlayer:
-            AIManager::GetInstance()->charactersMovements.insert(
-                    {id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
+            otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
             SetNewPathToPlayer();
             break;
         case OnPathToPlayer:
             if (pathIterator < 0)
                 movementState = NearPlayerPosition;
+            break;
+        case NearPlayerPosition:
+            if (!isStatic) {
+                isStatic = true;
+                parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
+            }
             break;
         case SettingPathToEnemy:
             SetNewPathToPlayer();
@@ -142,7 +151,9 @@ void CharacterMovement::AIUpdate() {
                 movementState = NearEnemyPosition;
             break;
         case ReturningToPreviousTarget:
-            AIManager::GetInstance()->RemoveCharacterMovement(id);
+            isStatic = false;
+            parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
+            otherCharacters->erase(id);
             ReturnToPreviousPath();
             break;
         default:
@@ -222,37 +233,29 @@ void CharacterMovement::SetRandomSpawnPointNearPlayer() {
  * Sets random spawn point on AI grid.
  */
 void CharacterMovement::SetRandomSpawnPoint() {
-    int minX, maxX, minY, maxY, upDown, leftRight;
+    int minX, maxX, minY, maxY;
     playerPosition = playerTransform->GetLocalPosition();
     glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z};
 
-    upDown = RandomnessManager::GetInstance()->GetInt(0, 1);
-    leftRight = RandomnessManager::GetInstance()->GetInt(0, 1);
-
-//    if (upDown) {
-//        minX = std::clamp(newEndPoint.x - 2 * AI_SPAWN_GRID_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
-//        maxX = std::clamp(newEndPoint.x - AI_SPAWN_GRID_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
-//    } else {
-//        minX = std::clamp(newEndPoint.x + AI_SPAWN_GRID_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
-//        maxX = std::clamp(newEndPoint.x + 2 * AI_SPAWN_GRID_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
-//    }
-//
-//    if (leftRight) {
-//        minY = std::clamp(newEndPoint.y - 2 * AI_SPAWN_GRID_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-//        maxY = std::clamp(newEndPoint.y - AI_SPAWN_GRID_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-//    } else {
-//        minY = std::clamp(newEndPoint.y + AI_SPAWN_GRID_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-//        maxY = std::clamp(newEndPoint.y + 2 * AI_SPAWN_GRID_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-//    }
-
-    minX = minSpawnCoords.x;
-    maxX = maxSpawnCoords.x;
-    minY = minSpawnCoords.y;
-    maxY = maxSpawnCoords.y;
+    minX = newEndPoint.x - AI_SPAWN_X_MIN_DISTANCE;
+    maxX = newEndPoint.x + AI_SPAWN_X_MAX_DISTANCE;
+    minY = newEndPoint.y - AI_SPAWN_Y_MIN_DISTANCE;
+    maxY = newEndPoint.y + AI_SPAWN_Y_MAX_DISTANCE;
 
     while (true) {
-        newEndPoint.x = RandomnessManager::GetInstance()->GetInt(minX, maxX);
-        newEndPoint.y = RandomnessManager::GetInstance()->GetInt(minY, maxY);
+        while (true) {
+            newEndPoint.x = RandomnessManager::GetInstance()->GetInt(minSpawnCoords.x, maxSpawnCoords.x);
+
+            if (newEndPoint.x <= minX || newEndPoint.x >= maxX)
+                break;
+        }
+
+        while (true) {
+            newEndPoint.y = RandomnessManager::GetInstance()->GetInt(minSpawnCoords.y, maxSpawnCoords.y);
+
+            if (newEndPoint.y <= minY|| newEndPoint.y >= maxY)
+                break;
+        }
 
         if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
             break;
@@ -270,19 +273,10 @@ void CharacterMovement::SetRandomEndPoint() {
     currentPosition = parent->transform->GetLocalPosition();
     glm::ivec2 newEndPoint = {currentPosition.x, currentPosition.z};
 
-    minX = std::clamp(newEndPoint.x - AI_SPAWN_GRID_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
-    maxX = std::clamp(newEndPoint.x + AI_SPAWN_GRID_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
-    minY = std::clamp(newEndPoint.y - AI_SPAWN_GRID_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-    maxY = std::clamp(newEndPoint.y + AI_SPAWN_GRID_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-
-    if ((rotationAngle < 45.0f && rotationAngle >= 0.0f) || rotationAngle < -135.0f)
-        minY = newEndPoint.y;
-    else if (rotationAngle >= 45.0f && rotationAngle < 135.0f)
-        maxX = newEndPoint.x;
-    else if ((rotationAngle >= 135.0f && rotationAngle <= 180.0f) || rotationAngle > -45.0f)
-        maxY = newEndPoint.y;
-    else
-        minX = newEndPoint.x;
+    minX = std::clamp(newEndPoint.x - AI_POINT_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
+    maxX = std::clamp(newEndPoint.x + AI_POINT_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
+    minY = std::clamp(newEndPoint.y - AI_POINT_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
+    maxY = std::clamp(newEndPoint.y + AI_POINT_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
 
     while (true) {
         newEndPoint.x = RandomnessManager::GetInstance()->GetInt(minX, maxX);
@@ -411,7 +405,7 @@ const bool CharacterMovement::IsPositionAvailable(const glm::ivec2& position) {
     bool isAvailable = true;
 
     for (const auto& mov : *otherCharacters) {
-        if (position == mov.second->GetCurrentEndTarget()) {
+        if (position == mov.second->GetCurrentEndTarget() && mov.first != id) {
             isAvailable = false;
             break;
         }

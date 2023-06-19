@@ -9,6 +9,7 @@
 #include "Components/Renderers/Animator.h"
 #include "EngineManagers/DialogueManager.h"
 #include "EngineManagers/RandomnessManager.h"
+#include "Components/Renderers/Camera.h"
 
 Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -74,6 +75,7 @@ void Dialogue::ShowDialogue() {
     text1->text = "";
     text2->text = "";
     text3->text = "";
+    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(0.5f);
     text1->text = texts[0].text1;
     text2->text = texts[0].text2;
     text3->text = texts[0].text3;
@@ -84,6 +86,7 @@ void Dialogue::ShowDialogue() {
 }
 
 void Dialogue::HideDialogue() {
+    Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
     active = false;
     dialogueIndex = 0;
     playerManager->inputEnabled = true;

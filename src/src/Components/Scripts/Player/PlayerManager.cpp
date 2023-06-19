@@ -103,7 +103,12 @@ void PlayerManager::Awake() {
 
     sessionOpponent = nullptr;
 
+    // Audio
     audioSource = parent->AddComponent<AudioSource>();
+    audioSource->LoadAudioData("res/sounds/direct/walking_step_fast.wav", AudioType::Direct);
+    audioSource->SetPitch(1.05f);
+    audioSource->SetGain(0.5);
+    audioSource->IsLooping(true);
 
     // Load game
     // ---------
@@ -155,9 +160,6 @@ void PlayerManager::UpdateAnimationsAndSounds() {
 	if (velocity > 0.01 && previousVelocity <= 0.01) {
         animator->SetAnimation("MainHero/MainHeroRun.dae");
 		animator->speed = 2;
-        audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
-        audioSource->SetGain(0.5);
-        audioSource->IsLooping(true);
         audioSource->PlaySound();
 	}
 	else if (velocity <= 0.01 && previousVelocity > 0.01){
@@ -288,6 +290,11 @@ void PlayerManager::OnSessionToggle() {
         sessionStarter->Stop();
         sessionStarter.reset();
         GloomEngine::GetInstance()->timeScale = 1;
+        //TODO: ugly workaround
+        float velocity = glm::length(glm::vec2(rb->velocity.x, rb->velocity.z));
+        if(velocity > 0.01)
+            audioSource->PlaySound();
+
         return;
     }
 
@@ -295,6 +302,8 @@ void PlayerManager::OnSessionToggle() {
     if(savePointManager) savePointManager->NotifyMenuIsActive();
     SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.0f);
     GloomEngine::GetInstance()->timeScale = 0;
+    //TODO: ugly workaround
+    audioSource->StopSound();
     sessionStarter = GameObject::Instantiate("SessionStarter", sessionStarterUI)->AddComponent<SessionStarter>();
     sessionStarter->Setup(equipment->instruments);
 }
