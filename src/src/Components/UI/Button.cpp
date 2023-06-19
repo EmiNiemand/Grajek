@@ -182,6 +182,17 @@ void Button::ChangePosition(int newX, int newY) {
     ChangeText(text);
 }
 
+void Button::ChangeZ(float newZ) {
+    z = newZ;
+
+    textMesh->vertices[0].position.z = z-0.01f;
+    textMesh->vertices[1].position.z = z-0.01f;
+    textMesh->vertices[2].position.z = z-0.01f;
+    textMesh->vertices[3].position.z = z-0.01f;
+
+    textureMesh = CreateMesh(x, y, width,height);
+}
+
 void Button::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Button", 0x800080);
