@@ -80,10 +80,10 @@ void Shopkeeper::Start() {
     text1 = GameObject::Instantiate("DialogueText1", dialogue)->AddComponent<Text>();
     text2 = GameObject::Instantiate("DialogueText2", dialogue)->AddComponent<Text>();
     text3 = GameObject::Instantiate("DialogueText3", dialogue)->AddComponent<Text>();
-    text1->LoadFont(texts[0].text1, 250, 200, 32, glm::vec3(1));
-    text2->LoadFont(texts[0].text2, 250, 150, 32, glm::vec3(1));
-    text3->LoadFont(texts[0].text3, 250, 100, 32, glm::vec3(1));
-    GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png");
+    text1->LoadFont(texts[0].text1, 237, 175, 32, glm::vec3(1));
+    text2->LoadFont(texts[0].text2, 237, 125, 32, glm::vec3(1));
+    text3->LoadFont(texts[0].text3, 237, 75, 32, glm::vec3(1));
+    GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(127, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png");
     image->enabled = false;
     playerManager->inputEnabled = false;
     sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", dialogue)->AddComponent<AudioSource>());
@@ -96,12 +96,6 @@ void Shopkeeper::Start() {
 
 void Shopkeeper::Update() {
     if (shopkeeperEvent) return;
-    if (parent->children.empty()) {
-        shopkeeperEvent = true;
-        playerManager->inputEnabled = true;
-    }
-
-    if (dialogueIndex == 11) return;
 
     auto hid = HIDManager::GetInstance();
 
@@ -121,16 +115,17 @@ void Shopkeeper::Update() {
             parent->GetComponent<BoxCollider>()->enabled = false;
             shopkeeperModel->AddComponent<GameObjectAnimator>()->Setup(shopkeeperModel->transform, {
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 180.0f, 0.0f), 0.8f},
-                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -5.0f), 4.2f}
+                    {AnimatedProperty::Position, glm::vec3(0.0f, 0.0f, -4.0f), 3.0f}
             }, false);
             dialogue->DisableSelfAndChildren();
             auto animation = GameObject::Instantiate("DoorAnimation", door);
             animation->AddComponent<GameObjectAnimator>()->Setup(door->transform, {
-                    {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f},
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 90.0f, 0.0f), 2.0f},
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 0.5f},
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, -90.0f, 0.0f), 2.0f}
             }, false);
+            shopkeeperEvent = true;
+            playerManager->inputEnabled = true;
             return;
         }
     }
@@ -150,9 +145,9 @@ void Shopkeeper::Update() {
             circle2->pivot = {0.5, 0.5};
             circle2->SetPosition(1200, 700);
             instrumentControl = GameObject::Instantiate("InstrumentControl", background->GetParent())->AddComponent<Image>();
-            instrumentControl->LoadTexture(451, -836, "UI/Sesja/clapControl.png", 0.1);
+            instrumentControl->LoadTexture(451, -1018, "UI/Sesja/clapControl.png", 0.1);
             cheatSheet = GameObject::Instantiate("CheatSheet", background->GetParent())->AddComponent<Image>();
-            cheatSheet->LoadTexture(451, -836, "UI/Sesja/clapPatterns.png", 0.1);
+            cheatSheet->LoadTexture(451, -1018, "UI/Sesja/clapPatterns.png", 0.1);
 
             circleScale1 = GameObject::Instantiate("CircleAnimator", background->GetParent())->AddComponent<UIAnimator>();
             circleScale1->Setup(circle1, {
@@ -191,12 +186,12 @@ void Shopkeeper::Update() {
             if (instrumentControlActive) {
                 GameObject::Instantiate("InstrumentControlAnimator", background->GetParent())
                         ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, 250.0f, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, 225.0f, 0.0f), 0.5f}
                 });
             } else {
                 GameObject::Instantiate("InstrumentControlAnimator", background->GetParent())
                         ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -836.0f, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, -1018.0f, 0.0f), 0.5f}
                 });
             }
             if (dialogueIndex != 8)
@@ -212,12 +207,12 @@ void Shopkeeper::Update() {
             if (cheatSheetActive) {
                 GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                         ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, 100.0f, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, 0.0f, 0.0f), 0.5f}
                 });
             } else {
                 GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                         ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -836.0f, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(451.0f, -1018.0f, 0.0f), 0.5f}
                 });
             }
             if (dialogueIndex != 8)
