@@ -160,7 +160,7 @@ void Game::InitializeGame() const {
 
     auto opponent3 = GameObject::Instantiate("NormalOpponent", activeScene);
     auto opponent3Animator = opponent3->AddComponent<Animator>();
-    opponent3Animator->LoadAnimationModel("Opponent/Drummer/MainDrummer/Drummer.dae");
+    opponent3Animator->LoadAnimationModel("Opponent/Drummer/BasicDrummer001/Drummer.dae");
     opponent3Animator->SetAnimation("MainHero/MainHeroDrums.dae");
     opponent3->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
     opponent3->transform->SetLocalPosition(glm::vec3(-75.5, 0, -65.5));
