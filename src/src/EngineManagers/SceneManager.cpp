@@ -114,7 +114,6 @@ void SceneManager::SaveStaticObjects(const std::string &dataDirectoryPath, const
 void SceneManager::LoadStaticObjects(const std::string &dataDirectoryPath, const std::string &dataFileName) {
     std::vector<std::shared_ptr<StaticObjectData>> staticObjectsData;
     staticObjectsData = LoadMap(dataDirectoryPath, dataFileName);
-    spdlog::info("Loaded map objects successfully.");
 
     auto map = GameObject::Instantiate("map");
 
