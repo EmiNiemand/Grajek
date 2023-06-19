@@ -128,6 +128,8 @@ void Opponent::Update() {
 
     if (!dialogue->triggerActive) return;
 
+    if(dialogue->menuActive) return;
+
     auto hid = HIDManager::GetInstance();
 
     if (hid->IsKeyDown(Key::KEY_E) && defeated) {
@@ -155,7 +157,7 @@ void Opponent::Update() {
         button1->isActive = false;
         button2->isActive = true;
         chooseMenu->EnableSelfAndChildren();
-        DialogueManager::GetInstance()->NotifyMenuIsActive();
+        //DialogueManager::GetInstance()->NotifyMenuIsActive();
         dialogue->NextDialogue();
         dialogue->texts[1].text1 = "Let's say, whoever wins, gets " + std::to_string(bet);
         dialogue->texts[1].text2 = "";
@@ -177,7 +179,7 @@ void Opponent::Update() {
         if (hid->IsKeyDown(Key::KEY_ENTER)) {
             chooseMenuActive = false;
             chooseMenu->DisableSelfAndChildren();
-            DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+            //DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             if (button1->isActive) {
                 if (playerManager->GetCash() < bet) {
