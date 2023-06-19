@@ -105,6 +105,7 @@ void Game::InitializeGame() const {
     drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
     auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
+    drummerOpponentComponent->name = "Matt Ronome";
     drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                     {{1, 0.5}, {0, 0.5}, {2, 0.5}, {1, 0.25}, {0, 0.25}, {1, 0.5}, {2, 0.5}},
                                     80.0f, 50, glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
@@ -121,7 +122,7 @@ void Game::InitializeGame() const {
 
 
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
-    trumpeterOpponentComponent->name = "Jazz Lee";
+    trumpeterOpponentComponent->name = "Christopher Jazzus";
     trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
                                               {{0, 0.5}, {1, 1}, {2, 0.5}, {1, 1}, {2, 0.5}}, 80.0f, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
@@ -138,6 +139,7 @@ void Game::InitializeGame() const {
 
 
     auto opponent1OpponentComponent = opponent1->AddComponent<Opponent>();
+    opponent1OpponentComponent->name = "Benjamin Klapper";
     opponent1OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap),
                                       {{0, 0.5}, {0, 1}, {1, 1}}, 65.0f, 15,
                                       glm::vec3(1, 1, 0));
@@ -154,6 +156,7 @@ void Game::InitializeGame() const {
 
 
     auto opponent2OpponentComponent = opponent2->AddComponent<Opponent>();
+    opponent2OpponentComponent->name = "Patt Ernie";
     opponent2OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap),
                                       {{0, 0.5}, {0, 1}, {1, 1}}, 70.0f, 30,
                                       glm::vec3(1, 1, 0));
@@ -169,6 +172,7 @@ void Game::InitializeGame() const {
     opponent3->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
     auto opponent3OpponentComponent = opponent3->AddComponent<Opponent>();
+    opponent3OpponentComponent->name = "Sam Pelle";
     opponent3OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
                                       {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 70.0f, 25,
                                       glm::vec3(1, 1, 0));
@@ -182,10 +186,10 @@ void Game::InitializeGame() const {
     dialogueAnimator->LoadAnimationModel("Crowd/BobTheBuilder/Builder.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->name = "Tru Bob";
     dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
                                                        {"Come back when a music competition begins."},
                                                        {""}});
-    dialogueComponent->name = "Bob budowniczy";
     auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
@@ -200,6 +204,7 @@ void Game::InitializeGame() const {
     dialogueAnimator->LoadAnimationModel("Crowd/BasicMan003/BasicMan003.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->name = "David Kafferdale";
     dialogueComponent->texts.push_back({{"[singing]"},
                                {"Smoke on the water... a fire in the sky!"},
                                {"Smoke on the water... burn it down!"}});
@@ -208,14 +213,16 @@ void Game::InitializeGame() const {
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-    dialogue = GameObject::Instantiate("CrowdDialogue", activeScene);
-    dialogue->transform->SetLocalPosition(glm::vec3(-5, 0, -3));
+    dialogue = GameObject::Instantiate("Felynn Rutin", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-59, 0, 2.5));
     dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->transform->SetLocalRotation(glm::vec3(0, 355, 0));
     dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
     dialogueAnimator = dialogue->AddComponent<Animator>();
     dialogueAnimator->LoadAnimationModel("Crowd/BasicMan001/BasicMan001.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->name = "Felynn Rutin";
     dialogueComponent->texts.push_back({{"Man, I met a busker the other day that was really annoying."},
                                         {"He just kept playing the same thing over and over again."},
                                         {"I left that area really quickly."}});
@@ -224,17 +231,37 @@ void Game::InitializeGame() const {
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-    dialogue = GameObject::Instantiate("ClappingDialogue", activeScene);
-    dialogue->transform->SetLocalPosition(glm::vec3(-10, 0, 0));
+    dialogue = GameObject::Instantiate("Jimmy Bravo", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(18, 0, -15));
+    dialogue->transform->SetLocalRotation(glm::vec3(0, 315, 0));
     dialogue->transform->SetLocalScale(glm::vec3(0.5f));
     dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
     dialogueAnimator = dialogue->AddComponent<Animator>();
-    dialogueAnimator->LoadAnimationModel("Crowd/BasicMan001/BasicMan001.dae");
-    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueAnimator->LoadAnimationModel("Crowd/JimmyBravo/JimmyBravo.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle1.dae");
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->name = "Jimmy Bravo";
     dialogueComponent->texts.push_back({{"I just saw some dude trying to battle someone with drums by simply clapping!"},
                                         {"I mean, it was impressive attempt, but there was no way he was going to win."},
                                         {""}});
+    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator->SetParent(dialogue);
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
+    dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    dialogue = GameObject::Instantiate("BadgeDialogue", activeScene);
+    dialogue->transform->SetLocalPosition(glm::vec3(-58, 0, -65.5));
+    dialogue->transform->SetLocalScale(glm::vec3(0.5f));
+    dialogue->transform->SetLocalRotation(glm::vec3(0, 295, 0));
+    dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
+    dialogueAnimator = dialogue->AddComponent<Animator>();
+    dialogueAnimator->LoadAnimationModel("Crowd/Joseph/Joseph.dae");
+    dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
+    dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
+    dialogueComponent->name = "Joseph Joe Starr";
+    dialogueComponent->texts.push_back({{"OOOOOOOOOOOH MYYYYYYYYYYYYYYYYYY"},
+                                        {"GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOD!"},
+                                        {"The contest is approaching..."}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
