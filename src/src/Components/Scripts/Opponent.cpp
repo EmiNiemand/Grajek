@@ -160,7 +160,6 @@ void Opponent::Update() {
         button1->isActive = false;
         button2->isActive = true;
         chooseMenu->EnableSelfAndChildren();
-        //DialogueManager::GetInstance()->NotifyMenuIsActive();
         dialogue->NextDialogue();
         dialogue->texts[1].text1 = "Let's say, whoever wins, gets " + std::to_string(bet);
         dialogue->texts[1].text2 = "";
@@ -182,7 +181,6 @@ void Opponent::Update() {
         if (hid->IsKeyDown(Key::KEY_ENTER)) {
             chooseMenuActive = false;
             chooseMenu->DisableSelfAndChildren();
-            //DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             if (button1->isActive) {
                 if (playerManager->GetCash() < bet) {
@@ -294,4 +292,5 @@ void Opponent::PlayerStartedMusicSession() {
     belt->SetScale(0);
     timeCounter->SetScale(1);
     ui->EnableSelfAndChildren();
+    dialogue->menuActive = false;
 }
