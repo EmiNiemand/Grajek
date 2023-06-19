@@ -45,11 +45,13 @@ void SceneManager::InitializeScene() {
     activeScene = GameObject::Instantiate("Scene", nullptr, Tags::SCENE);
     Camera::activeCamera = GameObject::Instantiate("Camera", activeScene, Tags::CAMERA);
 
+    loadingScreenNumber = RandomnessManager::GetInstance()->GetInt(1, 8);
+
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     loadingScreen = GameObject::Instantiate("LoadingScreen", SceneManager::GetInstance()->activeScene)->AddComponent<Image>();
-    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreens/"+std::to_string(RandomnessManager::GetInstance()->GetInt(1, 8))+".png");
+    loadingScreen->LoadTexture(0, 0, "UI/LoadingScreens/"+std::to_string(loadingScreenNumber)+".png");
     loadingScreen->Draw();
     deleteLoadingScreen = true;
     glfwSwapBuffers(GloomEngine::GetInstance()->window);
@@ -74,6 +76,12 @@ void SceneManager::LoadScene(const std::string& scene) {
         audio->IsLooping(true);
         audio->SetGain(0.2f);
         audio->PlaySoundAfterStart(true);
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        loadingScreen->LoadTexture(0, 0, "UI/LoadingScreens/"+std::to_string(loadingScreenNumber)+"_loaded.png");
+        loadingScreen->Draw();
+        glfwSwapBuffers(GloomEngine::GetInstance()->window);
     } else if (scene == "MainMenu") {
         ClearScene();
         activeScene = GameObject::Instantiate("MainMenuScene", nullptr, Tags::SCENE);

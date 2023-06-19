@@ -25,6 +25,7 @@ public:
     std::string file;
 
     std::shared_ptr<Image> loadingScreen;
+    int loadingScreenNumber;
     bool deleteLoadingScreen = false;
 
     std::unordered_map<std::string, std::shared_ptr<GameObject>> parents;
