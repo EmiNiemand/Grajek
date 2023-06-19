@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "GloomEngine.h"
 #include "Components/Scripts/Opponent.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -23,7 +25,6 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
                      short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
     // Setup pattern
     instrument = std::move(instrument1);
-    instrument->GeneratePattern(musicPattern);
     pattern = instrument->patterns.back();
     pattern->sounds[0]->delay = musicPattern[0].delay;
     for (const auto& sound: instrument->patterns.back()->sounds) {
@@ -41,12 +42,15 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
 
     // Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
-    GameObject::Instantiate("OpponentFrame", ui)->AddComponent<Image>()->LoadTexture(460, 880, "UI/RamkaPrzeciwnik.png");
+    GameObject::Instantiate("OpponentFrame", ui)->AddComponent<Image>()
+            ->LoadTexture(460, 880, "UI/Opponent/battleFrame.png", -0.5);
+    GameObject::Instantiate("OpponentFrameBG", ui)->AddComponent<Image>()
+            ->LoadTexture(460, 880, "UI/Opponent/battleFrameBG.png", -0.4);
     belt = GameObject::Instantiate("OpponentSatisfactionDifference", ui)->AddComponent<Image>();
-    belt->LoadTexture(960, 880, "UI/Satisfaction.png");
+    belt->LoadTexture(960, 920, "UI/Opponent/progressBar.png", -0.45);
     belt->SetScale(0.0f);
     timeCounter = GameObject::Instantiate("OpponentTimeCounter", ui)->AddComponent<Image>();
-    timeCounter->LoadTexture(460, 865, "UI/TimeCounter.png");
+    timeCounter->LoadTexture(468, 1036, "UI/Opponent/timeBar.png", -0.55);
     ui->DisableSelfAndChildren();
 
     indicator = Prefab::Instantiate<ConeIndicator>("Indicator");
@@ -157,7 +161,6 @@ void Opponent::Update() {
         button1->isActive = false;
         button2->isActive = true;
         chooseMenu->EnableSelfAndChildren();
-        //DialogueManager::GetInstance()->NotifyMenuIsActive();
         dialogue->NextDialogue();
         dialogue->texts[1].text1 = "Let's say, whoever wins, gets " + std::to_string(bet);
         dialogue->texts[1].text2 = "";
@@ -179,7 +182,6 @@ void Opponent::Update() {
         if (hid->IsKeyDown(Key::KEY_ENTER)) {
             chooseMenuActive = false;
             chooseMenu->DisableSelfAndChildren();
-            //DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             if (button1->isActive) {
                 if (playerManager->GetCash() < bet) {
@@ -249,6 +251,7 @@ void Opponent::Update() {
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             musicSession = false;
+            AIManager::GetInstance()->NotifyEnemyStopsPlaying();
         }
         return;
     }
@@ -263,9 +266,10 @@ void Opponent::Update() {
 }
 
 void Opponent::PlayerPlayedPattern(float satisfaction1) {
-    float s = satisfaction1 - satisfaction;
+    float s = satisfaction1 - AIManager::GetInstance()->GetCombinedEnemySatisfaction();
     satisfactionDifference += s;
     belt->SetScale(glm::vec2(satisfactionDifference / 100, 1.0f));
+    AIManager::GetInstance()->NotifyEnemyPlayedPattern(pattern);
 }
 
 void Opponent::OnDestroy() {
@@ -291,4 +295,6 @@ void Opponent::PlayerStartedMusicSession() {
     belt->SetScale(0);
     timeCounter->SetScale(1);
     ui->EnableSelfAndChildren();
+    dialogue->menuActive = false;
+    AIManager::GetInstance()->NotifyEnemyStartsPlaying(instrument->name, instrument->genre);
 }

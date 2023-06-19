@@ -223,7 +223,7 @@ void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pa
  * @returns float - combined satisfaction of every character
  */
 const float AIManager::GetCombinedEnemySatisfaction() {
-    float satisfaction = 0.0f;
+    float satisfaction = 50.0f;
     float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
 
