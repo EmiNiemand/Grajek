@@ -34,10 +34,10 @@ void CharacterLogic::Start() {
 }
 
 void CharacterLogic::Update() {
-    if (logicState != ListeningToPlayer) {
+    if (logicState != Listening) {
         switch (characterMovement->GetState()) {
+            case OnPathToDuel:
             case OnPathToPlayer:
-            case OnPathToEnemy:
                 characterAnimations->SetNewState(Running);
                 break;
             case OnPathToTarget:
@@ -46,25 +46,23 @@ void CharacterLogic::Update() {
             case NearTargetPosition:
                 characterAnimations->SetNewState(Idle);
                 break;
-            case NearEnemyPosition:
-                logicState = ListeningToEnemy;
-                break;
+            case NearDuelPosition:
             case NearPlayerPosition:
-                logicState = ListeningToPlayer;
+                logicState = Listening;
                 break;
             default:
                 break;
         }
     }
 
-    if (logicState == ListeningToPlayer || logicState == ListeningToEnemy) {
-        if (playerSatisfaction >= upperSatisfactionLimit || enemySatisfaction >= upperSatisfactionLimit) {
+    if (logicState == Listening) {
+        if (playerSatisfaction >= upperSatisfactionLimit || opponentSatisfaction >= upperSatisfactionLimit) {
             characterAnimations->SetNewState(Cheering);
-        } else if (playerSatisfaction >= middleSatisfactionLimit || enemySatisfaction >= middleSatisfactionLimit) {
+        } else if (playerSatisfaction >= middleSatisfactionLimit || opponentSatisfaction >= middleSatisfactionLimit) {
             characterAnimations->SetNewState(Idle);
-        } else if (playerSatisfaction >= lowerSatisfactionLimit || enemySatisfaction >= lowerSatisfactionLimit) {
+        } else if (playerSatisfaction >= lowerSatisfactionLimit || opponentSatisfaction >= lowerSatisfactionLimit) {
             characterAnimations->SetNewState(Booing);
-        } else {
+        } else if (playerSatisfaction >= 0.0f || opponentSatisfaction >= 0.0f) {
             logicState = WalkingAway;
             characterMovement->SetState(ReturningToPreviousTarget);
         }
@@ -74,20 +72,19 @@ void CharacterLogic::Update() {
 }
 
 void CharacterLogic::AIUpdate() {
-    if (logicState == AlertedByPlayerTalking) {
-        playerSatisfaction = 65.0f;
-        logicState = MovingToPlayer;
-        characterMovement->SetState(SettingPathToPlayer);
-    } else if (logicState == AlertedByPlayer || logicState == AlertedByEnemy) {
-        CalculateSatisfaction();
+    if (logicState == AlertedByPlayer) {
+        CalculateBaseSatisfaction();
 
         if (playerSatisfaction > lowerSatisfactionLimit) {
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
-        } else if (enemySatisfaction > lowerSatisfactionLimit) {
-            logicState = MovingToEnemy;
-            characterMovement->SetState(SettingPathToEnemy);
         }
+    } else if (logicState == AlertedByOpponent) {
+        playerSatisfaction = 50.0f;
+        opponentSatisfaction = 50.0f;
+
+        logicState = MovingToDuel;
+        characterMovement->SetState(SettingPathToDuel);
     } else if (logicState == WalkingAway) {
         if (playerSatisfaction > lowerSatisfactionLimit) {
             logicState = MovingToPlayer;
@@ -97,7 +94,7 @@ void CharacterLogic::AIUpdate() {
 
     if (logicState == Wandering || logicState == WalkingAway) {
         playerSatisfaction = std::clamp(playerSatisfaction - ANNOYED_SATISFACTION_REDUCER, 0.0f, 100.0f);
-        enemySatisfaction = std::clamp(enemySatisfaction - ANNOYED_SATISFACTION_REDUCER, 0.0f, 100.0f);
+        opponentSatisfaction = std::clamp(opponentSatisfaction - ANNOYED_SATISFACTION_REDUCER, 0.0f, 100.0f);
 
         timeSinceSession += GloomEngine::GetInstance()->AIDeltaTime;
 
@@ -122,8 +119,8 @@ void CharacterLogic::AIUpdate() {
         timeSinceOnFrustum = 0.0f;
     }
 
-    playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
-    enemySatisfaction = std::clamp(enemySatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
+    if (logicState == Listening)
+        playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
 
     Component::AIUpdate();
 }
@@ -236,17 +233,17 @@ const float CharacterLogic::GetPlayerSatisfaction() const {
  * @param instrument - enum for instrument name
  * @param genre - enum for music genre
  */
-void CharacterLogic::SetEnemyInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre) {
-    enemyInstrumentName = instrument;
-    enemyGenre = genre;
+void CharacterLogic::SetOpponentInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre) {
+    opponentInstrumentName = instrument;
+    opponentGenre = genre;
 }
 
 /**
  * @annotation
  * Sets pattern played by enemy.
- * @param pattern - music pattern
+ * @param pat - music pattern
  */
-void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &pattern) {
+void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pattern) {
     if (pattern != nullptr) {
         bool isFavorite = false;
 
@@ -256,14 +253,14 @@ void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &patter
         }
 
         if (isFavorite)
-            enemySatisfaction += 2.0f;
+            opponentSatisfaction += 2.0f;
         else
-            enemySatisfaction += 1.0f;
+            opponentSatisfaction += 1.0f;
     } else {
-        enemySatisfaction -= 4.0f;
+        opponentSatisfaction -= 2.0f;
     }
 
-    enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
+    opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
 }
 
 /**
@@ -271,9 +268,18 @@ void CharacterLogic::SetEnemyPattern(const std::shared_ptr<MusicPattern> &patter
  * Sets new enemy session state.
  * @param isEnemyPlaying - session state
  */
-void CharacterLogic::SetEnemyPlayingStatus(const bool& isEnemyPlaying) {
-    if (isEnemyPlaying) {
-        logicState = AlertedByEnemy;
+void CharacterLogic::SetOpponentPlayingStatus(const bool& isOpponentPlaying) {
+    isPlayerPlaying = true;
+
+    if (isOpponentPlaying) {
+        playerPosition = playerTransform->GetLocalPosition();
+
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
+            logicState = AlertedByOpponent;
+
+            for (auto &pat: favPatterns)
+                pat.second = 0.0f;
+        }
     } else {
         if (logicState != Wandering && characterMovement != nullptr)
             characterMovement->SetState(ReturningToPreviousTarget);
@@ -287,15 +293,15 @@ void CharacterLogic::SetEnemyPlayingStatus(const bool& isEnemyPlaying) {
  * Returns current satisfaction based on enemy style.
  * @returns float - enemy satisfaction
  */
-const float CharacterLogic::GetEnemySatisfaction() const {
-    return enemySatisfaction;
+const float CharacterLogic::GetOpponentSatisfaction() const {
+    return opponentSatisfaction;
 }
 
 /**
  * @annotation
  * Calculates starting satisfaction.
  */
-void CharacterLogic::CalculateSatisfaction() {
+void CharacterLogic::CalculateBaseSatisfaction() {
     if (playerSatisfaction == 0.0f) {
         if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
             playerSatisfaction += 30.0f;
@@ -322,16 +328,18 @@ void CharacterLogic::CalculateSatisfaction() {
         playerSatisfaction = std::clamp(playerSatisfaction - repeatingModifier, 0.0f, 100.0f);
     }
 
-    enemySatisfaction = -1.0f;
+    if (logicState == AlertedByOpponent) {
+        opponentSatisfaction = 0.0f;
 
-    if (std::find(favGenres.begin(), favGenres.end(), enemyGenre) != favGenres.end())
-        enemySatisfaction += 30.0f;
+        if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
+            opponentSatisfaction += 30.0f;
 
-    if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), enemyInstrumentName)
+        if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
             != favInstrumentsNames.end())
-        enemySatisfaction += 20.0f;
+            opponentSatisfaction += 20.0f;
 
-    enemySatisfaction = std::clamp(enemySatisfaction, 0.0f, 100.0f);
+        opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
+    }
 }
 
 /**
@@ -341,22 +349,4 @@ void CharacterLogic::CalculateSatisfaction() {
  */
 const AI_LOGIC_STATE CharacterLogic::GetLogicState() const {
     return logicState;
-}
-
-void CharacterLogic::SetAwareStatusOfOpponent(const bool& state) {
-    if (state) {
-        playerPosition = playerTransform->GetLocalPosition();
-
-        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
-            logicState = AlertedByPlayerTalking;
-
-            for (auto &pat: favPatterns)
-                pat.second = 0.0f;
-        }
-    } else {
-        if (logicState != Wandering && characterMovement != nullptr)
-            characterMovement->SetState(ReturningToPreviousTarget);
-
-        logicState = Wandering;
-    }
 }

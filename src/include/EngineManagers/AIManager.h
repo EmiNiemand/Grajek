@@ -46,9 +46,7 @@ class AIManager {
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     InstrumentName currentPlayerInstrument {};
-    bool playerIsPlaying = false;
-    bool enemyIsPlaying = false;
-    bool playerTalksWithEnemy = false;
+    InstrumentName currentOpponentInstrument {};
     // Settings
     int charactersAmount = 0;
 
@@ -74,17 +72,17 @@ public:
     void Free();
 
     void InitializeSpawner(const int& maxCharacters);
+    void SpawnCharacter();
     void NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedPlayerSatisfaction();
-    void NotifyPlayerTalksWithOpponent(bool started=true);
-    void NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
-    void NotifyEnemyStopsPlaying();
-    void NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
-    const float GetCombinedEnemySatisfaction();
+    void NotifyPlayerTalksWithOpponent(const bool& state);
+    void NotifyOpponentStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
+    void NotifyOpponentStopsPlaying();
+    void NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
+    const float GetCombinedOpponentSatisfaction();
     [[nodiscard]] const int GetCharactersAmount() const;
-    void SpawnCharacter();
     void RemoveCharacterLogic(const int& componentId);
 
 };
