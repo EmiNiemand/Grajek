@@ -30,8 +30,8 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
-        sample->SetPositionOffset(parent->transform->GetLocalPosition());
-        sample->SetMaxDistance(15);
+        sample->SetDistanceMode(AudioDistanceMode::Continuous);
+        sample->SetMaxDistance(40);
     }
 
     satisfaction = satisfaction1;

@@ -15,6 +15,17 @@ AudioSource::AudioSource(const std::shared_ptr<GameObject> &parent, int id) : Co
 
 AudioSource::~AudioSource() = default;
 
+void AudioSource::Awake() {
+    if (audioType == AudioType::Positional) {
+        position = parent->transform->GetGlobalPosition() + positionOffset;
+
+        alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
+        alSource3f(sourceId, AL_VELOCITY, audioVelocity.x, audioVelocity.y, audioVelocity.z);
+        alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
+    }
+    Component::Awake();
+}
+
 void AudioSource::Start() {
     auto player = GloomEngine::GetInstance()->FindGameObjectWithName("Player");
 
@@ -104,19 +115,12 @@ void AudioSource::PlaySoundAfterStart(const bool &state) {
  * @param type - Positional or Direct audio
  */
 void AudioSource::LoadAudioData(const std::string& path, AudioType type) {
+    audioType = type;
     alGenBuffers(4, buffersIds);
     alGenSources(1, &sourceId);
 
-    alSourcef(sourceId, AL_PITCH, 1);
+    alSourcef(sourceId, AL_PITCH, pitch);
     alSourcef(sourceId, AL_GAIN, gain);
-
-    if (type == AudioType::Positional) {
-        position = parent->transform->GetLocalPosition() + positionOffset;
-
-        alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
-        alSource3f(sourceId, AL_VELOCITY, 0, 0, 0);
-        alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
-    }
 
     alSourcei(sourceId, AL_LOOPING, AL_FALSE);
 
@@ -190,8 +194,9 @@ void AudioSource::SetDistanceMode(const AudioDistanceMode& mode) {
  * Sets audio pitch.
  * @param val - [0.5 - 2.0], default 1.0
  */
-void AudioSource::SetPitch(const float& val) const {
-    alSourcef(sourceId, AL_PITCH, val);
+void AudioSource::SetPitch(const float& val) {
+    pitch = val;
+    alSourcef(sourceId, AL_PITCH, pitch);
 }
 
 /**
@@ -201,8 +206,7 @@ void AudioSource::SetPitch(const float& val) const {
  */
 void AudioSource::SetGain(const float& val) {
     gain = std::clamp(val, 0.0f, 1.0f);
-
-    alSourcef(sourceId, AL_GAIN, val);
+    alSourcef(sourceId, AL_GAIN, gain);
 }
 
 /**
@@ -210,7 +214,8 @@ void AudioSource::SetGain(const float& val) {
  * Sets audio velocity. Used in calculating doppler shift (moving objects emitting sound).
  * @param velocity - vector3, default {0}
  */
-void AudioSource::SetVelocity(const glm::vec3& velocity) const {
+void AudioSource::SetVelocity(const glm::vec3& velocity) {
+    audioVelocity = velocity;
     alSource3f(sourceId, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 }
 
