@@ -5,6 +5,7 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
+#include "Components/UI/Button.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "EngineManagers/HIDManager.h"
@@ -73,6 +74,9 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     lossDialogue->texts.push_back({{"Unfortunately, you need a bit more practice bud."},
                                    {"Definitely come back later though! You have a lot of potential."},
                                    {"I feel that our battle could be legendary."}});
+    dialogue->name = name;
+    winDialogue->name = name;
+    lossDialogue->name = name;
 
     // Setup choose menu
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
@@ -94,7 +98,18 @@ void Opponent::Start() {
     if (playerEquipment->badges.contains(badge) && playerEquipment->badges[badge]) {
         defeated = true;
         indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
-
+    }
+    if (badge == PlayerBadges::DRUMS) {
+        dialogue->dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog2.png");
+        winDialogue->dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog2.png");
+        lossDialogue->dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog2.png");
+    } else if (badge == PlayerBadges::TRUMPET) {
+        dialogue->dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog4.png");
+        winDialogue->dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog4.png");
+        lossDialogue->dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog4.png");
+    } else {
+        winDialogue->dialogueImage->LoadTexture(127, 0, dialogue->dialogueImage->filePath);
+        lossDialogue->dialogueImage->LoadTexture(127, 0, dialogue->dialogueImage->filePath);
     }
     Component::Start();
 }

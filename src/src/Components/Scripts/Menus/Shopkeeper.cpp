@@ -4,6 +4,7 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
+#include "Components/UI/Button.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Player/PlayerManager.h"
 #include "Components/Renderers/Animator.h"
@@ -87,6 +88,8 @@ void Shopkeeper::Start() {
     text2->z = -0.55;
     text3->LoadFont(texts[0].text3, 237, 75, 32, glm::vec3(1));
     text3->z = -0.55;
+    dialogue->AddComponent<Button>()->LoadTexture(1430, 210, "UI/Dialogues/name.png", "UI/Dialogues/name.png", -1);
+    dialogue->GetComponent<Button>()->LoadFont("Sklepu", 32, glm::vec3(1));
     GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(127, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png", -0.5);
     image->enabled = false;
     playerManager->inputEnabled = false;

@@ -54,6 +54,7 @@ public:
     std::shared_ptr<Dialogue> lossDialogue;
     std::shared_ptr<SessionUI> sessionUI;
     std::shared_ptr<GameObject> indicator;
+    std::string name;
 
 public:
     Opponent(const std::shared_ptr<GameObject> &parent, int id);

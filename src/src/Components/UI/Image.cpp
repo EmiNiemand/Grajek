@@ -41,7 +41,7 @@ std::shared_ptr<Mesh> Image::CreateMesh() {
     return std::make_shared<Mesh>(vertices, std::vector<unsigned int>{0, 1, 3, 0, 2, 3}, std::vector<Texture>{});
 }
 
-void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
+void Image::LoadTexture(int x2, int y2, std::string path, float z2) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     int nrChannels;
@@ -65,6 +65,7 @@ void Image::LoadTexture(int x2, int y2, const std::string &path, float z2) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        filePath = path;
         x = x2; y = y2; z = z2;
         UpdateCorners();
         this->mesh = CreateMesh();

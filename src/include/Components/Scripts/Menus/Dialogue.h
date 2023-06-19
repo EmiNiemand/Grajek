@@ -30,6 +30,8 @@ public:
     short dialogueIndex = 0;
     std::vector<Strings> texts;
     std::shared_ptr<Image> image;
+    std::shared_ptr<Image> dialogueImage;
+    std::string name;
 
 public:
     Dialogue(const std::shared_ptr<GameObject> &parent, int id);
