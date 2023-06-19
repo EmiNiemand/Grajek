@@ -32,7 +32,7 @@ void Shopkeeper::Start() {
     shopkeeperModel->transform->SetLocalScale({0.5, 0.5, 0.5});
     auto animatorObject = GameObject::Instantiate("ShopkeeperAnimator", shopkeeperModel);
     auto animator = animatorObject->AddComponent<Animator>();
-    animator->LoadAnimationModel("Crowd/JazzMan001/JazzMan001.dae");
+    animator->LoadAnimationModel("Crowd/Shopkeeper/Shopkeeper.dae");
     animator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
     texts.push_back({{"Hi! Welcome to Rhythmtown. I am your friendly local instrument shopkeeper."},
@@ -89,7 +89,7 @@ void Shopkeeper::Start() {
     text3->LoadFont(texts[0].text3, 237, 75, 32, glm::vec3(1));
     text3->z = -0.55;
     dialogue->AddComponent<Button>()->LoadTexture(1430, 210, "UI/Dialogues/name.png", "UI/Dialogues/name.png", -1);
-    dialogue->GetComponent<Button>()->LoadFont("Sklepu", 32, glm::vec3(1));
+    dialogue->GetComponent<Button>()->LoadFont("Max Reeve-Erbe", 32, glm::vec3(1));
     GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(127, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png", -0.5);
     image->enabled = false;
     playerManager->inputEnabled = false;
