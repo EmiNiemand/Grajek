@@ -74,6 +74,12 @@ void CharacterLogic::Update() {
 }
 
 void CharacterLogic::AIUpdate() {
+    if (logicState == AlertedByPlayerTalking) {
+        playerSatisfaction = 50.0f;
+        logicState = MovingToPlayer;
+        characterMovement->SetState(SettingPathToPlayer);
+    }
+
     if (logicState == AlertedByPlayer || logicState == AlertedByEnemy) {
         CalculateSatisfaction();
 
@@ -332,4 +338,22 @@ void CharacterLogic::CalculateSatisfaction() {
  */
 const AI_LOGIC_STATE CharacterLogic::GetLogicState() const {
     return logicState;
+}
+
+void CharacterLogic::SetAwareStatusOfOpponent(const bool& state) {
+    if (state) {
+        playerPosition = playerTransform->GetLocalPosition();
+
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
+            logicState = AlertedByPlayerTalking;
+
+            for (auto &pat: favPatterns)
+                pat.second = 0.0f;
+        }
+    } else {
+        if (logicState != Wandering && characterMovement != nullptr)
+            characterMovement->SetState(ReturningToPreviousTarget);
+
+        logicState = Wandering;
+    }
 }

@@ -168,7 +168,11 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(bool started) {
+    playerTalksWithEnemy = started;
 
+    for (auto&& ch : charactersLogics) {
+        ch.second->SetAwareStatusOfOpponent(started);
+    }
 }
 
 /**

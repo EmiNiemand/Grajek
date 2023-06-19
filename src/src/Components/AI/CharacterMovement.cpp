@@ -299,7 +299,7 @@ void CharacterMovement::SetRandomEndPoint() {
 void CharacterMovement::SetNewPathToPlayer() {
     playerPosition = playerTransform->GetLocalPosition();
     glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
-    int boundariesXY = 2;
+    int boundariesXY = 3;
     bool isAvailable = false;
 
     for (int y = -boundariesXY; y <= boundariesXY; y += 2) {

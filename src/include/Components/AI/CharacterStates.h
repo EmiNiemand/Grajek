@@ -10,6 +10,7 @@ enum AI_LOGIC_STATE {
     AlertedByPlayer,
     MovingToPlayer,
     ListeningToPlayer,
+    AlertedByPlayerTalking,
     AlertedByEnemy,
     MovingToEnemy,
     ListeningToEnemy,

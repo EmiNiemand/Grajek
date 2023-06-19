@@ -48,6 +48,7 @@ class AIManager {
     InstrumentName currentPlayerInstrument {};
     bool playerIsPlaying = false;
     bool enemyIsPlaying = false;
+    bool playerTalksWithEnemy = false;
     // Settings
     int charactersAmount = 0;
 

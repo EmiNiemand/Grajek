@@ -77,6 +77,7 @@ public:
     const float GetEnemySatisfaction() const;
     const AI_LOGIC_STATE GetLogicState() const;
 
+    void SetAwareStatusOfOpponent(const bool& state);
 };
 
 #endif //GLOOMENGINE_CHARACTERLOGIC_H
