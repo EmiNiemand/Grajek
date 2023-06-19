@@ -43,6 +43,7 @@ public:
     void LoadFont(std::string text, FT_UInt fontSize = 18, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), const std::string &path = "Kanit-Light.ttf");
     void ChangeText(std::string newText);
     void ChangePosition(int newX, int newY);
+    void ChangeZ(float newZ);
 
 	int GetWidth();
 	int GetHeight();
