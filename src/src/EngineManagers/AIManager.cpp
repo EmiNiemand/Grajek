@@ -117,7 +117,7 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
     for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == ListeningToPlayer)
+        if (state == ListeningToPlayer || state == WalkingAway)
             ch.second->SetPlayerPattern(pat);
     }
 }
@@ -212,7 +212,7 @@ void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pa
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == ListeningToEnemy)
+        if (state == ListeningToEnemy || state == WalkingAway)
             ch.second->SetEnemyPattern(pat);
     }
 }
@@ -259,16 +259,6 @@ const int AIManager::GetCharactersAmount() const {
 void AIManager::RemoveCharacterLogic(const int& componentId) {
     if (charactersLogics.contains(componentId))
         charactersLogics.erase(componentId);
-}
-
-/**
- * @annotation
- * Removes CharacterMovement from the manager.
- * @param componentId - component id
- */
-void AIManager::RemoveCharacterMovement(const int& componentId) {
-    if (charactersMovements.contains(componentId))
-        charactersMovements.erase(componentId);
 }
 
 /**

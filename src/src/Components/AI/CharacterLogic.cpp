@@ -75,12 +75,10 @@ void CharacterLogic::Update() {
 
 void CharacterLogic::AIUpdate() {
     if (logicState == AlertedByPlayerTalking) {
-        playerSatisfaction = 50.0f;
+        playerSatisfaction = 65.0f;
         logicState = MovingToPlayer;
         characterMovement->SetState(SettingPathToPlayer);
-    }
-
-    if (logicState == AlertedByPlayer || logicState == AlertedByEnemy) {
+    } else if (logicState == AlertedByPlayer || logicState == AlertedByEnemy) {
         CalculateSatisfaction();
 
         if (playerSatisfaction > lowerSatisfactionLimit) {
@@ -91,7 +89,7 @@ void CharacterLogic::AIUpdate() {
             characterMovement->SetState(SettingPathToEnemy);
         }
     } else if (logicState == WalkingAway) {
-        if (playerSatisfaction > middleSatisfactionLimit) {
+        if (playerSatisfaction > lowerSatisfactionLimit) {
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
         }
@@ -112,7 +110,7 @@ void CharacterLogic::AIUpdate() {
         timeSinceSession = 0.0f;
     }
 
-    if (!parent->isOnFrustum) {
+    if (!parent->isOnFrustum && !isPlayerPlaying) {
         timeSinceOnFrustum += GloomEngine::GetInstance()->AIDeltaTime;
 
         if (timeSinceOnFrustum > AI_DESPAWN_TIMEOUT) {
@@ -179,7 +177,7 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
                 pat.second = std::clamp(pat.second + 1.0f, 0.0f, 5.0f);
                 isFavorite = true;
             } else {
-                pat.second = std::clamp(pat.second - 0.75f, -1.0f, 5.0f);
+                pat.second = std::clamp(pat.second - 1.0f, 0.0f, 5.0f);
             }
         }
 
@@ -197,7 +195,9 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
  * Sets new player session state.
  * @param isPlayerPlaying - session state
  */
-void CharacterLogic::SetPlayerPlayingStatus(const bool& isPlayerPlaying) {
+void CharacterLogic::SetPlayerPlayingStatus(const bool& state) {
+    isPlayerPlaying = state;
+
     if (isPlayerPlaying) {
         playerPosition = playerTransform->GetLocalPosition();
 

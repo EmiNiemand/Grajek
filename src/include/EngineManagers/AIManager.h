@@ -86,7 +86,6 @@ public:
     [[nodiscard]] const int GetCharactersAmount() const;
     void SpawnCharacter();
     void RemoveCharacterLogic(const int& componentId);
-    void RemoveCharacterMovement(const int &componentId);
 
 };
 

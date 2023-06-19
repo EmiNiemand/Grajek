@@ -13,8 +13,8 @@
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 
-constexpr float SATISFACTION_REDUCER = 2.0f;
-constexpr float PREVIOUS_SESSION_TIMEOUT = 5.0f;
+constexpr float SATISFACTION_REDUCER = 0.25f;
+constexpr float PREVIOUS_SESSION_TIMEOUT = 10.0f;
 
 class GameObject;
 class CharacterAnimations;
@@ -30,6 +30,7 @@ class CharacterLogic : public Component {
     // Movement and indicators
     std::shared_ptr<CharacterMovement> characterMovement = nullptr;
     // Player values and modifiers
+    bool isPlayerPlaying = false;
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     InstrumentName playerInstrumentName {};
@@ -76,8 +77,8 @@ public:
     void SetEnemyPlayingStatus(const bool& isEnemyPlaying);
     const float GetEnemySatisfaction() const;
     const AI_LOGIC_STATE GetLogicState() const;
-
     void SetAwareStatusOfOpponent(const bool& state);
+
 };
 
 #endif //GLOOMENGINE_CHARACTERLOGIC_H

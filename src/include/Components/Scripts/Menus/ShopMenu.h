@@ -17,6 +17,8 @@ private:
 public:
     std::shared_ptr<Image> buyImage;
     std::shared_ptr<AudioSource> sound;
+    std::shared_ptr<AudioSource> buySound;
+    std::shared_ptr<AudioSource> cantBuySound;
     bool triggerActive = false;
 
 public:

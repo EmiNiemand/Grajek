@@ -7,7 +7,6 @@
 #include "EngineManagers/RandomnessManager.h"
 #include "EngineManagers/CollisionManager.h"
 #include "Components/AI/CharacterMovement.h"
-#include "Components/AI/CharacterLogic.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 
@@ -216,7 +215,10 @@ void CharacterMovement::SetRandomSpawnPointNearPlayer() {
     maxX = std::clamp(newEndPoint.x + AI_SPAWN_PLAYER_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
     minY = std::clamp(newEndPoint.y - AI_SPAWN_PLAYER_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
     maxY = std::clamp(newEndPoint.y + AI_SPAWN_PLAYER_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
-
+    if (minX == maxX)
+        spdlog::error("SRSPNP X");
+    if (minY == maxY)
+        spdlog::error("SRSPNP Y");
     while (true) {
         newEndPoint.x = RandomnessManager::GetInstance()->GetInt(minX, maxX);
         newEndPoint.y = RandomnessManager::GetInstance()->GetInt(minY, maxY);
@@ -241,7 +243,10 @@ void CharacterMovement::SetRandomSpawnPoint() {
     maxX = newEndPoint.x + AI_SPAWN_X_MAX_DISTANCE;
     minY = newEndPoint.y - AI_SPAWN_Y_MIN_DISTANCE;
     maxY = newEndPoint.y + AI_SPAWN_Y_MAX_DISTANCE;
-
+    if (minX == maxX)
+        spdlog::error("SRSP X");
+    if (minY == maxY)
+        spdlog::error("SRSP Y");
     while (true) {
         while (true) {
             newEndPoint.x = RandomnessManager::GetInstance()->GetInt(minSpawnCoords.x, maxSpawnCoords.x);
@@ -278,6 +283,10 @@ void CharacterMovement::SetRandomEndPoint() {
     minY = std::clamp(newEndPoint.y - AI_POINT_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
     maxY = std::clamp(newEndPoint.y + AI_POINT_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
 
+    if (minX == maxX)
+        spdlog::error("SREP X");
+    if (minY == maxY)
+        spdlog::error("SREP Y");
     while (true) {
         newEndPoint.x = RandomnessManager::GetInstance()->GetInt(minX, maxX);
         newEndPoint.y = RandomnessManager::GetInstance()->GetInt(minY, maxY);
@@ -340,7 +349,6 @@ void CharacterMovement::SetNewPathToPlayer() {
  * Sets previous end point as the current one.
  */
 void CharacterMovement::ReturnToPreviousPath() {
-    endPoint = previousEndPoint;
     speedMultiplier = 1.0f;
     movementState = OnPathToTarget;
     CalculatePath(previousEndPoint);

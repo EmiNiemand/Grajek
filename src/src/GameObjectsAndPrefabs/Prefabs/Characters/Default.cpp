@@ -24,7 +24,7 @@ std::shared_ptr<GameObject> Default::Create() {
     // Setting values
     auto collider = character->GetComponent<BoxCollider>();
     collider->SetOffset({0, 1.5, 0.1});
-    collider->SetSize({0.5, 2, 0.8});
+    collider->SetSize({0.5, 2, 0.6});
     collider->isDynamic = true;
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
 
