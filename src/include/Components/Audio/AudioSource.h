@@ -23,6 +23,7 @@ class AudioSource : public Component {
     std::shared_ptr<Transform> playerPos = nullptr;
     glm::vec3 position = {};
     glm::vec3 positionOffset = {};
+    glm::vec3 audioVelocity = {};
     // Audio data
     std::shared_ptr<AudioLoader> audioLoader = nullptr;
     ALuint buffersIds[NUM_BUFFERS] {};
@@ -34,13 +35,16 @@ class AudioSource : public Component {
     // Settings
     float gain = 1.0f;
     float maxDistance = 0.0f;
+    float pitch = 1.0f;
     bool isMovingTarget = false;
     AudioDistanceMode distanceMode = AudioDistanceMode::Continuous;
+    AudioType audioType = AudioType::Direct;
 
 public:
     AudioSource(const std::shared_ptr<GameObject> &parent, int id);
     ~AudioSource() override;
 
+    void Awake() override;
     void Start() override;
     void Update() override;
     void OnCreate() override;
@@ -57,8 +61,8 @@ public:
     void SetPositionOffset(const glm::vec3& offset);
     void SetDistanceMode(const AudioDistanceMode& mode);
     void SetGain(const float& val);
-    void SetPitch(const float& val) const;
-    void SetVelocity(const glm::vec3& velocity) const;
+    void SetPitch(const float& val);
+    void SetVelocity(const glm::vec3& velocity);
     void SetMaxDistance(const float& val);
     void IsLooping(const bool& state);
     void IsMoving(const bool& state);

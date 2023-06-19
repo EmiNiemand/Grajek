@@ -97,39 +97,80 @@ void Game::InitializeGame() const {
     // Enemies
     auto drummer = GameObject::Instantiate("DrumOpponent", activeScene);
     auto drummerAnimator = drummer->AddComponent<Animator>();
-    drummerAnimator->LoadAnimationModel("Opponent/Drummer/Drummer.dae");
+    drummerAnimator->LoadAnimationModel("Opponent/Drummer/MainDrummer/Drummer.dae");
     drummerAnimator->SetAnimation("MainHero/MainHeroDrums.dae");
     drummer->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
     drummer->transform->SetLocalPosition(glm::vec3(-54, 0, 18));
     drummer->transform->SetLocalRotation(glm::vec3(0, 135, 0));
     drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
-    // 2      *   *
-    // 1    *   *
-    // 0  *
     auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
     drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
-                                    {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50,
-                                    glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
+                                    {{1, 0.5}, {0, 0.5}, {2, 0.5}, {1, 0.25}, {0, 0.25}, {1, 0.5}, {2, 0.5}},
+                                    80.0f, 50, glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
 
 
     auto trumpeter = GameObject::Instantiate("JazzOpponent", activeScene);
     auto trumpeterAnimator = trumpeter->AddComponent<Animator>();
-    trumpeterAnimator->LoadAnimationModel("Opponent/Trumpeter/Trumpeter.dae");
+    trumpeterAnimator->LoadAnimationModel("Opponent/Trumpeter/MainTrumpeter/Trumpeter.dae");
     trumpeterAnimator->SetAnimation("MainHero/MainHeroTrumpet.dae");
     trumpeter->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
     trumpeter->transform->SetLocalPosition(glm::vec3(-87, 0, -42));
     trumpeter->transform->SetLocalRotation(glm::vec3(0, 45, 0));
     trumpeter->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
-    // 2      *   *
-    // 1    *   *
-    // 0  *
+
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
     trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
-                                              {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 80.0f, 50,
+                                              {{0, 0.5}, {1, 1}, {2, 0.5}, {1, 1}, {2, 0.5}}, 80.0f, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
 
+
+    auto opponent1 = GameObject::Instantiate("NormalOpponent", activeScene);
+    auto opponent1Animator = opponent1->AddComponent<Animator>();
+    opponent1Animator->LoadAnimationModel("Crowd/BasicMan003/BasicMan003.dae");
+    opponent1Animator->SetAnimation("MainHero/MainHeroClap.dae");
+    opponent1->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    opponent1->transform->SetLocalPosition(glm::vec3(12, 0, 7));
+    opponent1->transform->SetLocalRotation(glm::vec3(0, 210, 0));
+    opponent1->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
+
+
+    auto opponent1OpponentComponent = opponent1->AddComponent<Opponent>();
+    opponent1OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap),
+                                      {{0, 0.5}, {0, 1}, {1, 1}}, 65.0f, 15,
+                                      glm::vec3(1, 1, 0));
+
+
+    auto opponent2 = GameObject::Instantiate("NormalOpponent", activeScene);
+    auto opponent2Animator = opponent2->AddComponent<Animator>();
+    opponent2Animator->LoadAnimationModel("Crowd/BasicMan003/BasicMan003.dae");
+    opponent2Animator->SetAnimation("MainHero/MainHeroClap.dae");
+    opponent2->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    opponent2->transform->SetLocalPosition(glm::vec3(-36.5, 0, -26));
+    opponent2->transform->SetLocalRotation(glm::vec3(0, 310, 0));
+    opponent2->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
+
+
+    auto opponent2OpponentComponent = opponent2->AddComponent<Opponent>();
+    opponent2OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap),
+                                      {{0, 0.5}, {0, 1}, {1, 1}}, 70.0f, 30,
+                                      glm::vec3(1, 1, 0));
+
+
+    auto opponent3 = GameObject::Instantiate("NormalOpponent", activeScene);
+    auto opponent3Animator = opponent3->AddComponent<Animator>();
+    opponent3Animator->LoadAnimationModel("Opponent/Drummer/BasicDrummer001/Drummer.dae");
+    opponent3Animator->SetAnimation("MainHero/MainHeroDrums.dae");
+    opponent3->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
+    opponent3->transform->SetLocalPosition(glm::vec3(-75.5, 0, -65.5));
+    opponent3->transform->SetLocalRotation(glm::vec3(0, 40, 0));
+    opponent3->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
+
+    auto opponent3OpponentComponent = opponent3->AddComponent<Opponent>();
+    opponent3OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums),
+                                      {{0, 0.5}, {1, 0.5}, {2, 0.5}, {1, 0.5}, {2, 0.5}}, 70.0f, 25,
+                                      glm::vec3(1, 1, 0));
 
     // Town people
     auto dialogue = GameObject::Instantiate("GateDialogue", activeScene);
@@ -145,7 +186,7 @@ void Game::InitializeGame() const {
                                                        {""}});
     auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("PatternDialogue1", activeScene);
@@ -162,7 +203,7 @@ void Game::InitializeGame() const {
                                {"Smoke on the water... burn it down!"}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("CrowdDialogue", activeScene);
@@ -178,7 +219,7 @@ void Game::InitializeGame() const {
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("ClappingDialogue", activeScene);
@@ -194,7 +235,7 @@ void Game::InitializeGame() const {
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
