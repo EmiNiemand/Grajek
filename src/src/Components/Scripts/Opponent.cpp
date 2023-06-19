@@ -13,7 +13,6 @@
 #include "Components/Scripts/Player/PlayerEquipment.h"
 #include "EngineManagers/AIManager.h"
 #include "Components/Scripts/SessionUI/SessionUI.h"
-#include "Components/Renderers/Camera.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
