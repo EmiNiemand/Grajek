@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include "glm/vec2.hpp"
 #include "Components/Component.h"
 
 class MusicPattern;
@@ -48,6 +49,9 @@ public:
     bool ToggleMetronomeVisuals();
     bool ToggleMetronomeSound();
     bool ToggleBackingTrack();
+
+    void ChangeActiveButton(glm::vec2 moveVector);
+    void OnClick();
 
 private:
     void DetectPattern();

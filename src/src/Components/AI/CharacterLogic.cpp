@@ -47,6 +47,7 @@ void CharacterLogic::Update() {
                 characterAnimations->SetNewState(Idle);
                 break;
             case NearDuelPosition:
+                CalculateBasePlayerSatisfaction();
             case NearPlayerPosition:
                 logicState = Listening;
                 break;
@@ -62,7 +63,7 @@ void CharacterLogic::Update() {
             characterAnimations->SetNewState(Idle);
         } else if (playerSatisfaction >= lowerSatisfactionLimit || opponentSatisfaction >= lowerSatisfactionLimit) {
             characterAnimations->SetNewState(Booing);
-        } else if (playerSatisfaction >= 0.0f || opponentSatisfaction >= 0.0f) {
+        } else if (playerSatisfaction < lowerSatisfactionLimit || opponentSatisfaction < lowerSatisfactionLimit) {
             logicState = WalkingAway;
             characterMovement->SetState(ReturningToPreviousTarget);
         }
@@ -73,15 +74,15 @@ void CharacterLogic::Update() {
 
 void CharacterLogic::AIUpdate() {
     if (logicState == AlertedByPlayer) {
-        CalculateBaseSatisfaction();
+        CalculateBasePlayerSatisfaction();
 
         if (playerSatisfaction > lowerSatisfactionLimit) {
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
         }
     } else if (logicState == AlertedByOpponent) {
+        CalculateBaseOpponentSatisfaction();
         playerSatisfaction = 50.0f;
-        opponentSatisfaction = 50.0f;
 
         logicState = MovingToDuel;
         characterMovement->SetState(SettingPathToDuel);
@@ -269,17 +270,11 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
  * @param isEnemyPlaying - session state
  */
 void CharacterLogic::SetOpponentPlayingStatus(const bool& isOpponentPlaying) {
-    isPlayerPlaying = true;
-
     if (isOpponentPlaying) {
         playerPosition = playerTransform->GetLocalPosition();
 
-        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition()))
             logicState = AlertedByOpponent;
-
-            for (auto &pat: favPatterns)
-                pat.second = 0.0f;
-        }
     } else {
         if (logicState != Wandering && characterMovement != nullptr)
             characterMovement->SetState(ReturningToPreviousTarget);
@@ -294,14 +289,17 @@ void CharacterLogic::SetOpponentPlayingStatus(const bool& isOpponentPlaying) {
  * @returns float - enemy satisfaction
  */
 const float CharacterLogic::GetOpponentSatisfaction() const {
+    if (opponentSatisfaction < lowerSatisfactionLimit)
+        return 0.0f;
+
     return opponentSatisfaction;
 }
 
 /**
  * @annotation
- * Calculates starting satisfaction.
+ * Calculates starting player satisfaction.
  */
-void CharacterLogic::CalculateBaseSatisfaction() {
+void CharacterLogic::CalculateBasePlayerSatisfaction() {
     if (playerSatisfaction == 0.0f) {
         if (std::find(favGenres.begin(), favGenres.end(), playerGenre) != favGenres.end())
             playerSatisfaction += 30.0f;
@@ -327,20 +325,25 @@ void CharacterLogic::CalculateBaseSatisfaction() {
 
         playerSatisfaction = std::clamp(playerSatisfaction - repeatingModifier, 0.0f, 100.0f);
     }
-
-    if (logicState == AlertedByOpponent) {
-        opponentSatisfaction = 0.0f;
-
-        if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
-            opponentSatisfaction += 30.0f;
-
-        if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
-            != favInstrumentsNames.end())
-            opponentSatisfaction += 20.0f;
-
-        opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
-    }
 }
+
+/**
+ * @annotation
+ * Calculates starting opponent satisfaction.
+ */
+void CharacterLogic::CalculateBaseOpponentSatisfaction() {
+    opponentSatisfaction = 0.0f;
+
+    if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
+        opponentSatisfaction += 30.0f;
+
+    if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
+        != favInstrumentsNames.end())
+        opponentSatisfaction += 20.0f;
+
+    opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
+}
+
 
 /**
  * @annotation

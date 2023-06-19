@@ -68,8 +68,6 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
         else
             Prefab::Instantiate<Default>();
     }
-
-    isInitializing = false;
 }
 
 void AIManager::Free() {
@@ -274,6 +272,8 @@ void AIManager::RemoveCharacterLogic(const int& componentId) {
  * Spawns new character.
  */
 void AIManager::SpawnCharacter() {
+    isInitializing = false;
+
     random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
     if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodParams.second) < JAZZ_HOOD_DISTANCE)

@@ -208,3 +208,11 @@ void MusicSession::OnDestroy() {
     instrument.reset();
     Component::OnDestroy();
 }
+
+void MusicSession::ChangeActiveButton(glm::vec2 moveVector) {
+    sessionUI->ChangeActiveButton(moveVector);
+}
+
+void MusicSession::OnClick() {
+    sessionUI->OnClick();
+}

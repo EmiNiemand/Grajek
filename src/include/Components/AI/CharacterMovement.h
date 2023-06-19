@@ -20,7 +20,7 @@ constexpr float DISTANCE_TO_COLLISION = 1.25f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.50f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.15f;
 // Movement consts
-constexpr float MOVEMENT_TIMEOUT = 2.0f;
+constexpr float MOVEMENT_TIMEOUT = 3.0f;
 constexpr float MOVEMENT_SMOOTHING_PARAM = 0.5f;
 constexpr float MOVEMENT_MAX_SPEED = 0.075f;
 
@@ -71,6 +71,7 @@ class CharacterMovement : public Component {
     void SetRandomSpawnPoint();
     void SetRandomEndPoint();
     void SetNewPathToPlayer();
+    void SetNewPathToDuel();
     void ReturnToPreviousPath();
     void CalculatePath(const glm::ivec2& toPoint);
 

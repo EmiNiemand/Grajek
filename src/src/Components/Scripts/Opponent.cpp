@@ -84,14 +84,14 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
 
     // Setup choose menu
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
-    chooseMenu->AddComponent<Image>()->LoadTexture(560, 290, "UI/ChooseMenu.png", -0.6f);
+    chooseMenu->AddComponent<Image>()->LoadTexture(560, 400, "UI/Opponent/chooseMenu.png", -0.6f);
     button1 = GameObject::Instantiate("OpponentChooseMenuButton1", chooseMenu)->AddComponent<Button>();
-    button1->LoadTexture(700, 400, "UI/buttonInactive.png", "UI/buttonActive.png", -0.65f);
-    button1->LoadFont("Yes", 32);
+    button1->LoadTexture(573, 412, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -0.65f);
     button2 = GameObject::Instantiate("OpponentChooseMenuButton2", chooseMenu)->AddComponent<Button>();
-    button2->LoadTexture(1050, 400, "UI/buttonInactive.png", "UI/buttonActive.png", -0.65f);
-    button2->LoadFont("No", 32);
+    button2->LoadTexture(967, 412, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -0.65f);
     button2->isActive = true;
+    GameObject::Instantiate("OpponentChooseMenuImage", chooseMenu)->AddComponent<Image>()->
+            LoadTexture(0, 0, "UI/backgroundOpacity60.png", 0.65f);
     chooseMenu->DisableSelfAndChildren();
 }
 

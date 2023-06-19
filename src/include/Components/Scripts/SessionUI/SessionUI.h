@@ -19,6 +19,7 @@ class Text;
 class GameObject;
 class AudioSource;
 class UIAnimator;
+class Button;
 
 class SessionUI : public Component {
 private:
@@ -44,12 +45,17 @@ private:
 
     // Cheat sheet
     std::shared_ptr<Image> cheatSheet;
-    bool cheatSheetActive = false;
 
     // Instrument control
     std::shared_ptr<Image> instrumentControl;
     bool instrumentControlActive = false;
+
 protected:
+    bool cheatSheetActive = false;
+    std::shared_ptr<Button> activeButton;
+    std::vector<std::shared_ptr<Button>> soundButtons;
+    std::vector<std::shared_ptr<AudioSource>> patternsSounds;
+
     // Samples
     std::vector<std::shared_ptr<AudioSource>> sampleSources;
     std::vector<std::shared_ptr<Image>> sampleImages;
@@ -67,7 +73,7 @@ public:
 
     virtual void PlaySound(int index);
     virtual void StopSound(int index);
-    void ToggleCheatSheet();
+    virtual bool ToggleCheatSheet();
     void ToggleInstrumentControl();
     // Fraction values: <0, 1>
     void UpdateAccuracy(float fraction);
@@ -79,6 +85,9 @@ public:
     bool ToggleMetronomeSound();
     bool ToggleMetronomeVisuals();
     bool ToggleBackingTrack();
+
+    void ChangeActiveButton(glm::vec2 moveVector);
+    void OnClick();
 
 protected:
     void BackingTrackSetup(const std::string& trackName);

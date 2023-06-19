@@ -50,7 +50,8 @@ class CharacterLogic : public Component {
     float playerSatisfaction = 0.0f;
     float opponentSatisfaction = 0.0f;
 
-    void CalculateBaseSatisfaction();
+    void CalculateBasePlayerSatisfaction();
+    void CalculateBaseOpponentSatisfaction();
 
 public:
     // Favorite instruments and patterns
