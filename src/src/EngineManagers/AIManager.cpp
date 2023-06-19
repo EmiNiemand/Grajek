@@ -36,20 +36,21 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
 
-    glm::vec3 coords;
     isInitializing = true;
     charactersAmount = maxCharacters;
+    charactersLogics.reserve(maxCharacters);
+    charactersMovements.reserve(maxCharacters);
     pathfinding = std::make_shared<CharacterPathfinding>();
-    jazzHoodCenter = GloomEngine::GetInstance()->FindGameObjectWithName("JazzHoodCenter")->
+    jazzHoodParams.second = GloomEngine::GetInstance()->FindGameObjectWithName("JazzHoodCenter")->
             transform->GetLocalPosition();
 
-    coords = GloomEngine::GetInstance()->FindGameObjectWithName("MinSpawnCoords")->transform->GetLocalPosition();
-    minSpawnCoords.x = std::clamp((int)coords.x, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
-    minSpawnCoords.y = std::clamp((int)coords.z, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
+    minSpawnCoords = GloomEngine::GetInstance()->FindGameObjectWithName("MinSpawnCoords")->transform->GetLocalPosition();
+    minSpawnCoords.x = std::clamp(minSpawnCoords.x, -AI_GRID_SIZE / 2.0f, AI_GRID_SIZE / 2.0f);
+    minSpawnCoords.z = std::clamp(minSpawnCoords.z, -AI_GRID_SIZE / 2.0f, AI_GRID_SIZE / 2.0f);
 
-    coords = GloomEngine::GetInstance()->FindGameObjectWithName("MaxSpawnCoords")->transform->GetLocalPosition();
-    maxSpawnCoords.x = std::clamp((int)coords.x, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
-    maxSpawnCoords.y = std::clamp((int)coords.z, -AI_GRID_SIZE / 2, AI_GRID_SIZE / 2);
+    maxSpawnCoords = GloomEngine::GetInstance()->FindGameObjectWithName("MaxSpawnCoords")->transform->GetLocalPosition();
+    maxSpawnCoords.x = std::clamp(maxSpawnCoords.x, -AI_GRID_SIZE / 2.0f, AI_GRID_SIZE / 2.0f);
+    maxSpawnCoords.z = std::clamp(maxSpawnCoords.z, -AI_GRID_SIZE / 2.0f, AI_GRID_SIZE / 2.0f);
 
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     playerPosition = playerTransform->GetLocalPosition();
@@ -57,12 +58,12 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
     for (int i = 0; i < charactersAmount; i++) {
         random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-        if (glm::distance(playerPosition, jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
-            jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
+        if (glm::distance(playerPosition, jazzHoodParams.second) < JAZZ_HOOD_DISTANCE)
+            jazzHoodParams.first = JAZZ_MAN_INCREASED_SPAWN_RATE;
         else
-            jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
+            jazzHoodParams.first = JAZZ_MAN_DEFAULT_SPAWN_RATE;
 
-        if (random <= jazzManSpawnRate)
+        if (random <= jazzHoodParams.first)
             Prefab::Instantiate<JazzTrumpet>();
         else
             Prefab::Instantiate<Default>();
@@ -127,6 +128,7 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
  * @returns float - combined satisfaction of every character
  */
 const float AIManager::GetCombinedPlayerSatisfaction() {
+    float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = 0.0f;
     float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
@@ -162,7 +164,7 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
         }
     }
 
-    return satisfaction;
+    return satisfaction * randomModifier;
 }
 
 /**
@@ -263,19 +265,19 @@ void AIManager::RemoveCharacterMovement(const int& componentId) {
 
 /**
  * @annotation
- * Spawns new characters.
+ * Spawns new character.
  */
 void AIManager::SpawnCharacter() {
     std::weak_ptr<GameObject> ch;
 
     random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
-    if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodCenter) < JAZZ_HOOD_DISTANCE)
-        jazzManSpawnRate = JAZZ_MAN_INCREASED_SPAWN_RATE;
+    if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodParams.second) < JAZZ_HOOD_DISTANCE)
+        jazzHoodParams.first = JAZZ_MAN_INCREASED_SPAWN_RATE;
     else
-        jazzManSpawnRate = JAZZ_MAN_DEFAULT_SPAWN_RATE;
+        jazzHoodParams.first = JAZZ_MAN_DEFAULT_SPAWN_RATE;
 
-    if (random <= jazzManSpawnRate)
+    if (random <= jazzHoodParams.first)
         ch = Prefab::Instantiate<JazzTrumpet>();
     else
         ch = Prefab::Instantiate<Default>();

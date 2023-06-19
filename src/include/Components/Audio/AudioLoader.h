@@ -42,6 +42,7 @@ public:
     void LoadFileHeader(const AudioType& type);
     void FillBuffersQueue();
     const bool FillProcessedBuffers(const ALuint &processedBuffers);
+    void ReloadBuffersQueue();
     void CloseFile();
 
 };

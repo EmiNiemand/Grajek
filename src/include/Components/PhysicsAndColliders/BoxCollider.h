@@ -26,6 +26,8 @@ public:
     bool isTrigger = false;
     bool isDynamic = false;
 
+    void ChangeAIGridPoints(const bool &state);
+
 public:
     BoxCollider(const std::shared_ptr<GameObject> &parent, int id);
     ~BoxCollider() override;
@@ -51,6 +53,7 @@ private:
     void SetGridPoints();
     void SetCollidersGridPoints(const glm::ivec2 points[4]);
     static void SetAIGridPoints(const glm::ivec2 points[4]);
+
 };
 
 #endif //OPENGLGP_BOXCOLLIDER_H

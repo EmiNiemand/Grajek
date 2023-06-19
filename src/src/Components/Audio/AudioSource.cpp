@@ -156,10 +156,12 @@ void AudioSource::PauseSound() const {
 
 /**
  * @annotation
- * Stops the sound.
+ * Stops the sound and reloads the buffers.
  */
-void AudioSource::StopSound() const {
+void AudioSource::StopSound() {
     alSourceStop(sourceId);
+    alSourcei(sourceId, AL_BUFFER, NULL);
+    audioLoader->ReloadBuffersQueue();
 }
 
 /**

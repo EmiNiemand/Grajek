@@ -7,7 +7,6 @@
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
-#include "Components/UI/Indicator.h"
 #include "Components/Scripts/Instrument.h"
 #include "EngineManagers/RandomnessManager.h"
 
@@ -27,9 +26,6 @@ std::shared_ptr<GameObject> JazzTrumpet::Create() {
     collider->SetSize({0.5, 2, 0.8});
     collider->isDynamic = true;
     character->transform->SetLocalScale({0.5, 0.5, 0.5});
-
-    auto characterIndicator = character->AddComponent<Indicator>();
-    characterIndicator->SetTexturePath("UI/Wykrzyknik.png");
 
     character->AddComponent<CharacterMovement>();
     auto characterLogic = character->AddComponent<CharacterLogic>();

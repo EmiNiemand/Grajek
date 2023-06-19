@@ -53,7 +53,7 @@ public:
     void PlaySound();
     void ForcePlaySound();
     void PauseSound() const;
-    void StopSound() const;
+    void StopSound();
     void SetPositionOffset(const glm::vec3& offset);
     void SetDistanceMode(const AudioDistanceMode& mode);
     void SetGain(const float& val);
