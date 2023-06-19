@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "GloomEngine.h"
 #include "Components/Scripts/Opponent.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
@@ -23,7 +25,6 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
                      short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
     // Setup pattern
     instrument = std::move(instrument1);
-    instrument->GeneratePattern(musicPattern);
     pattern = instrument->patterns.back();
     pattern->sounds[0]->delay = musicPattern[0].delay;
     for (const auto& sound: instrument->patterns.back()->sounds) {
@@ -247,6 +248,7 @@ void Opponent::Update() {
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             musicSession = false;
+            AIManager::GetInstance()->NotifyEnemyStopsPlaying();
         }
         return;
     }
@@ -261,9 +263,10 @@ void Opponent::Update() {
 }
 
 void Opponent::PlayerPlayedPattern(float satisfaction1) {
-    float s = satisfaction1 - satisfaction;
+    float s = satisfaction1 - AIManager::GetInstance()->GetCombinedEnemySatisfaction();
     satisfactionDifference += s;
     belt->SetScale(glm::vec2(satisfactionDifference / 100, 1.0f));
+    AIManager::GetInstance()->NotifyEnemyPlayedPattern(pattern);
 }
 
 void Opponent::OnDestroy() {
@@ -290,4 +293,5 @@ void Opponent::PlayerStartedMusicSession() {
     timeCounter->SetScale(1);
     ui->EnableSelfAndChildren();
     dialogue->menuActive = false;
+    AIManager::GetInstance()->NotifyEnemyStartsPlaying(instrument->name, instrument->genre);
 }
