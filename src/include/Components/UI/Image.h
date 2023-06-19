@@ -27,6 +27,7 @@ public:
     /// Value range: (<0, 1>, <0, 1>)
     /// Describes offset from leftBottom corner
     glm::vec2 pivot = {0, 0};
+    std::string filePath;
 
     Image(const std::shared_ptr<GameObject> &parent, int id);
 
@@ -35,7 +36,7 @@ public:
     * x from 0 to 1920\n
     * y from 0 to 1080
     */
-    void LoadTexture(int x, int y, const std::string& path, float z = 0);
+    void LoadTexture(int x, int y, std::string path, float z = 0);
 
     void Update() override;
     void OnDestroy() override;

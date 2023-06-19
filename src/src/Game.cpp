@@ -121,6 +121,7 @@ void Game::InitializeGame() const {
 
 
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
+    trumpeterOpponentComponent->name = "Jazz Lee";
     trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
                                               {{0, 0.5}, {1, 1}, {2, 0.5}, {1, 1}, {2, 0.5}}, 80.0f, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
@@ -184,6 +185,7 @@ void Game::InitializeGame() const {
     dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
                                                        {"Come back when a music competition begins."},
                                                        {""}});
+    dialogueComponent->name = "Bob budowniczy";
     auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
