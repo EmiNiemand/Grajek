@@ -44,7 +44,7 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
             {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.2f},
     }, AnimationBehaviour::Resetable);
     sampleAnimators[0][1]->Setup(sampleImages[0], {
-            {AnimatedProperty::Position, glm::vec3(valveInitPos[0].x, -sampleImages[0]->GetHeight(), 0), positionAnimationDuration}
+            {AnimatedProperty::Position, glm::vec3(valveInitPos[0].x, -sampleImages[0]->GetHeight()*0.9, 0), positionAnimationDuration}
     }, AnimationBehaviour::Resetable);
 
     // Medium-pitched sound
@@ -57,7 +57,7 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
             {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.2f},
     }, AnimationBehaviour::Resetable);
     sampleAnimators[1][1]->Setup(sampleImages[1], {
-            {AnimatedProperty::Position, glm::vec3(valveInitPos[1].x, -sampleImages[1]->GetHeight(), 0), positionAnimationDuration}
+            {AnimatedProperty::Position, glm::vec3(valveInitPos[1].x, -sampleImages[1]->GetHeight()*0.9, 0), positionAnimationDuration}
     }, AnimationBehaviour::Resetable);
 
     // High-pitched sound
@@ -70,7 +70,7 @@ void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>>
             {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.2f},
     }, AnimationBehaviour::Resetable);
     sampleAnimators[2][1]->Setup(sampleImages[2], {
-            {AnimatedProperty::Position, glm::vec3(valveInitPos[2].x, -sampleImages[2]->GetHeight(), 0), positionAnimationDuration}
+            {AnimatedProperty::Position, glm::vec3(valveInitPos[2].x, -sampleImages[2]->GetHeight()*0.9, 0), positionAnimationDuration}
     }, AnimationBehaviour::Resetable);
 
     for (int i = 0; i < 3; ++i) {
@@ -92,8 +92,8 @@ void TrumpetSessionUI::Update() {
 }
 
 void TrumpetSessionUI::PlaySound(int index) {
-    sampleAnimators[index][1]->paused = false;
     for (int i = 0; i < sampleAnimators[index].size(); ++i) {
+        sampleAnimators[index][i]->paused = false;
         sampleAnimators[index][i]->Reset();
     }
 
@@ -105,7 +105,9 @@ void TrumpetSessionUI::PlaySound(int index) {
 }
 
 void TrumpetSessionUI::StopSound(int index) {
-    sampleAnimators[index][1]->paused = true;
+    for (int i = 0; i < sampleAnimators[index].size(); ++i) {
+        sampleAnimators[index][i]->paused = true;
+    }
     sampleImages[index]->SetPosition(valveInitPos[index].x, valveInitPos[index].y);
     sampleImages[index]->SetAlpha(1);
 
