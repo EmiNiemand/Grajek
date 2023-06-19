@@ -16,8 +16,8 @@
 
 // Forces consts
 constexpr float DISTANCE_TO_POINT = 1.5f;
-constexpr float DISTANCE_TO_COLLISION = 1.3f;
-constexpr float AVOIDANCE_ROTATION_FACTOR = 1.60f;
+constexpr float DISTANCE_TO_COLLISION = 1.25f;
+constexpr float AVOIDANCE_ROTATION_FACTOR = 1.50f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.15f;
 // Movement consts
 constexpr float MOVEMENT_TIMEOUT = 2.0f;
@@ -28,7 +28,6 @@ class GameObject;
 class Transform;
 class BoxCollider;
 class Rigidbody;
-class CharacterLogic;
 class CharacterPathfinding;
 
 class CharacterMovement : public Component {

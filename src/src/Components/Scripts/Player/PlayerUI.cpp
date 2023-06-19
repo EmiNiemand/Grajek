@@ -146,10 +146,10 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     auto shopMenu = GameObject::Instantiate("ShopMenu", menus);
     {
         auto shopMenuComponent = shopMenu->AddComponent<ShopMenu>();
-        auto firstInstrumentCost = shopMenuComponent->Menu::AddText("FirstInstrumentCost", "Cost: 100", 320, 220, 32,glm::vec3(1.0f, 1.0f, 1.0f));
-        auto secondInstrumentCost = shopMenuComponent->Menu::AddText("SecondInstrumentCost", "Cost: 500", 1600, 620, 32,glm::vec3(1.0f, 1.0f, 1.0f));
-        auto thirdInstrumentCost = shopMenuComponent->Menu::AddText("ThirdInstrumentCost", "Cost: 1500", 1770, 350, 32,glm::vec3(1.0f, 1.0f, 1.0f));
-        auto fourthInstrumentCost = shopMenuComponent->Menu::AddText("FourthInstrumentCost", "Cost: 5000", 1040, 900,32, glm::vec3(1.0f, 1.0f, 1.0f));
+        auto firstInstrumentCost = shopMenuComponent->Menu::AddText("FirstInstrumentCost", "Cost: $200", 320, 220, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto secondInstrumentCost = shopMenuComponent->Menu::AddText("SecondInstrumentCost", "Cost: $500", 1600, 620, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto thirdInstrumentCost = shopMenuComponent->Menu::AddText("ThirdInstrumentCost", "Sold out!", 1790, 350, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto fourthInstrumentCost = shopMenuComponent->Menu::AddText("FourthInstrumentCost", "Sold out!", 1035, 900,32, glm::vec3(1.0f, 1.0f, 1.0f));
         auto firstInstrument = shopMenuComponent->Menu::AddButton("FirstInstrument", 10, 0, "UI/Sklep/Perkusja.png","UI/Sklep/PerkusjaZRamka.png");
         auto secondInstrument = shopMenuComponent->Menu::AddButton("SecondInstrument", 1425, 525, "UI/Sklep/Trabka.png","UI/Sklep/TrabkaZRamka.png");
         auto thirdInstrument = shopMenuComponent->Menu::AddButton("ThirdInstrument", 1525, 250,"UI/Sklep/LaunbhPad.png","UI/Sklep/LaunbhPadZRamka.png");

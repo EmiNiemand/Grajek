@@ -8,8 +8,6 @@
 #include "EngineManagers/HIDManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
-#include "Components/Audio/AudioSource.h"
-#include "Components/Scripts/Player/PlayerManager.h"
 
 PlayerMovement::PlayerMovement(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 

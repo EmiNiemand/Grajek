@@ -464,7 +464,7 @@ void BoxCollider::ChangeAIGridPoints(const bool& state) {
     }
 
     for (int x = minX; x <= maxX; ++x) {
-        for (int y = minY ; y <= maxY; ++y) {
+        for (int y = minY; y <= maxY; ++y) {
             AIManager::GetInstance()->aiGrid[(x + AI_GRID_SIZE / 2) + (y + AI_GRID_SIZE / 2) * AI_GRID_SIZE] = state;
         }
     }

@@ -103,16 +103,16 @@ void ShopMenu::OnClick() {
     bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                100, Instrument::GetInstrument(InstrumentName::Drums));
+                200, Instrument::GetInstrument(InstrumentName::Drums));
     } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
                 500, Instrument::GetInstrument(InstrumentName::Trumpet));
     } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                1500, Instrument::GetInstrument(InstrumentName::Launchpad));
+                INT_MAX, Instrument::GetInstrument(InstrumentName::Launchpad));
     } else if (activeButton->GetParent()->GetName() == "FourthInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                5000, Instrument::GetInstrument(InstrumentName::Guitar));
+                INT_MAX, Instrument::GetInstrument(InstrumentName::Guitar));
     }
     if(boughtInstrument) {
         if (activeButton->GetParent()->GetName() == "FirstInstrument"){
