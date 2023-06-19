@@ -198,7 +198,7 @@ void Game::InitializeGame() const {
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
-    shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -2));
+    shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -3));
     shopkeeper->AddComponent<Shopkeeper>();
 
 #ifdef DEBUG
