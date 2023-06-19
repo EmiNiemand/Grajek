@@ -105,7 +105,8 @@ void PlayerManager::Awake() {
 
     // Audio
     audioSource = parent->AddComponent<AudioSource>();
-    audioSource->LoadAudioData("res/sounds/direct/walking_step.wav", AudioType::Direct);
+    audioSource->LoadAudioData("res/sounds/direct/walking_step_fast.wav", AudioType::Direct);
+    audioSource->SetPitch(1.05f);
     audioSource->SetGain(0.5);
     audioSource->IsLooping(true);
 

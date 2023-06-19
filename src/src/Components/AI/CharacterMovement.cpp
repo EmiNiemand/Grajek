@@ -110,7 +110,7 @@ void CharacterMovement::FixedUpdate() {
 
             if (movementState == OnPathToPlayer)
                 movementState = NearPlayerPosition;
-            else if (movementState == OnPathToTarget)
+            else
                 movementState = NearTargetPosition;
         }
     }
