@@ -100,8 +100,8 @@ void Game::InitializeGame() const {
     drummerAnimator->LoadAnimationModel("Opponent/Drummer/MainDrummer/Drummer.dae");
     drummerAnimator->SetAnimation("MainHero/MainHeroDrums.dae");
     drummer->AddComponent<BoxCollider>()->SetSize({0.5, 1, 0.5});
-    drummer->transform->SetLocalPosition(glm::vec3(-54, 0, 18));
-    drummer->transform->SetLocalRotation(glm::vec3(0, 135, 0));
+    drummer->transform->SetLocalPosition(glm::vec3(-53, 0, 18));
+    drummer->transform->SetLocalRotation(glm::vec3(0, 155, 0));
     drummer->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
 
     auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
@@ -214,9 +214,9 @@ void Game::InitializeGame() const {
     dialogueAnimator->LoadAnimationModel("Crowd/BasicMan001/BasicMan001.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
-    dialogueComponent->texts.push_back({{"Pamietaj, zeby nie grac dlugo czas tego samego patternu."},
-                                        {"Ludzie zaczna sie nudzic."},
-                                        {""}});
+    dialogueComponent->texts.push_back({{"Man, I met a busker the other day that was really annoying."},
+                                        {"He just kept playing the same thing over and over again."},
+                                        {"I left that area really quickly."}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
