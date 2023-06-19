@@ -5,6 +5,7 @@
 #include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
+#include "Components/UI/Button.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Animations/UIAnimator.h"
@@ -42,7 +43,7 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -1);
+    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -0.95);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
@@ -55,9 +56,9 @@ void SessionUI::PlaySound(int index) {
     //spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
 }
 
-void SessionUI::ToggleCheatSheet() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
-    if (instrumentControlActive) return;
+bool SessionUI::ToggleCheatSheet() {
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return false;
+    if (instrumentControlActive) return false;
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -70,6 +71,7 @@ void SessionUI::ToggleCheatSheet() {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
                 });
     }
+    return true;
 }
 
 void SessionUI::ToggleInstrumentControl() {
@@ -212,6 +214,35 @@ bool SessionUI::ToggleBackingTrack() {
     return backingTrackEnabled;
 }
 
+void SessionUI::ChangeActiveButton(glm::vec2 moveVector) {
+    if (!cheatSheetActive) return;
+
+    if (moveVector.y == 1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->previousButton;
+        activeButton->isActive = true;
+    }
+    if (moveVector.y == -1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->nextButton;
+        activeButton->isActive = true;
+    }
+}
+
+void SessionUI::OnClick() {
+    if (!cheatSheetActive) return;
+    
+    for (int i = 0; i < soundButtons.size(); i++) {
+        patternsSounds[i]->StopSound();
+    }
+    for (int i = 0; i < soundButtons.size(); i++) {
+        if (soundButtons[i]->isActive) {
+            patternsSounds[i]->PlaySound();
+            return;
+        }
+    }
+}
+
 void SessionUI::OnDestroy() {
     accuracyRating.clear();
     accuracyRatingAnimator.clear();
@@ -230,6 +261,8 @@ void SessionUI::OnDestroy() {
     sampleImages.clear();
     for(int i=0; i<sampleAnimators.size(); i++)
         sampleAnimators[i].clear();
+    for(int i=0; i<patternsSounds.size(); i++)
+        patternsSounds[i].reset();
     sampleAnimators.clear();
     Component::OnDestroy();
 }
