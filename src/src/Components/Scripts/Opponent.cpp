@@ -129,6 +129,7 @@ void Opponent::Update() {
     if (hid->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
         dialogueActive = true;
         dialogue->ShowDialogue();
+        AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(true);
         return;
     }
 
@@ -166,6 +167,7 @@ void Opponent::Update() {
                 if (playerManager->GetCash() < bet) {
                     dialogue->texts[2].text1 = "Sorry, but you don't have enough money.";
                     dialogue->texts[2].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
+                    AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
                     rejectDialogueActive = true;
                 } else {
                     dialogue->texts[2].text1 = "Alright then, let's go!";
@@ -175,6 +177,7 @@ void Opponent::Update() {
             } else {
                 dialogue->texts[2].text1 = "Understandable, have a great day!";
                 dialogue->texts[2].text2 = "";
+                AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
                 rejectDialogueActive = true;
             }
             dialogue->NextDialogue();
@@ -223,6 +226,7 @@ void Opponent::Update() {
                 indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
                 // TODO add sound when player beat boss
             }
+            AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
             ui->DisableSelfAndChildren();
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;

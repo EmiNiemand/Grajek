@@ -77,6 +77,7 @@ public:
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedPlayerSatisfaction();
+    void NotifyPlayerTalksWithOpponent(bool started=true);
     void NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyEnemyStopsPlaying();
     void NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern> &pat);

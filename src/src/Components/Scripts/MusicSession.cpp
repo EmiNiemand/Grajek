@@ -69,6 +69,9 @@ void MusicSession::PlaySample(int index) {
 
 void MusicSession::StopSample(int index) {
     if(instrument->samples.empty() || instrument->samples.size()-1 < index) return;
+    // Some samples might be left over from previously played pattern
+    sessionUI->StopSound(index);
+
     if(recordedSounds.empty()) return;
 
     for (auto it = recordedSounds.rbegin(); it != recordedSounds.rend(); ++it) {
@@ -79,7 +82,6 @@ void MusicSession::StopSample(int index) {
     }
 
     if(!(instrument->name == InstrumentName::Clap || instrument->name == InstrumentName::Drums)) {
-        sessionUI->StopSound(index);
         DetectPattern();
     }
 }
@@ -108,6 +110,8 @@ void MusicSession::DetectPattern() {
     // Remove patterns that don't match anymore
     // ----------------------------------------
     int lastIndex = recordedSounds.size() - 1;
+    spdlog::info("ID:");
+    spdlog::info(recordedSounds[lastIndex].sample->id);
 
 
     for (auto pattern=potentialPatterns.begin(); pattern!=potentialPatterns.end(); )

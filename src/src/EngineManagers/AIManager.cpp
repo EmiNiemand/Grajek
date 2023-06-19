@@ -167,6 +167,10 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     return satisfaction * randomModifier;
 }
 
+void AIManager::NotifyPlayerTalksWithOpponent(bool started) {
+
+}
+
 /**
  * @annotation
  * Notifies every character about started enemy session.
