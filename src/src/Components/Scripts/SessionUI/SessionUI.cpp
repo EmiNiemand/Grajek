@@ -43,12 +43,12 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -0.95);
+    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -0.8);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
-    instrumentControl->LoadTexture(450, -1100, instrumentControlPath, -1);
+    instrumentControl->LoadTexture(450, -1100, instrumentControlPath, -0.8);
 }
 
 void SessionUI::PlaySound(int index) {
@@ -231,7 +231,7 @@ void SessionUI::ChangeActiveButton(glm::vec2 moveVector) {
 
 void SessionUI::OnClick() {
     if (!cheatSheetActive) return;
-    
+
     for (int i = 0; i < soundButtons.size(); i++) {
         patternsSounds[i]->StopSound();
     }
