@@ -35,9 +35,12 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
 
     auto badgesParent = GameObject::Instantiate("Badges", parent);
     {
-        int xPos = 10, yPos = 1080 - cashBackground->GetHeight() - 60;
+        auto badgesBG = badgesParent->AddComponent<Image>();
+        badgesBG->LoadTexture(0, 0, "UI/Badges/Background.png", -0.82);
+        badgesBG->SetPosition(0, 1080 - cashBackground->GetHeight() - badgesBG->GetHeight() + 12);
+
+        int xPos = 18, yPos = 1080 - cashBackground->GetHeight() - 73;
         float zPos = -0.85;
-        int xSplit = 65, ySplit = 10;
 
         badges = {
             {PlayerBadges::DRUMS, nullptr}, {PlayerBadges::TRUMPET, nullptr},
@@ -47,10 +50,13 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
             badge.second = GameObject::Instantiate("DrumsBadge", badgesParent)->AddComponent<Image>();
             badge.second->SetAlpha(0);
         }
-        badges[PlayerBadges::DRUMS]->LoadTexture(xPos + xSplit*0, yPos + ySplit*0, "UI/Badges/Drums.png", zPos);
-        badges[PlayerBadges::TRUMPET]->LoadTexture(xPos + xSplit*1, yPos + ySplit*0, "UI/Badges/Trumpet.png", zPos);
-        badges[PlayerBadges::LAUNCHPAD]->LoadTexture(xPos + xSplit*2, yPos + ySplit*0, "UI/Badges/Launchpad.png", zPos);
-        badges[PlayerBadges::GUITAR]->LoadTexture(xPos + xSplit*3, yPos + ySplit*0, "UI/Badges/Guitar.png", zPos);
+        badges[PlayerBadges::DRUMS]->LoadTexture(xPos, yPos + 1, "UI/Badges/Drums.png", zPos);
+        xPos += 57;
+        badges[PlayerBadges::TRUMPET]->LoadTexture(xPos, yPos - 7, "UI/Badges/Trumpet.png", zPos);
+        xPos += 55;
+        badges[PlayerBadges::LAUNCHPAD]->LoadTexture(xPos, yPos - 8, "UI/Badges/Launchpad.png", zPos);
+        xPos += 67;
+        badges[PlayerBadges::GUITAR]->LoadTexture(xPos, yPos - 5, "UI/Badges/Guitar.png", zPos);
     }
 
     auto menus = GameObject::Instantiate("Menus", parent);

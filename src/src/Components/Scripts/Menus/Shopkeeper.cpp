@@ -81,12 +81,12 @@ void Shopkeeper::Start() {
     text2 = GameObject::Instantiate("DialogueText2", dialogue)->AddComponent<Text>();
     text3 = GameObject::Instantiate("DialogueText3", dialogue)->AddComponent<Text>();
     text1->LoadFont(texts[0].text1, 250, 200, 32);
-    text1->z = -0.95;
+    text1->z = -0.55;
     text2->LoadFont(texts[0].text2, 250, 150, 32);
-    text2->z = -0.95;
+    text2->z = -0.55;
     text3->LoadFont(texts[0].text3, 250, 100, 32);
-    text3->z = -0.95;
-    GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png");
+    text3->z = -0.55;
+    GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>()->LoadTexture(0, 0, "UI/dialogue.png", -0.5);
     image->enabled = false;
     playerManager->inputEnabled = false;
 
@@ -287,6 +287,11 @@ void Shopkeeper::Update() {
             if (key.second == 0) pattern++;
             else if (key.second == 1) {
                 if (pattern == 2) {
+                    for (int i = 0; i < 2; ++i) {
+                        for (int j = 0; j < 2; ++j) {
+                            GameObject::Destroy(sampleAnimators[i][j]->GetParent());
+                        }
+                    }
                     GameObject::Destroy(background->GetParent());
                     NextDialogue();
                 }
