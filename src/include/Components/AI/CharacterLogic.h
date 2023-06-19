@@ -13,7 +13,8 @@
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 
-constexpr float SATISFACTION_REDUCER = 0.25f;
+constexpr float ANNOYED_SATISFACTION_REDUCER = 0.25f;
+constexpr float NORMAL_SATISFACTION_REDUCER = 0.05f;
 constexpr float PREVIOUS_SESSION_TIMEOUT = 10.0f;
 
 class GameObject;

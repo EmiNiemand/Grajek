@@ -96,8 +96,8 @@ void CharacterLogic::AIUpdate() {
     }
 
     if (logicState == Wandering || logicState == WalkingAway) {
-        playerSatisfaction = std::clamp(playerSatisfaction - SATISFACTION_REDUCER, 0.0f, 100.0f);
-        enemySatisfaction = std::clamp(enemySatisfaction - SATISFACTION_REDUCER, 0.0f, 100.0f);
+        playerSatisfaction = std::clamp(playerSatisfaction - ANNOYED_SATISFACTION_REDUCER, 0.0f, 100.0f);
+        enemySatisfaction = std::clamp(enemySatisfaction - ANNOYED_SATISFACTION_REDUCER, 0.0f, 100.0f);
 
         timeSinceSession += GloomEngine::GetInstance()->AIDeltaTime;
 
@@ -121,6 +121,9 @@ void CharacterLogic::AIUpdate() {
     } else {
         timeSinceOnFrustum = 0.0f;
     }
+
+    playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
+    enemySatisfaction = std::clamp(enemySatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
 
     Component::AIUpdate();
 }
