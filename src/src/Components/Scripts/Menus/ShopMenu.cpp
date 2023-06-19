@@ -62,6 +62,8 @@ void ShopMenu::Awake() {
 
 void ShopMenu::OnDestroy() {
     instruments.clear();
+    buySound = nullptr;
+    cantBuySound = nullptr;
     Menu::OnDestroy();
 }
 
