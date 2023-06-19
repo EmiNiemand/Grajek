@@ -50,7 +50,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
 
     indicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     indicator->SetParent(parent);
-    indicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    indicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     indicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
     indicator->GetComponent<Renderer>()->material.color = indicatorColor;
 
@@ -104,6 +104,7 @@ void Opponent::Update() {
     timer += GloomEngine::GetInstance()->deltaTime;
     if (timer >= pattern->sounds[sampleIndex]->delay) {
         timer = 0.0f;
+        if (sampleIndex > 0) sampleSources[sampleIndex - 1]->StopSound();
         sampleSources[sampleIndex]->ForcePlaySound();
         sampleIndex++;
         if (sampleIndex >= pattern->sounds.size())

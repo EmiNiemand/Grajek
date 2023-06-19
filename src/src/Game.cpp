@@ -122,7 +122,7 @@ void Game::InitializeGame() const {
 
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
     trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet),
-                                              {{0, 0.5}, {1, 1}, {2, 0.5}, {1, 2}, {2, 1}}, 80.0f, 200,
+                                              {{0, 0.5}, {1, 1}, {2, 0.5}, {1, 1}, {2, 0.5}}, 80.0f, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
 
 
@@ -186,7 +186,7 @@ void Game::InitializeGame() const {
                                                        {""}});
     auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("PatternDialogue1", activeScene);
@@ -203,7 +203,7 @@ void Game::InitializeGame() const {
                                {"Smoke on the water... burn it down!"}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("CrowdDialogue", activeScene);
@@ -219,7 +219,7 @@ void Game::InitializeGame() const {
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("ClappingDialogue", activeScene);
@@ -235,7 +235,7 @@ void Game::InitializeGame() const {
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
-    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 5, 0));
+    dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
