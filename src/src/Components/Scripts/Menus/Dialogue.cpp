@@ -11,6 +11,7 @@
 #include "EngineManagers/DialogueManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/Renderers/Camera.h"
+#include "Utilities.h"
 
 Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -33,8 +34,8 @@ void Dialogue::Awake() {
     text1->LoadFont(texts[0].text1, 237, 175, 32, glm::vec3(1));
     text2->LoadFont(texts[0].text2, 237, 125, 32, glm::vec3(1));
     text3->LoadFont(texts[0].text3, 237, 75, 32, glm::vec3(1));
-    dialogue->AddComponent<Button>()->LoadTexture(1430, 210, "UI/Dialogues/name.png", "UI/Dialogues/name.png", -1);
-    dialogue->GetComponent<Button>()->LoadFont(name, 32, glm::vec3(1));
+    dialogue->AddComponent<Button>()->LoadTexture(1425, 210, "UI/Dialogues/name.png", "UI/Dialogues/name.png", -1);
+    dialogue->GetComponent<Button>()->LoadFont(name, 36, glm::vec3(1), GameFont::KanitMedium);
     dialogueImage = GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>();
     dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png");
     image->enabled = false;
