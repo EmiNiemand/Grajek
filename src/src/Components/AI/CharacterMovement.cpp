@@ -63,7 +63,7 @@ void CharacterMovement::FixedUpdate() {
                 if (box.first == parent->GetComponent<BoxCollider>()->GetId())
                     continue;
 
-                if (box.second->isDynamic || movementState == OnPathToPlayer) {
+                if (box.second->isDynamic) {
                     steeringPosition = box.second->GetParent()->transform->GetGlobalPosition();
                     distance = glm::distance(currentPosition, steeringPosition);
 
@@ -140,7 +140,7 @@ void CharacterMovement::AIUpdate() {
             break;
         case SettingPathToDuel:
             otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
-            SetNewPathToPlayer();
+            SetNewPathToDuel();
             break;
         case NearDuelPosition:
             if (!isStatic) {
@@ -316,25 +316,22 @@ void CharacterMovement::SetRandomEndPoint() {
  */
 void CharacterMovement::SetNewPathToPlayer() {
     playerPosition = playerTransform->GetLocalPosition();
-    glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
-    int boundariesXY;
+    glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z}, intEndPoint;
+    int boundariesXY = 3;
     bool isAvailable = false;
-
-    if (movementState == SettingPathToDuel)
-        boundariesXY = 4;
-    else
-        boundariesXY = 3;
 
     for (int y = -boundariesXY; y <= boundariesXY; y += 2) {
         for (int x = -boundariesXY; x <= boundariesXY; x += 2) {
             if (y == -boundariesXY || y == boundariesXY || x == -boundariesXY || x == boundariesXY) {
-                newEndPoint = {intEndPoint.x + x, intEndPoint.y + y};
+                intEndPoint = {newEndPoint.x + x, newEndPoint.y + y};
 
-                if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    isAvailable = IsPositionAvailable(newEndPoint);
+                if (!aiGrid[(intEndPoint.x + AI_GRID_SIZE / 2) + (intEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                    isAvailable = IsPositionAvailable(intEndPoint);
 
-                if (isAvailable)
+                if (isAvailable) {
+                    newEndPoint = intEndPoint;
                     break;
+                }
             }
         }
 
@@ -347,17 +344,52 @@ void CharacterMovement::SetNewPathToPlayer() {
         }
     }
 
-    distance = glm::distance(glm::vec2(currentPosition.x, currentPosition.z),
-                             glm::vec2(newEndPoint.x, newEndPoint.y));
-
-    speedMultiplier = 2.0f + distance / 100.0f;
+    speedMultiplier = 2.0f;
     previousEndPoint = endPoint;
-    endPoint = {newEndPoint.x, newEndPoint.y};
+    endPoint = newEndPoint;
+    movementState = OnPathToPlayer;
 
-    if (movementState == SettingPathToDuel)
-        movementState = OnPathToDuel;
-    else
-        movementState = OnPathToPlayer;
+    CalculatePath(endPoint);
+}
+
+/**
+ * @annotation
+ * Sets new end point near player position (when dueling).
+ */
+void CharacterMovement::SetNewPathToDuel() {
+    playerPosition = playerTransform->GetLocalPosition();
+    glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z}, intEndPoint;
+    int boundariesXY = 4;
+    bool isAvailable = false;
+
+    for (int y = -boundariesXY; y <= boundariesXY; y += 2) {
+        for (int x = -boundariesXY; x <= boundariesXY; x += 2) {
+            if (y == -boundariesXY || y == boundariesXY || x == -boundariesXY || x == boundariesXY) {
+                intEndPoint = {newEndPoint.x + x, newEndPoint.y + y};
+
+                if (!aiGrid[(intEndPoint.x + AI_GRID_SIZE / 2) + (intEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
+                    isAvailable = IsPositionAvailable(intEndPoint);
+
+                if (isAvailable) {
+                    newEndPoint = intEndPoint;
+                    break;
+                }
+            }
+        }
+
+        if (isAvailable)
+            break;
+
+        if (y >= boundariesXY) {
+            boundariesXY += 2;
+            y = -boundariesXY;
+        }
+    }
+
+    speedMultiplier = 2.0f;
+    previousEndPoint = endPoint;
+    endPoint = newEndPoint;
+    movementState = OnPathToDuel;
 
     CalculatePath(endPoint);
 }
@@ -415,7 +447,7 @@ const AI_MOVEMENT_STATE CharacterMovement::GetState() const {
 /**
  * @annotation
  * Returns current end target.
- * @returns glm::ivec2 - endPoint casted to int values
+ * @returns glm::ivec2 - endPoint
  */
 const glm::ivec2 CharacterMovement::GetCurrentEndTarget() const {
     return endPoint;
