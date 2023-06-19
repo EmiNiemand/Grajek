@@ -21,7 +21,6 @@ void CharacterAnimations::SetNewState(AI_ANIMATION_STATE state) {
 }
 
 void CharacterAnimations::SetNewAnimation() {
-    // TODO: implement logic for all animations
     switch(currentState) {
         case AI_ANIMATION_STATE::Idle:
             animator.lock()->SetAnimation("CrowdAnimations/Idle1.dae");

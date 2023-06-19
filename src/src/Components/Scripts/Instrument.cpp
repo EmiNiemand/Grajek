@@ -3,7 +3,6 @@
 //
 
 #include "Components/Scripts/Instrument.h"
-
 #include <utility>
 #include "Components/UI/Image.h"
 

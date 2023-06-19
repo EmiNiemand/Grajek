@@ -1,5 +1,4 @@
 #include "Components/Scripts/SessionUI/DrumsSessionUI.h"
-#include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Image.h"
 #include "Components/Animations/UIAnimator.h"
