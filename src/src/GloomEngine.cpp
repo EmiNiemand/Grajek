@@ -14,19 +14,15 @@
 #include "EngineManagers/RandomnessManager.h"
 #include "EngineManagers/AIManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "Components/Renderers/Renderer.h"
-#include "Components/Renderers/Camera.h"
 #include "Components/Renderers/Lights/PointLight.h"
 #include "Components/Renderers/Lights/DirectionalLight.h"
 #include "Components/Renderers/Lights/SpotLight.h"
-#include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/Scripts/Player/PlayerMovement.h"
 #include "Other/FrustumCulling.h"
 #include "Components/Renderers/Animator.h"
 #include "Components/UI/Image.h"
 
-#include <filesystem>
 #include <stb_image.h>
 
 #ifdef DEBUG
@@ -54,12 +50,14 @@ void GloomEngine::Initialize() {
     OptionsManager::GetInstance()->Load();
     InitializeWindow();
 
-    game = std::make_shared<Game>();
-    SceneManager::GetInstance()->LoadScene("MainMenu");
-    RendererManager::GetInstance()->UpdateProjection();
     AudioManager::GetInstance()->InitializeAudio();
     RandomnessManager::GetInstance()->InitializeRandomEngine();
     HIDManager::GetInstance();
+
+    game = std::make_shared<Game>();
+    SceneManager::GetInstance()->LoadScene("MainMenu");
+    RendererManager::GetInstance()->UpdateProjection();
+
 
 #ifdef DEBUG
     DebugManager::GetInstance()->Start();
