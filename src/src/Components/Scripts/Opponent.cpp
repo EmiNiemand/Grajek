@@ -31,7 +31,8 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         auto sample = sampleSources.back();
         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
         sample->SetDistanceMode(AudioDistanceMode::Continuous);
-        sample->SetMaxDistance(15);
+        sample->SetMaxDistance(10);
+        if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
     }
 
     satisfaction = satisfaction1;
@@ -104,7 +105,7 @@ void Opponent::Update() {
     timer += GloomEngine::GetInstance()->deltaTime;
     if (timer >= pattern->sounds[sampleIndex]->delay) {
         timer = 0.0f;
-        if (sampleIndex > 0) sampleSources[sampleIndex - 1]->StopSound();
+        if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
         sampleSources[sampleIndex]->ForcePlaySound();
         sampleIndex++;
         if (sampleIndex >= pattern->sounds.size())
