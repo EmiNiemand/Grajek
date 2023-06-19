@@ -127,15 +127,15 @@ void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
 
     metronomeSoundIndicator.insert({true, GameObject::Instantiate("MetronomeSoundEnabled", parent)->AddComponent<Image>()});
     metronomeSoundIndicator.insert({false, GameObject::Instantiate("MetronomeSoundDisabled", parent)->AddComponent<Image>()});
-    metronomeSoundIndicator[true]->LoadTexture(50, 850, "UI/Sesja/metronomeSoundEnabled.png", -0.5);
-    metronomeSoundIndicator[false]->LoadTexture(50, 850, "UI/Sesja/metronomeSoundDisabled.png", -0.5);
+    metronomeSoundIndicator[true]->LoadTexture(93, 841, "UI/Sesja/metronomeSoundEnabled.png", -0.5);
+    metronomeSoundIndicator[false]->LoadTexture(93, 841, "UI/Sesja/metronomeSoundDisabled.png", -0.5);
     metronomeSoundIndicator[true]->SetAlpha(metronomeSoundEnabled ? 1:0);
     metronomeSoundIndicator[false]->SetAlpha(metronomeSoundEnabled ? 0:1);
 
     metronomeVisualsIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
     metronomeVisualsIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});
-    metronomeVisualsIndicator[true]->LoadTexture(50, 900, "UI/Sesja/metronomeVisualsEnabled.png", -0.5);
-    metronomeVisualsIndicator[false]->LoadTexture(50, 900, "UI/Sesja/metronomeVisualsDisabled.png", -0.5);
+    metronomeVisualsIndicator[true]->LoadTexture(43, 840, "UI/Sesja/metronomeVisualsEnabled.png", -0.5);
+    metronomeVisualsIndicator[false]->LoadTexture(43, 840, "UI/Sesja/metronomeVisualsDisabled.png", -0.5);
     metronomeVisualsIndicator[true]->SetAlpha(metronomeVisualEnabled ? 1:0);
     metronomeVisualsIndicator[false]->SetAlpha(metronomeVisualEnabled ? 0:1);
 }
@@ -148,8 +148,8 @@ void SessionUI::BackingTrackSetup(const std::string& trackName) {
 
     backingTrackIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
     backingTrackIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});
-    backingTrackIndicator[true]->LoadTexture(110, 900, "UI/Sesja/backingTrackEnabled.png", -0.5);
-    backingTrackIndicator[false]->LoadTexture(110, 900, "UI/Sesja/backingTrackDisabled.png", -0.5);
+    backingTrackIndicator[true]->LoadTexture(45, 790, "UI/Sesja/backingTrackEnabled.png", -0.5);
+    backingTrackIndicator[false]->LoadTexture(45, 790, "UI/Sesja/backingTrackDisabled.png", -0.5);
     backingTrackIndicator[true]->SetAlpha(backingTrackEnabled ? 1:0);
     backingTrackIndicator[false]->SetAlpha(backingTrackEnabled ? 0:1);
 }
