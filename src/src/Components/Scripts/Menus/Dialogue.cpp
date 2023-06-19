@@ -49,7 +49,7 @@ void Dialogue::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     triggerActive = true;
     if (!forced)
         image->enabled = true;
-    Component::OnTriggerStay(gameObject);
+    Component::OnTriggerEnter(gameObject);
 }
 
 void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
