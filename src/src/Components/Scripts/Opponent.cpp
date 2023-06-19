@@ -104,7 +104,7 @@ void Opponent::Update() {
     timer += GloomEngine::GetInstance()->deltaTime;
     if (timer >= pattern->sounds[sampleIndex]->delay) {
         timer = 0.0f;
-        if (sampleIndex > 0) sampleSources[sampleIndex - 1]->StopSound();
+        if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
         sampleSources[sampleIndex]->ForcePlaySound();
         sampleIndex++;
         if (sampleIndex >= pattern->sounds.size())
