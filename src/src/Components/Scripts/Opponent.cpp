@@ -251,7 +251,7 @@ void Opponent::Update() {
             DialogueManager::GetInstance()->NotifyMenuIsNotActive();
             dialogue->image->enabled = false;
             musicSession = false;
-            AIManager::GetInstance()->NotifyEnemyStopsPlaying();
+            AIManager::GetInstance()->NotifyOpponentStopsPlaying();
         }
         return;
     }
@@ -266,10 +266,10 @@ void Opponent::Update() {
 }
 
 void Opponent::PlayerPlayedPattern(float satisfaction1) {
-    float s = satisfaction1 - AIManager::GetInstance()->GetCombinedEnemySatisfaction();
+    float s = satisfaction1 - AIManager::GetInstance()->GetCombinedOpponentSatisfaction();
     satisfactionDifference += s;
     belt->SetScale(glm::vec2(satisfactionDifference / 100, 1.0f));
-    AIManager::GetInstance()->NotifyEnemyPlayedPattern(pattern);
+    AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
 }
 
 void Opponent::OnDestroy() {
@@ -296,5 +296,5 @@ void Opponent::PlayerStartedMusicSession() {
     timeCounter->SetScale(1);
     ui->EnableSelfAndChildren();
     dialogue->menuActive = false;
-    AIManager::GetInstance()->NotifyEnemyStartsPlaying(instrument->name, instrument->genre);
+    AIManager::GetInstance()->NotifyOpponentStartsPlaying(instrument->name, instrument->genre);
 }

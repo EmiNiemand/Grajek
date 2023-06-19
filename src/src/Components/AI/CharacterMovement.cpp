@@ -96,7 +96,7 @@ void CharacterMovement::FixedUpdate() {
         }
     }
 
-    if (movementState == NearPlayerPosition) {
+    if (movementState == NearPlayerPosition || movementState == NearDuelPosition) {
         steeringForce = glm::normalize(playerPosition - currentPosition);
 
         ApplyRotation(steeringForce);
@@ -109,6 +109,8 @@ void CharacterMovement::FixedUpdate() {
 
             if (movementState == OnPathToPlayer)
                 movementState = NearPlayerPosition;
+            else if (movementState == OnPathToDuel)
+                movementState = NearDuelPosition;
             else
                 movementState = NearTargetPosition;
         }
@@ -126,6 +128,26 @@ void CharacterMovement::AIUpdate() {
             if (pathIterator < 0)
                 movementState = NearTargetPosition;
             break;
+        case ReturningToPreviousTarget:
+            isStatic = false;
+            parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
+            otherCharacters->erase(id);
+            ReturnToPreviousPath();
+            break;
+        case OnPathToDuel:
+            if (pathIterator < 0)
+                movementState = NearDuelPosition;
+            break;
+        case SettingPathToDuel:
+            otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
+            SetNewPathToPlayer();
+            break;
+        case NearDuelPosition:
+            if (!isStatic) {
+                isStatic = true;
+                parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
+            }
+            break;
         case SettingPathToPlayer:
             otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
             SetNewPathToPlayer();
@@ -139,21 +161,6 @@ void CharacterMovement::AIUpdate() {
                 isStatic = true;
                 parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
             }
-            break;
-        case SettingPathToEnemy:
-            SetNewPathToPlayer();
-            CalculatePath(endPoint);
-            movementState = OnPathToEnemy;
-            break;
-        case OnPathToEnemy:
-            if (pathIterator < 0)
-                movementState = NearEnemyPosition;
-            break;
-        case ReturningToPreviousTarget:
-            isStatic = false;
-            parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
-            otherCharacters->erase(id);
-            ReturnToPreviousPath();
             break;
         default:
             break;
@@ -215,6 +222,7 @@ void CharacterMovement::SetRandomSpawnPointNearPlayer() {
     maxX = std::clamp(newEndPoint.x + AI_SPAWN_PLAYER_DISTANCE, minSpawnCoords.x, maxSpawnCoords.x);
     minY = std::clamp(newEndPoint.y - AI_SPAWN_PLAYER_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
     maxY = std::clamp(newEndPoint.y + AI_SPAWN_PLAYER_DISTANCE, minSpawnCoords.y, maxSpawnCoords.y);
+
     if (minX == maxX)
         spdlog::error("SRSPNP X");
     if (minY == maxY)
@@ -243,6 +251,7 @@ void CharacterMovement::SetRandomSpawnPoint() {
     maxX = newEndPoint.x + AI_SPAWN_X_MAX_DISTANCE;
     minY = newEndPoint.y - AI_SPAWN_Y_MIN_DISTANCE;
     maxY = newEndPoint.y + AI_SPAWN_Y_MAX_DISTANCE;
+
     if (minX == maxX)
         spdlog::error("SRSP X");
     if (minY == maxY)
@@ -308,8 +317,13 @@ void CharacterMovement::SetRandomEndPoint() {
 void CharacterMovement::SetNewPathToPlayer() {
     playerPosition = playerTransform->GetLocalPosition();
     glm::ivec2 newEndPoint, intEndPoint = {playerPosition.x, playerPosition.z};
-    int boundariesXY = 3;
+    int boundariesXY;
     bool isAvailable = false;
+
+    if (movementState == SettingPathToDuel)
+        boundariesXY = 4;
+    else
+        boundariesXY = 3;
 
     for (int y = -boundariesXY; y <= boundariesXY; y += 2) {
         for (int x = -boundariesXY; x <= boundariesXY; x += 2) {
@@ -339,7 +353,11 @@ void CharacterMovement::SetNewPathToPlayer() {
     speedMultiplier = 2.0f + distance / 100.0f;
     previousEndPoint = endPoint;
     endPoint = {newEndPoint.x, newEndPoint.y};
-    movementState = OnPathToPlayer;
+
+    if (movementState == SettingPathToDuel)
+        movementState = OnPathToDuel;
+    else
+        movementState = OnPathToPlayer;
 
     CalculatePath(endPoint);
 }

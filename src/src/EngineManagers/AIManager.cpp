@@ -85,8 +85,6 @@ void AIManager::Free() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    playerIsPlaying = true;
-
     currentPlayerInstrument = ins;
 
     for (auto&& ch : charactersLogics) {
@@ -100,8 +98,6 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyPlayerStopsPlaying() {
-    playerIsPlaying = false;
-
     for (auto&& ch : charactersLogics)
         ch.second->SetPlayerPlayingStatus(false);
 }
@@ -117,7 +113,7 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
     for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == ListeningToPlayer || state == WalkingAway)
+        if (state == Listening || state == WalkingAway)
             ch.second->SetPlayerPattern(pat);
     }
 }
@@ -136,7 +132,7 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == ListeningToPlayer) {
+        if (state == Listening) {
             satisfaction += ch.second->GetPlayerSatisfaction();
             characterCounter += 1.0f;
         }
@@ -167,12 +163,9 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     return satisfaction * randomModifier;
 }
 
-void AIManager::NotifyPlayerTalksWithOpponent(bool started) {
-    playerTalksWithEnemy = started;
-
-    for (auto&& ch : charactersLogics) {
-        ch.second->SetAwareStatusOfOpponent(started);
-    }
+void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
+    for (auto&& ch : charactersLogics)
+        ch.second->SetOpponentPlayingStatus(state);
 }
 
 /**
@@ -181,24 +174,20 @@ void AIManager::NotifyPlayerTalksWithOpponent(bool started) {
  * @param ins - enum of instrument name
  * @param gen - enum of music genre
  */
-void AIManager::NotifyEnemyStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    enemyIsPlaying = true;
+void AIManager::NotifyOpponentStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
+    currentOpponentInstrument = ins;
 
-    for (auto&& ch : charactersLogics) {
-        ch.second->SetPlayerInstrumentAndGenre(ins, gen);
-        ch.second->SetPlayerPlayingStatus(true);
-    }
+    for (auto&& ch : charactersLogics)
+        ch.second->SetOpponentInstrumentAndGenre(ins, gen);
 }
 
 /**
  * @annotation
  * Notifies every character about stopped player session.
  */
-void AIManager::NotifyEnemyStopsPlaying() {
-    enemyIsPlaying = false;
-
+void AIManager::NotifyOpponentStopsPlaying() {
     for (auto&& ch : charactersLogics)
-        ch.second->SetEnemyPlayingStatus(false);
+        ch.second->SetOpponentPlayingStatus(false);
 }
 
 /**
@@ -206,14 +195,14 @@ void AIManager::NotifyEnemyStopsPlaying() {
  * Notifies every character about the pattern played by enemy.
  * @param pat - pointer to MusicPattern played by enemy
  */
-void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
+void AIManager::NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
     AI_LOGIC_STATE state;
 
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == ListeningToEnemy || state == WalkingAway)
-            ch.second->SetEnemyPattern(pat);
+        if (state == Listening)
+            ch.second->SetOpponentPattern(pat);
     }
 }
 
@@ -222,22 +211,41 @@ void AIManager::NotifyEnemyPlayedPattern(const std::shared_ptr<MusicPattern>& pa
  * Returns combined enemy satisfaction.
  * @returns float - combined satisfaction of every character
  */
-const float AIManager::GetCombinedEnemySatisfaction() {
-    float satisfaction = 50.0f;
+const float AIManager::GetCombinedOpponentSatisfaction() {
+    float satisfaction = 0.0f;
     float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
 
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == ListeningToEnemy) {
-            satisfaction += ch.second->GetEnemySatisfaction();
+        if (state == Listening) {
+            satisfaction += ch.second->GetOpponentSatisfaction();
             characterCounter += 1.0f;
         }
     }
 
-    if (characterCounter != 0.0f)
+    if (characterCounter != 0.0f) {
         satisfaction /= characterCounter;
+
+        switch (currentOpponentInstrument) {
+            case Clap:
+                satisfaction *= CLAP_MODIFIER;
+                break;
+            case Drums:
+                satisfaction *= DRUMS_MODIFIER;
+                break;
+            case Trumpet:
+                satisfaction *= TRUMPET_MODIFIER;
+                break;
+            case Launchpad:
+                satisfaction *= LAUNCHPAD_MODIFIER;
+                break;
+            case Guitar:
+                satisfaction *= GUITAR_MODIFIER;
+                break;
+        }
+    }
 
     return satisfaction;
 }
@@ -266,8 +274,6 @@ void AIManager::RemoveCharacterLogic(const int& componentId) {
  * Spawns new character.
  */
 void AIManager::SpawnCharacter() {
-    std::weak_ptr<GameObject> ch;
-
     random = RandomnessManager::GetInstance()->GetInt(1, 10);
 
     if (glm::distance(playerTransform->GetLocalPosition(), jazzHoodParams.second) < JAZZ_HOOD_DISTANCE)
@@ -276,10 +282,7 @@ void AIManager::SpawnCharacter() {
         jazzHoodParams.first = JAZZ_MAN_DEFAULT_SPAWN_RATE;
 
     if (random <= jazzHoodParams.first)
-        ch = Prefab::Instantiate<JazzTrumpet>();
+        Prefab::Instantiate<JazzTrumpet>();
     else
-        ch = Prefab::Instantiate<Default>();
-
-    if (playerIsPlaying)
-        ch.lock()->GetComponent<CharacterLogic>()->SetPlayerPlayingStatus(true);
+        Prefab::Instantiate<Default>();
 }

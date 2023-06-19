@@ -13,7 +13,8 @@
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 
-constexpr float SATISFACTION_REDUCER = 0.25f;
+constexpr float ANNOYED_SATISFACTION_REDUCER = 0.20f;
+constexpr float NORMAL_SATISFACTION_REDUCER = 0.03f;
 constexpr float PREVIOUS_SESSION_TIMEOUT = 10.0f;
 
 class GameObject;
@@ -40,16 +41,16 @@ class CharacterLogic : public Component {
     float values = 0.0f;
     float repeatingModifier = 0.0f;
     // Enemy instruments
-    InstrumentName enemyInstrumentName {};
-    MusicGenre enemyGenre {};
+    InstrumentName opponentInstrumentName {};
+    MusicGenre opponentGenre {};
     // Satisfaction
     float lowerSatisfactionLimit = 0.0f;
     float middleSatisfactionLimit = 0.0f;
     float upperSatisfactionLimit = 0.0f;
     float playerSatisfaction = 0.0f;
-    float enemySatisfaction = 0.0f;
+    float opponentSatisfaction = 0.0f;
 
-    void CalculateSatisfaction();
+    void CalculateBaseSatisfaction();
 
 public:
     // Favorite instruments and patterns
@@ -69,15 +70,14 @@ public:
 
     void SetAnimationModelToLoad(const std::string& model);
     void SetPlayerInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre);
-    void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pat);
+    void SetPlayerPattern(const std::shared_ptr<MusicPattern> &pattern);
     void SetPlayerPlayingStatus(const bool& isPlayerPlaying);
     const float GetPlayerSatisfaction() const;
-    void SetEnemyInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre);
-    void SetEnemyPattern(const std::shared_ptr<MusicPattern> &pat);
-    void SetEnemyPlayingStatus(const bool& isEnemyPlaying);
-    const float GetEnemySatisfaction() const;
+    void SetOpponentInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre);
+    void SetOpponentPattern(const std::shared_ptr<MusicPattern> &pattern);
+    void SetOpponentPlayingStatus(const bool& isOpponentPlaying);
+    const float GetOpponentSatisfaction() const;
     const AI_LOGIC_STATE GetLogicState() const;
-    void SetAwareStatusOfOpponent(const bool& state);
 
 };
 
