@@ -63,9 +63,7 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
                     input >> json;
                     json.at("saveDate").get_to(gameData->saveDate);
                 }
-                catch (std::exception e) {
-                    spdlog::info("Failed to read a file content at path: " + path.string());
-                }
+                catch (std::exception e) {}
                 loadGameMenu->Menu::AddText("SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 130,
                                             38, glm::vec3(0.1f), GameFont::MarckScript);
 
