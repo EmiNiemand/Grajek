@@ -48,7 +48,15 @@ void ShopMenu::Awake() {
     sound->LoadAudioData("res/sounds/direct/shop.wav", AudioType::Direct);
     sound->SetGain(0);
     sound->IsLooping(true);
-    sound->ForcePlaySound();
+    auto buy_sound = GameObject::Instantiate("buy_sound", parent);
+    buySound = buy_sound->AddComponent<AudioSource>();
+    buySound->LoadAudioData("res/sounds/direct/buy.wav", AudioType::Direct);
+    buySound->SetGain(0.4f);
+    auto cant_buy_sound = GameObject::Instantiate("cant_buy_sound", parent);
+    cantBuySound = cant_buy_sound->AddComponent<AudioSource>();
+    cantBuySound->LoadAudioData("res/sounds/direct/cant_buy.wav", AudioType::Direct);
+    cantBuySound->SetGain(0.3f);
+    cantBuySound->SetPitch(0.9f);
     Component::Awake();
 }
 
@@ -141,10 +149,12 @@ void ShopMenu::OnClick() {
         DeleteButton(activeButton);
         if (instruments.empty()) buyImage->enabled = false;
         spdlog::info("[SM] Bought instrument!");
+        buySound->ForcePlaySound();
     } else {
         GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
                 Setup(610, 340, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
         spdlog::info("[SM] Not enough money for instrument");
+        cantBuySound->ForcePlaySound();
     }
 }
 
