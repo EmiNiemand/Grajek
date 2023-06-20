@@ -6,7 +6,6 @@
 #include "Components/UI/Button.h"
 #include "Components/UI/Image.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
-#include "Components/Animations/GameObjectAnimator.h"
 
 Shop::Shop(const std::string &name, int id, const std::shared_ptr<GameObject> &parent, Tags tag) :
            Prefab(name, id, parent, tag) {

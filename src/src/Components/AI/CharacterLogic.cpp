@@ -254,9 +254,9 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
         }
 
         if (isFavorite)
-            opponentSatisfaction += 2.0f;
+            opponentSatisfaction += 10.0f;
         else
-            opponentSatisfaction += 1.0f;
+            opponentSatisfaction += 6.0f;
     } else {
         opponentSatisfaction -= 2.0f;
     }
@@ -332,14 +332,14 @@ void CharacterLogic::CalculateBasePlayerSatisfaction() {
  * Calculates starting opponent satisfaction.
  */
 void CharacterLogic::CalculateBaseOpponentSatisfaction() {
-    opponentSatisfaction = 0.0f;
+    opponentSatisfaction = 40.0f;
 
     if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
-        opponentSatisfaction += 30.0f;
+        opponentSatisfaction += 5.0f;
 
     if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
         != favInstrumentsNames.end())
-        opponentSatisfaction += 20.0f;
+        opponentSatisfaction += 5.0f;
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
 }

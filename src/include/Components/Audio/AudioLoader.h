@@ -40,9 +40,8 @@ public:
     void InitializeAudioLoader(const ALuint &sourceId, const ALuint *buffersId);
     void OpenFile(const std::string &path);
     void LoadFileHeader(const AudioType& type);
-    void FillBuffersQueue();
+    const bool FillBuffersQueue();
     const bool FillProcessedBuffers(const ALuint &processedBuffers);
-    void ReloadBuffersQueue();
     void CloseFile();
 
 };

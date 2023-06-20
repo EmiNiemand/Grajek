@@ -3,13 +3,13 @@
 #include "EngineManagers/RendererManager.h"
 #include "LowLevelClasses/Shader.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "Components/Renderers/Camera.h"
 #include "Components/PhysicsAndColliders/BoxCollider.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "EngineManagers/AIManager.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
+#include "Components/Renderers/Camera.h"
 #endif
 
 CollisionManager::CollisionManager() {

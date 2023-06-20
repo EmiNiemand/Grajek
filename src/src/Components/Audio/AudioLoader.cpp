@@ -176,9 +176,13 @@ void AudioLoader::LoadFileHeader(const AudioType& type) {
 
 /**
  * @annotation
- * Initializes buffers queue and loads first chunks of data.
+ * Loads first chunks of data.
  */
-void AudioLoader::FillBuffersQueue() {
+const bool AudioLoader::FillBuffersQueue() {
+    file.seekg(dataStartSectionPointer);
+    samplesSizeToLoad = subChunkSize;
+    bool isEndOfFile = false;
+
     for (int i = 0; i < NUM_BUFFERS; ++i) {
         if (samplesSizeToLoad < BUFFER_SIZE) {
             file.read(reinterpret_cast<char *>(samples), samplesSizeToLoad);
@@ -186,6 +190,7 @@ void AudioLoader::FillBuffersQueue() {
             alBufferData(buffers[i], format, samples, samplesSizeToLoad, sampleRate);
             alSourceQueueBuffers(source, 1, &buffers[i]);
             samplesSizeToLoad = subChunkSize;
+            isEndOfFile = true;
             break;
         } else {
             file.read(reinterpret_cast<char *>(samples), BUFFER_SIZE);
@@ -194,6 +199,8 @@ void AudioLoader::FillBuffersQueue() {
             samplesSizeToLoad -= BUFFER_SIZE;
         }
     }
+
+    return isEndOfFile;
 }
 
 /**
@@ -204,8 +211,7 @@ void AudioLoader::FillBuffersQueue() {
  */
 const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
     ALuint bufferId;
-
-    bool isPlaying = true;
+    bool isEndOfFile = false;
 
     for (int i = 0; i < processedBuffers; ++i) {
         alSourceUnqueueBuffers(source, 1, &bufferId);
@@ -216,7 +222,7 @@ const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
             alBufferData(bufferId, format, samples, samplesSizeToLoad, sampleRate);
             alSourceQueueBuffers(source, 1, &bufferId);
             samplesSizeToLoad = subChunkSize;
-            isPlaying = false;
+            isEndOfFile = true;
             break;
         } else {
             file.read(reinterpret_cast<char *>(samples), BUFFER_SIZE);
@@ -226,31 +232,7 @@ const bool AudioLoader::FillProcessedBuffers(const ALuint &processedBuffers) {
         }
     }
 
-    return isPlaying;
-}
-
-/**
- * @annotation
- * Reloads the buffers with first chunks of data.
- */
-void AudioLoader::ReloadBuffersQueue() {
-    file.seekg(dataStartSectionPointer);
-    samplesSizeToLoad = subChunkSize;
-
-    for (int i = 0; i < NUM_BUFFERS; ++i) {
-        if (samplesSizeToLoad < BUFFER_SIZE) {
-            file.read(reinterpret_cast<char *>(samples), samplesSizeToLoad);
-            file.seekg(dataStartSectionPointer);
-            alBufferData(buffers[i], format, samples, samplesSizeToLoad, sampleRate);
-            alSourceQueueBuffers(source, 1, &buffers[i]);
-            samplesSizeToLoad = subChunkSize;
-        } else {
-            file.read(reinterpret_cast<char *>(samples), BUFFER_SIZE);
-            alBufferData(buffers[i], format, samples, BUFFER_SIZE, sampleRate);
-            alSourceQueueBuffers(source, 1, &buffers[i]);
-            samplesSizeToLoad -= BUFFER_SIZE;
-        }
-    }
+    return isEndOfFile;
 }
 
 /**

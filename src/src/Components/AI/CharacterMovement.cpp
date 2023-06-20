@@ -32,7 +32,7 @@ void CharacterMovement::Start() {
     coords = AIManager::GetInstance()->maxSpawnCoords;
     maxSpawnCoords = {coords.x, coords.z};
 
-    if (isInitializing)
+    if (AIManager::GetInstance()->isInitializing)
         SetRandomSpawnPointNearPlayer();
     else
         SetRandomSpawnPoint();
@@ -171,7 +171,6 @@ void CharacterMovement::AIUpdate() {
 
 void CharacterMovement::OnCreate() {
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
-    isInitializing = AIManager::GetInstance()->isInitializing;
     Component::OnCreate();
 }
 

@@ -1,5 +1,4 @@
 #include "Components/Scripts/SessionUI/ClapSessionUI.h"
-#include "GloomEngine.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Button.h"

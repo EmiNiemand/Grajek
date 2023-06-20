@@ -34,7 +34,6 @@ class CharacterMovement : public Component {
     AI_MOVEMENT_STATE movementState = NearTargetPosition;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     float timeSinceLastPoint = 0.0f;
-    bool isInitializing = false;
     bool isStatic = false;
     // Collisions
     std::unordered_map<int, std::shared_ptr<BoxCollider>>* collisionGrid = nullptr;

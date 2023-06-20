@@ -30,7 +30,7 @@ class AudioSource : public Component {
     ALuint sourceId = 0;
     ALint currentState = 0;
     bool isLooping = false;
-    bool isPlaying = false;
+    bool isEndOfFile = false;
     bool startWithTheGame = false;
     // Settings
     float gain = 1.0f;
@@ -54,8 +54,8 @@ public:
 
     void PlaySoundAfterStart(const bool& state);
     void LoadAudioData(const std::string& path, AudioType type);
-    void PlaySound();
-    void ForcePlaySound();
+    void PlaySound() const;
+    void ForcePlaySound() const;
     void PauseSound() const;
     void StopSound();
     void SetPositionOffset(const glm::vec3& offset);
