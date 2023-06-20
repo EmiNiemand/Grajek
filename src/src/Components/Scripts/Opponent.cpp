@@ -25,6 +25,8 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
                      short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
     // Setup pattern
     instrument = std::move(instrument1);
+    //TODO: added back to make patterns work -> delete later
+    instrument->GeneratePattern(musicPattern);
     pattern = instrument->patterns.back();
     pattern->sounds[0]->delay = musicPattern[0].delay;
     for (const auto& sound: instrument->patterns.back()->sounds) {
