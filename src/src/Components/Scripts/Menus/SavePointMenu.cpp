@@ -48,8 +48,10 @@ void SavePointMenu::OnClick() {
     buttonImage->enabled = true;
     auto animator = GameObject::Instantiate("SavePointMenuAnimator", SavePointManager::GetInstance()->activeSavePoint->GetParent());
     auto image = GameObject::Instantiate("SavePointMenuImage", animator)->AddComponent<Image>();
-    image->LoadTexture(1000, 700, "UI/ZapisGry.png");
+    image->LoadTexture(0, 0, "UI/ZapisGry.png");
+    image->SetPosition(960 - image->GetWidth()/2, 700);
     animator->AddComponent<UIAnimator>()->Setup(image, {
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.2f},
             {AnimatedProperty::Alpha, glm::vec3(0.0f), 2.0f}
     }, AnimationBehaviour::OneTime);
 
