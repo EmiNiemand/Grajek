@@ -9,6 +9,7 @@
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
+#include "Components/Renderers/Camera.h"
 #endif
 
 CollisionManager::CollisionManager() {

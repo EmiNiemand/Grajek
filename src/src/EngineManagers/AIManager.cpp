@@ -36,7 +36,6 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
     ZoneScopedNC("AIManager", 0xDC143C);
 #endif
 
-    isInitializing = true;
     charactersAmount = maxCharacters;
     charactersLogics.reserve(maxCharacters);
     charactersMovements.reserve(maxCharacters);
