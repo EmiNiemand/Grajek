@@ -156,6 +156,7 @@ int PlayerManager::GetCash() {
 
 #pragma region Animation, Sound Events
 void PlayerManager::UpdateAnimationsAndSounds() {
+    if (GloomEngine::GetInstance()->timeScale == 0) audioSource->StopSound();
 	if(!rb) return;
     if(session || sessionStarter) return;
 
