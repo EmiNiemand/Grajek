@@ -32,9 +32,7 @@ std::shared_ptr<GameData> FileDataHandler::LoadGame() {
         input >> json;
         from_json(json, gameData);
     }
-    catch (std::exception e) {
-        spdlog::error("Failed to read a file content at path: " + path.string());
-    }
+    catch (std::exception e) {}
 
     return gameData;
 }

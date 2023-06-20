@@ -9,6 +9,7 @@ public:
 
     void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) override;
     void PlaySound(int index) override;
+    bool ToggleCheatSheet() override;
 };
 
 #endif //GLOOMENGINE_CLAPSESSIONUI_H

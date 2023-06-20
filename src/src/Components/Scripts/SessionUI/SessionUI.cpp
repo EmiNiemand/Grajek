@@ -5,6 +5,7 @@
 #include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
+#include "Components/UI/Button.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Animations/UIAnimator.h"
@@ -42,12 +43,12 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -1);
+    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -0.8);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
-    instrumentControl->LoadTexture(450, -1100, instrumentControlPath, -1);
+    instrumentControl->LoadTexture(450, -1100, instrumentControlPath, -0.8);
 }
 
 void SessionUI::PlaySound(int index) {
@@ -55,9 +56,9 @@ void SessionUI::PlaySound(int index) {
     //spdlog::info("[SUI] Played sound at index "+std::to_string(index)+"!");
 }
 
-void SessionUI::ToggleCheatSheet() {
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
-    if (instrumentControlActive) return;
+bool SessionUI::ToggleCheatSheet() {
+    if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return false;
+    if (instrumentControlActive) return false;
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -70,6 +71,7 @@ void SessionUI::ToggleCheatSheet() {
                         {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
                 });
     }
+    return true;
 }
 
 void SessionUI::ToggleInstrumentControl() {
@@ -125,15 +127,15 @@ void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
 
     metronomeSoundIndicator.insert({true, GameObject::Instantiate("MetronomeSoundEnabled", parent)->AddComponent<Image>()});
     metronomeSoundIndicator.insert({false, GameObject::Instantiate("MetronomeSoundDisabled", parent)->AddComponent<Image>()});
-    metronomeSoundIndicator[true]->LoadTexture(50, 850, "UI/Sesja/metronomeSoundEnabled.png", -0.5);
-    metronomeSoundIndicator[false]->LoadTexture(50, 850, "UI/Sesja/metronomeSoundDisabled.png", -0.5);
+    metronomeSoundIndicator[true]->LoadTexture(93, 841, "UI/Sesja/metronomeSoundEnabled.png", -0.5);
+    metronomeSoundIndicator[false]->LoadTexture(93, 841, "UI/Sesja/metronomeSoundDisabled.png", -0.5);
     metronomeSoundIndicator[true]->SetAlpha(metronomeSoundEnabled ? 1:0);
     metronomeSoundIndicator[false]->SetAlpha(metronomeSoundEnabled ? 0:1);
 
     metronomeVisualsIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
     metronomeVisualsIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});
-    metronomeVisualsIndicator[true]->LoadTexture(50, 900, "UI/Sesja/metronomeVisualsEnabled.png", -0.5);
-    metronomeVisualsIndicator[false]->LoadTexture(50, 900, "UI/Sesja/metronomeVisualsDisabled.png", -0.5);
+    metronomeVisualsIndicator[true]->LoadTexture(43, 840, "UI/Sesja/metronomeVisualsEnabled.png", -0.5);
+    metronomeVisualsIndicator[false]->LoadTexture(43, 840, "UI/Sesja/metronomeVisualsDisabled.png", -0.5);
     metronomeVisualsIndicator[true]->SetAlpha(metronomeVisualEnabled ? 1:0);
     metronomeVisualsIndicator[false]->SetAlpha(metronomeVisualEnabled ? 0:1);
 }
@@ -146,8 +148,8 @@ void SessionUI::BackingTrackSetup(const std::string& trackName) {
 
     backingTrackIndicator.insert({true, GameObject::Instantiate("MetronomeVisualsEnabled", parent)->AddComponent<Image>()});
     backingTrackIndicator.insert({false, GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>()});
-    backingTrackIndicator[true]->LoadTexture(110, 900, "UI/Sesja/backingTrackEnabled.png", -0.5);
-    backingTrackIndicator[false]->LoadTexture(110, 900, "UI/Sesja/backingTrackDisabled.png", -0.5);
+    backingTrackIndicator[true]->LoadTexture(45, 790, "UI/Sesja/backingTrackEnabled.png", -0.5);
+    backingTrackIndicator[false]->LoadTexture(45, 790, "UI/Sesja/backingTrackDisabled.png", -0.5);
     backingTrackIndicator[true]->SetAlpha(backingTrackEnabled ? 1:0);
     backingTrackIndicator[false]->SetAlpha(backingTrackEnabled ? 0:1);
 }
@@ -212,6 +214,35 @@ bool SessionUI::ToggleBackingTrack() {
     return backingTrackEnabled;
 }
 
+void SessionUI::ChangeActiveButton(glm::vec2 moveVector) {
+    if (!cheatSheetActive) return;
+
+    if (moveVector.y == 1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->previousButton;
+        activeButton->isActive = true;
+    }
+    if (moveVector.y == -1.0f) {
+        activeButton->isActive = false;
+        activeButton = activeButton->nextButton;
+        activeButton->isActive = true;
+    }
+}
+
+void SessionUI::OnClick() {
+    if (!cheatSheetActive) return;
+
+    for (int i = 0; i < soundButtons.size(); i++) {
+        patternsSounds[i]->StopSound();
+    }
+    for (int i = 0; i < soundButtons.size(); i++) {
+        if (soundButtons[i]->isActive) {
+            patternsSounds[i]->PlaySound();
+            return;
+        }
+    }
+}
+
 void SessionUI::OnDestroy() {
     accuracyRating.clear();
     accuracyRatingAnimator.clear();
@@ -230,6 +261,8 @@ void SessionUI::OnDestroy() {
     sampleImages.clear();
     for(int i=0; i<sampleAnimators.size(); i++)
         sampleAnimators[i].clear();
+    for(int i=0; i<patternsSounds.size(); i++)
+        patternsSounds[i].reset();
     sampleAnimators.clear();
     Component::OnDestroy();
 }

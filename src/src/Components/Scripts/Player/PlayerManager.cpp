@@ -107,7 +107,7 @@ void PlayerManager::Awake() {
     audioSource = parent->AddComponent<AudioSource>();
     audioSource->LoadAudioData("res/sounds/direct/walking_step_fast.wav", AudioType::Direct);
     audioSource->SetPitch(1.05f);
-    audioSource->SetGain(0.5);
+    audioSource->SetGain(0.25);
     audioSource->IsLooping(true);
 
     // Load game
@@ -248,17 +248,19 @@ void PlayerManager::OnMenuToggle() {
 }
 
 void PlayerManager::OnApply() {
-    if(!(activeMenu || sessionStarter)) return;
+    if(!(activeMenu || sessionStarter || session)) return;
 
     if(activeMenu) { activeMenu->OnClick(); return; }
-    sessionStarter->OnClick();
+    if(sessionStarter) { sessionStarter->OnClick(); return; }
+    if(session) { session->OnClick(); return; }
 }
 
 void PlayerManager::OnUIMove(glm::vec2 moveVector) {
-    if(!(activeMenu || sessionStarter)) return;
+    if(!(activeMenu || sessionStarter || session)) return;
 
+    if(activeMenu) { activeMenu->ChangeActiveButton(moveVector); return; }
     if(sessionStarter) { sessionStarter->ChangeActiveButton(moveVector); return; }
-    activeMenu->ChangeActiveButton(moveVector);
+    if(session) { session->ChangeActiveButton(moveVector); return; }
 }
 
 #pragma endregion
@@ -426,7 +428,23 @@ void PlayerManager::PollInput() {
     for (auto key: PlayerInput::StartSession)
         if (hid->IsKeyDown(key.first)) OnSessionToggle();
 
-	if(activeMenu || sessionStarter) {
+	if(activeMenu || sessionStarter || session) {
+        if(session) {
+            for (auto key: PlayerInput::PlaySound) {
+                if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
+                if (hid->IsKeyUp(key.first)) OnSoundStop(key.second);
+            }
+            for (auto key: PlayerInput::InstrumentControl)
+                if (hid->IsKeyDown(key.first)) OnInstrumentControlToggle();
+            for (auto key: PlayerInput::CheatSheet)
+                if (hid->IsKeyDown(key.first)) OnCheatSheetToggle();
+            for (auto key: PlayerInput::MetronomeSoundToggle)
+                if (hid->IsKeyDown(key.first)) OnMetronomeSoundToggle();
+            for (auto key: PlayerInput::MetronomeVisualToggle)
+                if (hid->IsKeyDown(key.first)) OnMetronomeVisualsToggle();
+            for (auto key: PlayerInput::BackingTrackToggle)
+                if (hid->IsKeyDown(key.first)) OnBackingTrackToggle();
+        }
 		for (auto key: PlayerInput::Move) {
 			if (hid->IsKeyDown(key.first)) {
 				readMoveVector.y = key.second == 0 ? 1 : key.second == 2 ? -1 : readMoveVector.y;
@@ -441,25 +459,6 @@ void PlayerManager::PollInput() {
 
 		return;
 	}
-
-    if(session) {
-        for (auto key: PlayerInput::PlaySound) {
-            if (hid->IsKeyDown(key.first)) OnSoundPlay(key.second);
-            if (hid->IsKeyUp(key.first)) OnSoundStop(key.second);
-        }
-        for (auto key: PlayerInput::InstrumentControl)
-            if (hid->IsKeyDown(key.first)) OnInstrumentControlToggle();
-        for (auto key: PlayerInput::CheatSheet)
-            if (hid->IsKeyDown(key.first)) OnCheatSheetToggle();
-        for (auto key: PlayerInput::MetronomeSoundToggle)
-            if (hid->IsKeyDown(key.first)) OnMetronomeSoundToggle();
-        for (auto key: PlayerInput::MetronomeVisualToggle)
-            if (hid->IsKeyDown(key.first)) OnMetronomeVisualsToggle();
-        for (auto key: PlayerInput::BackingTrackToggle)
-            if (hid->IsKeyDown(key.first)) OnBackingTrackToggle();
-
-        return;
-    }
 
 	for (auto key: PlayerInput::Move) {
 		if (hid->IsKeyPressed(key.first)) {

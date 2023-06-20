@@ -1,6 +1,7 @@
 #include "Components/Scripts/SessionUI/ClapSessionUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Image.h"
+#include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 
 ClapSessionUI::ClapSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
@@ -79,6 +80,21 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
             {AnimatedProperty::Position, glm::vec3(1560, 0, 0), 0},
             {AnimatedProperty::Position, glm::vec3(1560, 300, 0), 0.2f}
     }, AnimationBehaviour::Resetable);
+
+    // Add buttons
+    int x = 1051, y = 603;
+    for (int i = 0; i < 2; i++, y -= 145) {
+        soundButtons.push_back(GameObject::Instantiate("clapPatternsButton", parent)->AddComponent<Button>());
+        soundButtons[i]->LoadTexture(x, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
+        soundButtons[i]->isActive = false;
+        soundButtons[i]->enabled = false;
+        patternsSounds.push_back(GameObject::Instantiate("clapPatternsSound", parent)->AddComponent<AudioSource>());
+        patternsSounds[i]->LoadAudioData("res/sounds/direct/clap/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
+    }
+    soundButtons[0]->previousButton = soundButtons[1];
+    soundButtons[0]->nextButton = soundButtons[1];
+    soundButtons[1]->previousButton = soundButtons[0];
+    soundButtons[1]->nextButton = soundButtons[0];
 }
 
 void ClapSessionUI::PlaySound(int index) {
@@ -86,4 +102,21 @@ void ClapSessionUI::PlaySound(int index) {
         sampleAnimators[index][i]->Reset();
     }
     SessionUI::PlaySound(index);
+}
+
+bool ClapSessionUI::ToggleCheatSheet() {
+    if (!SessionUI::ToggleCheatSheet()) return false;
+    if (cheatSheetActive) {
+        for (const auto & button : soundButtons) {
+            button->enabled = true;
+            button->isActive = false;
+        }
+        soundButtons[0]->isActive = true;
+        activeButton = soundButtons[0];
+    } else {
+        for (const auto & button : soundButtons) {
+            button->enabled = false;
+        }
+    }
+    return true;
 }
