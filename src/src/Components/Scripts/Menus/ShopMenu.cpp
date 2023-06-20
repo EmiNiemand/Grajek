@@ -151,7 +151,7 @@ void ShopMenu::OnClick() {
         buySound->ForcePlaySound();
     } else {
         GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
-                Setup(610, 340, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
+                Setup(610, 500, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
 //        spdlog::info("[SM] Not enough money for instrument");
         cantBuySound->ForcePlaySound();
     }
