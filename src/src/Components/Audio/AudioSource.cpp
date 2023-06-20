@@ -18,10 +18,7 @@ AudioSource::~AudioSource() = default;
 void AudioSource::Awake() {
     if (audioType == AudioType::Positional) {
         position = parent->transform->GetGlobalPosition() + positionOffset;
-
         alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
-        alSource3f(sourceId, AL_VELOCITY, audioVelocity.x, audioVelocity.y, audioVelocity.z);
-        alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
     }
     Component::Awake();
 }
@@ -61,8 +58,8 @@ void AudioSource::Update() {
 
     alGetSourcei(sourceId, AL_BUFFERS_PROCESSED, &currentState);
 
-    if (isPlaying && !isLooping)
-        isPlaying = audioLoader->FillProcessedBuffers(currentState);
+    if (!isEndOfFile && !isLooping)
+        isEndOfFile = audioLoader->FillProcessedBuffers(currentState);
     else if (isLooping)
         audioLoader->FillProcessedBuffers(currentState);
 
@@ -121,32 +118,31 @@ void AudioSource::LoadAudioData(const std::string& path, AudioType type) {
 
     alSourcef(sourceId, AL_PITCH, pitch);
     alSourcef(sourceId, AL_GAIN, gain);
-
+    alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
+    alSource3f(sourceId, AL_VELOCITY, audioVelocity.x, audioVelocity.y, audioVelocity.z);
+    alSourcef(sourceId, AL_ROLLOFF_FACTOR, 1.5f);
     alSourcei(sourceId, AL_LOOPING, AL_FALSE);
 
     audioLoader->InitializeAudioLoader(sourceId, buffersIds);
     audioLoader->OpenFile(path);
     audioLoader->LoadFileHeader(type);
-    audioLoader->FillBuffersQueue();
+    isEndOfFile = audioLoader->FillBuffersQueue();
 }
 
 /**
  * @annotation
  * Plays the sound only if it is not currently playing.
  */
-void AudioSource::PlaySound() {
-    if (currentState != AL_PLAYING) {
-        isPlaying = true;
+void AudioSource::PlaySound() const {
+    if (currentState != AL_PLAYING)
         alSourcePlay(sourceId);
-    }
 }
 
 /**
  * @annotation
  * Plays the sound despite its current status.
  */
-void AudioSource::ForcePlaySound() {
-    isPlaying = true;
+void AudioSource::ForcePlaySound() const {
     alSourcePlay(sourceId);
 }
 
@@ -160,12 +156,12 @@ void AudioSource::PauseSound() const {
 
 /**
  * @annotation
- * Stops the sound and reloads the buffers.
+ * Stops the sound and fill the buffers with the first samples.
  */
 void AudioSource::StopSound() {
     alSourceStop(sourceId);
     alSourcei(sourceId, AL_BUFFER, NULL);
-    audioLoader->ReloadBuffersQueue();
+    isEndOfFile = audioLoader->FillBuffersQueue();
 }
 
 /**
