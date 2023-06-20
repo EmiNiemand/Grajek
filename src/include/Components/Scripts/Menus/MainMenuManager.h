@@ -17,6 +17,7 @@ public:
     std::shared_ptr<LoadGameMenu> loadGameMenu;
     std::shared_ptr<OptionsMenu> optionsMenu;
     std::shared_ptr<CreditsMenu> creditsMenu;
+    bool inputEnabled = true;
 
 public:
     void Start() override;

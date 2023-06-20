@@ -1,6 +1,7 @@
 #include "GameObjectsAndPrefabs/Prefabs/MainMenuPrefab.h"
 #include "Components/Scripts/Menus/MainMenuManager.h"
 #include "Components/UI/Button.h"
+#include "Components/UI/Image.h"
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
@@ -8,6 +9,7 @@
 #include "LowLevelClasses/GameData.h"
 #include <fstream>
 #include "nlohmann/json.hpp"
+#include "Components/Scripts/Menus/OptionsChooseMenu.h"
 
 MainMenuPrefab::MainMenuPrefab(const std::string &name, uint32_t id, const std::shared_ptr<GameObject> &parent, Tags tag) :
             Prefab(name, id, parent, tag) {
@@ -115,6 +117,15 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     saveButton->nextButton = cancelButton;
     cancelButton->previousButton = saveButton;
     cancelButton->nextButton = windowResolutionButton;
+
+    auto chooseMenu = GameObject::Instantiate("OptionsChooseMenu", optionsMenu->GetParent())->AddComponent<OptionsChooseMenu>();
+    chooseMenu->GetParent()->AddComponent<Image>()->LoadTexture(600, 400, "UI/Settings/chooseMenu.png", -0.95);
+    chooseMenu->button1 = GameObject::Instantiate("OptionsChooseMenuButton1", chooseMenu->GetParent())->AddComponent<Button>();
+    chooseMenu->button1->LoadTexture(500, 350, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -1);
+    chooseMenu->button2 = GameObject::Instantiate("OptionsChooseMenuButton2", chooseMenu->GetParent())->AddComponent<Button>();
+    chooseMenu->button2->LoadTexture(800, 350, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -1);
+    chooseMenu->button2->isActive = true;
+    optionsMenu->chooseMenu = chooseMenu->GetParent();
     optionsMenu->GetParent()->DisableSelfAndChildren();
 
     // Credits Menu

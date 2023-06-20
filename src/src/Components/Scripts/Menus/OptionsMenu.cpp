@@ -13,6 +13,7 @@
 #include "Components/Scripts/Menus/MainMenuManager.h"
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "EngineManagers/SceneManager.h"
+#include "EngineManagers/HIDManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {
     auto optionsManager = OptionsManager::GetInstance();
@@ -42,7 +43,7 @@ OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Me
 OptionsMenu::~OptionsMenu() = default;
 
 void OptionsMenu::Start() {
-    std::string mainMenu = "";
+    std::string mainMenu;
     if (SceneManager::GetInstance()->activeScene->GetName() == "MainMenuScene")
         mainMenu = "MainMenu";
     musicVolumeValue = GloomEngine::GetInstance()->FindGameObjectWithName(mainMenu + "MusicVolumeValue")->GetComponent<Button>();
@@ -72,6 +73,7 @@ void OptionsMenu::Start() {
     if (shadowResolutionIterator == 2) shadowResolutionButtons[1]->isActive = false;
     sound = parent->AddComponent<AudioSource>();
     sound->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
+
     Component::Start();
 }
 
@@ -89,6 +91,9 @@ bool OptionsMenu::ShowMenu() {
     previousWindowResolutionHeight = (float)optionsManager->height;
     previousWindowFullScreen = optionsManager->fullScreen;
     previousShadowResolution = (float)optionsManager->shadowResolution;
+    chooseMenu->DisableSelfAndChildren();
+    if (SceneManager::GetInstance()->activeScene->GetName() == "Scene")
+        SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0);
     return true;
 }
 
@@ -99,7 +104,7 @@ void OptionsMenu::ChangeActiveButton(glm::vec2 moveVector) {
 }
 
 void OptionsMenu::OnClick() {
-    std::string mainMenu = "";
+    std::string mainMenu;
     if (SceneManager::GetInstance()->activeScene->GetName() == "MainMenuScene")
         mainMenu = "MainMenu";
 

@@ -9,6 +9,7 @@
 #include "Components/Scripts/Menus/LoadGameMenu.h"
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/CreditsMenu.h"
+#include "Components/Scripts/Menus/OptionsChooseMenu.h"
 
 #ifdef DEBUG
     #include "tracy/Tracy.hpp"
@@ -45,8 +46,11 @@ void MainMenuManager::OnDestroy() {
 void MainMenuManager::OnMenuToggle() {
     if (!activeMenu) return;
     if (activeMenu == mainMenu) return;
-    if (activeMenu == optionsMenu)
-        OptionsManager::GetInstance()->Save();
+    if (activeMenu == optionsMenu) {
+        optionsMenu->chooseMenu->GetComponent<OptionsChooseMenu>()->ShowChooseMenu();
+        inputEnabled = false;
+        return;
+    }
     activeMenu->HideMenu();
     activeMenu = mainMenu;
     mainMenu->ShowMenu();
@@ -63,6 +67,8 @@ void MainMenuManager::OnUIMove(glm::vec2 moveVector) const {
 }
 
 void MainMenuManager::PollInput() {
+    if (!inputEnabled) return;
+
     auto hid = HIDManager::GetInstance();
     glm::vec2 readMoveVector(0);
 

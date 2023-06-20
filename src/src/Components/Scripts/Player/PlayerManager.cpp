@@ -33,6 +33,7 @@
 #include "EngineManagers/SavePointManager.h"
 #include "LowLevelClasses/GameData.h"
 #include "GloomEngine.h"
+#include "Components/Scripts/Menus/OptionsChooseMenu.h"
 
 #include <filesystem>
 
@@ -211,13 +212,16 @@ void PlayerManager::ToggleOptionsMenu() {
     //TODO: this should be simply controlled by pauseMenu
     // (which means that PlayerManager here only calls method)
     // in PauseMenu (or even activeMenu)
+
     activeMenu->HideMenu();
 
     if (activeMenu == pauseMenu)
         activeMenu = optionsMenu;
-    else if(activeMenu == optionsMenu)
+    else if(activeMenu == optionsMenu) {
         activeMenu = pauseMenu;
-
+        optionsMenu->chooseMenu->GetComponent<OptionsChooseMenu>()->ShowChooseMenu();
+        inputEnabled = false;
+    }
     activeMenu->ShowMenu();
 }
 
