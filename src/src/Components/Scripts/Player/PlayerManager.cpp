@@ -34,6 +34,7 @@
 #include "LowLevelClasses/GameData.h"
 #include "GloomEngine.h"
 #include "Components/Scripts/Menus/OptionsChooseMenu.h"
+#include "EngineManagers/AudioManager.h"
 
 #include <filesystem>
 
@@ -50,7 +51,7 @@ void PlayerManager::Awake() {
 
     // Add Components
     // --------------
-    parent->AddComponent<AudioListener>();
+    listener = AudioManager::GetInstance()->audioListener;
     rb = parent->AddComponent<Rigidbody>();
 
     // Add Player scripts
@@ -131,6 +132,7 @@ void PlayerManager::Update() {
 #endif
     PollInput();
     UpdateAnimationsAndSounds();
+    listener->UpdatePosition(parent->transform->GetLocalPosition());
 
     Component::Update();
 }

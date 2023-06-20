@@ -14,6 +14,7 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "EngineManagers/SceneManager.h"
 #include "EngineManagers/HIDManager.h"
+#include "EngineManagers/AudioManager.h"
 
 OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {
     auto optionsManager = OptionsManager::GetInstance();
@@ -21,8 +22,7 @@ OptionsMenu::OptionsMenu(const std::shared_ptr<GameObject> &parent, int id) : Me
     windowResolutionIterator = (short)(optionsManager->width / 480 - 2);
     windowFullScreenIterator = (short)(optionsManager->fullScreen);
     shadowResolutionIterator = (short)(optionsManager->shadowResolution / 2048);
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Player"))
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(OptionsManager::GetInstance()->musicVolume);
+    AudioManager::GetInstance()->audioListener->SetGain(OptionsManager::GetInstance()->musicVolume);
     if (optionsManager->fullScreen) {
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
@@ -144,12 +144,9 @@ void OptionsMenu::ChangeValue(float x) {
 
     if (activeButtonName == mainMenu + "MusicVolumeButton") {
         std::shared_ptr<AudioListener> audioListener;
-        float gain = 0.5f;
-        if (GloomEngine::GetInstance()->FindGameObjectWithName("Player")) {
-            audioListener = GloomEngine::GetInstance()->FindGameObjectWithName(
-                    "Player")->GetComponent<AudioListener>();
-            gain = audioListener->GetGain();
-        }
+        std::shared_ptr<AudioSource> mainMenuMusic;
+        audioListener = AudioManager::GetInstance()->audioListener;
+        float gain = audioListener->GetGain();
         if (x == -1.0f) {
             if (optionManager->musicVolume <= 0.0f) return;
             if (audioListener)
@@ -169,8 +166,7 @@ void OptionsMenu::ChangeValue(float x) {
         if (musicVolumeIterator == 8) musicVolumeButtons[1]->isActive = false;
         musicVolumeValue->ChangeText(musicVolumeValues[musicVolumeIterator]);
         sound->ForcePlaySound();
-    }
-	else if (activeButtonName == mainMenu + "WindowResolutionButton") {
+    } else if (activeButtonName == mainMenu + "WindowResolutionButton") {
         const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (x == -1.0f) {
             if (optionManager->width == 1920) {

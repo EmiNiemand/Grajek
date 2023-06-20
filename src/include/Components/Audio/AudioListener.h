@@ -8,26 +8,21 @@
 #include "glm/matrix.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Components/Component.h"
+#include <algorithm>
 #include <al.h>
 
-class GameObject;
-
-class AudioListener : public Component {
+class AudioListener {
     glm::vec3 position = {};
     glm::vec3 velocity = {};
-    float gain = 1.0f;
+    float gain = 0.5f;
 
 public:
-    AudioListener(const std::shared_ptr<GameObject> &parent, int id);
-    ~AudioListener() override;
+    explicit AudioListener();
+    ~AudioListener();
 
-    void Start() override;
-    void Update() override;
-    void OnCreate() override;
-
+    static void UpdatePosition(const glm::vec3& position);
     void SetGain(const float& val);
-    const float GetGain() const;
+    [[nodiscard]] const float GetGain() const;
     void SetVelocity(const glm::vec3& vel);
 
 };

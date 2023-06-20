@@ -110,8 +110,9 @@ void MusicSession::DetectPattern() {
     // Remove patterns that don't match anymore
     // ----------------------------------------
     int lastIndex = recordedSounds.size() - 1;
-    spdlog::info("ID:");
-    spdlog::info(recordedSounds[lastIndex].sample->id);
+    // Yep, finally found it, and commented it -Adrian
+//    spdlog::info("ID:");
+//    spdlog::info(recordedSounds[lastIndex].sample->id);
 
 
     for (auto pattern=potentialPatterns.begin(); pattern!=potentialPatterns.end(); )

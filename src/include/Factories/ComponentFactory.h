@@ -30,7 +30,7 @@ class SessionUI;
 class MusicSession;
 class CharacterLogic;
 class CharacterMovement;
-class Indicator;
+class AudioSource;
 
 class ComponentFactory {
 private:

@@ -25,15 +25,12 @@ class AudioManager {
 
     inline static AudioManager* audioManager;
     explicit AudioManager();
-    static void CheckAudioDevice(const std::stop_token& token, ALCdevice** device, bool& isInitialized);
+    static void CheckAudioDevice(const std::stop_token& token, ALCdevice* device, bool& isInitialized);
     static void SetAudioSettings();
 
 public:
     std::shared_ptr<AudioListener> audioListener;
     std::unordered_map<int, std::shared_ptr<AudioSource>> audioSources;
-
-//    Currently unused, maybe in future for audio streaming
-//    std::unordered_map<ALuint, std::shared_ptr<AudioSource>> audioBuffers;
 
     AudioManager(AudioManager &other) = delete;
     void operator=(const AudioManager&) = delete;

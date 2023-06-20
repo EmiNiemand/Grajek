@@ -26,7 +26,7 @@ class ShopMenu;
 class SavePointMenu;
 class Menu;
 class Animator;
-
+class AudioListener;
 
 class PlayerManager : public Component, public IDataPersistance {
 private:
@@ -49,6 +49,7 @@ private:
     std::shared_ptr<Animator> animator;
 	std::shared_ptr<Rigidbody> rb;
     std::shared_ptr<AudioSource> audioSource;
+    std::shared_ptr<AudioListener> listener;
 	//PlayerCollider collider;
 	//PlayerCamera camera;
 	// Local variables

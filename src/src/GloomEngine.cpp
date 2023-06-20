@@ -47,11 +47,11 @@ void GloomEngine::Initialize() {
 #ifdef DEBUG
     ZoneScopedNC("Init", 0xDC143C);
 #endif
+
+    RandomnessManager::GetInstance()->InitializeRandomEngine();
+    AudioManager::GetInstance()->InitializeAudio();
     OptionsManager::GetInstance()->Load();
     InitializeWindow();
-
-    AudioManager::GetInstance()->InitializeAudio();
-    RandomnessManager::GetInstance()->InitializeRandomEngine();
     HIDManager::GetInstance();
 
     game = std::make_shared<Game>();
