@@ -85,12 +85,18 @@ void SceneManager::LoadScene(const std::string& scene) {
     } else if (scene == "MainMenu") {
         ClearScene();
         activeScene = GameObject::Instantiate("MainMenuScene", nullptr, Tags::SCENE);
+        auto audio = activeScene->AddComponent<AudioSource>();
+        audio->LoadAudioData("res/sounds/direct/mainmenu.wav", AudioType::Direct);
+        audio->IsLooping(true);
+        audio->PlaySoundAfterStart(true);
         Prefab::Instantiate<MainMenuPrefab>();
     }
 }
 
 void SceneManager::ClearScene() {
     if (!activeScene) return;
+    auto audioSource = activeScene->GetComponent<AudioSource>();
+    if (audioSource) audioSource->StopSound();
     activeScene->RemoveAllChildren();
     parents.clear();
     Animator::animationModels.clear();
