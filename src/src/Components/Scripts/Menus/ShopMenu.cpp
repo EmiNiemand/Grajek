@@ -48,15 +48,12 @@ void ShopMenu::Awake() {
     sound->LoadAudioData("res/sounds/direct/shop.wav", AudioType::Direct);
     sound->SetGain(0);
     sound->IsLooping(true);
-    auto buy_sound = GameObject::Instantiate("buy_sound", parent);
-    buySound = buy_sound->AddComponent<AudioSource>();
+    auto buySoundObject = GameObject::Instantiate("buy_sound", parent);
+    buySound = buySoundObject->AddComponent<AudioSource>();
     buySound->LoadAudioData("res/sounds/direct/buy.wav", AudioType::Direct);
-    buySound->SetGain(0.4f);
-    auto cant_buy_sound = GameObject::Instantiate("cant_buy_sound", parent);
-    cantBuySound = cant_buy_sound->AddComponent<AudioSource>();
+    auto cantBuySoundObject = GameObject::Instantiate("cant_buy_sound", parent);
+    cantBuySound = cantBuySoundObject->AddComponent<AudioSource>();
     cantBuySound->LoadAudioData("res/sounds/direct/cant_buy.wav", AudioType::Direct);
-    cantBuySound->SetGain(0.3f);
-    cantBuySound->SetPitch(0.9f);
     Component::Awake();
 }
 
@@ -172,5 +169,5 @@ void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
 void ShopMenu::HideMenu() {
     Menu::HideMenu();
     sound->SetGain(0.0f);
-    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.35f);
+    SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2f);
 }
