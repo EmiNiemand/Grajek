@@ -85,7 +85,7 @@ bool ShopMenu::ShowMenu() {
     if (!triggerActive) return false;
     if(!Menu::ShowMenu()) return false;
 
-    sound->SetGain(1);
+    sound->SetGain(0.5);
     sound->PlaySound();
     SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0);
     GloomEngine::GetInstance()->timeScale = 1;
@@ -147,12 +147,12 @@ void ShopMenu::OnClick() {
         }
         DeleteButton(activeButton);
         if (instruments.empty()) buyImage->enabled = false;
-        spdlog::info("[SM] Bought instrument!");
+//        spdlog::info("[SM] Bought instrument!");
         buySound->ForcePlaySound();
     } else {
         GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
                 Setup(610, 340, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
-        spdlog::info("[SM] Not enough money for instrument");
+//        spdlog::info("[SM] Not enough money for instrument");
         cantBuySound->ForcePlaySound();
     }
 }
