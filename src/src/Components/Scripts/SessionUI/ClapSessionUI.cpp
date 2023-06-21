@@ -82,7 +82,7 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
     }, AnimationBehaviour::Resetable);
 
     // Add buttons
-    int x = 1051, y = 603;
+    int x = 500, y = 603;
     for (int i = 0; i < 2; i++, y -= 145) {
         soundButtons.push_back(GameObject::Instantiate("clapPatternsButton", parent)->AddComponent<Button>());
         soundButtons[i]->LoadTexture(x, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
