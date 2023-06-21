@@ -25,7 +25,7 @@ public:
     int x, y;
     std::string text;
     bool isActive = false;
-    std::shared_ptr<Button> previousButton, nextButton;
+    std::shared_ptr<Button> left, right, up, down;
 
 public:
     Button(const std::shared_ptr<GameObject> &parent, int id);

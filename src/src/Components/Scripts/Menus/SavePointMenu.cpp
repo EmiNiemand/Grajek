@@ -30,19 +30,6 @@ bool SavePointMenu::ShowMenu() {
     return true;
 }
 
-void SavePointMenu::ChangeActiveButton(glm::vec2 moveVector) {
-    if (moveVector.x == 1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
-        activeButton->isActive = true;
-    }
-    if (moveVector.x == -1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
-        activeButton->isActive = true;
-    }
-}
-
 void SavePointMenu::OnClick() {
     if (!activeButton) return;
     buttonImage->enabled = true;

@@ -30,16 +30,16 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     auto creditsButton = mainMenu->AddButton("CreditsButton", 810, 160, "UI/MainMenu/CreditsInactive.png", "UI/MainMenu/CreditsActive.png", "", 32);
     auto exitButton = mainMenu->AddButton("ExitFromGameButton", 877, 69, "UI/MainMenu/ExitInactive.png", "UI/MainMenu/ExitActive.png", "", 32);
     mainMenu->AddImage("MainMenuBackground", 0, 0, "UI/MainMenu/MainMenu.png");
-    newGameButton->previousButton = exitButton;
-    newGameButton->nextButton = continueButton;
-    continueButton->previousButton = newGameButton;
-    continueButton->nextButton = optionsButton;
-    optionsButton->previousButton = continueButton;
-    optionsButton->nextButton = creditsButton;
-    creditsButton->previousButton = optionsButton;
-    creditsButton->nextButton = exitButton;
-    exitButton->previousButton = creditsButton;
-    exitButton->nextButton = newGameButton;
+    newGameButton->up = exitButton;
+    newGameButton->down = continueButton;
+    continueButton->up = newGameButton;
+    continueButton->down = optionsButton;
+    optionsButton->up = continueButton;
+    optionsButton->down = creditsButton;
+    creditsButton->up = optionsButton;
+    creditsButton->down = exitButton;
+    exitButton->up = creditsButton;
+    exitButton->down = newGameButton;
 
     // Load Game Menu
     auto loadGameMenu = GameObject::Instantiate("LoadGameMenu", mainMenuScene)->AddComponent<LoadGameMenu>();
@@ -73,14 +73,33 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
             }
             ypos -= 500;
         }
-        loadGameButtons[0]->previousButton = loadGameButtons[9];
-        loadGameButtons[0]->nextButton = loadGameButtons[1];
-        for (int i = 1; i < loadGameButtons.size() - 1; i++) {
-            loadGameButtons[i]->previousButton = loadGameButtons[i - 1];
-            loadGameButtons[i]->nextButton = loadGameButtons[i + 1];
+
+        loadGameButtons[0]->left = loadGameButtons[4];
+        loadGameButtons[0]->right = loadGameButtons[1];
+        loadGameButtons[0]->down = loadGameButtons[5];
+
+        loadGameButtons[4]->left = loadGameButtons[3];
+        loadGameButtons[4]->right = loadGameButtons[0];
+        loadGameButtons[4]->down = loadGameButtons[9];
+
+        loadGameButtons[5]->left = loadGameButtons[9];
+        loadGameButtons[5]->right = loadGameButtons[6];
+        loadGameButtons[5]->up = loadGameButtons[0];
+
+        loadGameButtons[9]->left = loadGameButtons[8];
+        loadGameButtons[9]->right = loadGameButtons[5];
+        loadGameButtons[9]->up = loadGameButtons[4];
+
+        for (int i = 1; i < 4; i++) {
+            loadGameButtons[i]->left = loadGameButtons[i - 1];
+            loadGameButtons[i]->right = loadGameButtons[i + 1];
+            loadGameButtons[i]->down = loadGameButtons[i + 5];
+
+            loadGameButtons[i + 5]->left = loadGameButtons[i + 4];
+            loadGameButtons[i + 5]->right = loadGameButtons[i + 6];
+            loadGameButtons[i + 5]->up = loadGameButtons[i];
         }
-        loadGameButtons[loadGameButtons.size() - 1]->previousButton = loadGameButtons[loadGameButtons.size() - 2];
-        loadGameButtons[loadGameButtons.size() - 1]->nextButton = loadGameButtons[0];
+
         loadGameMenu->GetParent()->DisableSelfAndChildren();
     }
 
@@ -105,18 +124,20 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
     optionsMenu->AddButton("MainMenuShadowResolutionLeft", 740, 157, "UI/Settings/GuzikNieKlikniety.png", "UI/Settings/GuzikKlikniety.png")->isActive = true;
     optionsMenu->AddButton("MainMenuShadowResolutionRight", 1735, 157, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png")->isActive = true;
     optionsMenu->AddImage("OptionsBackground", 0, 0, "UI/Settings/Settings.png");
-    windowResolutionButton->previousButton = cancelButton;
-    windowResolutionButton->nextButton = windowFullScreenButton;
-    windowFullScreenButton->previousButton = windowResolutionButton;
-    windowFullScreenButton->nextButton = musicVolumeButton;
-    musicVolumeButton->previousButton = windowFullScreenButton;
-    musicVolumeButton->nextButton = shadowResolutionButton;
-    shadowResolutionButton->previousButton = musicVolumeButton;
-    shadowResolutionButton->nextButton = saveButton;
-    saveButton->previousButton = shadowResolutionButton;
-    saveButton->nextButton = cancelButton;
-    cancelButton->previousButton = saveButton;
-    cancelButton->nextButton = windowResolutionButton;
+    windowResolutionButton->up = cancelButton;
+    windowResolutionButton->down = windowFullScreenButton;
+    windowFullScreenButton->up = windowResolutionButton;
+    windowFullScreenButton->down = musicVolumeButton;
+    musicVolumeButton->up = windowFullScreenButton;
+    musicVolumeButton->down = shadowResolutionButton;
+    shadowResolutionButton->up = musicVolumeButton;
+    shadowResolutionButton->down = saveButton;
+    saveButton->up = shadowResolutionButton;
+    saveButton->down = windowResolutionButton;
+    saveButton->right = cancelButton;
+    cancelButton->up = shadowResolutionButton;
+    cancelButton->down = windowResolutionButton;
+    cancelButton->left = saveButton;
 
     auto chooseMenu = GameObject::Instantiate("OptionsChooseMenu", optionsMenu->GetParent())->AddComponent<OptionsChooseMenu>();
     chooseMenu->GetParent()->AddComponent<Image>()->LoadTexture(600, 400, "UI/Settings/chooseMenu.png", -0.95);

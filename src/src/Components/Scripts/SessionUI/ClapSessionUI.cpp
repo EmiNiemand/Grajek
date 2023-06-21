@@ -91,10 +91,10 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
         patternsSounds.push_back(GameObject::Instantiate("clapPatternsSound", parent)->AddComponent<AudioSource>());
         patternsSounds[i]->LoadAudioData("res/sounds/direct/clap/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
     }
-    soundButtons[0]->previousButton = soundButtons[1];
-    soundButtons[0]->nextButton = soundButtons[1];
-    soundButtons[1]->previousButton = soundButtons[0];
-    soundButtons[1]->nextButton = soundButtons[0];
+    soundButtons[0]->up = soundButtons[1];
+    soundButtons[0]->down = soundButtons[1];
+    soundButtons[1]->up = soundButtons[0];
+    soundButtons[1]->down = soundButtons[0];
 }
 
 void ClapSessionUI::PlaySound(int index) {

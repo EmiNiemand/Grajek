@@ -8,15 +8,18 @@
 class Button;
 class Text;
 class Image;
+class AudioSource;
 
 class Menu : public Component {
 public:
     std::shared_ptr<Button> activeButton;
+    std::shared_ptr<AudioSource> activeButtonChangeSound;
 
 public:
     Menu(const std::shared_ptr<GameObject> &parent, int id);
     ~Menu() override;
 
+    void Awake() override;
     void OnDestroy() override;
 
     virtual bool ShowMenu();

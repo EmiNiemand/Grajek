@@ -219,12 +219,12 @@ void SessionUI::ChangeActiveButton(glm::vec2 moveVector) {
 
     if (moveVector.y == 1.0f) {
         activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
+        activeButton = activeButton->up;
         activeButton->isActive = true;
     }
     if (moveVector.y == -1.0f) {
         activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
+        activeButton = activeButton->down;
         activeButton->isActive = true;
     }
 }

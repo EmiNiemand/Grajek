@@ -99,8 +99,8 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         for(int i=0; i<buttonNames.size(); i++) {
             auto prevIndex = i-1<0 ? buttonNames.size()-1:i-1;
             auto nextIndex = i+1==buttonNames.size() ? 0:i+1;
-            buttonBuffer[i]->previousButton = buttonBuffer[prevIndex];
-            buttonBuffer[i]->nextButton = buttonBuffer[nextIndex];
+            buttonBuffer[i]->up = buttonBuffer[prevIndex];
+            buttonBuffer[i]->down = buttonBuffer[nextIndex];
         }
 
         pause->GetParent()->DisableSelfAndChildren();
@@ -146,18 +146,20 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         button = optionsMenu->AddButton("ShadowResolutionRight", 1735, 157, "UI/Settings/GuzikNieKliknietyPrawy.png", "UI/Settings/GuzikKliknietyPrawy.png");
         button->isActive=true; button->ChangeZ(-0.95);
         optionsMenu->AddImage("OptionsBackground", 0, 0, "UI/Settings/Settings.png", -0.9);
-        windowResolutionButton->previousButton = cancelButton;
-        windowResolutionButton->nextButton = windowFullScreenButton;
-        windowFullScreenButton->previousButton = windowResolutionButton;
-        windowFullScreenButton->nextButton = musicVolumeButton;
-        musicVolumeButton->previousButton = windowFullScreenButton;
-        musicVolumeButton->nextButton = shadowResolutionButton;
-        shadowResolutionButton->previousButton = musicVolumeButton;
-        shadowResolutionButton->nextButton = saveButton;
-        saveButton->previousButton = shadowResolutionButton;
-        saveButton->nextButton = cancelButton;
-        cancelButton->previousButton = saveButton;
-        cancelButton->nextButton = windowResolutionButton;
+        windowResolutionButton->up = cancelButton;
+        windowResolutionButton->down = windowFullScreenButton;
+        windowFullScreenButton->up = windowResolutionButton;
+        windowFullScreenButton->down = musicVolumeButton;
+        musicVolumeButton->up = windowFullScreenButton;
+        musicVolumeButton->down = shadowResolutionButton;
+        shadowResolutionButton->up = musicVolumeButton;
+        shadowResolutionButton->down = saveButton;
+        saveButton->up = shadowResolutionButton;
+        saveButton->down = windowResolutionButton;
+        saveButton->right = cancelButton;
+        cancelButton->up = shadowResolutionButton;
+        cancelButton->down = windowResolutionButton;
+        cancelButton->left = saveButton;
 
         auto chooseMenu = GameObject::Instantiate("OptionsChooseMenu", optionsMenu->GetParent())->AddComponent<OptionsChooseMenu>();
         chooseMenu->GetParent()->AddComponent<Image>()->LoadTexture(600, 400, "UI/Settings/chooseMenu.png", -0.98);
@@ -190,14 +192,14 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         secondInstrumentCost->GetParent()->SetParent(secondInstrument->GetParent());
         thirdInstrumentCost->GetParent()->SetParent(thirdInstrument->GetParent());
         fourthInstrumentCost->GetParent()->SetParent(fourthInstrument->GetParent());
-        firstInstrument->previousButton = thirdInstrument;
-        firstInstrument->nextButton = fourthInstrument;
-        secondInstrument->previousButton = fourthInstrument;
-        secondInstrument->nextButton = thirdInstrument;
-        thirdInstrument->previousButton = secondInstrument;
-        thirdInstrument->nextButton = firstInstrument;
-        fourthInstrument->previousButton = firstInstrument;
-        fourthInstrument->nextButton = secondInstrument;
+        firstInstrument->left = thirdInstrument;
+        firstInstrument->right = fourthInstrument;
+        secondInstrument->left = fourthInstrument;
+        secondInstrument->right = thirdInstrument;
+        thirdInstrument->left = secondInstrument;
+        thirdInstrument->right = firstInstrument;
+        fourthInstrument->left = firstInstrument;
+        fourthInstrument->right = secondInstrument;
         shopMenu->DisableSelfAndChildren();
     }
 
@@ -234,14 +236,33 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
             }
             ypos -= 500;
         }
-        loadGameButtons[0]->previousButton = loadGameButtons[9];
-        loadGameButtons[0]->nextButton = loadGameButtons[1];
-        for (int i = 1; i < loadGameButtons.size() - 1; i++) {
-            loadGameButtons[i]->previousButton = loadGameButtons[i - 1];
-            loadGameButtons[i]->nextButton = loadGameButtons[i + 1];
+
+        loadGameButtons[0]->left = loadGameButtons[4];
+        loadGameButtons[0]->right = loadGameButtons[1];
+        loadGameButtons[0]->down = loadGameButtons[5];
+
+        loadGameButtons[4]->left = loadGameButtons[3];
+        loadGameButtons[4]->right = loadGameButtons[0];
+        loadGameButtons[4]->down = loadGameButtons[9];
+
+        loadGameButtons[5]->left = loadGameButtons[9];
+        loadGameButtons[5]->right = loadGameButtons[6];
+        loadGameButtons[5]->up = loadGameButtons[0];
+
+        loadGameButtons[9]->left = loadGameButtons[8];
+        loadGameButtons[9]->right = loadGameButtons[5];
+        loadGameButtons[9]->up = loadGameButtons[4];
+
+        for (int i = 1; i < 4; i++) {
+            loadGameButtons[i]->left = loadGameButtons[i - 1];
+            loadGameButtons[i]->right = loadGameButtons[i + 1];
+            loadGameButtons[i]->down = loadGameButtons[i + 5];
+
+            loadGameButtons[i + 5]->left = loadGameButtons[i + 4];
+            loadGameButtons[i + 5]->right = loadGameButtons[i + 6];
+            loadGameButtons[i + 5]->up = loadGameButtons[i];
         }
-        loadGameButtons[loadGameButtons.size() - 1]->previousButton = loadGameButtons[loadGameButtons.size() - 2];
-        loadGameButtons[loadGameButtons.size() - 1]->nextButton = loadGameButtons[0];
+
         savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
         savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/enterSavePoint.png");
         SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;

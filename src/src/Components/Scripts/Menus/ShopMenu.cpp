@@ -44,7 +44,8 @@ void ShopMenu::Awake() {
     else
         instruments.push_back(GloomEngine::GetInstance()->FindGameObjectWithName("FourthInstrument")->GetComponent<Button>());
 
-    sound = parent->AddComponent<AudioSource>();
+    auto soundObject = GameObject::Instantiate("shopBackgroundMusicAudioSource", parent);
+    sound = soundObject->AddComponent<AudioSource>();
     sound->LoadAudioData("res/sounds/direct/shop.wav", AudioType::Direct);
     sound->SetGain(0);
     sound->IsLooping(true);
@@ -54,7 +55,7 @@ void ShopMenu::Awake() {
     auto cantBuySoundObject = GameObject::Instantiate("cant_buy_sound", parent);
     cantBuySound = cantBuySoundObject->AddComponent<AudioSource>();
     cantBuySound->LoadAudioData("res/sounds/direct/cant_buy.wav", AudioType::Direct);
-    Component::Awake();
+    Menu::Awake();
 }
 
 void ShopMenu::OnDestroy() {
@@ -68,16 +69,7 @@ void ShopMenu::ChangeActiveButton(glm::vec2 moveVector) {
     if(!activeButton) return;
 
     activeButton->GetParent()->children.begin()->second->DisableSelfAndChildren();
-    if (moveVector.y == 1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
-        activeButton->isActive = true;
-    }
-    if (moveVector.y == -1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
-        activeButton->isActive = true;
-    }
+    Menu::ChangeActiveButton(moveVector);
     activeButton->GetParent()->children.begin()->second->EnableSelfAndChildren();
 }
 
@@ -159,10 +151,10 @@ void ShopMenu::OnClick() {
 
 void ShopMenu::DeleteButton(std::shared_ptr<Button> button) {
     if(button == activeButton)
-        ChangeActiveButton({0, -1});
-    std::shared_ptr<Button> temp = button->previousButton;
-    button->previousButton->nextButton = button->nextButton;
-    button->nextButton->previousButton = temp;
+        ChangeActiveButton({-1, 0});
+    std::shared_ptr<Button> temp = button->left;
+    button->left->right = button->right;
+    button->right->left = temp;
     GameObject::Destroy(button->GetParent());
 }
 

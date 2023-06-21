@@ -45,12 +45,12 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
     if (buttons.size() > 1) {
         int i = 0;
         for (const auto &button: buttons) {
-            if (i != 0) button->previousButton = buttons[i - 1];
-            if (i != buttons.size()-1) button->nextButton = buttons[i + 1];
+            if (i != 0) button->left = buttons[i - 1];
+            if (i != buttons.size()-1) button->right = buttons[i + 1];
             i++;
         }
-        buttons[0]->previousButton = buttons[buttons.size() - 1];
-        buttons[buttons.size() - 1]->nextButton = buttons[0];
+        buttons[0]->left = buttons[buttons.size() - 1];
+        buttons[buttons.size() - 1]->right = buttons[0];
     }
     activeButton = buttons[0];
     buttons[0]->isActive = true;
@@ -58,17 +58,7 @@ void SessionStarter::Setup(const std::set<std::shared_ptr<Instrument>>& instrume
 }
 
 void SessionStarter::ChangeActiveButton(glm::vec2 moveVector) {
-    if (!activeButton->previousButton) return;
-    if (moveVector.x == 1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
-        activeButton->isActive = true;
-    }
-    if (moveVector.x == -1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
-        activeButton->isActive = true;
-    }
+    Menu::ChangeActiveButton(moveVector);
 }
 
 void SessionStarter::OnClick() {

@@ -24,7 +24,6 @@ public:
 
     bool ShowMenu() override;
     void HideMenu() override;
-    void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;
 
     void LoadData(std::shared_ptr<GameData> data) override{};

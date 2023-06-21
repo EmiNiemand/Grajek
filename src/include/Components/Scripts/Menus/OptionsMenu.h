@@ -23,7 +23,7 @@ private:
     std::shared_ptr<Button> windowResolutionValue;
     std::shared_ptr<Button> windowFullScreenValue;
     std::shared_ptr<Button> shadowResolutionValue;
-    std::shared_ptr<AudioSource> sound;
+
     float previousMusicVolume, previousWindowResolutionWidth, previousWindowResolutionHeight, previousWindowFullScreen, previousShadowResolution;
     short musicVolumeIterator = 0, windowResolutionIterator = 0, windowFullScreenIterator = 0, shadowResolutionIterator = 0;
 

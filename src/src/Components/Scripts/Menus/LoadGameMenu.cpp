@@ -15,19 +15,6 @@ bool LoadGameMenu::ShowMenu() {
     return true;
 }
 
-void LoadGameMenu::ChangeActiveButton(glm::vec2 moveVector) {
-    if (moveVector.x == 1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
-        activeButton->isActive = true;
-    }
-    if (moveVector.x == -1.0f) {
-        activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
-        activeButton->isActive = true;
-    }
-}
-
 void LoadGameMenu::OnClick() {
     if (!activeButton) return;
     std::filesystem::path path = std::filesystem::current_path();

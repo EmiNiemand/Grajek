@@ -279,7 +279,9 @@ void Button::OnDestroy() {
     }
     textureMesh.reset();
     textMesh.reset();
-    previousButton.reset();
-    nextButton.reset();
+    left.reset();
+    right.reset();
+    up.reset();
+    down.reset();
     Component::OnDestroy();
 }

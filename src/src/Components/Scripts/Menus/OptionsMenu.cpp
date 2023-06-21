@@ -71,8 +71,7 @@ void OptionsMenu::Start() {
     if (windowFullScreenIterator == 1) windowFullScreenButtons[1]->isActive = false;
     if (shadowResolutionIterator == 0) shadowResolutionButtons[0]->isActive = false;
     if (shadowResolutionIterator == 2) shadowResolutionButtons[1]->isActive = false;
-    sound = parent->AddComponent<AudioSource>();
-    sound->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
+
 
     Component::Start();
 }
@@ -165,7 +164,7 @@ void OptionsMenu::ChangeValue(float x) {
         if (musicVolumeIterator == 0) musicVolumeButtons[0]->isActive = false;
         if (musicVolumeIterator == 8) musicVolumeButtons[1]->isActive = false;
         musicVolumeValue->ChangeText(musicVolumeValues[musicVolumeIterator]);
-        sound->ForcePlaySound();
+        activeButtonChangeSound->ForcePlaySound();
     } else if (activeButtonName == mainMenu + "WindowResolutionButton") {
         const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (x == -1.0f) {
@@ -216,7 +215,7 @@ void OptionsMenu::ChangeValue(float x) {
         if (windowResolutionIterator == 2) windowResolutionButtons[1]->isActive = false;
         PostProcessingManager::GetInstance()->WindowResize();
         windowResolutionValue->ChangeText(windowResolutionValues[windowResolutionIterator]);
-        sound->ForcePlaySound();
+        activeButtonChangeSound->ForcePlaySound();
     }
 
 	else if (activeButtonName == mainMenu + "WindowFullScreenButton") {
@@ -248,7 +247,7 @@ void OptionsMenu::ChangeValue(float x) {
         if (windowFullScreenIterator == 0) windowFullScreenButtons[0]->isActive = false;
         if (windowFullScreenIterator == 1) windowFullScreenButtons[1]->isActive = false;
         windowFullScreenValue->ChangeText(windowFullScreenValues[windowFullScreenIterator]);
-        sound->ForcePlaySound();
+        activeButtonChangeSound->ForcePlaySound();
     }
 
 	else if (activeButtonName == mainMenu + "ShadowResolutionButton") {
@@ -270,7 +269,7 @@ void OptionsMenu::ChangeValue(float x) {
         if (shadowResolutionIterator == 2) shadowResolutionButtons[1]->isActive = false;
         ChangeShadowResolution();
         shadowResolutionValue->ChangeText(shadowResolutionValues[shadowResolutionIterator]);
-        sound->ForcePlaySound();
+        activeButtonChangeSound->ForcePlaySound();
     }
 }
 
@@ -359,7 +358,6 @@ void OptionsMenu::OnDestroy() {
     windowResolutionValue.reset();
     windowFullScreenValue.reset();
     shadowResolutionValue.reset();
-    sound.reset();
     musicVolumeButtons.clear();
     windowResolutionButtons.clear();
     windowFullScreenButtons.clear();

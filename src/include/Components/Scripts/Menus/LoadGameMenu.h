@@ -12,7 +12,6 @@ public:
     ~LoadGameMenu() override;
 
     bool ShowMenu() override;
-    void ChangeActiveButton(glm::vec2 moveVector) override;
     void OnClick() override;
 };
 

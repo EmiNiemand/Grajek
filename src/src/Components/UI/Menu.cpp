@@ -4,12 +4,26 @@
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
 #include "Components/UI/Button.h"
+#include "Components/Audio/AudioSource.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 Menu::Menu(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Menu::~Menu() = default;
+
+void Menu::Awake() {
+    auto soundObject = GameObject::Instantiate("buttonChangeAudioSource", parent);
+    activeButtonChangeSound = soundObject->AddComponent<AudioSource>();
+    activeButtonChangeSound->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
+    Component::Awake();
+}
+
+void Menu::OnDestroy() {
+    activeButton.reset();
+    activeButtonChangeSound.reset();
+    Component::OnDestroy();
+}
 
 bool Menu::ShowMenu() {
     if(GetParent()->GetEnabled()) return false;
@@ -29,15 +43,33 @@ void Menu::HideMenu() {
 }
 
 void Menu::ChangeActiveButton(glm::vec2 moveVector) {
-    if (moveVector.y == 1.0f) {
+    if (moveVector.x == 1.0f) {
+        if (!activeButton->right) return;
         activeButton->isActive = false;
-        activeButton = activeButton->previousButton;
+        activeButton = activeButton->right;
         activeButton->isActive = true;
+        activeButtonChangeSound->ForcePlaySound();
+    }
+    if (moveVector.x == -1.0f) {
+        if (!activeButton->left) return;
+        activeButton->isActive = false;
+        activeButton = activeButton->left;
+        activeButton->isActive = true;
+        activeButtonChangeSound->ForcePlaySound();
+    }
+    if (moveVector.y == 1.0f) {
+        if (!activeButton->up) return;
+        activeButton->isActive = false;
+        activeButton = activeButton->up;
+        activeButton->isActive = true;
+        activeButtonChangeSound->ForcePlaySound();
     }
     if (moveVector.y == -1.0f) {
+        if (!activeButton->down) return;
         activeButton->isActive = false;
-        activeButton = activeButton->nextButton;
+        activeButton = activeButton->down;
         activeButton->isActive = true;
+        activeButtonChangeSound->ForcePlaySound();
     }
 }
 
@@ -61,7 +93,4 @@ std::shared_ptr<Button> Menu::AddButton(std::string name, int x, int y, const st
     return button;
 }
 
-void Menu::OnDestroy() {
-    activeButton.reset();
-    Component::OnDestroy();
-}
+
