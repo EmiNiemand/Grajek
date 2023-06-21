@@ -24,6 +24,7 @@ void SavePointTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObj
     if (gameObject->GetName() != "Player") return;
     triggerActive = true;
     buttonImage->enabled = true;
+    savePointMenu->buttonImage = buttonImage;
     savePointMenu->triggerActive = true;
     SavePointManager::GetInstance()->activeSavePoint = std::dynamic_pointer_cast<SavePointTrigger>(shared_from_this());
     Component::OnTriggerStay(gameObject);
@@ -33,6 +34,7 @@ void SavePointTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObje
     if (gameObject->GetName() != "Player") return;
     triggerActive = false;
     buttonImage->enabled = false;
+    savePointMenu->buttonImage = nullptr;
     savePointMenu->triggerActive = false;
     Component::OnTriggerExit(gameObject);
 }
