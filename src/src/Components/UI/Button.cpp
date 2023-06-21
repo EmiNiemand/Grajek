@@ -3,6 +3,7 @@
 #include "LowLevelClasses/Mesh.h"
 #include "EngineManagers/UIManager.h"
 #include "stb_image.h"
+#include "LowLevelClasses/Mesh.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -153,7 +154,7 @@ void Button::LoadFont(std::string text, FT_UInt fontSize, glm::vec3 color, const
 
     this->textMesh = CreateMesh((int)(this->textureMesh->vertices[0].position.x*960.0f)+960, (int)(this->textureMesh->vertices[0].position.y*960.0f)+960, 0, 0);
     this->text = std::move(text);
-    this->color = color;
+    this->textColor = color;
     this->fontSize = fontSize;
     this->textX = (int)(this->textureMesh->vertices[0].position.x*960.0f)+960;
     this->textY = (int)(this->textureMesh->vertices[0].position.y*540.0f)+540 + height / 2 - fontSize / 3;
@@ -193,6 +194,33 @@ void Button::ChangeZ(float newZ) {
     textureMesh = CreateMesh(x, y, width,height);
 }
 
+void Button::SetScale(float newScale) {
+    scale = {newScale, newScale};
+    auto width2 = newScale * width;
+    auto height2 = newScale * height;
+    leftBottom = {x - width2 / 2, y - height2 / 2};
+    rightTop = {leftBottom.x + width2, leftBottom.y + height2};
+    leftTop = {leftBottom.x, rightTop.y};
+    rightBottom = {rightTop.x, leftBottom.y};
+    textureMesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    textureMesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    textureMesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    textureMesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    textureMesh->setupMesh();
+    UIComponent::SetScale(newScale);
+}
+
+void Button::SetColor(glm::vec3 newColor) {
+    color = newColor;
+    if (color.x < 0.0f) color.x = 0.0f;
+    if (color.y < 0.0f) color.y = 0.0f;
+    if (color.z < 0.0f) color.z = 0.0f;
+    if (color.x > 1.0f) color.x = 1.0f;
+    if (color.y > 1.0f) color.y = 1.0f;
+    if (color.z > 1.0f) color.z = 1.0f;
+    UIComponent::SetColor(newColor);
+}
+
 void Button::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Button", 0x800080);
@@ -205,7 +233,7 @@ void Button::Draw() {
     if (!this->text.empty()) {
         UIManager::GetInstance()->shader->Activate();
         UIManager::GetInstance()->shader->SetBool("isText", true);
-        UIManager::GetInstance()->shader->SetVec3("textColor", color);
+        UIManager::GetInstance()->shader->SetVec3("textColor", textColor);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(textMesh->vao);
 
@@ -253,6 +281,7 @@ void Button::Draw() {
     UIManager::GetInstance()->shader->SetBool("isText", false);
     glActiveTexture(GL_TEXTURE0);
 	UIManager::GetInstance()->shader->SetInt("texture1", 0);
+    UIManager::GetInstance()->shader->SetVec3("color", color);
     if(isActive) {
         glBindTexture(GL_TEXTURE_2D, textureIsActive);
     } else {
