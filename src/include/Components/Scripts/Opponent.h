@@ -21,6 +21,8 @@ private:
     std::shared_ptr<Instrument> instrument;
     std::shared_ptr<MusicPattern> pattern;
     std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::shared_ptr<AudioSource> winSound;
+    std::shared_ptr<AudioSource> loseSound;
     std::shared_ptr<PlayerManager> playerManager;
 
     // Session Starter

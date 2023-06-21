@@ -94,6 +94,12 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     GameObject::Instantiate("OpponentChooseMenuImage", chooseMenu)->AddComponent<Image>()->
             LoadTexture(0, 0, "UI/backgroundOpacity60.png", 0.65f);
     chooseMenu->DisableSelfAndChildren();
+
+    // Setup sounds
+    winSound = GameObject::Instantiate("WinAudioSource", parent)->AddComponent<AudioSource>();
+    winSound->LoadAudioData("res/sounds/direct/win.wav", AudioType::Direct);
+    loseSound = GameObject::Instantiate("LoseAudioSource", parent)->AddComponent<AudioSource>();
+    loseSound->LoadAudioData("res/sounds/direct/lose.wav", AudioType::Direct);
 }
 
 void Opponent::Start() {
@@ -238,6 +244,7 @@ void Opponent::Update() {
                 time = 0.0f;
                 satisfactionDifference = 0.0f;
                 playerManager->EndSessionWithOpponent(false, bet);
+                loseSound->PlaySound();
             }
             if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
                 defeated = true;
@@ -248,6 +255,7 @@ void Opponent::Update() {
                 auto crowd = GloomEngine::GetInstance()->FindGameObjectWithName("Crowd");
                 if (crowd) crowd->GetComponent<Crowd::Crowd>()->OnEnemyDefeat(badge);
                 // TODO add sound when player beat boss
+                winSound->PlaySound();
             }
             AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
             ui->DisableSelfAndChildren();
