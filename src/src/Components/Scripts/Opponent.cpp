@@ -14,6 +14,7 @@
 #include "Components/Scripts/Player/PlayerEquipment.h"
 #include "EngineManagers/AIManager.h"
 #include "Components/Scripts/SessionUI/SessionUI.h"
+#include "Components/Scripts/Crowd.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -244,6 +245,8 @@ void Opponent::Update() {
                 playerManager->EndSessionWithOpponent(true, bet);
                 if (badge != (PlayerBadges)(-1)) playerManager->ReceiveBadge(badge);
                 indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
+                auto crowd = GloomEngine::GetInstance()->FindGameObjectWithName("Crowd");
+                if (crowd) crowd->GetComponent<Crowd::Crowd>()->OnEnemyDefeat(badge);
                 // TODO add sound when player beat boss
             }
             AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);

@@ -14,12 +14,6 @@
 #include "ProjectSettings.h"
 #include "Utilities.h"
 
-class Player;
-class Die;
-class Shop;
-class House;
-class Indicator;
-
 class PrefabFactory {
 private:
     inline static PrefabFactory* prefabFactory = nullptr;

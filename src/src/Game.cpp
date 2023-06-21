@@ -24,12 +24,12 @@
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
 #include "GameObjectsAndPrefabs/Prefabs/Indicator.h"
-#include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/AIManager.h"
 #include "Components/Scripts/Opponent.h"
 #include "Components/Scripts/Instrument.h"
+#include "Components/Scripts/Crowd.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -271,6 +271,9 @@ void Game::InitializeGame() const {
 #else
     AIManager::GetInstance()->InitializeSpawner(50);
 #endif
+
+    std::shared_ptr<GameObject> crowd = GameObject::Instantiate("Crowd", SceneManager::GetInstance()->activeScene);
+    crowd->AddComponent<Crowd::Crowd>();
 
     camera->SetTarget(nullptr);
 }
