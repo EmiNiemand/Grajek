@@ -2,7 +2,7 @@
 #include "GloomEngine.h"
 #include "Components/Scripts/Opponent.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
-#include "GameObjectsAndPrefabs/Prefabs/ConeIndicator.h"
+#include "GameObjectsAndPrefabs/Prefabs/Indicator.h"
 #include "Components/Renderers/Renderer.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
@@ -53,7 +53,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     timeCounter->LoadTexture(468, 1036, "UI/Opponent/timeBar.png", -0.55);
     ui->DisableSelfAndChildren();
 
-    indicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    indicator = Prefab::Instantiate<Indicator>("Indicator");
     indicator->SetParent(parent);
     indicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     indicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));

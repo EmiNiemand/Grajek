@@ -2,7 +2,7 @@
 #include "Components/Renderers/Animator.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "Components/Scripts/Player/PlayerManager.h"
-#include "GameObjectsAndPrefabs/Prefabs/ConeIndicator.h"
+#include "GameObjectsAndPrefabs/Prefabs/Indicator.h"
 #include "Components/Renderers/Renderer.h"
 #include "LowLevelClasses/Bone.h"
 
@@ -21,7 +21,7 @@ std::shared_ptr<GameObject> Player::Create() {
     player->transform->SetLocalScale({0.5, 0.5, 0.5});
     std::shared_ptr<GameObject> pivot = GameObject::Instantiate("PlayerPivot", player);
 
-    auto indicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    auto indicator = Prefab::Instantiate<Indicator>("Indicator");
     indicator->SetParent(player);
     indicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     indicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));

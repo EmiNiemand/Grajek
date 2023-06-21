@@ -23,7 +23,7 @@
 #include "Components/Scripts/Menus/MainMenu.h"
 #include "GameObjectsAndPrefabs/Prefabs/Player.h"
 #include "GameObjectsAndPrefabs/Prefabs/Die.h"
-#include "GameObjectsAndPrefabs/Prefabs/ConeIndicator.h"
+#include "GameObjectsAndPrefabs/Prefabs/Indicator.h"
 #include "GameObjectsAndPrefabs/Prefabs/SavePoint.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
@@ -185,7 +185,7 @@ void Game::InitializeGame() const {
     dialogueComponent->texts.push_back({{"Sorry buddy, cannot let you in - this place is under construction."},
                                                        {"Come back when a music competition begins."},
                                                        {""}});
-    auto dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    auto dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -203,7 +203,7 @@ void Game::InitializeGame() const {
     dialogueComponent->texts.push_back({{"[singing]"},
                                {"Smoke on the water... a fire in the sky!"},
                                {"Smoke on the water... burn it down!"}});
-    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -221,7 +221,7 @@ void Game::InitializeGame() const {
     dialogueComponent->texts.push_back({{"Man, I met a busker the other day that was really annoying."},
                                         {"He just kept playing the same thing over and over again."},
                                         {"I left that area really quickly."}});
-    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -239,7 +239,7 @@ void Game::InitializeGame() const {
     dialogueComponent->texts.push_back({{"I just saw some dude trying to battle someone with drums by simply clapping!"},
                                         {"I mean, it was impressive attempt, but there was no way he was going to win."},
                                         {""}});
-    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -257,7 +257,7 @@ void Game::InitializeGame() const {
     dialogueComponent->texts.push_back({{"OOOOOOOOOOOH MYYYYYYYYYYYYYYYYYY"},
                                         {"GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOD!"},
                                         {"The contest is approaching..."}});
-    dialogueIndicator = Prefab::Instantiate<ConeIndicator>("Indicator");
+    dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
