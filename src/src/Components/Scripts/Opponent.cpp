@@ -22,7 +22,7 @@ Opponent::~Opponent() = default;
 
 void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
                      short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
-    // Setup pattern
+//     Setup pattern
     instrument = std::move(instrument1);
     //TODO: added back to make patterns work -> delete later
     instrument->GeneratePattern(musicPattern);
@@ -41,7 +41,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     bet = bet1;
     badge = badge1;
 
-    // Setup UI
+//     Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
     GameObject::Instantiate("OpponentFrame", ui)->AddComponent<Image>()
             ->LoadTexture(460, 880, "UI/Opponent/battleFrame.png", -0.5);
@@ -60,7 +60,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     indicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
     indicator->GetComponent<Renderer>()->material.color = indicatorColor;
 
-    // Setup dialogues
+//     Setup dialogues
     dialogue = GameObject::Instantiate("OpponentDialogue", parent)->AddComponent<Dialogue>();
     winDialogue = GameObject::Instantiate("OpponentWinDialogue", parent)->AddComponent<Dialogue>();
     winDialogue->forced = true;
@@ -83,7 +83,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     winDialogue->name = name;
     lossDialogue->name = name;
 
-    // Setup choose menu
+//     Setup choose menu
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
     chooseMenu->AddComponent<Image>()->LoadTexture(700, 420, "UI/Opponent/chooseMenu.png", -0.6f);
     button1 = GameObject::Instantiate("OpponentChooseMenuButton1", chooseMenu)->AddComponent<Button>();
