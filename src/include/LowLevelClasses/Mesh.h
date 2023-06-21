@@ -14,6 +14,7 @@
 #define MAX_BONE_INFLUENCE 4
 
 class Image;
+class Button;
 
 struct Vertex {
     // position
@@ -60,6 +61,7 @@ public:
 
 private:
     friend class Image;
+    friend class Button;
     // render data
     unsigned int vbo, ebo;
 

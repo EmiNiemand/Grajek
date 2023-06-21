@@ -86,9 +86,9 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
     chooseMenu->AddComponent<Image>()->LoadTexture(560, 400, "UI/Opponent/chooseMenu.png", -0.6f);
     button1 = GameObject::Instantiate("OpponentChooseMenuButton1", chooseMenu)->AddComponent<Button>();
-    button1->LoadTexture(573, 412, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -0.65f);
+    button1->LoadTexture(762, 500, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -0.65f);
     button2 = GameObject::Instantiate("OpponentChooseMenuButton2", chooseMenu)->AddComponent<Button>();
-    button2->LoadTexture(967, 412, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -0.65f);
+    button2->LoadTexture(1156, 500, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -0.65f);
     button2->isActive = true;
     GameObject::Instantiate("OpponentChooseMenuImage", chooseMenu)->AddComponent<Image>()->
             LoadTexture(0, 0, "UI/backgroundOpacity60.png", 0.65f);
@@ -159,6 +159,10 @@ void Opponent::Update() {
     if (hid->IsKeyDown(Key::KEY_ENTER) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
         chooseMenuActive = true;
         button1->isActive = false;
+        button1->SetColor(glm::vec3(0.1f));
+        button1->SetScale(0.75);
+        button2->SetScale(0.75);
+        button2->SetScale(1);
         button2->isActive = true;
         chooseMenu->EnableSelfAndChildren();
         dialogue->NextDialogue();
@@ -172,11 +176,19 @@ void Opponent::Update() {
         if (hid->IsKeyDown(Key::KEY_A) || hid->IsKeyDown(Key::KEY_ARROW_LEFT)) {
             button1->isActive = true;
             button2->isActive = false;
+            button1->SetColor(glm::vec3(1));
+            button2->SetColor(glm::vec3(0.1f));
+            button1->SetScale(1);
+            button2->SetScale(0.75);
             return;
         }
         if (hid->IsKeyDown(Key::KEY_D) || hid->IsKeyDown(Key::KEY_ARROW_RIGHT)) {
             button1->isActive = false;
             button2->isActive = true;
+            button1->SetColor(glm::vec3(0.1f));
+            button2->SetColor(glm::vec3(1));
+            button1->SetScale(0.75);
+            button2->SetScale(1);
             return;
         }
         if (hid->IsKeyDown(Key::KEY_ENTER)) {
