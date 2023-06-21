@@ -5,6 +5,8 @@
 #include "stb_image.h"
 #include "EngineManagers/UIManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
+#include "EngineManagers/RendererManager.h"
+#include "Components/Renderers/Camera.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -155,6 +157,19 @@ void Image::Update() {
 #endif
     if (!mesh) return;
     if (alpha <= 0.1f) return;
+    if (isDynamic) {
+        glm::vec4 newPosition = glm::vec4(parent->parent->transform->GetGlobalPosition(), 1.0f);
+        glm::mat4 viewProjection = RendererManager::GetInstance()->projection * Camera::activeCamera->GetComponent<Camera>()->GetViewMatrix();
+        glm::vec4 postProjectivePosition = viewProjection * newPosition;
+
+        float clipSpaceX = postProjectivePosition.x / postProjectivePosition.w;
+        float clipSpaceY = postProjectivePosition.y / postProjectivePosition.w;
+
+        float imageWidth = glm::length(((leftBottom + leftTop) - (rightBottom + rightTop)) * 0.5f);
+        float imageHeight = glm::length(((leftBottom + rightBottom) - (leftTop + rightTop)) * 0.5f);
+
+        SetPosition((clipSpaceX + 1) * 960 - imageWidth / 2, (clipSpaceY + 1) * 540 - imageHeight / 2);
+    }
     UIComponent::Update();
 }
 

@@ -24,10 +24,18 @@ std::shared_ptr<GameObject> Shop::Create() {
     shopTrigger->AddComponent<BoxCollider>()->SetOffset({-2.5, 1, 4});
     shopTrigger->GetComponent<BoxCollider>()->SetSize({1.5, 1.5, 1.5});
     shopTrigger->GetComponent<BoxCollider>()->isTrigger = true;
-    shopTrigger->AddComponent<ShopTrigger>();
-    shopTrigger->GetComponent<ShopTrigger>()->buttonImage = GameObject::Instantiate("ShopButton", shopTrigger)->AddComponent<Image>();
-    shopTrigger->GetComponent<ShopTrigger>()->buttonImage->LoadTexture(1600, 50, "UI/Sklep/Przycisk.png", 0.5f);
-    shopTrigger->GetComponent<ShopTrigger>()->buttonImage->enabled = false;
+    auto shopTriggerComponent = shopTrigger->AddComponent<ShopTrigger>();
+
+    auto interactButton = GameObject::Instantiate("InteractButton", shopTrigger);
+    interactButton->transform->SetLocalPosition({-2.5, 3, 2.5});
+    auto interactButtonImage = GameObject::Instantiate("InteractButton", interactButton);
+    auto interactButtonImageComponent = interactButtonImage->AddComponent<Image>();
+    interactButtonImageComponent->LoadTexture(0, 0, "UI/Sklep/Przycisk.png", 0.5f);
+    interactButtonImageComponent->isDynamic = true;
+    interactButtonImageComponent->SetScale(0.5);
+    interactButtonImageComponent->enabled = false;
+
+    shopTriggerComponent->buttonImage = interactButtonImageComponent;
 
     return shop;
 }

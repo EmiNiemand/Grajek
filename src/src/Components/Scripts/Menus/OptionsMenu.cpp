@@ -131,6 +131,7 @@ void OptionsMenu::OnClick() {
             mainMenuManager->mainMenu->ShowMenu();
         }
     }
+
     Menu::OnClick();
 }
 
@@ -297,8 +298,7 @@ void OptionsMenu::ChangeShadowResolution() {
 void OptionsMenu::CancelSettings() {
     auto optionManager = OptionsManager::GetInstance();
 //     previousMusicVolume
-    if (GloomEngine::GetInstance()->FindGameObjectWithName("Player"))
-        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<AudioListener>()->SetGain(previousMusicVolume);
+    AudioManager::GetInstance()->audioListener->SetGain(previousMusicVolume);
     optionManager->musicVolume = previousMusicVolume;
     musicVolumeIterator = (short)(optionManager->musicVolume / 0.125f);
     musicVolumeButtons[0]->isActive = true;

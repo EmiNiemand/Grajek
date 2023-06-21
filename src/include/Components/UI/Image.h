@@ -28,6 +28,7 @@ public:
     /// Describes offset from leftBottom corner
     glm::vec2 pivot = {0, 0};
     std::string filePath;
+    bool isDynamic = false;
 
     Image(const std::shared_ptr<GameObject> &parent, int id);
 

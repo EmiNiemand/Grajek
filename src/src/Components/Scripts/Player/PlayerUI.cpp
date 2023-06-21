@@ -263,9 +263,6 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
             loadGameButtons[i + 5]->up = loadGameButtons[i];
         }
 
-        savePointMenu->AddImage("SavePointMenuBackground", 0, 0, "UI/pause.png");
-        savePointMenu->buttonImage = savePointMenu->AddImage("SavePointMenuButtonImage", 1600, 50, "UI/enterSavePoint.png");
-        SavePointManager::GetInstance()->buttonImage = savePointMenu->buttonImage;
         savePointMenu->GetParent()->DisableSelfAndChildren();
     }
 }

@@ -10,7 +10,13 @@ SavePointTrigger::~SavePointTrigger() = default;
 
 void SavePointTrigger::Start() {
     savePointMenu = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenu")->GetComponent<SavePointMenu>();
-    buttonImage = GloomEngine::GetInstance()->FindGameObjectWithName("SavePointMenuButtonImage")->GetComponent<Image>();
+    auto interactButton = GameObject::Instantiate("InteractButton", parent);
+    interactButton->transform->SetLocalPosition({0, 8, 0});
+    buttonImage = GameObject::Instantiate("ButtonImage", interactButton)->AddComponent<Image>();
+    buttonImage->LoadTexture(0, 0, "UI/enterSavePoint.png");
+    buttonImage->isDynamic = true;
+    buttonImage->SetScale(0.5);
+    buttonImage->enabled = false;
     Component::Start();
 }
 

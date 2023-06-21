@@ -24,8 +24,13 @@ void Dialogue::Awake() {
     parent->GetComponent<BoxCollider>()->SetSize({5, 5, 5});
     parent->GetComponent<BoxCollider>()->isTrigger = true;
 
-    image = GameObject::Instantiate("ButtonImage", parent)->AddComponent<Image>();
-    image->LoadTexture(1600, 50, "UI/interactionTalk.png");
+    auto interactButton = GameObject::Instantiate("InteractButton", parent);
+    interactButton->transform->SetLocalPosition({0, 8, 0});
+    image = GameObject::Instantiate("ButtonImage", interactButton)->AddComponent<Image>();
+    image->LoadTexture(0, 0, "UI/interactionTalk.png");
+    image->isDynamic = true;
+    image->SetScale(0.5);
+    image->enabled = false;
 
     dialogue = GameObject::Instantiate("Dialogue", parent->children.begin()->second);
     text1 = GameObject::Instantiate("DialogueText1", dialogue)->AddComponent<Text>();
@@ -38,7 +43,6 @@ void Dialogue::Awake() {
     dialogue->GetComponent<Button>()->LoadFont(name, 36, glm::vec3(1), GameFont::KanitMedium);
     dialogueImage = GameObject::Instantiate("DialogueImage", dialogue)->AddComponent<Image>();
     dialogueImage->LoadTexture(127, 0, "UI/Dialogues/Dialog" + std::to_string(RandomnessManager::GetInstance()->GetInt(1, 4)) + ".png");
-    image->enabled = false;
     dialogue->DisableSelfAndChildren();
 
     Component::Awake();

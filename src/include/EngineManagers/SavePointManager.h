@@ -12,7 +12,6 @@ private:
     inline static SavePointManager* savePointManager;
 
 public:
-    std::shared_ptr<Image> buttonImage;
     std::shared_ptr<SavePointTrigger> activeSavePoint;
     std::unordered_map<int, std::shared_ptr<SavePointTrigger>> savePoints;
 
