@@ -82,14 +82,20 @@ void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &s
     }, AnimationBehaviour::Resetable);
 
     // Add buttons
-    int x = 500, y = 603;
+    int x = -485, y = 603;
     for (int i = 0; i < 2; i++, y -= 145) {
         soundButtons.push_back(GameObject::Instantiate("clapPatternsButton", parent)->AddComponent<Button>());
         soundButtons[i]->LoadTexture(x, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
         soundButtons[i]->isActive = false;
-        soundButtons[i]->enabled = false;
         patternsSounds.push_back(GameObject::Instantiate("clapPatternsSound", parent)->AddComponent<AudioSource>());
         patternsSounds[i]->LoadAudioData("res/sounds/direct/clap/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
+        soundAnimators.push_back({GameObject::Instantiate("clapPatternsButtonAnimator", parent)->AddComponent<UIAnimator>(), GameObject::Instantiate("clapPatternsButtonAnimator", parent)->AddComponent<UIAnimator>()});
+        soundAnimators[i][0]->Setup(soundButtons[i], {
+                {AnimatedProperty::Position, glm::vec3(500, y, -0.85), 0.5f}
+        }, AnimationBehaviour::Resetable);
+        soundAnimators[i][1]->Setup(soundButtons[i], {
+                {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.5f}
+        }, AnimationBehaviour::Resetable);
     }
     soundButtons[0]->up = soundButtons[1];
     soundButtons[0]->down = soundButtons[1];
@@ -108,14 +114,18 @@ bool ClapSessionUI::ToggleCheatSheet() {
     if (!SessionUI::ToggleCheatSheet()) return false;
     if (cheatSheetActive) {
         for (const auto & button : soundButtons) {
-            button->enabled = true;
             button->isActive = false;
+        }
+        for (int i = 0; i < 2; i++) {
+            soundAnimators[i][0]->Reset();
         }
         soundButtons[0]->isActive = true;
         activeButton = soundButtons[0];
     } else {
         for (const auto & button : soundButtons) {
-            button->enabled = false;
+            for (int i = 0; i < 2; i++) {
+                soundAnimators[i][1]->Reset();
+            }
         }
     }
     return true;

@@ -4,6 +4,7 @@
 #include "EngineManagers/UIManager.h"
 #include "stb_image.h"
 #include "LowLevelClasses/Mesh.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -72,6 +73,7 @@ void Button::LoadTexture(int x, int y, const std::string& path, const std::strin
         this->height = height;
         this->x = x;
         this->y = y;
+        parent->transform->SetLocalPosition(glm::vec3(x, y, z));
     }
     else
     {
@@ -192,6 +194,21 @@ void Button::ChangeZ(float newZ) {
     textMesh->vertices[3].position.z = z-0.01f;
 
     textureMesh = CreateMesh(x, y, width,height);
+}
+
+void Button::SetPosition(float x2, float y2) {
+    x=x2; y=y2;
+    parent->transform->SetLocalPosition(glm::vec3(x, y, z));
+    leftBottom = {x - width*pivot.x*scale.x, y - height*pivot.y*scale.y};
+    rightTop = {x + width*(1-pivot.x)*scale.x, y + height*(1-pivot.y)*scale.y};
+    leftTop = {leftBottom.x, rightTop.y};
+    rightBottom = {rightTop.x, leftBottom.y};
+    textureMesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    textureMesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    textureMesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    textureMesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    textureMesh->setupMesh();
+    UIComponent::SetPosition(x2, y2);
 }
 
 void Button::SetScale(float newScale) {

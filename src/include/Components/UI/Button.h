@@ -31,6 +31,7 @@ public:
     std::string text;
     bool isActive = false;
     std::shared_ptr<Button> left, right, up, down;
+    glm::vec2 pivot = {0,0};
 
 public:
     Button(const std::shared_ptr<GameObject> &parent, int id);
@@ -50,6 +51,7 @@ public:
     void ChangePosition(int newX, int newY);
     void ChangeZ(float newZ);
 
+    void SetPosition(float x2, float y2) override;
     void SetScale(float scale) override;
     void SetColor(glm::vec3 newColor) override;
 

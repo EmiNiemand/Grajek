@@ -54,6 +54,7 @@ protected:
     bool cheatSheetActive = false;
     std::shared_ptr<Button> activeButton;
     std::vector<std::shared_ptr<Button>> soundButtons;
+    std::vector<std::vector<std::shared_ptr<UIAnimator>>> soundAnimators;
     std::vector<std::shared_ptr<AudioSource>> patternsSounds;
 
     // Samples
