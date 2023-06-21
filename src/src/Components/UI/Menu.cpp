@@ -16,6 +16,7 @@ void Menu::Awake() {
     auto soundObject = GameObject::Instantiate("buttonChangeAudioSource", parent);
     activeButtonChangeSound = soundObject->AddComponent<AudioSource>();
     activeButtonChangeSound->LoadAudioData("res/sounds/direct/options_scroll.wav", AudioType::Direct);
+    activeButtonChangeSound->SetGain(0.5);
     Component::Awake();
 }
 
