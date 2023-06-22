@@ -15,6 +15,7 @@
 #include "EngineManagers/AIManager.h"
 #include "Components/Scripts/SessionUI/SessionUI.h"
 #include "Components/Scripts/Crowd.h"
+#include "EngineManagers/RandomnessManager.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -23,16 +24,19 @@ Opponent::~Opponent() = default;
 void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
                      short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
 //     Setup pattern
+    sampleSources.reserve(5);
     instrument = std::move(instrument1);
     //TODO: added back to make patterns work -> delete later
-    instrument->GeneratePattern(musicPattern);
-    pattern = instrument->patterns.back();
-    pattern->sounds[0]->delay = musicPattern[0].delay;
-    for (const auto& sound: instrument->patterns.back()->sounds) {
+    pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
+//    instrument->GeneratePattern(musicPattern);
+//    pattern = instrument->patterns.back();
+//    pattern->sounds[0]->delay = musicPattern[0].delay;
+    for (const auto& sound: pattern->sounds) {
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
         sample->SetDistanceMode(AudioDistanceMode::Continuous);
+        sample->SetPitch(0.8f);
         sample->SetMaxDistance(10);
         if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
     }
@@ -133,8 +137,23 @@ void Opponent::Update() {
         if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
         sampleSources[sampleIndex]->ForcePlaySound();
         sampleIndex++;
-        if (sampleIndex >= pattern->sounds.size())
+        if (sampleIndex >= pattern->sounds.size()) {
+            pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
+            for (const auto& sample : sampleSources) {
+                GameObject::Destroy(sample->GetParent());
+            }
+            sampleSources.clear();
+            for (const auto& sound: pattern->sounds) {
+                sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
+                auto sample = sampleSources.back();
+                sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
+                sample->SetDistanceMode(AudioDistanceMode::Continuous);
+                sample->SetPitch(0.8f);
+                sample->SetMaxDistance(10);
+                if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
+            }
             sampleIndex = 0;
+        }
     }
 
     if (!dialogue->triggerActive) return;
@@ -276,11 +295,11 @@ void Opponent::Update() {
     Component::Update();
 }
 
-void Opponent::PlayerPlayedPattern(float satisfaction1) {
-    float s = satisfaction1 - AIManager::GetInstance()->GetCombinedOpponentSatisfaction();
-    satisfactionDifference += s;
-    belt->SetScale(glm::vec2(satisfactionDifference / 100, 1.0f));
+void Opponent::PlayerPlayedPattern(float playerSatisfaction) {
     AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
+    float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction() - playerSatisfaction;
+    satisfactionDifference += std::clamp(diff, -5.0f, 5.0f);
+    belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
 }
 
 void Opponent::OnDestroy() {

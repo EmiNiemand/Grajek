@@ -136,34 +136,35 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
         }
     }
 
-    if (sessionCharacters != 0.0f)
+    if (sessionCharacters != 0.0f) {
         satisfaction /= sessionCharacters;
 
-    return satisfaction / 100.0f;
+        switch (currentPlayerInstrument) {
+            case Clap:
+                satisfaction *= CLAP_MODIFIER;
+                break;
+            case Drums:
+                satisfaction *= DRUMS_MODIFIER;
+                break;
+            case Trumpet:
+                satisfaction *= TRUMPET_MODIFIER;
+                break;
+            case Launchpad:
+                satisfaction *= LAUNCHPAD_MODIFIER;
+                break;
+            case Guitar:
+                satisfaction *= GUITAR_MODIFIER;
+                break;
+        }
+    }
+
+    return satisfaction;
 }
 
 float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
     float crowdSize = 1.0f;
-
-    switch (currentPlayerInstrument) {
-        case Clap:
-            satisfaction *= CLAP_MODIFIER;
-            break;
-        case Drums:
-            satisfaction *= DRUMS_MODIFIER;
-            break;
-        case Trumpet:
-            satisfaction *= TRUMPET_MODIFIER;
-            break;
-        case Launchpad:
-            satisfaction *= LAUNCHPAD_MODIFIER;
-            break;
-        case Guitar:
-            satisfaction *= GUITAR_MODIFIER;
-            break;
-    }
 
     if (sessionCharacters <= 10.0f)
         satisfaction *= 1.25;
@@ -174,7 +175,7 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     else
         satisfaction *= 2.0f;
 
-    return ((accuracy * (float)patternSize) + satisfaction * randomModifier) * crowdSize;
+    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier) * crowdSize;
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {

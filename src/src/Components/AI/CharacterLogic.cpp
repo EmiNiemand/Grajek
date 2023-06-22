@@ -250,15 +250,15 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
 
         for (auto& pat : favPatterns) {
             if (pat.first == pattern->id) {
-                opponentSatisfaction += 3.0f;
+                opponentSatisfaction += 10.0f;
                 isFavorite = true;
             }
         }
 
         if (!isFavorite)
-            opponentSatisfaction += 1.5f;
+            opponentSatisfaction += 5.0f;
     } else {
-        opponentSatisfaction -= 3.0f;
+        opponentSatisfaction -= 5.0f;
     }
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
