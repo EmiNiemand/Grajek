@@ -10,6 +10,7 @@
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterAnimations.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
+#include "Components/PhysicsAndColliders/Rigidbody.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -34,6 +35,7 @@ void CharacterLogic::Start() {
 }
 
 void CharacterLogic::Update() {
+    float velocity;
     if (logicState != Listening) {
         switch (characterMovement->GetState()) {
             case OnPathToDuel:
@@ -41,6 +43,9 @@ void CharacterLogic::Update() {
                 characterAnimations->SetNewState(Running);
                 break;
             case OnPathToTarget:
+                velocity = glm::length(glm::vec2(characterMovement->rigidbody->velocity.x, characterMovement->rigidbody->velocity.z));
+                if (velocity < 0.0001)
+                    characterAnimations->SetNewState(Idle);
                 characterAnimations->SetNewState(Walking);
                 break;
             case NearTargetPosition:
