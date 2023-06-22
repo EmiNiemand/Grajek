@@ -19,7 +19,7 @@ constexpr int AI_SPAWN_Y_MIN_DISTANCE = 30;
 constexpr int AI_SPAWN_Y_MAX_DISTANCE = 15;
 constexpr int AI_POINT_DISTANCE = 25;
 constexpr float AI_AWARE_DISTANCE = 35.0f;
-constexpr float AI_DESPAWN_TIMEOUT = 0.75f;
+constexpr float AI_DESPAWN_TIMEOUT = 1.0f;
 constexpr float AI_CELL_SIZE = 1.0f;
 // Jazz Hood consts
 constexpr float JAZZ_HOOD_DISTANCE = 70.0f;

@@ -301,14 +301,14 @@ void Game::InitializeGame() const {
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -3));
     shopkeeper->AddComponent<Shopkeeper>();
 
-#ifdef DEBUG
-    AIManager::GetInstance()->InitializeSpawner(1);
-#else
-    AIManager::GetInstance()->InitializeSpawner(50);
-#endif
-
     std::shared_ptr<GameObject> crowd = GameObject::Instantiate("Crowd", SceneManager::GetInstance()->activeScene);
     crowd->AddComponent<Crowd::Crowd>();
+
+#ifdef DEBUG
+//    AIManager::GetInstance()->InitializeSpawner(1);
+#else
+    AIManager::GetInstance()->InitializeSpawner(55);
+#endif
 
     camera->SetTarget(nullptr);
 }
