@@ -9,7 +9,6 @@
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterAnimations.h"
-#include "Components/Scripts/MusicPattern.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 
 #ifdef DEBUG
