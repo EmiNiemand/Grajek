@@ -216,13 +216,16 @@ bool SessionUI::ToggleBackingTrack() {
 
 void SessionUI::ChangeActiveButton(glm::vec2 moveVector) {
     if (!cheatSheetActive) return;
+    if (!activeButton) return;
 
     if (moveVector.y == 1.0f) {
+        if (!activeButton->up) return;
         activeButton->isActive = false;
         activeButton = activeButton->up;
         activeButton->isActive = true;
     }
     if (moveVector.y == -1.0f) {
+        if (!activeButton->down) return;
         activeButton->isActive = false;
         activeButton = activeButton->down;
         activeButton->isActive = true;
