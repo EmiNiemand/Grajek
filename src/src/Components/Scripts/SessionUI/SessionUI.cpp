@@ -43,12 +43,12 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(451, -1100, cheatSheetPath, -0.8);
+    cheatSheet->LoadTexture(-985, 0, cheatSheetPath, -0.8);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
-    instrumentControl->LoadTexture(450, -1100, instrumentControlPath, -0.8);
+    instrumentControl->LoadTexture(1785, 0, instrumentControlPath, -0.8);
 }
 
 void SessionUI::PlaySound(int index) {
@@ -63,12 +63,12 @@ bool SessionUI::ToggleCheatSheet() {
     if (cheatSheetActive) {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, 0, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(-75, 0, 0), 0.5f}
                 });
     } else {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -1100.0f, 0.0f), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(-985, 0, 0), 0.5f}
                 });
     }
     return true;
@@ -81,12 +81,12 @@ void SessionUI::ToggleInstrumentControl() {
     if (instrumentControlActive) {
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(960 - instrumentControl->GetWidth()/2, 0, 0.0f), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
         });
     } else {
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(960 - instrumentControl->GetWidth()/2, -1100.0f, 0.0f), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
         });
     }
 }

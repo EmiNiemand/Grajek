@@ -87,7 +87,7 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
             auto optionButton = pause->AddButton(buttonNames[i]+"Button", 0, 0,
                                                  "UI/Pauza/"+buttonImageNames[i]+".png",
                                                  "UI/Pauza/"+buttonImageNames[i]+"_Kolor.png",
-                                                 "", 32, glm::vec3(), GameFont::KanitLight, -1);
+                                                 "", 32, glm::vec3(), GameFont::KanitLight, -0.96);
             optionButton->ChangePosition(50, currentYPos);
             currentYPos += buttonOffset;
 
@@ -162,11 +162,12 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         cancelButton->left = saveButton;
 
         auto chooseMenu = GameObject::Instantiate("OptionsChooseMenu", optionsMenu->GetParent())->AddComponent<OptionsChooseMenu>();
-        chooseMenu->GetParent()->AddComponent<Image>()->LoadTexture(600, 400, "UI/Settings/chooseMenu.png", -0.98);
+        chooseMenu->GetParent()->AddComponent<Image>()->LoadTexture(700, 420, "UI/Settings/chooseMenu.png", -0.99);
+        GameObject::Instantiate("OptionsChooseMenuBG", chooseMenu->GetParent())->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity60.png", -0.98);
         chooseMenu->button1 = GameObject::Instantiate("OptionsChooseMenuButton1", chooseMenu->GetParent())->AddComponent<Button>();
-        chooseMenu->button1->LoadTexture(500, 350, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -1);
+        chooseMenu->button1->LoadTexture(772, 450, "UI/Settings/chooseMenuYes.png", "UI/Settings/chooseMenuYesActive.png", -1);
         chooseMenu->button2 = GameObject::Instantiate("OptionsChooseMenuButton2", chooseMenu->GetParent())->AddComponent<Button>();
-        chooseMenu->button2->LoadTexture(800, 350, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -1);
+        chooseMenu->button2->LoadTexture(1016, 450, "UI/Settings/chooseMenuNo.png", "UI/Settings/chooseMenuNoActive.png", -1);
         chooseMenu->button2->isActive = true;
         optionsMenu->chooseMenu = chooseMenu->GetParent();
         optionsMenu->GetParent()->DisableSelfAndChildren();

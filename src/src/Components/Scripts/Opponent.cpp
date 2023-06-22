@@ -14,6 +14,7 @@
 #include "Components/Scripts/Player/PlayerEquipment.h"
 #include "EngineManagers/AIManager.h"
 #include "Components/Scripts/SessionUI/SessionUI.h"
+#include "Components/Scripts/Crowd.h"
 
 Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -21,7 +22,7 @@ Opponent::~Opponent() = default;
 
 void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
                      short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
-    // Setup pattern
+//     Setup pattern
     instrument = std::move(instrument1);
     //TODO: added back to make patterns work -> delete later
     instrument->GeneratePattern(musicPattern);
@@ -40,7 +41,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     bet = bet1;
     badge = badge1;
 
-    // Setup UI
+//     Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
     GameObject::Instantiate("OpponentFrame", ui)->AddComponent<Image>()
             ->LoadTexture(460, 880, "UI/Opponent/battleFrame.png", -0.5);
@@ -59,7 +60,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     indicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
     indicator->GetComponent<Renderer>()->material.color = indicatorColor;
 
-    // Setup dialogues
+//     Setup dialogues
     dialogue = GameObject::Instantiate("OpponentDialogue", parent)->AddComponent<Dialogue>();
     winDialogue = GameObject::Instantiate("OpponentWinDialogue", parent)->AddComponent<Dialogue>();
     winDialogue->forced = true;
@@ -82,17 +83,23 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
     winDialogue->name = name;
     lossDialogue->name = name;
 
-    // Setup choose menu
+//     Setup choose menu
     chooseMenu = GameObject::Instantiate("OpponentChooseMenu", parent);
-    chooseMenu->AddComponent<Image>()->LoadTexture(560, 400, "UI/Opponent/chooseMenu.png", -0.6f);
+    chooseMenu->AddComponent<Image>()->LoadTexture(700, 420, "UI/Opponent/chooseMenu.png", -0.6f);
     button1 = GameObject::Instantiate("OpponentChooseMenuButton1", chooseMenu)->AddComponent<Button>();
-    button1->LoadTexture(573, 412, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -0.65f);
+    button1->LoadTexture(772, 450, "UI/Opponent/acceptBattle.png", "UI/Opponent/acceptBattleActive.png", -0.65f);
     button2 = GameObject::Instantiate("OpponentChooseMenuButton2", chooseMenu)->AddComponent<Button>();
-    button2->LoadTexture(967, 412, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -0.65f);
+    button2->LoadTexture(1016, 450, "UI/Opponent/declineBattle.png", "UI/Opponent/declineBattleActive.png", -0.65f);
     button2->isActive = true;
     GameObject::Instantiate("OpponentChooseMenuImage", chooseMenu)->AddComponent<Image>()->
             LoadTexture(0, 0, "UI/backgroundOpacity60.png", 0.65f);
     chooseMenu->DisableSelfAndChildren();
+
+    // Setup sounds
+    winSound = GameObject::Instantiate("WinAudioSource", parent)->AddComponent<AudioSource>();
+    winSound->LoadAudioData("res/sounds/direct/win.wav", AudioType::Direct);
+    loseSound = GameObject::Instantiate("LoseAudioSource", parent)->AddComponent<AudioSource>();
+    loseSound->LoadAudioData("res/sounds/direct/lose.wav", AudioType::Direct);
 }
 
 void Opponent::Start() {
@@ -237,6 +244,7 @@ void Opponent::Update() {
                 time = 0.0f;
                 satisfactionDifference = 0.0f;
                 playerManager->EndSessionWithOpponent(false, bet);
+                loseSound->PlaySound();
             }
             if (satisfactionDifference >= 100 || (time >= battleTime && satisfactionDifference > 0)) {
                 defeated = true;
@@ -244,7 +252,10 @@ void Opponent::Update() {
                 playerManager->EndSessionWithOpponent(true, bet);
                 if (badge != (PlayerBadges)(-1)) playerManager->ReceiveBadge(badge);
                 indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
+                auto crowd = GloomEngine::GetInstance()->FindGameObjectWithName("Crowd");
+                if (crowd) crowd->GetComponent<Crowd::Crowd>()->OnEnemyDefeat(badge);
                 // TODO add sound when player beat boss
+                winSound->PlaySound();
             }
             AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
             ui->DisableSelfAndChildren();

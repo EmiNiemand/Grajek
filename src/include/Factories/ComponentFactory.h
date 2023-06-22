@@ -9,29 +9,6 @@
 
 class GameObject;
 
-// Component classes - add component classes after creating new component
-class Component;
-class Renderer;
-class CubeMap;
-class Animator;
-class Camera;
-class PointLight;
-class DirectionalLight;
-class SpotLight;
-class BoxCollider;
-class Rigidbody;
-class Image;
-class Text;
-class PlayerManager;
-class PlayerMovement;
-class PlayerUI;
-class PlayerEquipment;
-class SessionUI;
-class MusicSession;
-class CharacterLogic;
-class CharacterMovement;
-class AudioSource;
-
 class ComponentFactory {
 private:
     int id = 0;
