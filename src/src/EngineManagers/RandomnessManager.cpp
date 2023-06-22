@@ -24,9 +24,11 @@ void RandomnessManager::InitializeRandomEngine() {
 #ifdef DEBUG
     ZoneScopedNC("RandomnessManager", 0xDC143C);
 #endif
-
-    std::random_device rd{};
-    randomEngine = std::mt19937 {rd()};
+    // NOTE: sometimes, depending on implementation and device, random_device can produce deterministic
+    // integers, i.e. same value even after reinitialization
+//    std::random_device rd;
+//    std::seed_seq seed {rd()};
+    randomEngine.seed(std::time(nullptr));
 }
 
 void RandomnessManager::Free() { }

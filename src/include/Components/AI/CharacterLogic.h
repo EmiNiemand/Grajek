@@ -9,7 +9,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "Components/Component.h"
-#include "Components/Scripts/MusicPattern.h"
 #include "Components/AI/CharacterStates.h"
 #include <vector>
 
@@ -20,6 +19,7 @@ constexpr float PREVIOUS_SESSION_TIMEOUT = 10.0f;
 class GameObject;
 class CharacterAnimations;
 class CharacterMovement;
+class MusicPattern;
 
 class CharacterLogic : public Component {
     AI_LOGIC_STATE logicState = Wandering;

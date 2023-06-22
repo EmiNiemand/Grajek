@@ -64,17 +64,32 @@ std::shared_ptr<GameObject> Default::Create() {
     auto instrument = Instrument::GetInstrument(Drums);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
+        if (RandomnessManager::GetInstance()->GetInt(0, 1))
+            characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
+
+    if (characterLogic->favPatterns.empty())
+        for (const auto& pat : instrument->patterns)
+            characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     instrument = Instrument::GetInstrument(Clap);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
+        if (RandomnessManager::GetInstance()->GetInt(0, 1))
+            characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
+
+    if (characterLogic->favPatterns.empty())
+        for (const auto& pat : instrument->patterns)
+            characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     instrument = Instrument::GetInstrument(Trumpet);
 
     for (const auto& pat : instrument->patterns)
-        characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
+        if (RandomnessManager::GetInstance()->GetInt(0, 1))
+            characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
+
+    if (characterLogic->favPatterns.empty())
+        for (const auto& pat : instrument->patterns)
+            characterLogic->favPatterns.emplace_back(pat->id, 0.0f);
 
     return character;
 }

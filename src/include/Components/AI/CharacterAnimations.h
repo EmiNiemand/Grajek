@@ -6,7 +6,6 @@
 #define GLOOMENGINE_CHARACTERANIMATIONS_H
 
 #include "Components/AI/CharacterStates.h"
-
 #include <memory>
 
 class Animator;

@@ -9,6 +9,7 @@
 #include "Components/AI/CharacterLogic.h"
 #include "Components/AI/CharacterMovement.h"
 #include "Components/AI/CharacterAnimations.h"
+#include "Components/Scripts/MusicPattern.h"
 #include "GameObjectsAndPrefabs/Prefab.h"
 
 #ifdef DEBUG
@@ -73,7 +74,9 @@ void CharacterLogic::Update() {
 }
 
 void CharacterLogic::AIUpdate() {
-    if (logicState == AlertedByPlayer) {
+    if (logicState == Listening) {
+        playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
+    } else if (logicState == AlertedByPlayer) {
         CalculateBasePlayerSatisfaction();
 
         if (playerSatisfaction > lowerSatisfactionLimit) {
@@ -81,7 +84,6 @@ void CharacterLogic::AIUpdate() {
             characterMovement->SetState(SettingPathToPlayer);
         }
     } else if (logicState == AlertedByOpponent) {
-        CalculateBaseOpponentSatisfaction();
         playerSatisfaction = 50.0f;
 
         logicState = MovingToDuel;
@@ -119,9 +121,6 @@ void CharacterLogic::AIUpdate() {
     } else {
         timeSinceOnFrustum = 0.0f;
     }
-
-    if (logicState == Listening)
-        playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
 
     Component::AIUpdate();
 }
@@ -178,12 +177,12 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
                 pat.second = std::clamp(pat.second + 1.0f, 0.0f, 5.0f);
                 isFavorite = true;
             } else {
-                pat.second = std::clamp(pat.second - 1.0f, 0.0f, 5.0f);
+                pat.second = std::clamp(pat.second - 1.0f, -1.0f, 5.0f);
             }
         }
 
         if (!isFavorite)
-            playerSatisfaction += 1.0f;
+            playerSatisfaction += 2.0f;
     } else {
         playerSatisfaction -= 5.0f;
     }
@@ -237,6 +236,8 @@ const float CharacterLogic::GetPlayerSatisfaction() const {
 void CharacterLogic::SetOpponentInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre) {
     opponentInstrumentName = instrument;
     opponentGenre = genre;
+
+    CalculateBaseOpponentSatisfaction();
 }
 
 /**
@@ -249,16 +250,16 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
         bool isFavorite = false;
 
         for (auto& pat : favPatterns) {
-            if (pat.first == pattern->id)
+            if (pat.first == pattern->id) {
+                opponentSatisfaction += 3.0f;
                 isFavorite = true;
+            }
         }
 
-        if (isFavorite)
-            opponentSatisfaction += 10.0f;
-        else
-            opponentSatisfaction += 6.0f;
+        if (!isFavorite)
+            opponentSatisfaction += 1.5f;
     } else {
-        opponentSatisfaction -= 2.0f;
+        opponentSatisfaction -= 3.0f;
     }
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
@@ -332,14 +333,14 @@ void CharacterLogic::CalculateBasePlayerSatisfaction() {
  * Calculates starting opponent satisfaction.
  */
 void CharacterLogic::CalculateBaseOpponentSatisfaction() {
-    opponentSatisfaction = 40.0f;
+    opponentSatisfaction = 0.0f;
 
     if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
-        opponentSatisfaction += 5.0f;
+        opponentSatisfaction += 35.0f;
 
     if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
         != favInstrumentsNames.end())
-        opponentSatisfaction += 5.0f;
+        opponentSatisfaction += 25.0f;
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
 }

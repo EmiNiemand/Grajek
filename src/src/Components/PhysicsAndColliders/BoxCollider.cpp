@@ -3,7 +3,6 @@
 #include "EngineManagers/CollisionManager.h"
 #include "Components/PhysicsAndColliders/Rigidbody.h"
 #include "EngineManagers/AIManager.h"
-#include <cmath>
 
 BoxCollider::BoxCollider(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {

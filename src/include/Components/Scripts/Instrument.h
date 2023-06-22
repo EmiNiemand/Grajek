@@ -24,7 +24,7 @@ public:
 	std::vector<std::shared_ptr<MusicPattern>> patterns;
 	std::vector<std::shared_ptr<Sample>> samples;
 
-    void Setup(InstrumentName name, MusicGenre genre=MusicGenre::Jazz, const std::shared_ptr<Image> &icon = nullptr);
+    void Setup(InstrumentName instrumentName, MusicGenre musicGenre=MusicGenre::Jazz, const std::shared_ptr<Image> &image = nullptr);
     void AddPatterns(std::vector<std::shared_ptr<MusicPattern>> newPatterns);
     /**
      * @brief Generates new pattern from given RawSamples. Each RawSample contains

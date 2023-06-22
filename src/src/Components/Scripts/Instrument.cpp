@@ -6,10 +6,10 @@
 #include <utility>
 #include "Components/UI/Image.h"
 
-void Instrument::Setup(InstrumentName name, MusicGenre genre, const std::shared_ptr<Image> &icon) {
-    this->name = name;
-    this->genre = genre;
-    this->icon = icon;
+void Instrument::Setup(InstrumentName instrumentName, MusicGenre musicGenre, const std::shared_ptr<Image> &image) {
+    this->name = instrumentName;
+    this->genre = musicGenre;
+    this->icon = image;
     patterns = std::vector<std::shared_ptr<MusicPattern>>();
 }
 
