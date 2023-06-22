@@ -102,16 +102,16 @@ void ShopMenu::OnClick() {
     bool boughtInstrument = false;
     if (activeButton->GetParent()->GetName() == "FirstInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                200, Instrument::GetInstrument(InstrumentName::Drums));
+                DRUMS_PRICE, Instrument::GetInstrument(InstrumentName::Drums));
     } else if (activeButton->GetParent()->GetName() == "SecondInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                500, Instrument::GetInstrument(InstrumentName::Trumpet));
+                TRUMPET_PRICE, Instrument::GetInstrument(InstrumentName::Trumpet));
     } else if (activeButton->GetParent()->GetName() == "ThirdInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                INT_MAX, Instrument::GetInstrument(InstrumentName::Launchpad));
+                LAUNCHPAD_PRICE, Instrument::GetInstrument(InstrumentName::Launchpad));
     } else if (activeButton->GetParent()->GetName() == "FourthInstrument") {
         boughtInstrument = playerManager->BuyInstrument(
-                INT_MAX, Instrument::GetInstrument(InstrumentName::Guitar));
+                GUITAR_PRICE, Instrument::GetInstrument(InstrumentName::Guitar));
     }
     if(boughtInstrument) {
         if (activeButton->GetParent()->GetName() == "FirstInstrument"){
@@ -139,12 +139,10 @@ void ShopMenu::OnClick() {
         }
         DeleteButton(activeButton);
         if (instruments.empty()) buyImage->enabled = false;
-//        spdlog::info("[SM] Bought instrument!");
         buySound->ForcePlaySound();
     } else {
         GameObject::Instantiate("Popup", parent)->AddComponent<Popup>()->
                 Setup(610, 500, "UI/Sklep/Cash.png", "UI/buttonInactive.png", "UI/buttonActive.png");
-//        spdlog::info("[SM] Not enough money for instrument");
         cantBuySound->ForcePlaySound();
     }
 }

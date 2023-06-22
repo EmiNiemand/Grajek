@@ -38,7 +38,7 @@ std::set<InstrumentName> PlayerEquipment::GetInstrumentNames() {
 }
 
 void PlayerEquipment::AddReward(float crowdSatisfaction) {
-    cash += (int)(crowdSatisfaction * maxCashReward);
+    cash += (int)std::round(crowdSatisfaction);
 }
 
 int PlayerEquipment::GetCash() const { return cash; }

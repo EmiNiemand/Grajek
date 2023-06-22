@@ -5,6 +5,11 @@
 #ifndef GLOOMENGINE_INSTRUMENT_H
 #define GLOOMENGINE_INSTRUMENT_H
 
+#define DRUMS_PRICE 100
+#define TRUMPET_PRICE 300
+#define LAUNCHPAD_PRICE INT_MAX
+#define GUITAR_PRICE INT_MAX
+
 #include <memory>
 #include <vector>
 #include "MusicPattern.h"
