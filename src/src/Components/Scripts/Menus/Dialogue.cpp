@@ -12,6 +12,7 @@
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/Renderers/Camera.h"
 #include "Utilities.h"
+#include "Components/Scripts/Player/PlayerInput.h"
 
 Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -65,18 +66,22 @@ void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 
 void Dialogue::Update() {
     if (!triggerActive || menuActive) return;
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E) && !forced && !active) {
-        if (dialogueIndex == 0) {
-            ShowDialogue();
-            return;
+    for (const auto& interactKey : PlayerInput::Interact) {
+        if (HIDManager::GetInstance()->IsKeyDown(interactKey.first) && !forced && !active) {
+            if (dialogueIndex == 0) {
+                ShowDialogue();
+                return;
+            }
         }
     }
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E)) {
-        if (dialogueIndex == texts.size() - 1) {
-            HideDialogue();
-            return;
+    for (const auto& applyKey : PlayerInput::Apply) {
+        if (HIDManager::GetInstance()->IsKeyDown(applyKey.first)) {
+            if (dialogueIndex == texts.size() - 1) {
+                HideDialogue();
+                return;
+            }
+            NextDialogue();
         }
-        NextDialogue();
     }
     Component::Update();
 }
