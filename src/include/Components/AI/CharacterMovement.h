@@ -59,7 +59,7 @@ class CharacterMovement : public Component {
     glm::ivec2 maxSpawnCoords {};
     glm::ivec2 minSpawnCoords {};
     // Rigidbody parameters
-    std::shared_ptr<Rigidbody> rigidbody = nullptr;
+
     float speed = 0.0f;
     float speedMultiplier = 1.0f;
     float rotationAngle = 0.0f;
@@ -79,6 +79,8 @@ protected:
     const glm::ivec2 GetCurrentEndTarget() const;
 
 public:
+    std::shared_ptr<Rigidbody> rigidbody = nullptr;
+
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 

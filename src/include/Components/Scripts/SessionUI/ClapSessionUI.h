@@ -9,7 +9,6 @@ public:
 
     void Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) override;
     void PlaySound(int index) override;
-    bool ToggleCheatSheet() override;
 };
 
 #endif //GLOOMENGINE_CLAPSESSIONUI_H

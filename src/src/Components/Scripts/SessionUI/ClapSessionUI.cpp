@@ -91,24 +91,3 @@ void ClapSessionUI::PlaySound(int index) {
     }
     SessionUI::PlaySound(index);
 }
-
-bool ClapSessionUI::ToggleCheatSheet() {
-    if (!SessionUI::ToggleCheatSheet()) return false;
-    if (cheatSheetActive) {
-        for (const auto & button : soundButtons) {
-            button->isActive = false;
-        }
-        for (int i = 0; i < 2; i++) {
-            soundAnimators[i][0]->Reset();
-        }
-        soundButtons[0]->isActive = true;
-        activeButton = soundButtons[0];
-    } else {
-        for (const auto & button : soundButtons) {
-            for (int i = 0; i < 2; i++) {
-                soundAnimators[i][1]->Reset();
-            }
-        }
-    }
-    return true;
-}

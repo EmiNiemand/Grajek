@@ -83,6 +83,8 @@ void AIManager::Free() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
+    sessionCharacters = 0.0f;
+
     currentPlayerInstrument = ins;
 
     for (auto&& ch : charactersLogics) {
@@ -122,9 +124,7 @@ void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& p
  * @returns float - combined satisfaction of every character
  */
 const float AIManager::GetCombinedPlayerSatisfaction() {
-    float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = 0.0f;
-    float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
 
     for (auto&& ch : charactersLogics) {
@@ -132,12 +132,12 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
 
         if (state == Listening) {
             satisfaction += ch.second->GetPlayerSatisfaction();
-            characterCounter += 1.0f;
+            sessionCharacters += 1.0f;
         }
     }
 
-    if (characterCounter != 0.0f) {
-        satisfaction /= characterCounter;
+    if (sessionCharacters != 0.0f) {
+        satisfaction /= sessionCharacters;
 
         switch (currentPlayerInstrument) {
             case Clap:
@@ -158,7 +158,24 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
         }
     }
 
-    return satisfaction * randomModifier;
+    return satisfaction;
+}
+
+float AIManager::GetReward(const float& accuracy, const int& patternSize) {
+    float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
+    float satisfaction = GetCombinedPlayerSatisfaction();
+    float crowdSize = 1.0f;
+
+    if (sessionCharacters <= 10.0f)
+        satisfaction *= 1.25;
+    else if (sessionCharacters <= 20.0f)
+        satisfaction *= 1.5f;
+    else if (sessionCharacters <= 30.0f)
+        satisfaction *= 1.75f;
+    else
+        satisfaction *= 2.0f;
+
+    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier) * crowdSize;
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {

@@ -78,8 +78,8 @@ bool GloomEngine::MainLoop() {
     glfwSetWindowSize(window, OptionsManager::GetInstance()->width, OptionsManager::GetInstance()->height);
 
     // AI UPDATE
-    int multiplier4Rate = (int)((currentTime - (float)(int)currentTime) * 4);
-    int multiplier4LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 4);
+    int multiplier2Rate = (int)((currentTime - (float)(int)currentTime) * 2);
+    int multiplier2LastRate = (int)((lastAIFrameTime - (float)(int)lastAIFrameTime) * 2);
     // FIXED UPDATE
     int multiplier120Rate = (int)((currentTime - (float)(int)currentTime) * 120);
     int multiplier120LastRate = (int)((lastFixedFrameTime - (float)(int)lastFixedFrameTime) * 120);
@@ -129,7 +129,7 @@ bool GloomEngine::MainLoop() {
 
     if (SceneManager::GetInstance()->activeScene->GetName() != "MainMenuScene") {
         // AI UPDATE
-        if (multiplier4Rate > multiplier4LastRate || (multiplier4Rate == 0 && multiplier4LastRate != 0)) {
+        if (multiplier2Rate > multiplier2LastRate || (multiplier2Rate == 0 && multiplier2LastRate != 0)) {
 #ifdef DEBUG
             ZoneScopedNC("AI update", 0x00FF00);
 #endif

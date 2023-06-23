@@ -1,6 +1,7 @@
 #include "Components/Scripts/SessionUI/DrumsSessionUI.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/UI/Image.h"
+#include "Components/UI/Button.h"
 #include "Components/Animations/UIAnimator.h"
 #include "EngineManagers/RandomnessManager.h"
 
@@ -56,6 +57,31 @@ void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionM
         {AnimatedProperty::Alpha, glm::vec3(0.6f), 0.1f},
         {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
+
+    // Add buttons
+    int x = -335, y = 625;
+    for (int i = 0; i < 4; i++, y -= 187) {
+        soundButtons.push_back(GameObject::Instantiate("drumsPatternsButton", parent)->AddComponent<Button>());
+        soundButtons[i]->LoadTexture(x, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
+        soundButtons[i]->isActive = false;
+        patternsSounds.push_back(GameObject::Instantiate("drumsPatternsSound", parent)->AddComponent<AudioSource>());
+        patternsSounds[i]->LoadAudioData("res/sounds/direct/drums/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
+        soundAnimators.push_back({GameObject::Instantiate("drumsPatternsButtonAnimator", parent)->AddComponent<UIAnimator>(), GameObject::Instantiate("drumsPatternsButtonAnimator", parent)->AddComponent<UIAnimator>()});
+        soundAnimators[i][0]->Setup(soundButtons[i], {
+                {AnimatedProperty::Position, glm::vec3(550, y, -0.85), 0.5}
+        }, AnimationBehaviour::Resetable);
+        soundAnimators[i][1]->Setup(soundButtons[i], {
+                {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.5}
+        }, AnimationBehaviour::Resetable);
+    }
+    soundButtons[0]->up = soundButtons[3];
+    soundButtons[0]->down = soundButtons[1];
+    soundButtons[1]->up = soundButtons[0];
+    soundButtons[1]->down = soundButtons[2];
+    soundButtons[2]->up = soundButtons[1];
+    soundButtons[2]->down = soundButtons[3];
+    soundButtons[3]->up = soundButtons[2];
+    soundButtons[3]->down = soundButtons[0];
 }
 
 void DrumsSessionUI::PlaySound(int index) {

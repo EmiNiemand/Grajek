@@ -19,7 +19,7 @@ constexpr int AI_SPAWN_Y_MIN_DISTANCE = 30;
 constexpr int AI_SPAWN_Y_MAX_DISTANCE = 15;
 constexpr int AI_POINT_DISTANCE = 25;
 constexpr float AI_AWARE_DISTANCE = 35.0f;
-constexpr float AI_DESPAWN_TIMEOUT = 1.0f;
+constexpr float AI_DESPAWN_TIMEOUT = 1.1f;
 constexpr float AI_CELL_SIZE = 1.0f;
 // Jazz Hood consts
 constexpr float JAZZ_HOOD_DISTANCE = 70.0f;
@@ -27,10 +27,10 @@ constexpr int JAZZ_MAN_INCREASED_SPAWN_RATE = 5;
 constexpr int JAZZ_MAN_DEFAULT_SPAWN_RATE = 2;
 // Earnings modifiers
 constexpr float CLAP_MODIFIER = 1.0f;
-constexpr float DRUMS_MODIFIER = 2.0f;
-constexpr float TRUMPET_MODIFIER = 3.0f;
-constexpr float LAUNCHPAD_MODIFIER = 4.0f;
-constexpr float GUITAR_MODIFIER = 5.0f;
+constexpr float DRUMS_MODIFIER = 3.0f;
+constexpr float TRUMPET_MODIFIER = 5.0f;
+constexpr float LAUNCHPAD_MODIFIER = 8.0f;
+constexpr float GUITAR_MODIFIER = 12.0f;
 
 class GloomEngine;
 class CharacterLogic;
@@ -49,6 +49,7 @@ class AIManager {
     InstrumentName currentOpponentInstrument {};
     // Settings
     int charactersAmount = 0;
+    float sessionCharacters = 0.0f;
 
     inline static AIManager* aiManager;
     explicit AIManager();
@@ -85,6 +86,7 @@ public:
     [[nodiscard]] const int GetCharactersAmount() const;
     void RemoveCharacterLogic(const int& componentId);
 
+    float GetReward(const float &accuracy, const int &patternSize);
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H
