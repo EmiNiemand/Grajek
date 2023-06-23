@@ -26,9 +26,9 @@ void RandomnessManager::InitializeRandomEngine() {
 #endif
     // NOTE: sometimes, depending on implementation and device, random_device can produce deterministic
     // integers, i.e. same value even after reinitialization
-//    std::random_device rd;
-//    std::seed_seq seed {rd()};
-    randomEngine.seed(std::time(nullptr));
+    std::random_device rd;
+    std::seed_seq seed {rd(), rd()};
+    randomEngine.seed(seed);
 }
 
 void RandomnessManager::Free() { }

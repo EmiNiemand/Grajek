@@ -95,10 +95,10 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
             // 0  * *
             instrument->GeneratePattern({
                 {0, 0}, {0, 0.5}, {1, 0.5}});
-            // 1    *
+            // 1      *
             // 0  *
             instrument->GeneratePattern({
-                {0, 0}, {1, 0.5}});
+                {0, 0}, {1, 1}});
             // 1  *  **
             // 0
             instrument->GeneratePattern({

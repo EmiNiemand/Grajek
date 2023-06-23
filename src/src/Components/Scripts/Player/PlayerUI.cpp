@@ -17,6 +17,7 @@
 #include "Components/Animations/UIAnimator.h"
 #include "LowLevelClasses/GameData.h"
 #include "Components/Scripts/Menus/OptionsChooseMenu.h"
+#include "Components/Scripts/Instrument.h"
 #include <fstream>
 
 //TODO: move menus creation to Prefabs or appropriate methods
@@ -177,8 +178,8 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     auto shopMenu = GameObject::Instantiate("ShopMenu", menus);
     {
         auto shopMenuComponent = shopMenu->AddComponent<ShopMenu>();
-        auto firstInstrumentCost = shopMenuComponent->Menu::AddText("FirstInstrumentCost", "Cost: $200", 320, 220, 32,glm::vec3(1.0f, 1.0f, 1.0f));
-        auto secondInstrumentCost = shopMenuComponent->Menu::AddText("SecondInstrumentCost", "Cost: $500", 1600, 620, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto firstInstrumentCost = shopMenuComponent->Menu::AddText("FirstInstrumentCost", "Cost: $" + std::to_string(DRUMS_PRICE), 320, 220, 32,glm::vec3(1.0f, 1.0f, 1.0f));
+        auto secondInstrumentCost = shopMenuComponent->Menu::AddText("SecondInstrumentCost", "Cost: $" + std::to_string(TRUMPET_PRICE), 1600, 620, 32,glm::vec3(1.0f, 1.0f, 1.0f));
         auto thirdInstrumentCost = shopMenuComponent->Menu::AddText("ThirdInstrumentCost", "Sold out!", 1790, 350, 32,glm::vec3(1.0f, 1.0f, 1.0f));
         auto fourthInstrumentCost = shopMenuComponent->Menu::AddText("FourthInstrumentCost", "Sold out!", 1035, 900,32, glm::vec3(1.0f, 1.0f, 1.0f));
         auto firstInstrument = shopMenuComponent->Menu::AddButton("FirstInstrument", 10, 0, "UI/Sklep/Perkusja.png","UI/Sklep/PerkusjaZRamka.png");
@@ -288,7 +289,7 @@ void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {
             {AnimatedProperty::Position, glm::vec3(0, 1080 - addMoneyImage->GetHeight(), 0), 0.5f}
     });
     auto addMoneyText = GameObject::Instantiate("AddMoneyText", parent)->AddComponent<Text>();
-    addMoneyText->LoadFont((cashDiff>0?"+":"") + std::to_string(cashDiff),
+    addMoneyText->LoadFont((cashDiff>0?"+$":"") + std::to_string(cashDiff),
                            0, 0, 48);
     addMoneyText->SetPosition(0, 1080 - addMoneyImage->GetHeight()/2 - 16);
     addMoneyText->z = -0.75f;

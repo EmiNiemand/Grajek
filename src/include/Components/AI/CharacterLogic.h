@@ -15,7 +15,7 @@
 
 constexpr float ANNOYED_SATISFACTION_REDUCER = 0.20f;
 constexpr float NORMAL_SATISFACTION_REDUCER = 0.03f;
-constexpr float PREVIOUS_SESSION_TIMEOUT = 10.0f;
+constexpr float PREVIOUS_SESSION_TIMEOUT = 7.5f;
 
 class GameObject;
 class CharacterAnimations;
