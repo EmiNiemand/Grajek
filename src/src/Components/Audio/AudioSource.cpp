@@ -106,7 +106,7 @@ void AudioSource::PlaySoundAfterStart(const bool &state) {
 
 /**
  * @annotation
- * Loads audio. Requires path to file and sound type. NOTE: types are either placed in res/sounds/direct or
+ * Loads audio data. Requires path to file and sound type. NOTE: types are either placed in res/sounds/direct or
  * res/sounds/positional (indicating their purpose).
  * @param path - path to .wav file
  * @param type - Positional or Direct audio
@@ -125,7 +125,25 @@ void AudioSource::LoadAudioData(const std::string& path, AudioType type) {
 
     audioLoader->InitializeAudioLoader(sourceId, buffersIds);
     audioLoader->OpenFile(path);
-    audioLoader->LoadFileHeader(type);
+    audioLoader->LoadFileHeader(audioType);
+    isEndOfFile = audioLoader->FillBuffersQueue();
+}
+
+/**
+ * @annotation
+ * Reloads new audio data. Requires path to file and sound type. NOTE: types are either placed in res/sounds/direct or
+ * res/sounds/positional (indicating their purpose).
+ * @param path - path to .wav file
+ * @param type - Positional or Direct audio
+ */
+void AudioSource::ReloadAudioData(const std::string& path, AudioType type) {
+    audioType = type;
+    alSourceStop(sourceId);
+    alSourcei(sourceId, AL_BUFFER, NULL);
+
+    audioLoader->CloseFile();
+    audioLoader->OpenFile(path);
+    audioLoader->LoadFileHeader(audioType);
     isEndOfFile = audioLoader->FillBuffersQueue();
 }
 

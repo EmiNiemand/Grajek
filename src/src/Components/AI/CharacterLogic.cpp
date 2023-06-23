@@ -59,9 +59,7 @@ void CharacterLogic::Update() {
             default:
                 break;
         }
-    }
-
-    if (logicState == Listening) {
+    } else if (logicState == Listening) {
         if (playerSatisfaction >= upperSatisfactionLimit || opponentSatisfaction >= upperSatisfactionLimit) {
             characterAnimations->SetNewState(Cheering);
         } else if (playerSatisfaction >= middleSatisfactionLimit || opponentSatisfaction >= middleSatisfactionLimit) {
@@ -81,8 +79,6 @@ void CharacterLogic::AIUpdate() {
     if (logicState == Listening) {
         playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
     } else if (logicState == AlertedByPlayer) {
-        CalculateBasePlayerSatisfaction();
-
         if (playerSatisfaction > lowerSatisfactionLimit) {
             logicState = MovingToPlayer;
             characterMovement->SetState(SettingPathToPlayer);
@@ -210,6 +206,8 @@ void CharacterLogic::SetPlayerPlayingStatus(const bool& state) {
 
             for (auto &pat: favPatterns)
                 pat.second = 0.0f;
+
+            CalculateBasePlayerSatisfaction();
         }
     } else {
         if (logicState != Wandering && characterMovement != nullptr)
@@ -240,8 +238,6 @@ const float CharacterLogic::GetPlayerSatisfaction() const {
 void CharacterLogic::SetOpponentInstrumentAndGenre(const InstrumentName &instrument, const MusicGenre &genre) {
     opponentInstrumentName = instrument;
     opponentGenre = genre;
-
-    CalculateBaseOpponentSatisfaction();
 }
 
 /**
@@ -255,15 +251,15 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
 
         for (auto& pat : favPatterns) {
             if (pat.first == pattern->id) {
-                opponentSatisfaction += 10.0f;
+                opponentSatisfaction += RandomnessManager::GetInstance()->GetFloat(6.0f, 8.0f);
                 isFavorite = true;
             }
         }
 
         if (!isFavorite)
-            opponentSatisfaction += 5.0f;
+            opponentSatisfaction += 4.0f;
     } else {
-        opponentSatisfaction -= 5.0f;
+        opponentSatisfaction -= 6.0f;
     }
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
@@ -278,8 +274,11 @@ void CharacterLogic::SetOpponentPlayingStatus(const bool& isOpponentPlaying) {
     if (isOpponentPlaying) {
         playerPosition = playerTransform->GetLocalPosition();
 
-        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition()))
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
             logicState = AlertedByOpponent;
+
+            CalculateBaseOpponentSatisfaction();
+        }
     } else {
         if (logicState != Wandering && characterMovement != nullptr)
             characterMovement->SetState(ReturningToPreviousTarget);
@@ -340,11 +339,11 @@ void CharacterLogic::CalculateBaseOpponentSatisfaction() {
     opponentSatisfaction = 0.0f;
 
     if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
-        opponentSatisfaction += 35.0f;
+        opponentSatisfaction += 30.0f;
 
     if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
         != favInstrumentsNames.end())
-        opponentSatisfaction += 25.0f;
+        opponentSatisfaction += 20.0f;
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
 }

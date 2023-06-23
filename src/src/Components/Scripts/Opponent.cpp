@@ -26,16 +26,16 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1
 //     Setup pattern
     sampleSources.reserve(5);
     instrument = std::move(instrument1);
-    pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
+    pattern = instrument->opponentPatterns[RandomnessManager::GetInstance()->GetInt(0,
+                                           (int)instrument->opponentPatterns.size() - 1)];
 
     for (const auto& sound: pattern->sounds) {
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
         sample->SetDistanceMode(AudioDistanceMode::Continuous);
-        sample->SetPitch(0.8f);
+        sample->SetPitch(0.9f);
         sample->SetMaxDistance(10);
-        if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
     }
 
     bet = bet1;
@@ -143,12 +143,14 @@ void Opponent::Update() {
             timer += deltaTime;
             if (timer >= (pattern->sounds[sampleIndex]->delay) * 60 / (float)instrument->genre) {
                 timer = 0.0f - pattern->sounds[sampleIndex]->duration * 60 / (float)instrument->genre;
-                if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
+
+                if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet)
+                    sampleSources[sampleIndex - 1]->StopSound();
+
                 sampleSources[sampleIndex]->ForcePlaySound();
                 sampleIndex++;
 
                 if (sampleIndex >= pattern->sounds.size()) {
-
                     if (musicSession) {
                         AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
                         float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction();
@@ -156,7 +158,8 @@ void Opponent::Update() {
                         belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
                     }
 
-                    pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
+                    pattern = instrument->opponentPatterns[RandomnessManager::GetInstance()->GetInt(0,
+                                                           (int)instrument->opponentPatterns.size() - 1)];
                     for (const auto& sample : sampleSources) {
                         GameObject::Destroy(sample->GetParent());
                     }
@@ -168,10 +171,10 @@ void Opponent::Update() {
                         auto sample = sampleSources.back();
                         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
                         sample->SetDistanceMode(AudioDistanceMode::Continuous);
-                        sample->SetPitch(0.8f);
+                        sample->SetPitch(0.9f);
                         sample->SetMaxDistance(10);
-                        if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
                     }
+
                     patternTimer = patternDelay;
                     sampleIndex = 0;
                 }

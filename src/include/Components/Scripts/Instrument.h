@@ -27,7 +27,9 @@ public:
     std::shared_ptr<Image> icon;
 
 	std::vector<std::shared_ptr<MusicPattern>> patterns;
+    std::vector<std::shared_ptr<MusicPattern>> opponentPatterns;
 	std::vector<std::shared_ptr<Sample>> samples;
+    std::vector<std::shared_ptr<Sample>> monoSamples;
 
     void Setup(InstrumentName instrumentName, MusicGenre musicGenre=MusicGenre::Jazz, const std::shared_ptr<Image> &image = nullptr);
     void AddPatterns(std::vector<std::shared_ptr<MusicPattern>> newPatterns);
@@ -36,7 +38,9 @@ public:
      * sample index (in instrument), delay value and sound duration.
      */
     void GeneratePattern(std::vector<RawSample> newPattern);
+    void GenerateOpponentPattern(std::vector<RawSample> newPattern);
     void AddSamples(const std::vector<std::string>& paths);
+    void AddMonoSamples(const std::vector<std::string> &paths);
     std::string NameToString() const;
 
     static std::shared_ptr<Instrument> GetInstrument(InstrumentName instrumentName);

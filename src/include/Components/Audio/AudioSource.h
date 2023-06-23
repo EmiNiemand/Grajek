@@ -54,6 +54,7 @@ public:
 
     void PlaySoundAfterStart(const bool& state);
     void LoadAudioData(const std::string& path, AudioType type);
+    void ReloadAudioData(const std::string &path, AudioType type);
     void PlaySound() const;
     void ForcePlaySound() const;
     void PauseSound() const;

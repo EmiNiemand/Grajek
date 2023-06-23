@@ -89,7 +89,7 @@ void Game::InitializeGame() const {
     sun->transform->SetLocalRotation({-50, 70, 0});
 
 
-    // Enemies
+    // Opponents
     auto drummer = GameObject::Instantiate("DrumOpponent", activeScene);
     auto drummerAnimator = drummer->AddComponent<Animator>();
     drummerAnimator->LoadAnimationModel("Opponent/Drummer/MainDrummer/Drummer.dae");
