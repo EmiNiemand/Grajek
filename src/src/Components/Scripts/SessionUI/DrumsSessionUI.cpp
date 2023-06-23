@@ -77,7 +77,7 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
     }, AnimationBehaviour::Resetable);
 
     // Add buttons
-    int x = -485, y = 625;
+    int x = -335, y = 625;
     for (int i = 0; i < 4; i++, y -= 187) {
         soundButtons.push_back(GameObject::Instantiate("drumsPatternsButton", parent)->AddComponent<Button>());
         soundButtons[i]->LoadTexture(x, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
@@ -86,10 +86,10 @@ void DrumsSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &
         patternsSounds[i]->LoadAudioData("res/sounds/direct/drums/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
         soundAnimators.push_back({GameObject::Instantiate("drumsPatternsButtonAnimator", parent)->AddComponent<UIAnimator>(), GameObject::Instantiate("drumsPatternsButtonAnimator", parent)->AddComponent<UIAnimator>()});
         soundAnimators[i][0]->Setup(soundButtons[i], {
-                {AnimatedProperty::Position, glm::vec3(550, y, -0.85), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(550, y, -0.85), 0.5}
         }, AnimationBehaviour::Resetable);
         soundAnimators[i][1]->Setup(soundButtons[i], {
-                {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.5}
         }, AnimationBehaviour::Resetable);
     }
     soundButtons[0]->up = soundButtons[3];
