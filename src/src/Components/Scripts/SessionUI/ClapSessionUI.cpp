@@ -6,27 +6,9 @@
 
 ClapSessionUI::ClapSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
 
-void ClapSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
-                          bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
-    // Load backing track
-    // ------------------
-    BackingTrackSetup("clap/backingTrack");
-
-    SessionUI::Setup(bpm, samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
-
-    // Set up cheat sheet
-    // ------------------
-    SetCheatSheet("UI/Sesja/clapPatterns.png");
-
-    // Set up instrument control
-    // ------------------
-    SetInstrumentControl("UI/Sesja/clapControl.png");
-
-    // Load theme
-    // ----------
-    GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
-     ->LoadTexture(0, 0, "UI/Sesja/widokKlaskanie.png");
-
+void ClapSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
+                          bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+    SessionUI::Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 
     // Set up samples
     // --------------

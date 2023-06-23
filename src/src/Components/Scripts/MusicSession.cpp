@@ -37,7 +37,7 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument, bool sess
         case Launchpad: sessionUI = sessionUIInstance->AddComponent<LaunchpadSessionUI>(); break;
         case Guitar:    sessionUI = sessionUIInstance->AddComponent<GuitarSessionUI>(); break;
     }
-    sessionUI->Setup(bpm, instrument->samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+    sessionUI->Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 }
 
 void MusicSession::Update() {

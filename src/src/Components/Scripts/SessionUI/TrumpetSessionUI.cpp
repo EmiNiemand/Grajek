@@ -5,26 +5,9 @@
 
 TrumpetSessionUI::TrumpetSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
 
-void TrumpetSessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
-                             bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
-    // Load backing track
-    // ------------------
-    BackingTrackSetup("trumpet/backingTrack");
-
-    SessionUI::Setup(bpm, samples, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
-
-    // Set up instrument control
-    // ------------------
-    SetInstrumentControl("UI/Sesja/trumpetControl.png");
-
-    // Add cheat sheet
-    // ------------------
-    SetCheatSheet("UI/Sesja/trumpetPatterns.png");
-
-    // Load theme
-    // ----------
-    GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
-            ->LoadTexture(0, 0, "UI/Sesja/widokTrabka.png");
+void TrumpetSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
+                             bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+    SessionUI::Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
 
     valveInitPos[0] = {1100, 0};
     valveInitPos[1] = {1300, 0};
