@@ -16,30 +16,38 @@ set(stb_image_SOURCE_DIR ${STB_IMAGE_DIR} CACHE INTERNAL "")
 add_library(stb_image STATIC ${STB_IMAGE_DIR}/stb_image.cpp)
 target_include_directories(stb_image PRIVATE ${STB_IMAGE_DIR})
 
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+	# imgui
+	set(IMGUI_DIR ${CMAKE_CURRENT_LIST_DIR}/imgui)
+	set(imgui_SOURCE_DIR ${IMGUI_DIR} CACHE INTERNAL "")
+	add_library(imgui STATIC ${IMGUI_DIR}/imgui.cpp
+							${IMGUI_DIR}/imgui_demo.cpp
+							${IMGUI_DIR}/imgui_draw.cpp
+							${IMGUI_DIR}/imgui_tables.cpp
+							${IMGUI_DIR}/imgui_widgets.cpp
+							${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+							${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+							${IMGUI_DIR}/misc/cpp/imgui_stdlib.cpp)
+	target_include_directories(imgui PRIVATE ${IMGUI_DIR})
+
+	set_target_properties(imgui PROPERTIES FOLDER "thirdparty")
+endif()
+
 # other
 CPMAddPackage("gh:assimp/assimp@5.2.5")
 CPMAddPackage("gh:glfw/glfw#3.3.8")
 CPMAddPackage("gh:g-truc/glm#0.9.9.8")
-CPMAddPackage("gh:ocornut/imgui@1.88")
 CPMAddPackage("gh:gabime/spdlog@1.10.0")
 CPMAddPackage("gh:nlohmann/json@3.11.2")
 CPMAddPackage("gh:kcat/openal-soft#1.23.1")
 CPMAddPackage("gh:aseprite/freetype2#VER-2-10-0")
 CPMAddPackage("gh:wolfpld/tracy#v0.9.1")
 
-set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "")
-add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp
-					     ${imgui_SOURCE_DIR}/imgui_demo.cpp
-					     ${imgui_SOURCE_DIR}/imgui_draw.cpp
-						 ${imgui_SOURCE_DIR}/imgui_tables.cpp
-					     ${imgui_SOURCE_DIR}/imgui_widgets.cpp)
-						 
 set_target_properties(glad
                       stb_image 
                       assimp 
                       glfw 
-                      glm 
-                      imgui
+                      glm
                       spdlog
 					  nlohmann_json
 					  OpenAL
