@@ -62,20 +62,20 @@ void TrumpetSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessio
     }
 
     // Add buttons
-    int x = -140, y = 630;
+    int x = 1850, y = 630;
     for (int i = 0; i < 4; i++, y -= 187) {
         soundButtons.push_back(GameObject::Instantiate("trumpetPatternsButton", parent)->AddComponent<Button>());
-        soundButtons[i]->LoadTexture(x, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
+        soundButtons[i]->LoadTexture(x+900, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
         soundButtons[i]->isActive = false;
         soundButtons[i]->SetScale(0.75);
         patternsSounds.push_back(GameObject::Instantiate("trumpetPatternsSound", parent)->AddComponent<AudioSource>());
         patternsSounds[i]->LoadAudioData("res/sounds/direct/trumpet/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
         soundAnimators.push_back({GameObject::Instantiate("trumpetPatternsButtonAnimator", parent)->AddComponent<UIAnimator>(), GameObject::Instantiate("trumpetPatternsButtonAnimator", parent)->AddComponent<UIAnimator>()});
         soundAnimators[i][0]->Setup(soundButtons[i], {
-                {AnimatedProperty::Position, glm::vec3(800, y, -0.85), 0.5}
+                {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.5}
         }, AnimationBehaviour::Resetable);
         soundAnimators[i][1]->Setup(soundButtons[i], {
-                {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.56}
+                {AnimatedProperty::Position, glm::vec3(x+900, y, -0.85), 0.56}
         }, AnimationBehaviour::Resetable);
     }
     soundButtons[0]->up = soundButtons[3];

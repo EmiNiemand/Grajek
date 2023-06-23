@@ -67,7 +67,7 @@ void SessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetron
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(-985, 0, cheatSheetPath, -0.8);
+    cheatSheet->LoadTexture(1785, 0, cheatSheetPath, -0.8);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
@@ -98,9 +98,11 @@ bool SessionUI::ToggleCheatSheet() {
     }
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
+        cheatSheet->SetZ(-0.81);
+        instrumentControl->SetZ(-0.8);
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(-75, 0, 0), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
                 });
         for (int i = 0; i < soundButtons.size(); i++) {
             soundButtons[i]->isActive = false;
@@ -111,7 +113,7 @@ bool SessionUI::ToggleCheatSheet() {
     } else {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(-985, 0, 0), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
                 });
         for (int i = 0; i < soundButtons.size(); i++) {
             soundAnimators[i][1]->Reset();
@@ -127,7 +129,7 @@ void SessionUI::ToggleInstrumentControl() {
         cheatSheetActive = false;
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                {AnimatedProperty::Position, glm::vec3(-985, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
         });
         for (int i = 0; i < soundAnimators.size(); i++) {
             soundAnimators[i][1]->Reset();
@@ -135,6 +137,8 @@ void SessionUI::ToggleInstrumentControl() {
     }
     instrumentControlActive = !instrumentControlActive;
     if (instrumentControlActive) {
+        instrumentControl->SetZ(-0.81);
+        cheatSheet->SetZ(-0.8);
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
                 {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
