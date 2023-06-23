@@ -334,8 +334,10 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat, floa
 
     if (!pat) return;
 
-    if (sessionOpponent)
+    if (sessionOpponent) {
         sessionOpponent->PlayerPlayedPattern(AIManager::GetInstance()->GetCombinedPlayerSatisfaction());
+    }
+
     else
         equipment->AddReward(AIManager::GetInstance()->GetReward(accuracy, (int)pat->sounds.size()));
 

@@ -4,7 +4,7 @@
 #ifdef DEBUG
 #include "EngineManagers/DebugManager.h"
 #include "imgui.h"
-#include "imgui_stdlib.h"
+#include "misc/cpp/imgui_stdlib.h"
 #include "EngineManagers/SceneManager.h"
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "windows.h"

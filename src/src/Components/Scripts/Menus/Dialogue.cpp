@@ -65,12 +65,13 @@ void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 
 void Dialogue::Update() {
     if (!triggerActive || menuActive) return;
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E) && !forced) {
-        if (dialogueIndex == 0)
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E) && !forced && !active) {
+        if (dialogueIndex == 0) {
             ShowDialogue();
+            return;
+        }
     }
-    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) {
-        if (!active) return;
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_E)) {
         if (dialogueIndex == texts.size() - 1) {
             HideDialogue();
             return;

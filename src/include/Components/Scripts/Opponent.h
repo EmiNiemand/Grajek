@@ -32,8 +32,10 @@ private:
     PlayerBadges badge;
 
     float battleTime = 60.0f;
-    float satisfaction = 0.0f;
+    float patternDelay = 0.0f;
     float timer = 0.0f;
+    float patternTimer = 0.0f;
+    float startPlayingTimer = 5.0f;
     short sampleIndex = 0;
     short bet = 0;
     bool defeated = false;
@@ -43,6 +45,7 @@ private:
     bool acceptDialogueActive = false;
     bool sessionStarter = false;
     bool musicSession = false;
+    bool shouldPlay = true;
 
 public:
     // Music Session
@@ -64,8 +67,8 @@ public:
 
     void OnDestroy() override;
     void Start() override;
-    void Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
-               short bet1, glm::vec3 indicatorColor = glm::vec3(1, 1, 0) ,PlayerBadges badge1 = (PlayerBadges)(-1));
+    void Setup(std::shared_ptr<Instrument> instrument1, float patternDelay1, short bet1,
+               glm::vec3 indicatorColor = glm::vec3(1, 1, 0) ,PlayerBadges badge1 = (PlayerBadges)(-1));
     void Update() override;
     void PlayerPlayedPattern(float satisfaction1);
     void PlayerStartedMusicSession();
