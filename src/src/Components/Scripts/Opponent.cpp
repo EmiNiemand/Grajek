@@ -21,16 +21,13 @@ Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Componen
 
 Opponent::~Opponent() = default;
 
-void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSample> musicPattern, float satisfaction1,
-                     short bet1, glm::vec3 indicatorColor, PlayerBadges badge1) {
+void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1, short bet1,
+                     glm::vec3 indicatorColor, PlayerBadges badge1) {
 //     Setup pattern
     sampleSources.reserve(5);
     instrument = std::move(instrument1);
-    //TODO: added back to make patterns work -> delete later
     pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
-//    instrument->GeneratePattern(musicPattern);
-//    pattern = instrument->patterns.back();
-//    pattern->sounds[0]->delay = musicPattern[0].delay;
+
     for (const auto& sound: pattern->sounds) {
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
@@ -41,9 +38,9 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, std::vector<RawSam
         if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
     }
 
-    satisfaction = satisfaction1;
     bet = bet1;
     badge = badge1;
+    patternDelay = patterDelay1;
 
 //     Setup UI
     ui = GameObject::Instantiate("OpponentUI", parent);
@@ -130,31 +127,58 @@ void Opponent::Start() {
 }
 
 void Opponent::Update() {
-    // Play pattern
-    timer += GloomEngine::GetInstance()->deltaTime;
-    if (timer >= pattern->sounds[sampleIndex]->delay) {
-        timer = 0.0f;
-        if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
-        sampleSources[sampleIndex]->ForcePlaySound();
-        sampleIndex++;
-        if (sampleIndex >= pattern->sounds.size()) {
-            pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
-            for (const auto& sample : sampleSources) {
-                GameObject::Destroy(sample->GetParent());
-            }
-            sampleSources.clear();
-            for (const auto& sound: pattern->sounds) {
-                sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
-                auto sample = sampleSources.back();
-                sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
-                sample->SetDistanceMode(AudioDistanceMode::Continuous);
-                sample->SetPitch(0.8f);
-                sample->SetMaxDistance(10);
-                if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
-            }
-            sampleIndex = 0;
+
+    float deltaTime = GloomEngine::GetInstance()->deltaTime;
+    if (musicSession && !shouldPlay) {
+        startPlayingTimer -= deltaTime;
+        if (startPlayingTimer <= 0) {
+            shouldPlay = true;
         }
     }
+
+    if (shouldPlay) {
+        patternTimer -= deltaTime;
+        if (patternTimer <= 0) {
+            // Play pattern
+            timer += deltaTime;
+            if (timer >= (pattern->sounds[sampleIndex]->delay) * 60 / (float)instrument->genre) {
+                timer = 0.0f - pattern->sounds[sampleIndex]->duration * 60 / (float)instrument->genre;
+                if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
+                sampleSources[sampleIndex]->ForcePlaySound();
+                sampleIndex++;
+
+                if (sampleIndex >= pattern->sounds.size()) {
+
+                    if (musicSession) {
+                        AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
+                        float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction();
+                        satisfactionDifference += std::clamp(-diff, -5.0f, 0.0f);
+                        belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
+                    }
+
+                    pattern = instrument->patterns[RandomnessManager::GetInstance()->GetInt(0, instrument->patterns.size() - 1)];
+                    for (const auto& sample : sampleSources) {
+                        GameObject::Destroy(sample->GetParent());
+                    }
+
+                    sampleSources.clear();
+
+                    for (const auto& sound: pattern->sounds) {
+                        sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
+                        auto sample = sampleSources.back();
+                        sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
+                        sample->SetDistanceMode(AudioDistanceMode::Continuous);
+                        sample->SetPitch(0.8f);
+                        sample->SetMaxDistance(10);
+                        if (instrument->name == InstrumentName::Clap) sample->SetGain(0.25f);
+                    }
+                    patternTimer = patternDelay;
+                    sampleIndex = 0;
+                }
+            }
+        }
+    }
+
 
     if (!dialogue->triggerActive) return;
 
@@ -168,7 +192,7 @@ void Opponent::Update() {
     }
 
     // Hide win dialogue
-    if (hid->IsKeyDown(Key::KEY_ENTER) && winDialogue->active && winDialogue->dialogueIndex) {
+    if (hid->IsKeyDown(Key::KEY_E) && winDialogue->active && winDialogue->dialogueIndex) {
         dialogue->image->enabled = true;
         winDialogue->HideDialogue();
     }
@@ -176,13 +200,14 @@ void Opponent::Update() {
     // Show first dialogue
     if (hid->IsKeyDown(Key::KEY_E) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
         dialogueActive = true;
+        shouldPlay = false;
         dialogue->ShowDialogue();
         AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(true);
         return;
     }
 
     // Show choose menu
-    if (hid->IsKeyDown(Key::KEY_ENTER) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
+    if (hid->IsKeyDown(Key::KEY_E) && dialogueActive && !chooseMenuActive && !rejectDialogueActive && !acceptDialogueActive) {
         chooseMenuActive = true;
         button1->isActive = false;
         button2->isActive = true;
@@ -205,7 +230,7 @@ void Opponent::Update() {
             button2->isActive = true;
             return;
         }
-        if (hid->IsKeyDown(Key::KEY_ENTER)) {
+        if (hid->IsKeyDown(Key::KEY_E)) {
             chooseMenuActive = false;
             chooseMenu->DisableSelfAndChildren();
             dialogue->image->enabled = false;
@@ -232,7 +257,7 @@ void Opponent::Update() {
     }
 
     // Hide reject dialogue
-    if (hid->IsKeyDown(Key::KEY_ENTER) && rejectDialogueActive) {
+    if (hid->IsKeyDown(Key::KEY_E) && rejectDialogueActive) {
         dialogue->enabled = false;
         dialogue->HideDialogue();
         dialogueActive = false;
@@ -242,7 +267,7 @@ void Opponent::Update() {
     }
 
     // Hide accept dialogue
-    if (hid->IsKeyDown(Key::KEY_ENTER) && acceptDialogueActive) {
+    if (hid->IsKeyDown(Key::KEY_E) && acceptDialogueActive) {
         dialogue->enabled = false;
         dialogue->HideDialogue();
         dialogueActive = false;
@@ -255,7 +280,7 @@ void Opponent::Update() {
 
     // Music session
     if (musicSession) {
-        time += GloomEngine::GetInstance()->deltaTime;
+        time += deltaTime;
         timeCounter->SetScale(glm::vec2(1 - time / battleTime, 1));
         if (time >= battleTime || satisfactionDifference >= 100 || satisfactionDifference <= -100) {
             if (satisfactionDifference <= -100 || (time >= battleTime && satisfactionDifference <= 0)) {
@@ -273,7 +298,6 @@ void Opponent::Update() {
                 indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
                 auto crowd = GloomEngine::GetInstance()->FindGameObjectWithName("Crowd");
                 if (crowd) crowd->GetComponent<Crowd::Crowd>()->OnEnemyDefeat(badge);
-                // TODO add sound when player beat boss
                 winSound->PlaySound();
             }
             AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
@@ -287,7 +311,7 @@ void Opponent::Update() {
     }
 
     // Hide lose dialogue
-    if (hid->IsKeyDown(Key::KEY_ENTER) && lossDialogue->active) {
+    if (hid->IsKeyDown(Key::KEY_E) && lossDialogue->active) {
         dialogue->image->enabled = true;
         lossDialogue->HideDialogue();
     }
@@ -296,9 +320,9 @@ void Opponent::Update() {
 }
 
 void Opponent::PlayerPlayedPattern(float playerSatisfaction) {
-    AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
-    float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction() - playerSatisfaction;
-    satisfactionDifference += std::clamp(diff, -5.0f, 5.0f);
+    shouldPlay = true;
+    float diff = playerSatisfaction;
+    satisfactionDifference += std::clamp(diff, 0.0f, 5.0f);
     belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
 }
 
