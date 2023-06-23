@@ -117,7 +117,6 @@ void Game::InitializeGame() const {
 
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
     trumpeterOpponentComponent->name = "Christopher Jazzus";
-                                              {{0, 0.5}, {1, 1}, {2, 0.5}, {1, 1}, {2, 0.5}}, 80.0f, 200,
     trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet), 0.5, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
 
