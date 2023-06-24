@@ -22,7 +22,7 @@ Opponent::Opponent(const std::shared_ptr<GameObject> &parent, int id) : Componen
 
 Opponent::~Opponent() = default;
 
-void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1, short bet1,
+void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1, float accuracy1, short bet1,
                      glm::vec3 indicatorColor, PlayerBadges badge1) {
 //     Setup pattern
     sampleSources.reserve(5);
@@ -39,6 +39,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1
         sample->SetMaxDistance(10);
     }
 
+    accuracy = accuracy1;
     bet = bet1;
     badge = badge1;
     patternDelay = patterDelay1;
@@ -146,7 +147,8 @@ void Opponent::Update() {
         if (patternTimer <= 0) {
             // Play pattern
             timer += deltaTime;
-            if (timer >= (pattern->sounds[sampleIndex]->delay) * 60 / (float)instrument->genre) {
+            if (timer >= (pattern->sounds[sampleIndex]->delay + pattern->sounds[sampleIndex]->delay *
+            (1 - accuracy / 100)) * 60 / (float)instrument->genre) {
                 if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
 
                 if (sampleIndex == pattern->sounds.size() - 1) {
@@ -155,8 +157,8 @@ void Opponent::Update() {
 
                     if (musicSession) {
                         AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
-                        float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction();
-                        satisfactionDifference += std::clamp(-diff, -5.0f, 0.0f);
+                        float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction(accuracy, (int)pattern->sounds.size());
+                        satisfactionDifference -= diff * 2;
                         belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
                     }
 
@@ -182,7 +184,8 @@ void Opponent::Update() {
                 }
                 ++sampleIndex;
                 sampleSources[sampleIndex]->ForcePlaySound();
-                timer = 0.0f - pattern->sounds[sampleIndex]->duration * 60 / (float)instrument->genre;
+                timer = 0.0f - (pattern->sounds[sampleIndex]->duration + pattern->sounds[sampleIndex]->duration *
+                        (1 - accuracy / 100)) * 60 / (float)instrument->genre;
             }
         }
     }
@@ -341,7 +344,7 @@ void Opponent::Update() {
 void Opponent::PlayerPlayedPattern(float playerSatisfaction) {
     shouldPlay = true;
     float diff = playerSatisfaction;
-    satisfactionDifference += std::clamp(diff, 0.0f, 5.0f);
+    satisfactionDifference += diff * 2;
     belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
 }
 

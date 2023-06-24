@@ -164,7 +164,6 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
 float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
-    float crowdSize = 1.0f;
 
     if (sessionCharacters <= 10.0f)
         satisfaction *= 1.25;
@@ -175,7 +174,7 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     else
         satisfaction *= 2.0f;
 
-    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier) * crowdSize;
+    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier);
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
@@ -226,7 +225,7 @@ void AIManager::NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern>&
  * Returns combined enemy satisfaction.
  * @returns float - combined satisfaction of every character
  */
-const float AIManager::GetCombinedOpponentSatisfaction() {
+const float AIManager::GetCombinedOpponentSatisfaction(const float& accuracy, const int& patternSize) {
     float satisfaction = 0.0f;
     float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
@@ -262,7 +261,18 @@ const float AIManager::GetCombinedOpponentSatisfaction() {
         }
     }
 
-    return satisfaction;
+    float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
+
+    if (sessionCharacters <= 10.0f)
+        satisfaction *= 1.25;
+    else if (sessionCharacters <= 20.0f)
+        satisfaction *= 1.5f;
+    else if (sessionCharacters <= 30.0f)
+        satisfaction *= 1.75f;
+    else
+        satisfaction *= 2.0f;
+
+    return ((accuracy / 100 * (float)patternSize) + satisfaction / 100.0f * randomModifier);
 }
 
 /**

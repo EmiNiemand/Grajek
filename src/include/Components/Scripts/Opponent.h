@@ -33,6 +33,7 @@ private:
 
     float battleTime = 30.0f;
     float patternDelay = 0.0f;
+    float accuracy = 0.0f;
     float timer = 0.0f;
     float patternTimer = 0.0f;
     float startPlayingTimer = 5.0f;
@@ -67,7 +68,7 @@ public:
 
     void OnDestroy() override;
     void Start() override;
-    void Setup(std::shared_ptr<Instrument> instrument1, float patternDelay1, short bet1,
+    void Setup(std::shared_ptr<Instrument> instrument1, float patternDelay1, float accuracy1, short bet1,
                glm::vec3 indicatorColor = glm::vec3(1, 1, 0), PlayerBadges badge1 = (PlayerBadges)(-1));
     void Update() override;
     void PlayerPlayedPattern(float satisfaction1);

@@ -82,7 +82,7 @@ public:
     void NotifyOpponentStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyOpponentStopsPlaying();
     void NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
-    const float GetCombinedOpponentSatisfaction();
+    const float GetCombinedOpponentSatisfaction(const float& accuracy, const int& patternSize);
     [[nodiscard]] const int GetCharactersAmount() const;
     void RemoveCharacterLogic(const int& componentId);
 
