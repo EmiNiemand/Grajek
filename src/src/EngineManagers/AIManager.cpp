@@ -197,7 +197,7 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     auto playerPlayedPattern = patternPlayed[0];
 
     for (int i = 1; i < 3; ++i) {
-        if (patternPlayed[i] == playerPlayedPattern)
+        if (patternPlayed.size() > i && patternPlayed[i] == playerPlayedPattern)
             ++patternCounter;
     }
 
