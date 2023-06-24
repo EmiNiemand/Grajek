@@ -101,7 +101,7 @@ void Game::InitializeGame() const {
 
     auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
     drummerOpponentComponent->name = "Matt Ronome";
-    drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums), 1.15, 75, 50,
+    drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums), 0.75, 80, 50,
                                     glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
 
 
@@ -117,7 +117,7 @@ void Game::InitializeGame() const {
 
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
     trumpeterOpponentComponent->name = "Christopher Jazzus";
-    trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet), 0.65, 75, 200,
+    trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet), 0.65, 80, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
 
 
