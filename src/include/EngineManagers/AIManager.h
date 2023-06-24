@@ -47,6 +47,9 @@ class AIManager {
     glm::vec3 playerPosition {};
     InstrumentName currentPlayerInstrument {};
     InstrumentName currentOpponentInstrument {};
+
+    std::vector<std::shared_ptr<MusicPattern>> patternPlayed = {};
+
     // Settings
     int charactersAmount = 0;
     float sessionCharacters = 0.0f;

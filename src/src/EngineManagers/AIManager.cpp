@@ -13,7 +13,9 @@
 #include <tracy/Tracy.hpp>
 #endif
 
-AIManager::AIManager() = default;
+AIManager::AIManager() {
+    patternPlayed.reserve(3);
+}
 
 AIManager::~AIManager() {
     delete aiManager;
@@ -74,6 +76,7 @@ void AIManager::Free() {
     charactersLogics.clear();
     charactersMovements.clear();
     playerTransform = nullptr;
+    patternPlayed.clear();
 }
 
 /**
@@ -109,6 +112,9 @@ void AIManager::NotifyPlayerStopsPlaying() {
  */
 void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
     AI_LOGIC_STATE state;
+
+    if (patternPlayed.size() == 3) patternPlayed.pop_back();
+    patternPlayed.insert(patternPlayed.begin(), pat);
 
     for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
@@ -165,16 +171,42 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
 
-    if (sessionCharacters <= 10.0f)
-        satisfaction *= 1.25;
-    else if (sessionCharacters <= 20.0f)
-        satisfaction *= 1.5f;
-    else if (sessionCharacters <= 30.0f)
-        satisfaction *= 1.75f;
-    else
-        satisfaction *= 2.0f;
+    float accuracyValue = accuracy;
 
-    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier);
+    if (sessionCharacters <= 10.0f)
+        satisfaction *= 1.0f;
+    else if (sessionCharacters <= 25.0f)
+        satisfaction *= 2.0f;
+    else if (sessionCharacters <= 50.0f)
+        satisfaction *= 4.0f;
+    else
+        satisfaction *= 6.0f;
+
+    if (accuracy <= 0.5)
+        accuracyValue = 0;
+    if (accuracy <= 0.8)
+        accuracyValue = 0.5;
+    if (accuracy <= 0.95)
+        accuracyValue = 0.75;
+    if (accuracy <= 1)
+        accuracyValue = 1.5;
+
+    float patternModifier = 1.0f;
+    int patternCounter = 0;
+
+    auto playerPlayedPattern = patternPlayed[0];
+
+    for (int i = 1; i < 3; ++i) {
+        if (patternPlayed[i] == playerPlayedPattern)
+            ++patternCounter;
+    }
+
+    if (patternCounter == 1)
+        patternModifier = 0.75;
+    else if (patternCounter == 2)
+        patternModifier = 0.5f;
+
+    return ((accuracyValue * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
@@ -264,13 +296,14 @@ const float AIManager::GetCombinedOpponentSatisfaction(const float& accuracy, co
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
 
     if (sessionCharacters <= 10.0f)
-        satisfaction *= 1.25;
-    else if (sessionCharacters <= 20.0f)
-        satisfaction *= 1.5f;
-    else if (sessionCharacters <= 30.0f)
-        satisfaction *= 1.75f;
-    else
+        satisfaction *= 1.0f;
+    else if (sessionCharacters <= 25.0f)
         satisfaction *= 2.0f;
+    else if (sessionCharacters <= 50.0f)
+        satisfaction *= 4.0f;
+    else
+        satisfaction *= 6.0f;
+
 
     return ((accuracy / 100 * (float)patternSize) + satisfaction / 100.0f * randomModifier);
 }
