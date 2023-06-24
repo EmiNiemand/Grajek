@@ -11,7 +11,7 @@ House::~House() = default;
 
 std::shared_ptr<GameObject> House::Create() {
     auto house = shared_from_this();
-    house->AddComponent<Renderer>()->LoadModel("texturedModels/domek.obj");
+    house->AddComponent<Renderer>()->LoadModel("Buildings/Normal/NormalGreen.obj");
     house->AddComponent<BoxCollider>()->SetOffset({0, 2, 0});
     house->GetComponent<BoxCollider>()->SetSize({3.25, 2, 1.75});
 
