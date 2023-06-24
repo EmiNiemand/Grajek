@@ -184,11 +184,11 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
 
     if (accuracy <= 0.5)
         accuracyValue = 0;
-    if (accuracy <= 0.8)
-        accuracyValue = 0.5;
-    if (accuracy <= 0.95)
-        accuracyValue = 0.75;
-    if (accuracy <= 1)
+    else if (accuracy <= 0.75)
+        accuracyValue = 0.25;
+    else if (accuracy <= 0.95)
+        accuracyValue = 1.0;
+    else if (accuracy <= 1)
         accuracyValue = 1.5;
 
     float patternModifier = 1.0f;
@@ -202,9 +202,11 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     }
 
     if (patternCounter == 1)
-        patternModifier = 0.75;
-    else if (patternCounter == 2)
-        patternModifier = 0.5f;
+        patternModifier = 0.85;
+    else if (patternCounter >= 2)
+        patternModifier = 0.35f;
+
+    spdlog::info(patternModifier);
 
     return ((accuracyValue * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
 }
