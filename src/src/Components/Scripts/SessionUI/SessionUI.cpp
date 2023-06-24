@@ -186,11 +186,11 @@ void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
     tickSound->IsLooping(false);
 
     metronomeSoundIndicator = GameObject::Instantiate("MetronomeSoundDisabled", parent)->AddComponent<Image>();
-    metronomeSoundIndicator->LoadTexture(1835, 250, "UI/Sesja/metronomeSoundDisabled.png", -0.85);
+    metronomeSoundIndicator->LoadTexture(1830, 250, "UI/Sesja/ToggleDisabled.png", -0.85);
     metronomeSoundIndicator->SetAlpha(metronomeSoundEnabled ? 0:1);
 
     metronomeVisualsIndicator = GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>();
-    metronomeVisualsIndicator->LoadTexture(1835, 200, "UI/Sesja/metronomeVisualsDisabled.png", -0.85);
+    metronomeVisualsIndicator->LoadTexture(1830, 200, "UI/Sesja/ToggleDisabled.png", -0.85);
     metronomeVisualsIndicator->SetAlpha(metronomeVisualEnabled ? 0:1);
 }
 
@@ -201,7 +201,7 @@ void SessionUI::BackingTrackSetup(const std::string& trackName) {
     backingTrack->PlaySoundAfterStart(true);
 
     backingTrackIndicator = GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>();
-    backingTrackIndicator->LoadTexture(1835, 150, "UI/Sesja/backingTrackDisabled.png", -0.85);
+    backingTrackIndicator->LoadTexture(1830, 150, "UI/Sesja/ToggleDisabled.png", -0.85);
     backingTrackIndicator->SetAlpha(backingTrackEnabled ? 0:1);
 }
 
