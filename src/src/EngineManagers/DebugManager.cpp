@@ -16,6 +16,10 @@
 namespace fs = std::filesystem;
 
 DebugManager::DebugManager() {
+    displayHierarchyTree = true;
+    displaySaveMenu = true;
+    displaySystemInfo = true;
+
     displaySelected = false;
     transformExtracted = false;
     safetySwitch = false;
@@ -62,53 +66,64 @@ void DebugManager::Render() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-    DisplaySystemInfo();
-    SaveMenu();
+    MainMenu();
+    if(displaySystemInfo){
+        DisplaySystemInfo();
+    }
+    if(displaySaveMenu){
+        SaveMenu();
+    }
+    if(displayHierarchyTree)
     {
-        ImGui::Begin("Hierarchy Tree");
-
-
-        ImGui::InputText("##Search",&searchName);
-        ImGui::SameLine();
-        if(ImGui::SmallButton("Reset Search")){
-            searchName = "";
-        }
-        if(searchName.empty() || SceneManager::GetInstance()->activeScene->GetName().find(searchName) != std::string::npos) {
-            ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
-            ImGui::SameLine();
-            if (ImGui::SmallButton("Open")) {
-                displaySelected = true;
-                safetySwitch = false;
-                selected = SceneManager::GetInstance()->activeScene;
-            }
-        }
-        ImGui::Indent();
-        std::string label;
-        for (const auto& child : SceneManager::GetInstance()->activeScene->children) {
-            label = "Open##" + std::to_string(child.first);
-            if(searchName.empty() || child.second->GetName().find(searchName) != std::string::npos) {
-                ImGui::Text("%s", child.second->GetName().c_str());
-                ImGui::SameLine();
-                if (ImGui::SmallButton(label.c_str())) {
-                    displaySelected = true;
-                    transformExtracted = false;
-                    selected = child.second;
-                    safetySwitch = false;
-                }
-            }
-            ProcessChildren(child.second);
-        }
-        ImGui::Unindent();
-        ImGui::End();
+        HierarchyTree();
     }
 
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void DebugManager::HierarchyTree() {
+    ImGui::Begin("Hierarchy Tree");
+    ImGui::InputText("##Search", &searchName);
+    ImGui::SameLine();
+    if (ImGui::SmallButton("Reset Search")) {
+        searchName = "";
+    }
+    if (searchName.empty() ||
+        SceneManager::GetInstance()->activeScene->GetName().find(searchName) != std::string::npos) {
+        ImGui::Text("%s", SceneManager::GetInstance()->activeScene->GetName().c_str());
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Open")) {
+            displaySelected = true;
+            safetySwitch = false;
+            selected = SceneManager::GetInstance()->activeScene;
+        }
+    }
+    ImGui::Indent();
+    std::string label;
+    for (const auto &child: SceneManager::GetInstance()->activeScene->children) {
+        label = "Open##" + std::to_string(child.first);
+        if (searchName.empty() || child.second->GetName().find(searchName) != std::string::npos) {
+            ImGui::Text("%s", child.second->GetName().c_str());
+            ImGui::SameLine();
+            if (ImGui::SmallButton(label.c_str())) {
+                displaySelected = true;
+                transformExtracted = false;
+                selected = child.second;
+                safetySwitch = false;
+            }
+        }
+        ProcessChildren(child.second);
+    }
+    ImGui::Unindent();
+    ImGui::End();
+
     if (displaySelected) {
-        static float inputVector1[3] = {0.0f,0.0f,0.0f};
-        static float inputVector2[3] = { 0.0f,0.0f,0.0f };
-        static float inputVector3[3] = { 0.0f,0.0f,0.0f };
-        static float inputVector4[3] = { 0.0f,0.0f,0.0f };
-        static float inputVector5[3] = { 0.0f,0.0f,0.0f };
+        static float inputVector1[3] = {0.0f, 0.0f, 0.0f};
+        static float inputVector2[3] = {0.0f, 0.0f, 0.0f};
+        static float inputVector3[3] = {0.0f, 0.0f, 0.0f};
+        static float inputVector4[3] = {0.0f, 0.0f, 0.0f};
+        static float inputVector5[3] = {0.0f, 0.0f, 0.0f};
         glm::vec3 positionHolder;
         glm::vec3 rotationHolder;
         glm::vec3 scaleHolder;
@@ -119,7 +134,7 @@ void DebugManager::Render() {
         positionHolder = selected->transform->GetLocalPosition();
         rotationHolder = selected->transform->GetLocalRotation();
         scaleHolder = selected->transform->GetLocalScale();
-        if(selected->GetComponent<BoxCollider>()){
+        if (selected->GetComponent<BoxCollider>()) {
             coliderSizeHolder = selected->GetComponent<BoxCollider>()->GetSize();
             coliderOffsetHolder = selected->GetComponent<BoxCollider>()->GetOffset();
         }
@@ -127,9 +142,9 @@ void DebugManager::Render() {
             ExtractVec3ToFloat3(positionHolder, inputVector1);
             ExtractVec3ToFloat3(rotationHolder, inputVector2);
             ExtractVec3ToFloat3(scaleHolder, inputVector3);
-            if(selected->GetComponent<BoxCollider>()){
-                ExtractVec3ToFloat3(coliderSizeHolder,inputVector4);
-                ExtractVec3ToFloat3(coliderOffsetHolder,inputVector5);
+            if (selected->GetComponent<BoxCollider>()) {
+                ExtractVec3ToFloat3(coliderSizeHolder, inputVector4);
+                ExtractVec3ToFloat3(coliderOffsetHolder, inputVector5);
             }
             transformExtracted = true;
         }
@@ -143,7 +158,7 @@ void DebugManager::Render() {
         selected->transform->SetLocalPosition(positionHolder);
         selected->transform->SetLocalRotation(rotationHolder);
         selected->transform->SetLocalScale(scaleHolder);
-        if(selected->GetComponent<BoxCollider>()){
+        if (selected->GetComponent<BoxCollider>()) {
             selected->GetComponent<BoxCollider>()->SetSize(coliderSizeHolder);
             selected->GetComponent<BoxCollider>()->SetOffset(coliderOffsetHolder);
         }
@@ -152,28 +167,27 @@ void DebugManager::Render() {
 
         static char newName[200] = "";
         ImGui::Text("%s", selected->GetName().c_str());
-        ImGui::InputText("Input new name",newName, IM_ARRAYSIZE(newName));
-        if(ImGui::SmallButton("Set new name")){
+        ImGui::InputText("Input new name", newName, IM_ARRAYSIZE(newName));
+        if (ImGui::SmallButton("Set new name")) {
             selected->SetName(newName);
         }
         ImGui::DragFloat3("Position", inputVector1, 1.0f);
-        ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f,360.0f);
+        ImGui::DragFloat3("Rotation", inputVector2, 1.0f, 0.0f, 360.0f);
         ImGui::DragFloat3("Scale", inputVector3, 1.0f, 0.0f);
-        if(selected->GetComponent<BoxCollider>()) {
+        if (selected->GetComponent<BoxCollider>()) {
             ImGui::DragFloat3("Colider Size", inputVector4, 1.0f);
             ImGui::DragFloat3("Colider Offset", inputVector5, 1.0f);
         }
 
-        if(selected->GetComponent<Renderer>()){
+        if (selected->GetComponent<Renderer>()) {
             ImGui::Text("Path of model: %s", selected->GetComponent<Renderer>()->lastLoadedModelPath.c_str());
             //ImGui::InputText("New model path:",newModelPath,IM_ARRAYSIZE(newModelPath));
-            if(folderPaths.empty()){
-                ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"!!!There are no model folders!!!");
+            if (folderPaths.empty()) {
+                ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "!!!There are no model folders!!!");
             } else {
-                const char * charFolderName = selectedFolderName.c_str();
-                if(ImGui::BeginCombo("Folders",charFolderName)){
-                    for (int n = 0; n < folderPaths.size(); n++)
-                    {
+                const char *charFolderName = selectedFolderName.c_str();
+                if (ImGui::BeginCombo("Folders", charFolderName)) {
+                    for (int n = 0; n < folderPaths.size(); n++) {
                         const bool is_selected = (selectedFolderId == n);
                         if (ImGui::Selectable(folderPaths[n].path().filename().generic_string().c_str(), is_selected))
                             selectedFolderId = n;
@@ -185,8 +199,8 @@ void DebugManager::Render() {
                     ImGui::EndCombo();
                 }
                 //ImGui::InputText("path to new model", inputPath, IM_ARRAYSIZE(inputPath));
-                if(modelPaths.empty()){
-                    ImGui::TextColored(ImVec4(1.0,0.0,0.0,1.0),"There are no models in the folder!");
+                if (modelPaths.empty()) {
+                    ImGui::TextColored(ImVec4(1.0, 0.0, 0.0, 1.0), "There are no models in the folder!");
                 } else {
                     static int selectedModelId = 0;
                     std::string stringModelName = modelPaths[selectedModelId].path().filename().string();
@@ -194,7 +208,8 @@ void DebugManager::Render() {
                     if (ImGui::BeginCombo("Models", charModelName)) {
                         for (int n = 0; n < modelPaths.size(); n++) {
                             const bool is_selected = (selectedModelId == n);
-                            if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(), is_selected))
+                            if (ImGui::Selectable(modelPaths[n].path().filename().generic_string().c_str(),
+                                                  is_selected))
                                 selectedModelId = n;
 
                             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -216,26 +231,23 @@ void DebugManager::Render() {
             ImGui::Text("This object doesnt have a Renderer");
         }
         ImGui::Checkbox("Safety checkbox (check if you want to remove the object)", &safetySwitch);
-        if(safetySwitch) {
-            if (ImGui::Button("REMOVE")){
+        if (safetySwitch) {
+            if (ImGui::Button("REMOVE")) {
                 GameObject::Destroy(selected);
                 safetySwitch = false;
                 displaySelected = false;
                 transformExtracted = false;
             }
         }
-        if (ImGui::Button("Close"))
-        {
+        if (ImGui::Button("Close")) {
             safetySwitch = false;
             displaySelected = false;
             transformExtracted = false;
         }
         ImGui::End();
     }
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
 void DebugManager::ProcessChildren(std::shared_ptr<GameObject> gameObject) {
     if (gameObject->children.empty())
         return;
@@ -432,6 +444,14 @@ std::vector<std::filesystem::directory_entry> DebugManager::FindModelFolders() {
             scannedEntries.push_back(entry);
     }
     return scannedEntries;
+}
+
+void DebugManager::MainMenu() {
+    ImGui::Begin("Main Menu");
+    ImGui::Checkbox("Display Hierarchy Tree",&displayHierarchyTree);
+    ImGui::Checkbox("Display Save Menu",&displaySaveMenu);
+    ImGui::Checkbox("Display Usage Info",&displaySystemInfo);
+    ImGui::End();
 }
 
 #endif

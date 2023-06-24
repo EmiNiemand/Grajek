@@ -15,6 +15,12 @@ private:
 	inline static DebugManager* hierarchyManager;
 	explicit DebugManager();
 
+    //flags to display coresponding menus
+    bool displayHierarchyTree;
+    bool displaySaveMenu;
+    bool displaySystemInfo;
+
+
 	bool displaySelected;
     bool safetySwitch;
 	//flag to check if position of the GameObject was already extracted. 
@@ -28,7 +34,8 @@ private:
     std::vector<fs::directory_entry> folderPaths;
     std::vector<fs::directory_entry> modelPaths;
 
-
+    void MainMenu();
+    void HierarchyTree();
 	void ProcessChildren(std::shared_ptr<GameObject> gameObject);
 	//Conversion from vec3 to float[3] for use in imgui.
 	static void ExtractVec3ToFloat3(glm::vec3 input,float* output);
