@@ -102,11 +102,9 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
             break;
         case Launchpad:
             instrument->Setup(instrumentName, MusicGenre::SynthPop);
-            instrument->AddSamples({});
             break;
         case Guitar:
             instrument->Setup(instrumentName, MusicGenre::Rock);
-            instrument->AddSamples({});
             break;
     }
 
@@ -263,22 +261,8 @@ std::shared_ptr<Instrument> Instrument::GetInstrument(InstrumentName instrumentN
                                                 {1, 0, 0.5}, {2, 0, 0.5}});
             break;
         case Launchpad:
-            // 2   * *
-            // 1 *     *
-            // 0 -------
-            instrument->GeneratePattern({
-                {0, 0, 2.0},
-                {1, 0}, {2, 0.5}, {2, 0.5},
-                {1, 0.5}});
             break;
         case Guitar:
-            // 2   *   *
-            // 1 *   *
-            // 0 -------
-            instrument->GeneratePattern({
-                {0, 0, 2.0},
-                {1, 0}, {2, 0.5},
-                {1, 0.5}, {2, 0.5}});
             break;
     }
 
