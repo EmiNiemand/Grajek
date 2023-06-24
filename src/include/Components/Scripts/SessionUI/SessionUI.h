@@ -34,14 +34,14 @@ private:
     std::shared_ptr<Image> metronomeImage;
     std::shared_ptr<UIAnimator> metronomeAnimator;
     std::shared_ptr<AudioSource> tickSound;
-    std::map<bool, std::shared_ptr<Image>> metronomeSoundIndicator;
-    std::map<bool, std::shared_ptr<Image>> metronomeVisualsIndicator;
+    std::shared_ptr<Image> metronomeSoundIndicator;
+    std::shared_ptr<Image> metronomeVisualsIndicator;
     bool metronomeSoundEnabled;
     bool metronomeVisualEnabled;
 
     // Backing track
     std::shared_ptr<AudioSource> backingTrack;
-    std::map<bool, std::shared_ptr<Image>> backingTrackIndicator;
+    std::shared_ptr<Image> backingTrackIndicator;
     bool backingTrackEnabled = true;
 
     // Cheat sheet
