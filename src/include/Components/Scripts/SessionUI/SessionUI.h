@@ -20,6 +20,7 @@ class GameObject;
 class AudioSource;
 class UIAnimator;
 class Button;
+class Instrument;
 
 class SessionUI : public Component {
 private:
@@ -67,10 +68,11 @@ public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
     // In child classes you need to place BackingTrackSetup() before calling parent's Setup()
-    virtual void Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
-                       bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack);
+    virtual void Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
+                       bool sessionMetronomeVisuals, bool sessionBackingTrack);
     void SetCheatSheet(const std::string& cheatSheetPath);
     void SetInstrumentControl(const std::string& instrumentControlPath);
+    void SetTheme(const std::string& themePath);
 
     virtual void PlaySound(int index);
     virtual void StopSound(int index);

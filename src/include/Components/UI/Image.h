@@ -50,6 +50,7 @@ public:
     void SetScale(glm::vec2 newScale);
     void SetColor(glm::vec3 newColor) override;
     void SetAlpha(float newAlpha) override;
+    void SetZ(float newZ);
 
     float GetWidth();
     float GetHeight();

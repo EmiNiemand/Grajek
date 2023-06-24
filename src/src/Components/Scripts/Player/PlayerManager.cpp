@@ -195,18 +195,12 @@ void PlayerManager::OnInteract() {
         OnMove({0, 0});
         return;
     }
-    else shopMenu->HideMenu();
 
     if (savePointMenu->ShowMenu()) {
         activeMenu = savePointMenu;
         OnMove({0, 0});
         return;
     }
-    else savePointMenu->HideMenu();
-
-    // If the code got to this point,
-    // active menu got closed
-    activeMenu.reset();
 }
 #pragma endregion
 

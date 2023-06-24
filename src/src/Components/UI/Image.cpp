@@ -151,6 +151,17 @@ void Image::SetAlpha(float newAlpha) {
     if (alpha > 1.0f) alpha = 1.0f;
 }
 
+void Image::SetZ(float newZ) {
+    z = newZ;
+    parent->transform->SetLocalPosition(glm::vec3(x, y, z));
+
+    mesh->vertices[0].position = glm::vec3(leftBottom.x/960-1, leftBottom.y/540-1, z);
+    mesh->vertices[1].position = glm::vec3(leftTop.x/960-1, leftTop.y/540-1, z);
+    mesh->vertices[2].position = glm::vec3(rightBottom.x/960-1, rightBottom.y/540-1, z);
+    mesh->vertices[3].position = glm::vec3(rightTop.x/960-1, rightTop.y/540-1, z);
+    mesh->setupMesh();
+}
+
 void Image::Update() {
 #ifdef DEBUG
     ZoneScopedNC("Image", 0x800080);

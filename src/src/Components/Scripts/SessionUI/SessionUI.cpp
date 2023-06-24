@@ -3,6 +3,7 @@
 //
 
 #include "Components/Scripts/SessionUI/SessionUI.h"
+#include "Components/Scripts/Instrument.h"
 #include "Components/UI/Image.h"
 #include "Components/UI/Text.h"
 #include "Components/UI/Button.h"
@@ -12,25 +13,48 @@
 
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &samples,
-                      bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+void SessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
+                      bool sessionMetronomeVisuals, bool sessionBackingTrack) {
     // I negate actual values to use Toggle methods to easily setup elements
     metronomeSoundEnabled = !(sessionMetronomeSound & sessionMetronomeVisuals);
     metronomeVisualEnabled = !sessionMetronomeVisuals;
     backingTrackEnabled = !sessionBackingTrack;
 
+    // TODO: ugly workaround, replace when possible by passing instrument to method
+    std::string instrumentName = instrument->NameToString();
+    std::string instrumentNameLCase = instrumentName;
+    instrumentNameLCase[0] -= 'Z'-'z';
+
+    // Load backing track
+    // ------------------
+    BackingTrackSetup(instrumentNameLCase+"/backingTrack");
+
+    // Load background
+    // ---------------
     GameObject::Instantiate("Background", parent)
             ->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/vignetteBackground.png", 0.8);
 
-    MetronomeSetup("UI/Sesja/Ramka.png", bpm);
+    MetronomeSetup("UI/Sesja/Ramka.png", (int)instrument->name);
     AccuracyFeedbackSetup();
 
     ToggleMetronomeVisuals();
     ToggleBackingTrack();
 
+    // Set up cheat sheet
+    // ------------------
+    SetCheatSheet("UI/Sesja/"+instrumentName+"Patterns.png");
+
+    // Set up instrument control
+    // ------------------
+    SetInstrumentControl("UI/Sesja/"+instrumentName+"Control.png");
+
+    // Load theme
+    // ----------
+    SetTheme("UI/Sesja/widok"+instrumentName+".png");
+
     // Set up sound samples
     // --------------------
-    for (const auto& sample: samples)
+    for (const auto& sample: instrument->samples)
     {
         sampleSources.push_back(GameObject::Instantiate("SampleSource", parent)->AddComponent<AudioSource>());
         sampleSources.back()->LoadAudioData(sample->clipPath, AudioType::Direct);
@@ -43,12 +67,18 @@ void SessionUI::Setup(int bpm, const std::vector<std::shared_ptr<Sample>> &sampl
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(-985, 0, cheatSheetPath, -0.8);
+    cheatSheet->LoadTexture(1785, 0, cheatSheetPath, -0.8);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
     instrumentControl->LoadTexture(1785, 0, instrumentControlPath, -0.8);
+}
+
+void SessionUI::SetTheme(const std::string &themePath) {
+    auto theme = GameObject::Instantiate("Theme", parent)->AddComponent<Image>();
+    theme->LoadTexture(0, 0, themePath);
+    theme->SetScale(0.8f);
 }
 
 void SessionUI::PlaySound(int index) {
@@ -68,9 +98,11 @@ bool SessionUI::ToggleCheatSheet() {
     }
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
+        cheatSheet->SetZ(-0.81);
+        instrumentControl->SetZ(-0.8);
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(-75, 0, 0), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
                 });
         for (int i = 0; i < soundButtons.size(); i++) {
             soundButtons[i]->isActive = false;
@@ -81,7 +113,7 @@ bool SessionUI::ToggleCheatSheet() {
     } else {
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(-985, 0, 0), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
                 });
         for (int i = 0; i < soundButtons.size(); i++) {
             soundAnimators[i][1]->Reset();
@@ -97,7 +129,7 @@ void SessionUI::ToggleInstrumentControl() {
         cheatSheetActive = false;
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                {AnimatedProperty::Position, glm::vec3(-985, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
         });
         for (int i = 0; i < soundAnimators.size(); i++) {
             soundAnimators[i][1]->Reset();
@@ -105,6 +137,8 @@ void SessionUI::ToggleInstrumentControl() {
     }
     instrumentControlActive = !instrumentControlActive;
     if (instrumentControlActive) {
+        instrumentControl->SetZ(-0.81);
+        cheatSheet->SetZ(-0.8);
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
                 {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
