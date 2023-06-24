@@ -251,18 +251,16 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
 
         for (auto& pat : favPatterns) {
             if (pat.first == pattern->id) {
-                opponentSatisfaction += RandomnessManager::GetInstance()->GetFloat(6.0f, 8.0f);
+                opponentSatisfaction += RandomnessManager::GetInstance()->GetFloat(1.0f, 2.0f);
                 isFavorite = true;
             }
         }
 
         if (!isFavorite)
-            opponentSatisfaction += 4.0f;
-    } else {
-        opponentSatisfaction -= 6.0f;
-    }
+            opponentSatisfaction += 1.5f;
 
-    opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
+        opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
+    }
 }
 
 /**
