@@ -216,7 +216,9 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                 std::string currentIndex = std::to_string(i * 5 + j + 1);
                 loadGameButtons.push_back(savePointMenu->Menu::AddButton(
                         "Save" + currentIndex, xpos, ypos,
-                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png", "Save " + currentIndex, 0, glm::vec3(1)));
+                        "UI/buttonSaveInactive.png", "UI/buttonSaveActive.png",
+                        "Save " + currentIndex, 0, glm::vec3(1)));
+                loadGameButtons.back()->ChangeZ(-0.93);
 
                 std::filesystem::path path = std::filesystem::current_path();
                 path += "\\res\\ProjectConfig\\Saves\\Save ";
@@ -230,9 +232,11 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
                     json.at("saveDate").get_to(gameData->saveDate);
                 }
                 catch (std::exception e) {}
-                savePointMenu->saveDates.push_back(savePointMenu->AddText(
+                auto dateText = savePointMenu->AddText(
                         "SaveDate" + currentIndex, gameData->saveDate, xpos + 15, ypos + 130,
-                        38, glm::vec3(0.1f), GameFont::MarckScript));
+                        38, glm::vec3(0.1f), GameFont::MarckScript);
+                dateText->z = -0.95;
+                savePointMenu->saveDates.push_back(dateText);
 
                 xpos += 350;
             }

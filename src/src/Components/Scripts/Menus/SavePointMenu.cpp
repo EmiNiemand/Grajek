@@ -15,8 +15,16 @@ SavePointMenu::SavePointMenu(const std::shared_ptr<GameObject> &parent, int id) 
 
 SavePointMenu::~SavePointMenu() = default;
 
+void SavePointMenu::Awake() {
+    backgroundImage = GameObject::Instantiate("SavePointBG", parent)->AddComponent<Image>();
+    backgroundImage->LoadTexture(0, 0, "UI/backgroundOpacity60.png", -0.9);
+    backgroundImage->enabled = false;
+    Menu::Awake();
+}
+
 void SavePointMenu::OnDestroy() {
     buttonImage.reset();
+    backgroundImage.reset();
     Menu::OnDestroy();
 }
 
@@ -25,6 +33,7 @@ bool SavePointMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
 
     buttonImage->enabled = false;
+    backgroundImage->enabled = true;
     activeButton = GloomEngine::GetInstance()->FindGameObjectWithName("Save1")->GetComponent<Button>();
     activeButton->isActive = true;
     return true;
@@ -87,6 +96,7 @@ void SavePointMenu::OnClick() {
 
 void SavePointMenu::HideMenu() {
     Menu::HideMenu();
+    backgroundImage->enabled = false;
     if (triggerActive) buttonImage->enabled = true;
 }
 
