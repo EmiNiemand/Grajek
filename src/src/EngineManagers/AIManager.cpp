@@ -184,11 +184,11 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
 
     if (accuracy <= 0.5)
         accuracyValue = 0;
-    if (accuracy <= 0.8)
-        accuracyValue = 0.5;
-    if (accuracy <= 0.95)
-        accuracyValue = 0.75;
-    if (accuracy <= 1)
+    else if (accuracy <= 0.8)
+        accuracyValue = 0.25;
+    else if (accuracy <= 0.95)
+        accuracyValue = 1.0;
+    else if (accuracy <= 1)
         accuracyValue = 1.5;
 
     float patternModifier = 1.0f;
@@ -203,8 +203,8 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
 
     if (patternCounter == 1)
         patternModifier = 0.75;
-    else if (patternCounter == 2)
-        patternModifier = 0.5f;
+    else if (patternCounter >= 2)
+        patternModifier = 0.35f;
 
     return ((accuracyValue * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
 }
@@ -271,24 +271,51 @@ const float AIManager::GetCombinedOpponentSatisfaction(const float& accuracy, co
         }
     }
 
+
+    float opponentInstrumentModifier = 0.0f;
+    float playerInstrumentModifier = 0.0f;
+
     if (characterCounter != 0.0f) {
         satisfaction /= characterCounter;
 
         switch (currentOpponentInstrument) {
             case Clap:
                 satisfaction *= CLAP_MODIFIER;
+                opponentInstrumentModifier = CLAP_MODIFIER;
                 break;
             case Drums:
                 satisfaction *= DRUMS_MODIFIER;
+                opponentInstrumentModifier = DRUMS_MODIFIER;
                 break;
             case Trumpet:
                 satisfaction *= TRUMPET_MODIFIER;
+                opponentInstrumentModifier = TRUMPET_MODIFIER;
                 break;
             case Launchpad:
                 satisfaction *= LAUNCHPAD_MODIFIER;
+                opponentInstrumentModifier = LAUNCHPAD_MODIFIER;
                 break;
             case Guitar:
                 satisfaction *= GUITAR_MODIFIER;
+                opponentInstrumentModifier = GUITAR_MODIFIER;
+                break;
+        }
+
+        switch (currentPlayerInstrument) {
+            case Clap:
+                playerInstrumentModifier = CLAP_MODIFIER;
+                break;
+            case Drums:
+                playerInstrumentModifier = DRUMS_MODIFIER;
+                break;
+            case Trumpet:
+                playerInstrumentModifier = TRUMPET_MODIFIER;
+                break;
+            case Launchpad:
+                playerInstrumentModifier = LAUNCHPAD_MODIFIER;
+                break;
+            case Guitar:
+                playerInstrumentModifier = GUITAR_MODIFIER;
                 break;
         }
     }
@@ -305,7 +332,10 @@ const float AIManager::GetCombinedOpponentSatisfaction(const float& accuracy, co
         satisfaction *= 6.0f;
 
 
-    return ((accuracy / 100 * (float)patternSize) + satisfaction / 100.0f * randomModifier);
+    float instrumentModifier = opponentInstrumentModifier - playerInstrumentModifier;
+    if (instrumentModifier == 0 || playerInstrumentModifier > opponentInstrumentModifier) instrumentModifier = 1;
+
+    return ((accuracy / 100 * (float)patternSize) + satisfaction / 100.0f * randomModifier) * instrumentModifier;
 }
 
 /**
