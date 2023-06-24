@@ -206,8 +206,6 @@ float AIManager::GetReward(const float& accuracy, const int& patternSize) {
     else if (patternCounter >= 2)
         patternModifier = 0.35f;
 
-    spdlog::info(accuracyValue);
-
     return ((accuracyValue * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
 }
 
