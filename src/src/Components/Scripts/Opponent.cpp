@@ -194,22 +194,20 @@ void Opponent::Update() {
         }
     }
 
-
-    if (!dialogue->triggerActive) return;
-
     if(dialogue->menuActive) return;
 
     auto hid = HIDManager::GetInstance();
 
 
     for (const auto& interactKey : PlayerInput::Interact) {
-        if (hid->IsKeyDown(interactKey.first) && defeated) {
+        if (hid->IsKeyDown(interactKey.first) && defeated && dialogue->triggerActive) {
             winDialogue->ShowDialogue();
             return;
         }
 
         // Show first dialogue
-        if (hid->IsKeyDown(interactKey.first) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
+        if (hid->IsKeyDown(interactKey.first) && !dialogueActive && !sessionStarter && !musicSession &&
+        !lossDialogue->active && !winDialogue->active && dialogue->triggerActive) {
             dialogueActive = true;
             shouldPlay = false;
             dialogue->ShowDialogue();
@@ -221,7 +219,10 @@ void Opponent::Update() {
     for (const auto& applyKey : PlayerInput::Apply) {
         // Hide win dialogue
         if (hid->IsKeyDown(applyKey.first) && winDialogue->active && winDialogue->dialogueIndex) {
-            dialogue->image->enabled = true;
+            if (dialogue->triggerActive)
+                dialogue->image->enabled = true;
+            else
+                dialogue->image->enabled = false;
             winDialogue->HideDialogue();
             return;
         }
@@ -286,7 +287,10 @@ void Opponent::Update() {
             dialogue->HideDialogue();
             dialogueActive = false;
             rejectDialogueActive = false;
-            dialogue->image->enabled = true;
+            if (dialogue->triggerActive)
+                dialogue->image->enabled = true;
+            else
+                dialogue->image->enabled = false;
             return;
         }
 
@@ -338,7 +342,10 @@ void Opponent::Update() {
 
         // Hide lose dialogue
         if (hid->IsKeyDown(applyKey.first) && lossDialogue->active) {
-            dialogue->image->enabled = true;
+            if (dialogue->triggerActive)
+                dialogue->image->enabled = true;
+            else
+                dialogue->image->enabled = false;
             lossDialogue->HideDialogue();
             return;
         }

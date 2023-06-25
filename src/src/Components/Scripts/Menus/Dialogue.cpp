@@ -65,17 +65,19 @@ void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 }
 
 void Dialogue::Update() {
-    if (!triggerActive || menuActive) return;
-    for (const auto& interactKey : PlayerInput::Interact) {
-        if (HIDManager::GetInstance()->IsKeyDown(interactKey.first) && !forced && !active) {
-            if (dialogueIndex == 0) {
-                ShowDialogue();
-                return;
+    if (menuActive) return;
+    if (triggerActive) {
+        for (const auto& interactKey : PlayerInput::Interact) {
+            if (HIDManager::GetInstance()->IsKeyDown(interactKey.first) && !forced && !active) {
+                if (dialogueIndex == 0) {
+                    ShowDialogue();
+                    return;
+                }
             }
         }
     }
     for (const auto& applyKey : PlayerInput::Apply) {
-        if (HIDManager::GetInstance()->IsKeyDown(applyKey.first)) {
+        if (HIDManager::GetInstance()->IsKeyDown(applyKey.first) && active) {
             if (dialogueIndex == texts.size() - 1) {
                 HideDialogue();
                 return;
