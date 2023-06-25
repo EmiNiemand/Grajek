@@ -174,10 +174,10 @@ void CharacterLogic::SetPlayerPattern(const std::shared_ptr<MusicPattern>& patte
         for (auto& pat : favPatterns) {
             if (pat.first == pattern->id) {
                 playerSatisfaction += 3.0f - pat.second;
-                pat.second = std::clamp(pat.second + 1.0f, 0.0f, 5.0f);
+                pat.second = std::clamp(pat.second + 2.0f, 0.0f, 6.0f);
                 isFavorite = true;
             } else {
-                pat.second = std::clamp(pat.second - 1.0f, -1.0f, 5.0f);
+                pat.second = std::clamp(pat.second - 1.5f, -1.0f, 6.0f);
             }
         }
 
@@ -312,8 +312,6 @@ void CharacterLogic::CalculateBasePlayerSatisfaction() {
 
         previousPlayerGenre = playerGenre;
         previousPlayerInstrumentName = playerInstrumentName;
-
-        playerSatisfaction = std::clamp(playerSatisfaction, 0.0f, 100.0f);
     } else {
         if (previousPlayerGenre != playerGenre && previousPlayerInstrumentName != playerInstrumentName) {
             repeatingModifier = 0.0f;
