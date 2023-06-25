@@ -14,7 +14,7 @@
 #endif
 
 AIManager::AIManager() {
-    patternPlayed.reserve(3);
+    playerPatternsPlayed.reserve(3);
 }
 
 AIManager::~AIManager() {
@@ -75,8 +75,8 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
 void AIManager::Free() {
     charactersLogics.clear();
     charactersMovements.clear();
+    playerPatternsPlayed.clear();
     playerTransform = nullptr;
-    patternPlayed.clear();
 }
 
 /**
@@ -86,8 +86,6 @@ void AIManager::Free() {
  * @param gen - enum of music genre
  */
 void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const MusicGenre &gen) {
-    sessionCharacters = 0.0f;
-
     currentPlayerInstrument = ins;
 
     for (auto&& ch : charactersLogics) {
@@ -101,6 +99,8 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyPlayerStopsPlaying() {
+    currentPlayerInstrument = {};
+
     for (auto&& ch : charactersLogics)
         ch.second->SetPlayerPlayingStatus(false);
 }
@@ -113,13 +113,15 @@ void AIManager::NotifyPlayerStopsPlaying() {
 void AIManager::NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
     AI_LOGIC_STATE state;
 
-    if (patternPlayed.size() == 3) patternPlayed.pop_back();
-    patternPlayed.insert(patternPlayed.begin(), pat);
+    if (playerPatternsPlayed.size() == 3)
+        playerPatternsPlayed.pop_back();
+
+    playerPatternsPlayed.insert(playerPatternsPlayed.begin(), pat);
 
     for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == Listening || state == WalkingAway)
+        if (state == ListeningToPlayer || state == ListeningToDuel || state == WalkingAway)
             ch.second->SetPlayerPattern(pat);
     }
 }
@@ -133,80 +135,47 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     float satisfaction = 0.0f;
     AI_LOGIC_STATE state;
 
-    for (auto&& ch : charactersLogics) {
+    for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == Listening) {
+        if (state == ListeningToPlayer || state == ListeningToDuel)
             satisfaction += ch.second->GetPlayerSatisfaction();
-            sessionCharacters += 1.0f;
-        }
     }
 
-    if (sessionCharacters != 0.0f) {
-        satisfaction /= sessionCharacters;
-
-        switch (currentPlayerInstrument) {
-            case Clap:
-                satisfaction *= CLAP_MODIFIER;
-                break;
-            case Drums:
-                satisfaction *= DRUMS_MODIFIER;
-                break;
-            case Trumpet:
-                satisfaction *= TRUMPET_MODIFIER;
-                break;
-            case Launchpad:
-                satisfaction *= LAUNCHPAD_MODIFIER;
-                break;
-            case Guitar:
-                satisfaction *= GUITAR_MODIFIER;
-                break;
-        }
+    switch (currentPlayerInstrument) {
+        case Clap:
+            satisfaction *= CLAP_MODIFIER;
+            break;
+        case Drums:
+            satisfaction *= DRUMS_MODIFIER;
+            break;
+        case Trumpet:
+            satisfaction *= TRUMPET_MODIFIER;
+            break;
+        case Launchpad:
+            satisfaction *= LAUNCHPAD_MODIFIER;
+            break;
+        case Guitar:
+            satisfaction *= GUITAR_MODIFIER;
+            break;
     }
 
     return satisfaction;
 }
 
-float AIManager::GetReward(const float& accuracy, const int& patternSize) {
+const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
-
-    float accuracyValue = accuracy;
-
-    if (sessionCharacters <= 10.0f)
-        satisfaction *= 1.0f;
-    else if (sessionCharacters <= 25.0f)
-        satisfaction *= 2.0f;
-    else if (sessionCharacters <= 50.0f)
-        satisfaction *= 4.0f;
-    else
-        satisfaction *= 6.0f;
-
-    if (accuracy <= 0.5)
-        accuracyValue = 0;
-    else if (accuracy <= 0.8)
-        accuracyValue = 0.25;
-    else if (accuracy <= 0.95)
-        accuracyValue = 1.0;
-    else if (accuracy <= 1)
-        accuracyValue = 1.5;
-
     float patternModifier = 1.0f;
-    int patternCounter = 0;
 
-    auto playerPlayedPattern = patternPlayed[0];
+    auto playerPlayedPattern = playerPatternsPlayed[0];
 
     for (int i = 1; i < 3; ++i) {
-        if (patternPlayed.size() > i && patternPlayed[i] == playerPlayedPattern)
-            ++patternCounter;
+        if (playerPatternsPlayed.size() > i && playerPatternsPlayed[i] == playerPlayedPattern)
+            patternModifier -= 0.3f;
     }
 
-    if (patternCounter == 1)
-        patternModifier = 0.75;
-    else if (patternCounter >= 2)
-        patternModifier = 0.35f;
-
-    return ((accuracyValue * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
+    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
@@ -232,6 +201,8 @@ void AIManager::NotifyOpponentStartsPlaying(const InstrumentName &ins, const Mus
  * Notifies every character about stopped player session.
  */
 void AIManager::NotifyOpponentStopsPlaying() {
+    currentOpponentInstrument = {};
+
     for (auto&& ch : charactersLogics)
         ch.second->SetOpponentPlayingStatus(false);
 }
@@ -247,7 +218,7 @@ void AIManager::NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern>&
     for (auto&& ch : charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == Listening)
+        if (state == ListeningToDuel || state == WalkingAway)
             ch.second->SetOpponentPattern(pat);
     }
 }
@@ -257,85 +228,46 @@ void AIManager::NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern>&
  * Returns combined enemy satisfaction.
  * @returns float - combined satisfaction of every character
  */
-const float AIManager::GetCombinedOpponentSatisfaction(const float& accuracy, const int& patternSize) {
+const float AIManager::GetCombinedOpponentSatisfaction() {
     float satisfaction = 0.0f;
-    float characterCounter = 0.0f;
     AI_LOGIC_STATE state;
 
-    for (auto&& ch : charactersLogics) {
+    for (auto &&ch: charactersLogics) {
         state = ch.second->GetLogicState();
 
-        if (state == Listening) {
+        if (state == ListeningToPlayer)
             satisfaction += ch.second->GetOpponentSatisfaction();
-            characterCounter += 1.0f;
-        }
     }
 
-
-    float opponentInstrumentModifier = 0.0f;
-    float playerInstrumentModifier = 0.0f;
-
-    if (characterCounter != 0.0f) {
-        satisfaction /= characterCounter;
-
-        switch (currentOpponentInstrument) {
-            case Clap:
-                satisfaction *= CLAP_MODIFIER;
-                opponentInstrumentModifier = CLAP_MODIFIER;
-                break;
-            case Drums:
-                satisfaction *= DRUMS_MODIFIER;
-                opponentInstrumentModifier = DRUMS_MODIFIER;
-                break;
-            case Trumpet:
-                satisfaction *= TRUMPET_MODIFIER;
-                opponentInstrumentModifier = TRUMPET_MODIFIER;
-                break;
-            case Launchpad:
-                satisfaction *= LAUNCHPAD_MODIFIER;
-                opponentInstrumentModifier = LAUNCHPAD_MODIFIER;
-                break;
-            case Guitar:
-                satisfaction *= GUITAR_MODIFIER;
-                opponentInstrumentModifier = GUITAR_MODIFIER;
-                break;
-        }
-
-        switch (currentPlayerInstrument) {
-            case Clap:
-                playerInstrumentModifier = CLAP_MODIFIER;
-                break;
-            case Drums:
-                playerInstrumentModifier = DRUMS_MODIFIER;
-                break;
-            case Trumpet:
-                playerInstrumentModifier = TRUMPET_MODIFIER;
-                break;
-            case Launchpad:
-                playerInstrumentModifier = LAUNCHPAD_MODIFIER;
-                break;
-            case Guitar:
-                playerInstrumentModifier = GUITAR_MODIFIER;
-                break;
-        }
+    switch (currentOpponentInstrument) {
+        case Clap:
+            satisfaction *= CLAP_MODIFIER;
+            break;
+        case Drums:
+            satisfaction *= DRUMS_MODIFIER;
+            break;
+        case Trumpet:
+            satisfaction *= TRUMPET_MODIFIER;
+            break;
+        case Launchpad:
+            satisfaction *= LAUNCHPAD_MODIFIER;
+            break;
+        case Guitar:
+            satisfaction *= GUITAR_MODIFIER;
+            break;
     }
 
+    return satisfaction;
+}
+
+const float AIManager::GetOpponentSkillLevel(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
+    float satisfaction = GetCombinedOpponentSatisfaction();
 
-    if (sessionCharacters <= 10.0f)
-        satisfaction *= 1.0f;
-    else if (sessionCharacters <= 25.0f)
-        satisfaction *= 2.0f;
-    else if (sessionCharacters <= 50.0f)
-        satisfaction *= 4.0f;
-    else
-        satisfaction *= 6.0f;
+    if (currentOpponentInstrument > currentPlayerInstrument)
+        satisfaction *= 3.0f;
 
-
-    float instrumentModifier = opponentInstrumentModifier - playerInstrumentModifier;
-    if (instrumentModifier == 0 || playerInstrumentModifier > opponentInstrumentModifier) instrumentModifier = 1;
-
-    return ((accuracy / 100 * (float)patternSize) + satisfaction / 100.0f * randomModifier) * instrumentModifier;
+    return ((accuracy * (float)patternSize) + satisfaction / 100.0f * randomModifier);
 }
 
 /**

@@ -35,64 +35,83 @@ void CharacterLogic::Start() {
 }
 
 void CharacterLogic::Update() {
-    float velocity;
-    if (logicState != Listening) {
-        switch (characterMovement->GetState()) {
-            case OnPathToDuel:
-            case OnPathToPlayer:
-                characterAnimations->SetNewState(Running);
-                break;
-            case OnPathToTarget:
-                velocity = glm::length(glm::vec2(characterMovement->rigidbody->velocity.x, characterMovement->rigidbody->velocity.z));
-                if (velocity < 0.0001)
-                    characterAnimations->SetNewState(Idle);
-                characterAnimations->SetNewState(Walking);
-                break;
-            case NearTargetPosition:
+    switch (logicState) {
+        case ListeningToPlayer:
+            if (playerSatisfaction >= upperSatisfactionLimit) {
+                characterAnimations->SetNewState(Cheering);
+            } else if (playerSatisfaction >= middleSatisfactionLimit) {
                 characterAnimations->SetNewState(Idle);
-                break;
-            case NearDuelPosition:
-                CalculateBasePlayerSatisfaction();
-            case NearPlayerPosition:
-                logicState = Listening;
-                break;
-            default:
-                break;
-        }
-    } else if (logicState == Listening) {
-        if (playerSatisfaction >= upperSatisfactionLimit || opponentSatisfaction >= upperSatisfactionLimit) {
-            characterAnimations->SetNewState(Cheering);
-        } else if (playerSatisfaction >= middleSatisfactionLimit || opponentSatisfaction >= middleSatisfactionLimit) {
-            characterAnimations->SetNewState(Idle);
-        } else if (playerSatisfaction >= lowerSatisfactionLimit || opponentSatisfaction >= lowerSatisfactionLimit) {
-            characterAnimations->SetNewState(Booing);
-        } else if (playerSatisfaction < lowerSatisfactionLimit || opponentSatisfaction < lowerSatisfactionLimit) {
-            logicState = WalkingAway;
-            characterMovement->SetState(ReturningToPreviousTarget);
-        }
+            } else if (playerSatisfaction >= lowerSatisfactionLimit) {
+                characterAnimations->SetNewState(Booing);
+            } else if (playerSatisfaction < lowerSatisfactionLimit) {
+                logicState = WalkingAway;
+                characterMovement->SetState(ReturningToPreviousTarget);
+            }
+            break;
+        case ListeningToDuel:
+            if ((playerSatisfaction + opponentSatisfaction) / 2.0f >= upperSatisfactionLimit) {
+                characterAnimations->SetNewState(Cheering);
+            } else if ((playerSatisfaction + opponentSatisfaction) / 2.0f >= middleSatisfactionLimit) {
+                characterAnimations->SetNewState(Idle);
+            } else if ((playerSatisfaction + opponentSatisfaction) / 2.0f >= lowerSatisfactionLimit) {
+                characterAnimations->SetNewState(Booing);
+            } else if ((playerSatisfaction + opponentSatisfaction) / 2.0f < lowerSatisfactionLimit) {
+                logicState = WalkingAway;
+                characterMovement->SetState(ReturningToPreviousTarget);
+            }
+            break;
+        default:
+            switch (characterMovement->GetState()) {
+                case OnPathToDuel:
+                case OnPathToPlayer:
+                    characterAnimations->SetNewState(Running);
+                    break;
+                case OnPathToTarget:
+                    characterAnimations->SetNewState(Walking);
+                    break;
+                case Stuck:
+                case NearTargetPosition:
+                    characterAnimations->SetNewState(Idle);
+                    break;
+                case NearDuelPosition:
+                    logicState = ListeningToDuel;
+                    break;
+                case NearPlayerPosition:
+                    logicState = ListeningToPlayer;
+                    break;
+                default:
+                    break;
+            }
+            break;
     }
 
     Component::Update();
 }
 
 void CharacterLogic::AIUpdate() {
-    if (logicState == Listening) {
-        playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
-    } else if (logicState == AlertedByPlayer) {
-        if (playerSatisfaction > lowerSatisfactionLimit) {
-            logicState = MovingToPlayer;
-            characterMovement->SetState(SettingPathToPlayer);
-        }
-    } else if (logicState == AlertedByOpponent) {
-        playerSatisfaction = 50.0f;
-
-        logicState = MovingToDuel;
-        characterMovement->SetState(SettingPathToDuel);
-    } else if (logicState == WalkingAway) {
-        if (playerSatisfaction > lowerSatisfactionLimit) {
-            logicState = MovingToPlayer;
-            characterMovement->SetState(SettingPathToPlayer);
-        }
+    switch (logicState) {
+        case ListeningToPlayer:
+            playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
+            break;
+        case AlertedByPlayer:
+            if (playerSatisfaction > lowerSatisfactionLimit) {
+                logicState = MovingToPlayer;
+                characterMovement->SetState(SettingPathToPlayer);
+            }
+            break;
+        case AlertedByOpponent:
+            playerSatisfaction = 50.0f;
+            logicState = MovingToDuel;
+            characterMovement->SetState(SettingPathToDuel);
+            break;
+        case WalkingAway:
+            if (playerSatisfaction > lowerSatisfactionLimit) {
+                logicState = MovingToPlayer;
+                characterMovement->SetState(SettingPathToPlayer);
+            }
+            break;
+        default:
+            break;
     }
 
     if (logicState == Wandering || logicState == WalkingAway) {
@@ -251,13 +270,13 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
 
         for (auto& pat : favPatterns) {
             if (pat.first == pattern->id) {
-                opponentSatisfaction += RandomnessManager::GetInstance()->GetFloat(1.0f, 2.0f);
+                opponentSatisfaction += RandomnessManager::GetInstance()->GetFloat(4.0f, 6.0f);
                 isFavorite = true;
             }
         }
 
         if (!isFavorite)
-            opponentSatisfaction += 1.5f;
+            opponentSatisfaction -= 3.0f;
 
         opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
     }
@@ -335,11 +354,11 @@ void CharacterLogic::CalculateBaseOpponentSatisfaction() {
     opponentSatisfaction = 0.0f;
 
     if (std::find(favGenres.begin(), favGenres.end(), opponentGenre) != favGenres.end())
-        opponentSatisfaction += 30.0f;
+        opponentSatisfaction += 40.0f;
 
     if (std::find(favInstrumentsNames.begin(), favInstrumentsNames.end(), opponentInstrumentName)
         != favInstrumentsNames.end())
-        opponentSatisfaction += 20.0f;
+        opponentSatisfaction += 30.0f;
 
     opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
 }

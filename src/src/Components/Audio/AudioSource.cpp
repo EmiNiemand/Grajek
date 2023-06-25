@@ -30,7 +30,7 @@ void AudioSource::Start() {
         playerPos = player->transform;
 
     if (startWithTheGame)
-        alSourcePlay(sourceId);
+        PlaySound();
 
     Component::Start();
 }
@@ -152,8 +152,12 @@ void AudioSource::ReloadAudioData(const std::string& path, AudioType type) {
  * Plays the sound only if it is not currently playing.
  */
 void AudioSource::PlaySound() const {
-    if (currentState != AL_PLAYING)
+    if (currentState != AL_PLAYING) {
+        if (maxDistance > 0.0f)
+            alSourcef(sourceId, AL_GAIN, 0.0f);
+
         alSourcePlay(sourceId);
+    }
 }
 
 /**

@@ -329,12 +329,12 @@ void PlayerManager::PlayedPattern(const std::shared_ptr<MusicPattern> &pat, floa
 
     if (!pat) return;
 
-    if (sessionOpponent) {
-        sessionOpponent->PlayerPlayedPattern(AIManager::GetInstance()->GetReward(accuracy, (int)pat->sounds.size()));
-    }
-
+    if (sessionOpponent)
+        sessionOpponent->PlayerPlayedPattern(AIManager::GetInstance()->
+            GetPlayerSkillLevel(accuracy, (int) pat->sounds.size()));
     else
-        equipment->AddReward(AIManager::GetInstance()->GetReward(accuracy, (int)pat->sounds.size()));
+        equipment->AddReward(AIManager::GetInstance()->
+            GetPlayerSkillLevel(accuracy, (int) pat->sounds.size()));
 
     playerUI->UpdateCash(equipment->cash);
 }
