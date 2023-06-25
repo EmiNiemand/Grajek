@@ -27,32 +27,32 @@ private:
     // Accuracy rating
     std::vector<std::shared_ptr<Image>> accuracyRating;
     std::vector<std::shared_ptr<UIAnimator>> accuracyRatingAnimator;
-    inline static std::string accuracyTexts[] { "Poor", "Nice", "Great!", "PERFECT" };
     inline static float accuracyThresholds[] { 0.5f, 0.8f, 0.95f };
 
     // Metronome
     std::shared_ptr<Image> metronomeImage;
     std::shared_ptr<UIAnimator> metronomeAnimator;
     std::shared_ptr<AudioSource> tickSound;
-    std::map<bool, std::shared_ptr<Image>> metronomeSoundIndicator;
-    std::map<bool, std::shared_ptr<Image>> metronomeVisualsIndicator;
+    std::shared_ptr<Image> metronomeSoundIndicator;
+    std::shared_ptr<Image> metronomeVisualsIndicator;
     bool metronomeSoundEnabled;
     bool metronomeVisualEnabled;
 
     // Backing track
     std::shared_ptr<AudioSource> backingTrack;
-    std::map<bool, std::shared_ptr<Image>> backingTrackIndicator;
+    std::shared_ptr<Image> backingTrackIndicator;
     bool backingTrackEnabled = true;
-
-    // Cheat sheet
-    std::shared_ptr<Image> cheatSheet;
 
     // Instrument control
     std::shared_ptr<Image> instrumentControl;
     bool instrumentControlActive = false;
 
+    // Cheat sheet
+    std::shared_ptr<Image> cheatSheet;
+
 protected:
     bool cheatSheetActive = false;
+
     std::shared_ptr<Button> activeButton;
     std::vector<std::shared_ptr<Button>> soundButtons;
     std::vector<std::vector<std::shared_ptr<UIAnimator>>> soundAnimators;

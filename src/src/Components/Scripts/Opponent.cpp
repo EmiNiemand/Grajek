@@ -72,7 +72,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1
     dialogue->texts.push_back({{"Yo, wanna see, who plays " + instrument->NameToString() + " better?"},
                                {"Then why don't we make a little bet to spice things up!"},
                                {""}});
-    dialogue->texts.push_back({{"Let's say, whoever wins, gets " + std::to_string(bet)},
+    dialogue->texts.push_back({{"Let's say, whoever wins, gets $" + std::to_string(bet)},
                                {""},
                                {""}});
     dialogue->texts.push_back({{""},{""},{""}});
@@ -107,10 +107,14 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1
 
 void Opponent::Start() {
     dialogue->enabled = false;
+    winDialogue->enabled = false;
+    lossDialogue->enabled = false;
     playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     auto playerEquipment = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerEquipment>();
     if (playerEquipment->badges.contains(badge) && playerEquipment->badges[badge]) {
         defeated = true;
+        winDialogue->enabled = true;
+        lossDialogue->enabled = true;
         indicator->GetComponent<Renderer>()->material.color = glm::vec3(1, 1, 1);
     }
     if (badge == PlayerBadges::DRUMS) {
@@ -190,22 +194,20 @@ void Opponent::Update() {
         }
     }
 
-
-    if (!dialogue->triggerActive) return;
-
     if(dialogue->menuActive) return;
 
     auto hid = HIDManager::GetInstance();
 
 
     for (const auto& interactKey : PlayerInput::Interact) {
-        if (hid->IsKeyDown(interactKey.first) && defeated) {
+        if (hid->IsKeyDown(interactKey.first) && defeated && dialogue->triggerActive) {
             winDialogue->ShowDialogue();
             return;
         }
 
         // Show first dialogue
-        if (hid->IsKeyDown(interactKey.first) && !dialogueActive && !sessionStarter && !musicSession && !lossDialogue->active && !winDialogue->active) {
+        if (hid->IsKeyDown(interactKey.first) && !dialogueActive && !sessionStarter && !musicSession &&
+        !lossDialogue->active && !winDialogue->active && dialogue->triggerActive) {
             dialogueActive = true;
             shouldPlay = false;
             dialogue->ShowDialogue();
@@ -217,7 +219,10 @@ void Opponent::Update() {
     for (const auto& applyKey : PlayerInput::Apply) {
         // Hide win dialogue
         if (hid->IsKeyDown(applyKey.first) && winDialogue->active && winDialogue->dialogueIndex) {
-            dialogue->image->enabled = true;
+            if (dialogue->triggerActive)
+                dialogue->image->enabled = true;
+            else
+                dialogue->image->enabled = false;
             winDialogue->HideDialogue();
             return;
         }
@@ -282,7 +287,10 @@ void Opponent::Update() {
             dialogue->HideDialogue();
             dialogueActive = false;
             rejectDialogueActive = false;
-            dialogue->image->enabled = true;
+            if (dialogue->triggerActive)
+                dialogue->image->enabled = true;
+            else
+                dialogue->image->enabled = false;
             return;
         }
 
@@ -303,6 +311,8 @@ void Opponent::Update() {
             time += deltaTime;
             timeCounter->SetScale(glm::vec2(1 - time / battleTime, 1));
             if (time >= battleTime || satisfactionDifference >= 100 || satisfactionDifference <= -100) {
+                winDialogue->enabled = true;
+                lossDialogue->enabled = true;
                 if (satisfactionDifference <= -100 || (time >= battleTime && satisfactionDifference <= 0)) {
                     lossDialogue->ShowDialogue();
                     time = 0.0f;
@@ -332,7 +342,10 @@ void Opponent::Update() {
 
         // Hide lose dialogue
         if (hid->IsKeyDown(applyKey.first) && lossDialogue->active) {
-            dialogue->image->enabled = true;
+            if (dialogue->triggerActive)
+                dialogue->image->enabled = true;
+            else
+                dialogue->image->enabled = false;
             lossDialogue->HideDialogue();
             return;
         }
