@@ -36,7 +36,7 @@ private:
     float accuracy = 0.0f;
     float timer = 0.0f;
     float patternTimer = 0.0f;
-    float startPlayingTimer = 5.0f;
+    float startPlayingTimer = 2.0f;
     short sampleIndex = 0;
     short bet = 0;
     bool defeated = false;

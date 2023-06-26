@@ -8,5 +8,6 @@
 "playerPosition.y": 0.1,
 "playerPosition.z": -13.0,
 "saveDate": "11.09.2001 21:37",
-"shopkeeperEvent": true
+"shopkeeperEvent": true,
+"tutorial": true
 }

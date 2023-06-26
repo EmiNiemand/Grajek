@@ -296,7 +296,7 @@ void Game::InitializeGame() const {
     crowd->AddComponent<Crowd::Crowd>();
 
 #ifdef DEBUG
-//    AIManager::GetInstance()->InitializeSpawner(1);
+    AIManager::GetInstance()->InitializeSpawner(2);
 #else
     AIManager::GetInstance()->InitializeSpawner(60);
 #endif

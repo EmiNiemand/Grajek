@@ -19,6 +19,7 @@ public:
     std::map<PlayerBadges, bool> badges;
 
     bool shopkeeperEvent;
+    bool tutorial;
     std::string saveDate;
 
 public:

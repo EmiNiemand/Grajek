@@ -51,6 +51,7 @@ class CharacterMovement : public Component {
     const bool *aiGrid = nullptr;
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
+    int nullPathCounter = 3;
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     glm::vec3 currentPosition {};
@@ -59,7 +60,7 @@ class CharacterMovement : public Component {
     glm::ivec2 maxSpawnCoords {};
     glm::ivec2 minSpawnCoords {};
     // Rigidbody parameters
-
+    std::shared_ptr<Rigidbody> rigidbody = nullptr;
     float speed = 0.0f;
     float speedMultiplier = 1.0f;
     float rotationAngle = 0.0f;
@@ -75,12 +76,12 @@ class CharacterMovement : public Component {
     void CalculatePath(const glm::ivec2& toPoint);
 
 protected:
-    const bool IsPositionAvailable(const glm::ivec2 &position);
-    const glm::ivec2 GetCurrentEndTarget() const;
+    const glm::ivec2 GetEndPoint() const;
+    const bool IsEndPointAvailable(const glm::ivec2 &position);
+    const glm::ivec2 GetSpawnPoint() const;
+    const bool IsSpawnPointAvailable(const glm::ivec2 &position);
 
 public:
-    std::shared_ptr<Rigidbody> rigidbody = nullptr;
-
     CharacterMovement(const std::shared_ptr<GameObject> &parent, int id);
     ~CharacterMovement() override;
 
@@ -92,6 +93,7 @@ public:
 
     void SetState(const AI_MOVEMENT_STATE& newState);
     const AI_MOVEMENT_STATE GetState() const;
+    const glm::vec3 GetCurrentPosition() const;
 
 };
 

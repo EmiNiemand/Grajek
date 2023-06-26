@@ -14,8 +14,6 @@ private:
     unsigned int textureID;
     std::shared_ptr<Mesh> mesh;
     glm::vec2 leftBottom{}, leftTop{}, rightBottom{}, rightTop{};
-    // Original dimensions of the image
-    int width = 1920, height = 1080;
     int x = 0, y = 0;
     float z = 0.0f;
     glm::vec2 scale = glm::vec2(1);
@@ -29,6 +27,8 @@ public:
     glm::vec2 pivot = {0, 0};
     std::string filePath;
     bool isDynamic = false;
+    // Original dimensions of the image
+    int width = 1920, height = 1080;
 
     Image(const std::shared_ptr<GameObject> &parent, int id);
 

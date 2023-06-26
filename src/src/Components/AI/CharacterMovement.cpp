@@ -22,7 +22,6 @@ void CharacterMovement::Start() {
     rigidbody = parent->GetComponent<Rigidbody>();
     collisionGrid = CollisionManager::GetInstance()->grid;
     collisionGridSize = CollisionManager::GetInstance()->gridSize;
-    otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
     aiGrid = AIManager::GetInstance()->aiGrid;
     pathfinding = AIManager::GetInstance()->pathfinding;
 
@@ -37,7 +36,7 @@ void CharacterMovement::Start() {
     else
         SetRandomSpawnPoint();
 
-    currentPosition = parent->transform->GetLocalPosition();
+    otherCharacters->erase(id);
     Component::Start();
 }
 
@@ -170,6 +169,8 @@ void CharacterMovement::AIUpdate() {
 }
 
 void CharacterMovement::OnCreate() {
+    otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
+    otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
     playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::OnCreate();
 }
@@ -227,10 +228,12 @@ void CharacterMovement::SetRandomSpawnPointNearPlayer() {
         newEndPoint.y = RandomnessManager::GetInstance()->GetInt(minY, maxY);
 
         if (!aiGrid[(newEndPoint.x + AI_GRID_SIZE / 2) + (newEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-            break;
+            if (IsSpawnPointAvailable(newEndPoint))
+                break;
     }
 
-    parent->transform->SetLocalPosition({newEndPoint.x, 0.01f, newEndPoint.y});
+    currentPosition = {newEndPoint.x, 0.01f, newEndPoint.y};
+    parent->transform->SetLocalPosition(currentPosition);
 }
 
 /**
@@ -266,7 +269,8 @@ void CharacterMovement::SetRandomSpawnPoint() {
             break;
     }
 
-    parent->transform->SetLocalPosition({newEndPoint.x, 0.01f, newEndPoint.y});
+    currentPosition = {newEndPoint.x, 0.01f, newEndPoint.y};
+    parent->transform->SetLocalPosition(currentPosition);
 }
 
 /**
@@ -313,7 +317,7 @@ void CharacterMovement::SetNewPathToPlayer() {
                 intEndPoint = {newEndPoint.x + x, newEndPoint.y + y};
 
                 if (!aiGrid[(intEndPoint.x + AI_GRID_SIZE / 2) + (intEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    isAvailable = IsPositionAvailable(intEndPoint);
+                    isAvailable = IsEndPointAvailable(intEndPoint);
 
                 if (isAvailable) {
                     newEndPoint = intEndPoint;
@@ -355,7 +359,7 @@ void CharacterMovement::SetNewPathToDuel() {
                 intEndPoint = {newEndPoint.x + x, newEndPoint.y + y};
 
                 if (!aiGrid[(intEndPoint.x + AI_GRID_SIZE / 2) + (intEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    isAvailable = IsPositionAvailable(intEndPoint);
+                    isAvailable = IsEndPointAvailable(intEndPoint);
 
                 if (isAvailable) {
                     newEndPoint = intEndPoint;
@@ -407,10 +411,15 @@ void CharacterMovement::CalculatePath(const glm::ivec2& toPoint) {
 
     path = pathfinding->FindNewPath({currentPosition.x, currentPosition.z},toPoint);
 
-    if (path == nullptr)
+    if (path == nullptr) {
         movementState = NearTargetPosition;
-    else
-        pathIterator = (int)path->size() - 1;
+        --nullPathCounter;
+        if (nullPathCounter == 0)
+            movementState = Stuck;
+    } else {
+        nullPathCounter = 3;
+        pathIterator = (int) path->size() - 1;
+    }
 }
 
 /**
@@ -433,24 +442,61 @@ const AI_MOVEMENT_STATE CharacterMovement::GetState() const {
 
 /**
  * @annotation
- * Returns current end target.
- * @returns glm::ivec2 - endPoint
+ * Returns current position.
+ * @returns glm::vec3 - currentPosition
  */
-const glm::ivec2 CharacterMovement::GetCurrentEndTarget() const {
+const glm::vec3 CharacterMovement::GetCurrentPosition() const {
+    return currentPosition;
+}
+
+/**
+ * @annotation
+ * Returns current spawn point.
+ * @returns glm::ivec2 - currentPosition
+ */
+const glm::ivec2 CharacterMovement::GetSpawnPoint() const {
+    return {currentPosition.x, currentPosition.z};
+}
+
+/**
+ * @annotation
+ * Returns current end point.
+ * @returns glm::ivec2 - currentPosition
+ */
+const glm::ivec2 CharacterMovement::GetEndPoint() const {
     return endPoint;
 }
 
 /**
  * @annotation
- * Checks whether this position is already chosen by another CharacterMovement object
+ * Checks whether this spawn point is already chosen by another CharacterMovement object.
  * @param position - position to check
  * @returns bool - false if not available, otherwise true
  */
-const bool CharacterMovement::IsPositionAvailable(const glm::ivec2& position) {
+const bool CharacterMovement::IsSpawnPointAvailable(const glm::ivec2& position) {
     bool isAvailable = true;
 
     for (const auto& mov : *otherCharacters) {
-        if (position == mov.second->GetCurrentEndTarget() && mov.first != id) {
+        if (position == mov.second->GetSpawnPoint() && mov.first != id) {
+            isAvailable = false;
+            break;
+        }
+    }
+
+    return isAvailable;
+}
+
+/**
+ * @annotation
+ * Checks whether this end point is already chosen by another CharacterMovement object.
+ * @param position - position to check
+ * @returns bool - false if not available, otherwise true
+ */
+const bool CharacterMovement::IsEndPointAvailable(const glm::ivec2& position) {
+    bool isAvailable = true;
+
+    for (const auto& mov : *otherCharacters) {
+        if (position == mov.second->GetEndPoint() && mov.first != id) {
             isAvailable = false;
             break;
         }

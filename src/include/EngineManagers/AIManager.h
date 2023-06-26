@@ -27,8 +27,8 @@ constexpr int JAZZ_MAN_INCREASED_SPAWN_RATE = 5;
 constexpr int JAZZ_MAN_DEFAULT_SPAWN_RATE = 2;
 // Earnings modifiers
 constexpr float CLAP_MODIFIER = 1.0f;
-constexpr float DRUMS_MODIFIER = 3.0f;
-constexpr float TRUMPET_MODIFIER = 5.0f;
+constexpr float DRUMS_MODIFIER = 2.0f;
+constexpr float TRUMPET_MODIFIER = 4.0f;
 constexpr float LAUNCHPAD_MODIFIER = 8.0f;
 constexpr float GUITAR_MODIFIER = 12.0f;
 
@@ -46,13 +46,10 @@ class AIManager {
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     InstrumentName currentPlayerInstrument {};
+    std::vector<std::shared_ptr<MusicPattern>> playerPatternsPlayed = {};
     InstrumentName currentOpponentInstrument {};
-
-    std::vector<std::shared_ptr<MusicPattern>> patternPlayed = {};
-
     // Settings
     int charactersAmount = 0;
-    float sessionCharacters = 0.0f;
 
     inline static AIManager* aiManager;
     explicit AIManager();
@@ -81,15 +78,16 @@ public:
     void NotifyPlayerStopsPlaying();
     void NotifyPlayerPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
     const float GetCombinedPlayerSatisfaction();
+    const float GetPlayerSkillLevel(const float &accuracy, const int &patternSize);
     void NotifyPlayerTalksWithOpponent(const bool& state);
     void NotifyOpponentStartsPlaying(const InstrumentName &ins, const MusicGenre &gen);
     void NotifyOpponentStopsPlaying();
     void NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern> &pat);
-    const float GetCombinedOpponentSatisfaction(const float& accuracy, const int& patternSize);
+    const float GetCombinedOpponentSatisfaction();
+    const float GetOpponentSkillLevel(const float &accuracy, const int &patternSize);
     [[nodiscard]] const int GetCharactersAmount() const;
     void RemoveCharacterLogic(const int& componentId);
 
-    float GetReward(const float &accuracy, const int &patternSize);
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H

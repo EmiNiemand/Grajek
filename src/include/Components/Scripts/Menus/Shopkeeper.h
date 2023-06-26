@@ -11,15 +11,20 @@ class Image;
 class Text;
 class PlayerManager;
 class UIAnimator;
+class AudioSource;
 
 class Shopkeeper : public Component, public IDataPersistance {
 private:
-    std::vector<std::shared_ptr<AudioSource>> sampleSources;
-    std::vector<std::shared_ptr<Image>> sampleImages;
-    std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
+    std::shared_ptr<Image> spaceImage;
+    std::shared_ptr<Image> musicSessionImage;
+    std::shared_ptr<Image> instrumentControlImage;
+    std::shared_ptr<Image> patternsImage;
+    std::shared_ptr<AudioSource> patternsSound;
+    std::shared_ptr<Image> soundButton1, soundButton2;
+    std::shared_ptr<Image> soundImage;
+    std::shared_ptr<Image> stopMusicSessionImage;
+    std::shared_ptr<Image> crowdImage;
 
-    std::shared_ptr<Image> background;
-    std::shared_ptr<Image> clapIcon;
     std::shared_ptr<Image> image;
     std::shared_ptr<Text> text1;
     std::shared_ptr<Text> text2;
@@ -28,16 +33,15 @@ private:
     std::shared_ptr<GameObject> shopkeeperModel;
     std::shared_ptr<GameObject> door;
     std::shared_ptr<PlayerManager> playerManager;
-    std::shared_ptr<Image> instrumentControl;
-    std::shared_ptr<Image> cheatSheet;
     short dialogueIndex = 0;
     short pattern = 0;
+    bool patternIsGood = false;
     bool shopkeeperEvent = false;
-    bool instrumentControlActive = false;
-    bool cheatSheetActive = false;
+    bool tutorial = false;
 
 public:
     std::vector<Strings> texts;
+    bool menuActive = false;
 
 public:
     Shopkeeper(const std::shared_ptr<GameObject> &parent, int id);

@@ -11,11 +11,13 @@ enum AI_LOGIC_STATE {
     AlertedByOpponent,
     MovingToPlayer,
     MovingToDuel,
-    Listening,
+    ListeningToPlayer,
+    ListeningToDuel,
     WalkingAway,
 };
 
 enum AI_MOVEMENT_STATE {
+    Stuck,
     Waiting,
     SettingPathToDuel,
     OnPathToDuel,

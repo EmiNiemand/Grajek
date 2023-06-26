@@ -243,6 +243,8 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
             ypos -= 500;
         }
 
+        savePointMenu->Menu::AddImage("SaveMenuBackground", 0, 0, "UI/backgroundOpacity60.png");
+
         loadGameButtons[0]->left = loadGameButtons[4];
         loadGameButtons[0]->right = loadGameButtons[1];
         loadGameButtons[0]->down = loadGameButtons[5];

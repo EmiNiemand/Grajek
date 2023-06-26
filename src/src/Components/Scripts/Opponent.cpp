@@ -34,8 +34,6 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1
         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
         auto sample = sampleSources.back();
         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
-        sample->SetDistanceMode(AudioDistanceMode::Continuous);
-        sample->SetPitch(0.9f);
         sample->SetMaxDistance(10);
     }
 
@@ -77,7 +75,7 @@ void Opponent::Setup(std::shared_ptr<Instrument> instrument1, float patterDelay1
                                {""}});
     dialogue->texts.push_back({{""},{""},{""}});
     winDialogue->texts.push_back({{"That was fantastic! Thanks for playing with me bud."},
-                                  {std::to_string(bet) + " well earned. Good luck with other buskers!"},
+                                  {"$" + std::to_string(bet) + " well earned. Good luck with other buskers!"},
                                   {""}});
     lossDialogue->texts.push_back({{"Unfortunately, you need a bit more practice bud."},
                                    {"Definitely come back later though! You have a lot of potential."},
@@ -131,7 +129,7 @@ void Opponent::Start() {
     }
 
     timer = pattern->sounds[sampleIndex]->duration * 60 / (float)instrument->genre;
-    sampleSources[sampleIndex]->ForcePlaySound();
+    sampleSources[sampleIndex]->PlaySound();
 
     Component::Start();
 }
@@ -153,22 +151,22 @@ void Opponent::Update() {
             timer += deltaTime;
             if (timer >= (pattern->sounds[sampleIndex]->delay + pattern->sounds[sampleIndex]->delay *
             (1 - accuracy / 100)) * 60 / (float)instrument->genre) {
-                if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet) sampleSources[sampleIndex - 1]->StopSound();
+                if (sampleIndex > 0 && instrument->name == InstrumentName::Trumpet)
+                    sampleSources[sampleIndex - 1]->PauseSound();
 
                 if (sampleIndex == pattern->sounds.size() - 1) {
 
-                    sampleSources[sampleIndex]->StopSound();
-
                     if (musicSession) {
                         AIManager::GetInstance()->NotifyOpponentPlayedPattern(pattern);
-                        float diff = AIManager::GetInstance()->GetCombinedOpponentSatisfaction(accuracy, (int)pattern->sounds.size());
-                        satisfactionDifference -= diff * 2;
+                        satisfactionDifference -= 2 * AIManager::GetInstance()->
+                                GetOpponentSkillLevel(accuracy / 100.0f,(int)pattern->sounds.size());
                         belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
                     }
 
                     pattern = instrument->opponentPatterns[RandomnessManager::GetInstance()->GetInt(0,
                                                            (int)instrument->opponentPatterns.size() - 1)];
                     for (const auto& sample : sampleSources) {
+                        sample->StopSound();
                         GameObject::Destroy(sample->GetParent());
                     }
 
@@ -178,8 +176,6 @@ void Opponent::Update() {
                         sampleSources.push_back(GameObject::Instantiate("OpponentSampleSource", parent)->AddComponent<AudioSource>());
                         auto sample = sampleSources.back();
                         sample->LoadAudioData(sound->sample->clipPath, AudioType::Positional);
-                        sample->SetDistanceMode(AudioDistanceMode::Continuous);
-                        sample->SetPitch(0.9f);
                         sample->SetMaxDistance(10);
                     }
 
@@ -187,7 +183,7 @@ void Opponent::Update() {
                     sampleIndex = -1;
                 }
                 ++sampleIndex;
-                sampleSources[sampleIndex]->ForcePlaySound();
+                sampleSources[sampleIndex]->PlaySound();
                 timer = 0.0f - (pattern->sounds[sampleIndex]->duration + pattern->sounds[sampleIndex]->duration *
                         (1 - accuracy / 100)) * 60 / (float)instrument->genre;
             }
@@ -197,7 +193,6 @@ void Opponent::Update() {
     if(dialogue->menuActive) return;
 
     auto hid = HIDManager::GetInstance();
-
 
     for (const auto& interactKey : PlayerInput::Interact) {
         if (hid->IsKeyDown(interactKey.first) && defeated && dialogue->triggerActive) {
@@ -234,7 +229,7 @@ void Opponent::Update() {
             button2->isActive = true;
             chooseMenu->EnableSelfAndChildren();
             dialogue->NextDialogue();
-            dialogue->texts[1].text1 = "Let's say, whoever wins, gets " + std::to_string(bet);
+            dialogue->texts[1].text1 = "Let's say, whoever wins, gets $" + std::to_string(bet);
             dialogue->texts[1].text2 = "";
             return;
         }
@@ -262,7 +257,7 @@ void Opponent::Update() {
                 if (button1->isActive) {
                     if (playerManager->GetCash() < bet) {
                         dialogue->texts[2].text1 = "Sorry, but you don't have enough money.";
-                        dialogue->texts[2].text2 = "Come back when you'll have at leat " + std::to_string(bet) + ".";
+                        dialogue->texts[2].text2 = "Come back when you'll have at least $" + std::to_string(bet) + ".";
                         AIManager::GetInstance()->NotifyPlayerTalksWithOpponent(false);
                         rejectDialogueActive = true;
                     } else {
@@ -356,8 +351,7 @@ void Opponent::Update() {
 
 void Opponent::PlayerPlayedPattern(float playerSatisfaction) {
     shouldPlay = true;
-    float diff = playerSatisfaction;
-    satisfactionDifference += diff * 2;
+    satisfactionDifference += 2.0f * playerSatisfaction;
     belt->SetScale(glm::vec2(satisfactionDifference / 100.0f, 1.0f));
 }
 
