@@ -50,6 +50,7 @@ class AIManager {
     InstrumentName currentOpponentInstrument {};
     // Settings
     int charactersAmount = 0;
+    float sessionCharacters = 0.0f;
 
     inline static AIManager* aiManager;
     explicit AIManager();

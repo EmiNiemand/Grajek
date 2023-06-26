@@ -7674,9 +7674,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp11"
 },
 {
@@ -7694,9 +7694,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp12"
 },
 {
@@ -11754,9 +11754,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp6"
 },
 {
@@ -11774,9 +11774,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp7"
 },
 {
@@ -11794,9 +11794,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp4"
 },
 {
@@ -11814,9 +11814,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp5"
 },
 {
@@ -11834,9 +11834,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp2"
 },
 {
@@ -11854,9 +11854,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp3"
 },
 {
@@ -11874,9 +11874,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp1"
 },
 {
@@ -11894,9 +11894,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp8"
 },
 {
@@ -12234,9 +12234,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareLamp"
 },
 {

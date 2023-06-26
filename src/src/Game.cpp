@@ -192,8 +192,8 @@ void Game::InitializeGame() const {
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
     dialogueComponent->name = "David Kafferdale";
     dialogueComponent->texts.push_back({{"[singing]"},
-                               {"Smoke on the water... a fire in the sky!"},
-                               {"Smoke on the water... burn it down!"}});
+                               {"Smoooke on the water... a fire in the sky!"},
+                               {"Smoooke on the water... burn it down!"}});
     dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
     dialogueIndicator->transform->SetLocalPosition(glm::vec3(0, 6.5, 0));
@@ -228,7 +228,7 @@ void Game::InitializeGame() const {
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
     dialogueComponent->name = "Jimmy Bravo";
     dialogueComponent->texts.push_back({{"I just saw some dude trying to battle someone with drums by simply clapping!"},
-                                        {"I mean, it was impressive attempt, but there was no way he was going to win."},
+                                        {"I mean, it was an impressive attempt, but there was no way he could win."},
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
@@ -261,9 +261,9 @@ void Game::InitializeGame() const {
     dialogueAnimator->LoadAnimationModel("Crowd/JazzMan004/JazzMan004.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
-    dialogueComponent->name = "brak nazwy / brak nazwy / brak nazwy";
-    dialogueComponent->texts.push_back({{"Pokaz odznake JazzBadge, zeby przejsc dalej."},
-                                        {""},
+    dialogueComponent->name = "Tom Bone";
+    dialogueComponent->texts.push_back({{"Show me what you've got! Oh, I see, you're missing"},
+                                        {"your Jazz Badge. Can't let you through without it."},
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
@@ -279,9 +279,9 @@ void Game::InitializeGame() const {
     dialogueAnimator->LoadAnimationModel("Crowd/BasicMan003/BasicMan003.dae");
     dialogueAnimator->SetAnimation("CrowdAnimations/Idle3.dae");
     dialogueComponent = GameObject::Instantiate("Dialogue", dialogue)->AddComponent<Dialogue>();
-    dialogueComponent->name = "brak nazwy / brak nazwy / brak nazwy";
-    dialogueComponent->texts.push_back({{"Pokaz odznake LaunchBadge, zeby przejsc dalej."},
-                                        {""},
+    dialogueComponent->name = "Bob Mallet";
+    dialogueComponent->texts.push_back({{"I'm sorry, firstly you will have to show me your Launch Badge."},
+                                        {"You know, first day of my new job, I have to check everyone."},
                                         {""}});
     dialogueIndicator = Prefab::Instantiate<Indicator>("Indicator");
     dialogueIndicator->SetParent(dialogue);
