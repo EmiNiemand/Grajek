@@ -20,7 +20,7 @@
 
 MusicSession::MusicSession(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
     instrument = std::move(playerInstrument);
 
     bpm = (int)instrument->genre;
@@ -37,7 +37,7 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument, bool sess
         case Launchpad: sessionUI = sessionUIInstance->AddComponent<LaunchpadSessionUI>(); break;
         case Guitar:    sessionUI = sessionUIInstance->AddComponent<GuitarSessionUI>(); break;
     }
-    sessionUI->Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+    sessionUI->Setup(instrument);
 }
 
 void MusicSession::Update() {

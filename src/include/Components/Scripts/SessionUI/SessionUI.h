@@ -31,6 +31,7 @@ private:
 
     // Metronome
     std::shared_ptr<Image> metronomeImage;
+    std::shared_ptr<Image> metronomeMask;
     std::shared_ptr<UIAnimator> metronomeAnimator;
     std::shared_ptr<AudioSource> tickSound;
     std::shared_ptr<Image> metronomeSoundIndicator;
@@ -46,6 +47,9 @@ private:
     // Instrument control
     std::shared_ptr<Image> instrumentControl;
     bool instrumentControlActive = false;
+
+    std::shared_ptr<AudioSource> notesRevealSound;
+    std::shared_ptr<AudioSource> notesHideSound;
 
     // Cheat sheet
     std::shared_ptr<Image> cheatSheet;
@@ -68,8 +72,7 @@ public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);
 
     // In child classes you need to place BackingTrackSetup() before calling parent's Setup()
-    virtual void Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
-                       bool sessionMetronomeVisuals, bool sessionBackingTrack);
+    virtual void Setup(std::shared_ptr<Instrument> instrument);
     void SetCheatSheet(const std::string& cheatSheetPath);
     void SetInstrumentControl(const std::string& instrumentControlPath);
     void SetTheme(const std::string& themePath);
@@ -95,7 +98,7 @@ public:
 protected:
     void BackingTrackSetup(const std::string& trackName);
 private:
-    void MetronomeSetup(const std::string& metronomePath, int bpm);
+    void MetronomeSetup(int bpm);
     void AccuracyFeedbackSetup();
 };
 

@@ -10,15 +10,15 @@
 #include "GameObjectsAndPrefabs/GameObject.h"
 #include "Components/Audio/AudioSource.h"
 #include "Components/Animations/UIAnimator.h"
+#include "EngineManagers/OptionsManager.h"
 
 SessionUI::SessionUI(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
-void SessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
-                      bool sessionMetronomeVisuals, bool sessionBackingTrack) {
+void SessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     // I negate actual values to use Toggle methods to easily setup elements
-    metronomeSoundEnabled = !(sessionMetronomeSound & sessionMetronomeVisuals);
-    metronomeVisualEnabled = !sessionMetronomeVisuals;
-    backingTrackEnabled = !sessionBackingTrack;
+    metronomeSoundEnabled = !OptionsManager::GetInstance()->sessionMetronomeSound;
+    metronomeVisualEnabled = !OptionsManager::GetInstance()->sessionMetronomeVisuals;
+    backingTrackEnabled = !OptionsManager::GetInstance()->sessionBackingTrack;
 
     // TODO: ugly workaround, replace when possible by passing instrument to method
     std::string instrumentName = instrument->NameToString();
@@ -34,7 +34,7 @@ void SessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetron
     GameObject::Instantiate("Background", parent)
             ->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/vignetteBackground.png", 0.8);
 
-    MetronomeSetup("UI/Sesja/Ramka.png", (int)instrument->genre);
+    MetronomeSetup( (int)instrument->genre);
     AccuracyFeedbackSetup();
 
     ToggleMetronomeVisuals();
@@ -73,6 +73,11 @@ void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
     instrumentControl->LoadTexture(1785, 0, instrumentControlPath, -0.8);
+
+    notesRevealSound = GameObject::Instantiate("NotesRevealSound", parent)->AddComponent<AudioSource>();
+    notesRevealSound->LoadAudioData("res/sounds/direct/cheatsheet_up.wav", AudioType::Direct);
+    notesHideSound = GameObject::Instantiate("NotesRevealSound", parent)->AddComponent<AudioSource>();
+    notesHideSound->LoadAudioData("res/sounds/direct/cheatsheet_down.wav", AudioType::Direct);
 }
 
 void SessionUI::SetTheme(const std::string &themePath) {
@@ -98,6 +103,7 @@ bool SessionUI::ToggleCheatSheet() {
     }
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
+        notesRevealSound->ForcePlaySound();
         cheatSheet->SetZ(-0.81);
         instrumentControl->SetZ(-0.8);
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -111,6 +117,7 @@ bool SessionUI::ToggleCheatSheet() {
         soundButtons[0]->isActive = true;
         activeButton = soundButtons[0];
     } else {
+        notesHideSound->ForcePlaySound();
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
                         {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
@@ -137,6 +144,7 @@ void SessionUI::ToggleInstrumentControl() {
     }
     instrumentControlActive = !instrumentControlActive;
     if (instrumentControlActive) {
+        notesRevealSound->ForcePlaySound();
         instrumentControl->SetZ(-0.81);
         cheatSheet->SetZ(-0.8);
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
@@ -144,6 +152,7 @@ void SessionUI::ToggleInstrumentControl() {
                 {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
         });
     } else {
+        notesHideSound->ForcePlaySound();
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
                 {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
@@ -172,13 +181,18 @@ void SessionUI::Update() {
 }
 
 # pragma region Helper methods
-void SessionUI::MetronomeSetup(const std::string& metronomePath, int bpm) {
+void SessionUI::MetronomeSetup(int bpm) {
     metronomeImage = GameObject::Instantiate("Metronome", parent)->AddComponent<Image>();
-    metronomeImage->LoadTexture(0, 0, metronomePath, -0.5);
+    metronomeImage->LoadTexture(0, 0, "UI/Sesja/MetronomeFrame.png", -0.5);
+    metronomeMask = GameObject::Instantiate("Metronome", parent)->AddComponent<Image>();
+    metronomeMask->LoadTexture(0, 0, "UI/Sesja/MetronomeFrameMask.png", -0.51);
+    metronomeMask->SetAlpha(0);
+
     metronomeAnimator = GameObject::Instantiate("MetronomeAnimator", parent)->AddComponent<UIAnimator>();
     metronomeAnimator->Setup(metronomeImage, {
-            {AnimatedProperty::Alpha, glm::vec3(0.2f), 30.0f / (float)bpm},
-            {AnimatedProperty::Alpha, glm::vec3(1.0f), 30.0f / (float)bpm}
+            // Duration of both checkpoints must add up to 60 to scale correctly with BPM
+            {AnimatedProperty::Alpha, glm::vec3(0.2f), 58.0f / (float)bpm},
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 2.0f / (float)bpm}
     }, AnimationBehaviour::Looping);
 
     tickSound = metronomeImage->GetParent()->AddComponent<AudioSource>();
@@ -231,7 +245,7 @@ void SessionUI::AccuracyFeedbackSetup() {
 void SessionUI::StopSound(int index) {}
 
 bool SessionUI::ToggleMetronomeSound() {
-    metronomeSoundEnabled = !metronomeSoundEnabled && metronomeVisualEnabled;
+    metronomeSoundEnabled = !metronomeSoundEnabled;
 
     metronomeSoundIndicator->SetAlpha(metronomeSoundEnabled ? 0:1);
 
@@ -240,14 +254,9 @@ bool SessionUI::ToggleMetronomeSound() {
 
 bool SessionUI::ToggleMetronomeVisuals() {
     metronomeVisualEnabled = !metronomeVisualEnabled;
-    metronomeAnimator->paused = !metronomeVisualEnabled;
-    spdlog::info(metronomeAnimator->paused);
 
-    if(!metronomeVisualEnabled) metronomeImage->SetAlpha(0);
-
+    metronomeMask->SetAlpha(metronomeVisualEnabled ? 0:1);
     metronomeVisualsIndicator->SetAlpha(metronomeVisualEnabled ? 0:1);
-
-    ToggleMetronomeSound();
 
     return metronomeVisualEnabled;
 }

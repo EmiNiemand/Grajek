@@ -23,6 +23,9 @@ OptionsManager::OptionsManager() {
     height = 810;
     fullScreen = false;
     shadowResolution = 4096;
+    sessionMetronomeVisuals = true;
+    sessionMetronomeSound = true;
+    sessionBackingTrack = true;
 }
 
 void OptionsManager::Load() {
@@ -41,6 +44,9 @@ void OptionsManager::Load() {
         json.at("height").get_to(height);
         json.at("fullScreen").get_to(fullScreen);
         json.at("shadowResolution").get_to(shadowResolution);
+        json.at("session.metronomeVisuals").get_to(sessionMetronomeVisuals);
+        json.at("session.metronomeSound").get_to(sessionMetronomeSound);
+        json.at("session.backingTrack").get_to(sessionBackingTrack);
     }
     catch (std::exception e) {
         spdlog::info("Failed to read a file content at path: " + path.string());
@@ -62,6 +68,9 @@ void OptionsManager::Save() {
         json["height"] = height;
         json["fullScreen"] = fullScreen;
         json["shadowResolution"] = shadowResolution;
+        json["session.metronomeVisuals"] = sessionMetronomeVisuals;
+        json["session.metronomeSound"] = sessionMetronomeSound;
+        json["session.backingTrack"] = sessionBackingTrack;
 
         std::ofstream saveFile(path);
         saveFile << json.dump(0, '\t') << std::endl;

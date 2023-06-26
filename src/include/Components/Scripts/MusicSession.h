@@ -35,7 +35,7 @@ public:
     std::shared_ptr<Instrument> instrument;
 
     MusicSession(const std::shared_ptr<GameObject> &parent, int id);
-    void Setup(std::shared_ptr<Instrument> playerInstrument, bool sessionMetronomeSound, bool sessionMetronomeVisuals, bool sessionBackingTrack);
+    void Setup(std::shared_ptr<Instrument> playerInstrument);
     void Stop();
     void Update() override;
 

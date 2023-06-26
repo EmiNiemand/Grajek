@@ -5,9 +5,8 @@
 
 LaunchpadSessionUI::LaunchpadSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
 
-void LaunchpadSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
-                               bool sessionMetronomeVisuals, bool sessionBackingTrack) {
-    SessionUI::Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+void LaunchpadSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
+    SessionUI::Setup(instrument);
     GameObject::Instantiate("Theme", parent)->AddComponent<Image>()
         ->LoadTexture(0, 0, "UI/Sesja/widokLaunchpad.png");
 }

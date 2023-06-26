@@ -7,9 +7,8 @@
 
 DrumsSessionUI::DrumsSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
 
-void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
-                           bool sessionMetronomeVisuals, bool sessionBackingTrack) {
-    SessionUI::Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
+    SessionUI::Setup(instrument);
 
     // Set up samples
     // --------------

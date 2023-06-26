@@ -14,6 +14,10 @@ public:
     bool fullScreen;
     unsigned int shadowResolution;
 
+    bool sessionMetronomeVisuals;
+    bool sessionMetronomeSound;
+    bool sessionBackingTrack;
+
 public:
     OptionsManager(OptionsManager &other) = delete;
     void operator=(const OptionsManager&) = delete;

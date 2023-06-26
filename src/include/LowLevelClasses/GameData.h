@@ -18,10 +18,6 @@ public:
     std::set<InstrumentName> instruments;
     std::map<PlayerBadges, bool> badges;
 
-    bool sessionMetronomeSound;
-    bool sessionMetronomeVisuals;
-    bool sessionBackingTrack;
-
     bool shopkeeperEvent;
     std::string saveDate;
 

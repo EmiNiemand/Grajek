@@ -6,9 +6,8 @@
 
 TrumpetSessionUI::TrumpetSessionUI(const std::shared_ptr<GameObject> &parent, int id) : SessionUI(parent, id) {}
 
-void TrumpetSessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetronomeSound,
-                             bool sessionMetronomeVisuals, bool sessionBackingTrack) {
-    SessionUI::Setup(instrument, sessionMetronomeSound, sessionMetronomeVisuals, sessionBackingTrack);
+void TrumpetSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
+    SessionUI::Setup(instrument);
 
     valveInitPos[0] = {1100, 0};
     valveInitPos[1] = {1300, 0};
