@@ -10,10 +10,10 @@ Popup::Popup(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, i
 
 Popup::~Popup() = default;
 
-void Popup::Setup(int x, int y, const std::string &imagePath, const std::string &buttonPathInactive, const std::string &buttonPathActive) {
+void Popup::Setup(int x, int y, const std::string &imagePath, const std::string &buttonPathInactive, const std::string &buttonPathActive, bool addBackground) {
     auto image = Menu::AddImage("PopupImage", x, y, imagePath, -0.95f);
     Menu::AddButton("PopupButton", x + image->width / 2 - 100, y - 60, buttonPathInactive, buttonPathActive, "[Enter]", 28, glm::vec3(0.0f), GameFont::KanitMedium, -0.975f);
-    Menu::AddImage("PopupBackground", 0, 0, "UI/backgroundOpacity60.png", -0.94f);
+    if(addBackground) Menu::AddImage("PopupBackground", 0, 0, "UI/backgroundOpacity60.png", -0.94f);
 }
 
 void Popup::Update() {

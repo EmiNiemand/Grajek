@@ -259,7 +259,8 @@ void Shopkeeper::Update() {
             Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
 
             GameObject::Instantiate("TutorialPopup", parent)->AddComponent<Popup>()->
-                    Setup(240, 140, "UI/Tutorial/Tutorial.png", "UI/buttonInactive.png", "UI/buttonActive.png");
+                    Setup(0, 0, "UI/Tutorial/Tutorial.png",
+                          "UI/ButtonTransparent.png", "UI/ButtonTransparent.png", false);
 
             return;
         }

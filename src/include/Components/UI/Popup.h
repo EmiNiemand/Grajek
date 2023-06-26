@@ -14,7 +14,7 @@ public:
     Popup(const std::shared_ptr<GameObject> &parent, int id);
     ~Popup() override;
 
-    void Setup(int x, int y, const std::string &imagePath, const std::string &buttonPathInactive, const std::string &buttonPathActive);
+    void Setup(int x, int y, const std::string &imagePath, const std::string &buttonPathInactive, const std::string &buttonPathActive, bool addBackground = true);
     void Update() override;
     void OnDestroy() override;
 };
