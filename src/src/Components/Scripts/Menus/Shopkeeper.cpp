@@ -46,6 +46,10 @@ void Shopkeeper::Start() {
     patternsImage->LoadTexture(0, 0, "UI/Tutorial/Patterns1.png", -0.9);
     patternsImage->enabled = false;
 
+    sound1 = GameObject::Instantiate("Sound1", parent)->AddComponent<AudioSource>();
+    sound1->LoadAudioData("res/sounds/direct/clap/clapWeak.wav", AudioType::Direct);
+    sound2 = GameObject::Instantiate("Sound2", parent)->AddComponent<AudioSource>();
+    sound2->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
     patternsSound = GameObject::Instantiate("PatternSound", parent)->AddComponent<AudioSource>();
     patternsSound->LoadAudioData("res/sounds/direct/clap/pattern2.wav", AudioType::Direct);
     soundButton1 = GameObject::Instantiate("SoundButtonImage", parent)->AddComponent<Image>();
@@ -153,7 +157,6 @@ void Shopkeeper::Update() {
         if (dialogueIndex == 14) {
             dialogueIndex++;
             stopMusicSessionImage->enabled = false;
-            playerManager->inputEnabled = false;
             crowdImage->enabled = true;
             return;
         }
@@ -177,7 +180,6 @@ void Shopkeeper::Update() {
         if (dialogueIndex == 12) {
             dialogueIndex++;
             patternsSound->PlaySound();
-            playerManager->inputEnabled = true;
             return;
         }
 
@@ -212,6 +214,7 @@ void Shopkeeper::Update() {
 
     if (hid->IsKeyDown(Key::KEY_R)) {
         if (dialogueIndex == 13) {
+            sound1->PlaySound();
             patternIsGood = true;
             return;
         }
@@ -219,14 +222,24 @@ void Shopkeeper::Update() {
 
     if (hid->IsKeyDown(Key::KEY_U)) {
         if (dialogueIndex == 13) {
+            sound2->PlaySound();
             if (patternIsGood) {
                 dialogueIndex++;
                 stopMusicSessionImage->enabled = true;
                 soundImage->enabled = false;
+                playerManager->inputEnabled = true;
                 soundButton1->enabled = false;
                 soundButton2->enabled = false;
             }
             patternIsGood = false;
+            return;
+        }
+    }
+
+    if (hid->IsKeyDown(Key::KEY_ESC)) {
+        if (dialogueIndex == 8) {
+            dialogueIndex--;
+            spaceImage->enabled = true;
             return;
         }
     }
