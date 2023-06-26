@@ -17,9 +17,7 @@ class Shopkeeper : public Component, public IDataPersistance {
 private:
     std::shared_ptr<Image> spaceImage;
     std::shared_ptr<Image> musicSessionImage;
-    std::shared_ptr<Image> instrumentControl;
     std::shared_ptr<Image> instrumentControlImage;
-    std::shared_ptr<Image> patterns;
     std::shared_ptr<Image> patternsImage;
     std::shared_ptr<AudioSource> patternsSound;
     std::shared_ptr<Image> soundButton1, soundButton2;
