@@ -17,6 +17,7 @@
 #include "Components/Scripts/Player/PlayerInput.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/UI/Popup.h"
+#include "EngineManagers/DialogueManager.h"
 
 Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -25,10 +26,12 @@ Shopkeeper::~Shopkeeper() = default;
 void Shopkeeper::Start() {
     Component::Start();
 
+    DialogueManager::GetInstance()->shopkeeper = std::dynamic_pointer_cast<Shopkeeper>(shared_from_this());
+
     if (tutorial) return;
 
     spaceImage = GameObject::Instantiate("SpaceImage", parent)->AddComponent<Image>();
-    spaceImage->LoadTexture(750, 50, "UI/Tutorial/Space.png");
+    spaceImage->LoadTexture(0, 0, "UI/Tutorial/SpaceToPlay.png");
     spaceImage->enabled = false;
 
     musicSessionImage = GameObject::Instantiate("MusicSessionImage", parent)->AddComponent<Image>();
@@ -49,6 +52,8 @@ void Shopkeeper::Start() {
     patternsImage->LoadTexture(0, 0, "UI/Tutorial/Patterns.png", -0.95);
     patternsImage->enabled = false;
 
+    patternsSound = GameObject::Instantiate("PatternSound", parent)->AddComponent<AudioSource>();
+    patternsSound->LoadAudioData("res/sounds/direct/clap/pattern2.wav", AudioType::Direct);
     soundButton1 = GameObject::Instantiate("SoundButtonImage", parent)->AddComponent<Image>();
     soundButton1->LoadTexture(1575, 603, "UI/Sesja/clapPatternsInactive.png", -0.99);
     soundButton1->enabled = false;
@@ -133,6 +138,7 @@ void Shopkeeper::Start() {
 }
 
 void Shopkeeper::Update() {
+    if (menuActive) return;
     if (tutorial) return;
 
     auto hid = HIDManager::GetInstance();
@@ -141,6 +147,12 @@ void Shopkeeper::Update() {
         if (dialogueIndex == 7) {
             dialogueIndex++;
             spaceImage->enabled = false;
+            return;
+        }
+
+        if (dialogueIndex == 8) {
+            dialogueIndex--;
+            spaceImage->enabled = true;
             return;
         }
 
@@ -169,6 +181,7 @@ void Shopkeeper::Update() {
 
         if (dialogueIndex == 12) {
             dialogueIndex++;
+            patternsSound->PlaySound();
             playerManager->inputEnabled = true;
             return;
         }
@@ -227,6 +240,7 @@ void Shopkeeper::Update() {
             return;
         }
     }
+
 
 
     if (shopkeeperEvent) return;

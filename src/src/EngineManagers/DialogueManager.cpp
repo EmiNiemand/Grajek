@@ -1,6 +1,8 @@
 #include "EngineManagers/DialogueManager.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/UI/Image.h"
+#include "Components/Scripts/Menus/Shopkeeper.h"
+#include "EngineManagers/HIDManager.h"
 
 DialogueManager::DialogueManager() = default;
 
@@ -21,6 +23,8 @@ void DialogueManager::NotifyMenuIsActive() {
         dialogue.second->image->enabled = false;
         dialogue.second->menuActive = true;
     }
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ESC))
+        shopkeeper->menuActive = true;
 }
 
 void DialogueManager::NotifyMenuIsNotActive() {
@@ -30,4 +34,6 @@ void DialogueManager::NotifyMenuIsNotActive() {
             dialogue.second->image->enabled = true;
         dialogue.second->menuActive = false;
     }
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ESC))
+        shopkeeper->menuActive = false;
 }

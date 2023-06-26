@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 class Dialogue;
+class Shopkeeper;
 
 class DialogueManager {
 private:
@@ -12,6 +13,7 @@ private:
 
 public:
     std::unordered_map<int, std::shared_ptr<Dialogue>> dialogues;
+    std::shared_ptr<Shopkeeper> shopkeeper;
 
 private:
     explicit DialogueManager();
