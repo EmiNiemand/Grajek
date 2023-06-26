@@ -248,6 +248,7 @@ bool SessionUI::ToggleMetronomeSound() {
     metronomeSoundEnabled = !metronomeSoundEnabled;
 
     metronomeSoundIndicator->SetAlpha(metronomeSoundEnabled ? 0:1);
+    OptionsManager::GetInstance()->sessionMetronomeSound = metronomeSoundEnabled;
 
     return metronomeSoundEnabled;
 }
@@ -257,6 +258,7 @@ bool SessionUI::ToggleMetronomeVisuals() {
 
     metronomeMask->SetAlpha(metronomeVisualEnabled ? 0:1);
     metronomeVisualsIndicator->SetAlpha(metronomeVisualEnabled ? 0:1);
+    OptionsManager::GetInstance()->sessionMetronomeVisuals = metronomeVisualEnabled;
 
     return metronomeVisualEnabled;
 }
@@ -268,6 +270,8 @@ bool SessionUI::ToggleBackingTrack() {
     backingTrack->SetGain(backingTrackEnabled? 1:0);
 
     backingTrackIndicator->SetAlpha(backingTrackEnabled ? 0:1);
+
+    OptionsManager::GetInstance()->sessionBackingTrack = backingTrackEnabled;
 
     return backingTrackEnabled;
 }
