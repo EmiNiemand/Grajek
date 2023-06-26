@@ -71,6 +71,8 @@ void Animator::LoadAnimation(const std::string& path)
 }
 
 void Animator::SetAnimation(const std::string &name) {
+    if(!animations.contains(Utilities::Hash(name))) return;
+
     previousAnimation = currentAnimation;
     previousAnimationTime = currentTime;
 	speed = 1;

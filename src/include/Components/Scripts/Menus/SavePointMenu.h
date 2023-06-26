@@ -14,11 +14,14 @@ private:
 public:
     bool triggerActive = false;
     std::shared_ptr<Image> buttonImage;
+    std::shared_ptr<Image> backgroundImage;
     std::vector<std::shared_ptr<Text>> saveDates;
 
 public:
     SavePointMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~SavePointMenu() override;
+
+    void Awake() override;
 
     void OnDestroy() override;
 

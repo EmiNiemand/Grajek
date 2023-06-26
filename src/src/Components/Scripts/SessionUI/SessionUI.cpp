@@ -34,7 +34,7 @@ void SessionUI::Setup(std::shared_ptr<Instrument> instrument, bool sessionMetron
     GameObject::Instantiate("Background", parent)
             ->AddComponent<Image>()->LoadTexture(0, 0, "UI/Sesja/vignetteBackground.png", 0.8);
 
-    MetronomeSetup("UI/Sesja/Ramka.png", (int)instrument->name);
+    MetronomeSetup("UI/Sesja/Ramka.png", (int)instrument->genre);
     AccuracyFeedbackSetup();
 
     ToggleMetronomeVisuals();
@@ -241,6 +241,7 @@ bool SessionUI::ToggleMetronomeSound() {
 bool SessionUI::ToggleMetronomeVisuals() {
     metronomeVisualEnabled = !metronomeVisualEnabled;
     metronomeAnimator->paused = !metronomeVisualEnabled;
+    spdlog::info(metronomeAnimator->paused);
 
     if(!metronomeVisualEnabled) metronomeImage->SetAlpha(0);
 
