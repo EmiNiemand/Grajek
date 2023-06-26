@@ -11,15 +11,15 @@ class Image;
 class Text;
 class PlayerManager;
 class UIAnimator;
+class AudioSource;
 
 class Shopkeeper : public Component, public IDataPersistance {
 private:
     std::shared_ptr<Image> spaceImage;
     std::shared_ptr<Image> musicSessionImage;
-    std::shared_ptr<Image> instrumentControl;
     std::shared_ptr<Image> instrumentControlImage;
-    std::shared_ptr<Image> patterns;
     std::shared_ptr<Image> patternsImage;
+    std::shared_ptr<AudioSource> patternsSound;
     std::shared_ptr<Image> soundButton1, soundButton2;
     std::shared_ptr<Image> soundImage;
     std::shared_ptr<Image> stopMusicSessionImage;
@@ -41,6 +41,7 @@ private:
 
 public:
     std::vector<Strings> texts;
+    bool menuActive = false;
 
 public:
     Shopkeeper(const std::shared_ptr<GameObject> &parent, int id);
