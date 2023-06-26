@@ -218,7 +218,6 @@ void PlayerManager::ToggleOptionsMenu() {
         activeMenu = pauseMenu;
         optionsMenu->chooseMenu->GetComponent<OptionsChooseMenu>()->ShowChooseMenu();
         // TODO: possibly redundant assignment, because timeScale is set to 0 anyway
-        inputEnabled = false;
     }
     activeMenu->ShowMenu();
 }
@@ -237,7 +236,6 @@ void PlayerManager::OnMenuToggle() {
     }
     // Options -> Pause menu
     else if (activeMenu == optionsMenu) {
-        OptionsManager::GetInstance()->Save();
         ToggleOptionsMenu();
         DialogueManager::GetInstance()->NotifyMenuIsActive();
     }
