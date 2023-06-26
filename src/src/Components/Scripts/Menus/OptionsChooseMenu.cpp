@@ -60,10 +60,14 @@ void OptionsChooseMenu::Update() {
 void OptionsChooseMenu::ShowChooseMenu() {
     button1->isActive = false;
     button2->isActive = true;
+    if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ENTER)) return;
     parent->EnableSelfAndChildren();
+    if (SceneManager::GetInstance()->activeScene->GetName() == "Scene")
+        GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->inputEnabled = false;
 }
 
 void OptionsChooseMenu::OnDestroy() {
-
+    button1.reset();
+    button2.reset();
     Component::OnDestroy();
 }
