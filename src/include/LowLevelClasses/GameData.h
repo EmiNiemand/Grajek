@@ -23,6 +23,7 @@ public:
     bool sessionBackingTrack;
 
     bool shopkeeperEvent;
+    bool tutorial;
     std::string saveDate;
 
 public:

@@ -108,7 +108,7 @@ void Dialogue::HideDialogue() {
     dialogueIndex = 0;
     playerManager->inputEnabled = true;
     dialogue->DisableSelfAndChildren();
-    if (!forced)
+    if (!forced && triggerActive)
         image->enabled = true;
 }
 

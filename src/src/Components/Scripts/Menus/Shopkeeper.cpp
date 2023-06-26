@@ -16,13 +16,64 @@
 #include "Components/Animations/UIAnimator.h"
 #include "Components/Scripts/Player/PlayerInput.h"
 #include "EngineManagers/RandomnessManager.h"
+#include "Components/UI/Popup.h"
 
 Shopkeeper::Shopkeeper(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
 Shopkeeper::~Shopkeeper() = default;
 
 void Shopkeeper::Start() {
-    if (shopkeeperEvent) return;
+    Component::Start();
+
+    if (tutorial) return;
+
+    spaceImage = GameObject::Instantiate("SpaceImage", parent)->AddComponent<Image>();
+    spaceImage->LoadTexture(750, 50, "UI/Tutorial/Space.png");
+    spaceImage->enabled = false;
+
+    musicSessionImage = GameObject::Instantiate("MusicSessionImage", parent)->AddComponent<Image>();
+    musicSessionImage->LoadTexture(0, 0, "UI/Tutorial/MusicSession.png", -0.99);
+    musicSessionImage->enabled = false;
+
+    instrumentControl = GameObject::Instantiate("InstrumentControlImage", parent)->AddComponent<Image>();
+    instrumentControl->LoadTexture(885, 0, "UI/Sesja/ClapControl.png", -0.9);
+    instrumentControl->enabled = false;
+    instrumentControlImage = GameObject::Instantiate("InstrumentControlImage", parent)->AddComponent<Image>();
+    instrumentControlImage->LoadTexture(0, 0, "UI/Tutorial/Control.png", -0.99);
+    instrumentControlImage->enabled = false;
+
+    patterns = GameObject::Instantiate("PatternsImage", parent)->AddComponent<Image>();
+    patterns->LoadTexture(885, 0, "UI/Sesja/ClapPatterns.png", -0.9);
+    patterns->enabled = false;
+    patternsImage = GameObject::Instantiate("PatternsImage", parent)->AddComponent<Image>();
+    patternsImage->LoadTexture(0, 0, "UI/Tutorial/Patterns.png", -0.95);
+    patternsImage->enabled = false;
+
+    soundButton1 = GameObject::Instantiate("SoundButtonImage", parent)->AddComponent<Image>();
+    soundButton1->LoadTexture(1575, 603, "UI/Sesja/clapPatternsInactive.png", -0.99);
+    soundButton1->enabled = false;
+    soundButton2 = GameObject::Instantiate("SoundButtonImage", parent)->AddComponent<Image>();
+    soundButton2->LoadTexture(1575, 458, "UI/Sesja/clapPatternsSelect.png", -0.99);
+    soundButton2->enabled = false;
+    soundImage = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
+    soundImage->LoadTexture(0, 0, "UI/Tutorial/Sound.png", -0.98);
+    soundImage->enabled = false;
+
+    stopMusicSessionImage = GameObject::Instantiate("StopMusicSessionImage", parent)->AddComponent<Image>();
+    stopMusicSessionImage->LoadTexture(0, 0, "UI/Tutorial/StopMusicSession.png", -0.99);
+    stopMusicSessionImage->enabled = false;
+
+    crowdImage = GameObject::Instantiate("StopMusicSessionImage", parent)->AddComponent<Image>();
+    crowdImage->LoadTexture(0, 0, "UI/Tutorial/Crowd.png", -0.99);
+    crowdImage->enabled = false;
+
+    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+
+    if (shopkeeperEvent) {
+        dialogueIndex = 7;
+        spaceImage->enabled = true;
+        return;
+    }
 
     shopkeeperModel = GameObject::Instantiate("ShopkeeperModel", parent);
     shopkeeperModel->AddComponent<Rigidbody>()->enabled = false;
@@ -35,41 +86,24 @@ void Shopkeeper::Start() {
     animator->LoadAnimationModel("Crowd/Shopkeeper/Shopkeeper.dae");
     animator->SetAnimation("CrowdAnimations/Idle3.dae");
     auto shopkeeperDialogue = GameObject::Instantiate("ShopkeeperDialogue", shopkeeperModel);
-    texts.push_back({{"Hi! Welcome to Rhythmtown. I am your friendly local instrument shopkeeper."},
-                               {"Let me show you some basics. Use [W][A][S][D] or arrows to move around,"},
-                               {"but please don't go anywhere yet. I still have some things to say."}});
+    texts.push_back({{"Hi! Welcome to Rhythmtown."},
+                               {"I'm your local instrument shopkeeper."},
+                               {""}});
     texts.push_back({{"Ah, you're here to take part in the competition?"},
-                               {"If you want to battle with current Music King,"},
-                               {"you need to know how to play on drums, trumpet, launchpad and guitar."}});
-    texts.push_back({{"Sounds intimidating? Don't worry!"},
-                     {"Let's start simple. Hit [Space] to start playing."},
-                     {""}});
-    texts.push_back({{"From here you can choose instrument on which you want to play."},
-                     {"[A][D] to select, [Enter] to accept"},
-                     {"For now you can clap to get people's attention. Hit [Enter]!"}});
-    texts.push_back({{"Every instrument has different controls and traits."},
-                     {"Don't worry though, I'll describe it to you after you buy it."},
-                     {"Also, you can see it anytime when you click [Shift]."}});
-    texts.push_back({{"Here, you use [R] and [U] to play. Could you click [Shift] once again?"},
-                     {""},
-                     {""}});
-    texts.push_back({{"Each instrument has various patterns that are possible to play."},
-                     {"Press [Tab] to see what you've discovered so far."},
-                     {""}});
-    texts.push_back({{"Ok, let's try that pattern at the top of the notes."},
-                     {"Close this page with [Tab]."},
-                     {""}});
-    texts.push_back({{"Play [R][R][U]!"},
-                     {""},
-                     {""}});
-    texts.push_back({{"Perfect! There's a long way ahead of you, but I believe you can do it."},
-                     {"To get instruments you'll need to earn some money."},
-                     {"Basically, you need to make people happy with your music."}});
-    texts.push_back({{"Make your music interesting!"},
-                     {"Keep your patterns varied and try to play to the beat."},
-                     {"Please, come back when you'll have at least $100, to buy your first instrument - drums. Good luck!"}});
-
-    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+                     {"That's great! Simply show me your Badges."},
+                     {"...oh, you don't have any?"}});
+    texts.push_back({{"If you want to battle with the current Music King,"},
+                     {"you need to master your skills by playing on Drums,"},
+                     {"Trumpet, Launchpad and Guitar."}});
+    texts.push_back({{"That mastery is put to the test when you get into"},
+                     {"musical battle with best Instrument's Buskers in the city."},
+                     {"They're easy to locate, just look for a big crowd nearby."}});
+    texts.push_back({{"If you manage to outperform them, you get an Instrument's"},
+                     {"Badge. You need four of them - one for every mentioned"},
+                     {"instrument, to be able to battle with the Music King."}});
+    texts.push_back({{"For now, explore the city, earn money with your instruments, pay attention"},
+                     {"to listening crowd and most importantly have fun! Come back when you'll"},
+                     {"have at least $100 for your first big purchase - Drums. Good luck!"}});
 
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     parent->GetComponent<BoxCollider>()->SetSize({2.5, 2.5, 2.5});
@@ -94,109 +128,116 @@ void Shopkeeper::Start() {
     image->enabled = false;
     playerManager->inputEnabled = false;
 
-
-    // Clap session set up
-    // -------------------
-    {
-        background = GameObject::Instantiate("ShopkeeperBackground", image->GetParent()->parent)->AddComponent<Image>();
-        background->LoadTexture(0, 0, "UI/backgroundOpacity90.png", 0.5f);
-
-        instrumentControl = GameObject::Instantiate("InstrumentControl",
-                                                    background->GetParent())->AddComponent<Image>();
-        instrumentControl->LoadTexture(451, -1018, "UI/Sesja/clapControl.png", -0.1);
-        cheatSheet = GameObject::Instantiate("CheatSheet", background->GetParent())->AddComponent<Image>();
-        cheatSheet->LoadTexture(451, -1018, "UI/Sesja/clapPatterns.png", -0.1);
-
-        clapIcon = GameObject::Instantiate("ShopkeeperClapImage",
-                                           background->GetParent())->AddComponent<Image>();
-        clapIcon->LoadTexture(832, 558, "UI/Icons/small/iconClap.png");
-
-        for (int i = 0; i < 2; ++i) {
-            sampleSources.push_back(GameObject::Instantiate("ShopkeeperSample", background->GetParent())
-                                            ->AddComponent<AudioSource>());
-            sampleImages.push_back(GameObject::Instantiate("SampleImage", background->GetParent())
-                                           ->AddComponent<Image>());
-            sampleImages.back()->pivot = {0.5, 0.5};
-            sampleImages.back()->SetAlpha(0);
-        }
-        sampleSources[0]->LoadAudioData("res/sounds/direct/clap/clapWeak.wav", AudioType::Direct);
-        sampleSources[1]->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
-        sampleImages[0]->LoadTexture(1000, 600, "UI/Sesja/ClapLeft.png");
-        sampleImages[1]->LoadTexture(1560, 600, "UI/Sesja/ClapRight.png");
-        // Clap
-        // ----
-        sampleAnimators.push_back({
-              GameObject::Instantiate("ScaleLeftAnimator", background->GetParent())->AddComponent<UIAnimator>(),
-              GameObject::Instantiate("ScaleRightAnimator", background->GetParent())->AddComponent<UIAnimator>(),
-              GameObject::Instantiate("PositionLeftAnimator", background->GetParent())->AddComponent<UIAnimator>(),
-              GameObject::Instantiate("PositionRightAnimator", background->GetParent())->AddComponent<UIAnimator>()
-        });
-        sampleAnimators[0][0]->Setup(sampleImages[0], {
-                {AnimatedProperty::Scale, glm::vec3(1.5f), 0},
-                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
-        }, AnimationBehaviour::Resetable);
-        sampleAnimators[0][1]->Setup(sampleImages[1], {
-                {AnimatedProperty::Scale, glm::vec3(1.5f), 0},
-                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
-        }, AnimationBehaviour::Resetable);
-        sampleAnimators[0][2]->Setup(sampleImages[0], {
-                {AnimatedProperty::Position, glm::vec3(1000 + sampleImages[0]->GetWidth(), 600, 0), 0},
-                {AnimatedProperty::Position, glm::vec3(1000, 600, 0),                               0.2f}
-        }, AnimationBehaviour::Resetable);
-        sampleAnimators[0][3]->Setup(sampleImages[1], {
-                {AnimatedProperty::Position, glm::vec3(1560 - sampleImages[0]->GetWidth(), 600, 0), 0},
-                {AnimatedProperty::Position, glm::vec3(1560, 600, 0),                               0.2f}
-        }, AnimationBehaviour::Resetable);
-        // Stomp
-        // -----
-        sampleAnimators.push_back({
-              GameObject::Instantiate("ScaleLeftAnimator", background->GetParent())->AddComponent<UIAnimator>(),
-              GameObject::Instantiate("ScaleRightAnimator", background->GetParent())->AddComponent<UIAnimator>(),
-              GameObject::Instantiate("PositionLeftAnimator", background->GetParent())->AddComponent<UIAnimator>(),
-              GameObject::Instantiate("PositionRightAnimator", background->GetParent())->AddComponent<UIAnimator>()
-        });
-        sampleAnimators[1][0]->Setup(sampleImages[0], {
-                {AnimatedProperty::Scale, glm::vec3(1.5f), 0},
-                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
-        }, AnimationBehaviour::Resetable);
-        sampleAnimators[1][1]->Setup(sampleImages[1], {
-                {AnimatedProperty::Scale, glm::vec3(1.5f), 0},
-                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
-        }, AnimationBehaviour::Resetable);
-        sampleAnimators[1][2]->Setup(sampleImages[0], {
-                {AnimatedProperty::Position, glm::vec3(1000, 300, 0),   0},
-                {AnimatedProperty::Position, glm::vec3(1000, 600, 0), 0.2f}
-        }, AnimationBehaviour::Resetable);
-        sampleAnimators[1][3]->Setup(sampleImages[1], {
-                {AnimatedProperty::Position, glm::vec3(1560, 300, 0),   0},
-                {AnimatedProperty::Position, glm::vec3(1560, 600, 0), 0.2f}
-        }, AnimationBehaviour::Resetable);
-    }
-    clapIcon->enabled = false;
-    background->enabled = false;
-
-
     door = GloomEngine::GetInstance()->FindGameObjectWithName("Door1");
     Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(0.5f);
-    Component::Start();
 }
 
 void Shopkeeper::Update() {
-    if (shopkeeperEvent) return;
+    if (tutorial) return;
 
     auto hid = HIDManager::GetInstance();
 
+    if (hid->IsKeyDown(Key::KEY_SPACE)) {
+        if (dialogueIndex == 7) {
+            dialogueIndex++;
+            spaceImage->enabled = false;
+            return;
+        }
+
+        if (dialogueIndex == 14) {
+            dialogueIndex++;
+            stopMusicSessionImage->enabled = false;
+            crowdImage->enabled = true;
+            return;
+        }
+    }
+
     if (hid->IsKeyDown(Key::KEY_ENTER)) {
-        if (dialogueIndex == 0  ||  dialogueIndex == 1  ||  dialogueIndex == 9) {
+        if (dialogueIndex == 8) {
+            dialogueIndex++;
+            musicSessionImage->enabled = true;
+            playerManager->inputEnabled = false;
+            return;
+        }
+
+        if (dialogueIndex == 11) {
+            dialogueIndex++;
+            patternsImage->enabled = false;
+            soundImage->enabled = true;
+            return;
+        }
+
+        if (dialogueIndex == 12) {
+            dialogueIndex++;
+            playerManager->inputEnabled = true;
+            return;
+        }
+
+        if (dialogueIndex == 15) {
+            dialogueIndex++;
+            playerManager->inputEnabled = true;
+            crowdImage->enabled = false;
+            tutorial = true;
+            return;
+        }
+    }
+
+    if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT)) {
+        if (dialogueIndex == 9) {
+            dialogueIndex++;
+            musicSessionImage->enabled = false;
+            instrumentControlImage->enabled = true;
+            instrumentControl->enabled = true;
+            return;
+        }
+    }
+
+    if (hid->IsKeyDown(Key::KEY_TAB)) {
+        if (dialogueIndex == 10) {
+            dialogueIndex++;
+            instrumentControl->enabled = false;
+            instrumentControlImage->enabled = false;
+            patterns->enabled = true;
+            soundButton1->enabled = true;
+            soundButton2->enabled = true;
+            patternsImage->enabled = true;
+            return;
+        }
+    }
+
+    if (hid->IsKeyDown(Key::KEY_R)) {
+        if (dialogueIndex == 13) {
+            patternIsGood = true;
+            return;
+        }
+    }
+
+    if (hid->IsKeyDown(Key::KEY_U)) {
+        if (dialogueIndex == 13) {
+            if (patternIsGood) {
+                dialogueIndex++;
+                playerManager->inputEnabled = false;
+                stopMusicSessionImage->enabled = true;
+                soundImage->enabled = false;
+                patterns->enabled = false;
+                soundButton1->enabled = false;
+                soundButton2->enabled = false;
+            }
+            patternIsGood = false;
+            return;
+        }
+    }
+
+
+    if (shopkeeperEvent) return;
+
+    if (hid->IsKeyDown(Key::KEY_ENTER)) {
+        if (dialogueIndex <= 4) {
             NextDialogue();
             return;
         }
-        if (dialogueIndex == 3) {
-            GameObject::Destroy(clapIcon->GetParent());
-            background->GetParent()->EnableSelfAndChildren();
-            NextDialogue();
-        }
-        if (dialogueIndex == 10) {
+
+        if (dialogueIndex == 5) {
             dialogueIndex++;
             GloomEngine::GetInstance()->FindGameObjectWithName("ShopkeeperAnimator")->GetComponent<Animator>()->SetAnimation("CrowdAnimations/Walk.dae");
             parent->GetComponent<BoxCollider>()->enabled = false;
@@ -211,89 +252,20 @@ void Shopkeeper::Update() {
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, 0.0f, 0.0f), 0.5f},
                     {AnimatedProperty::Rotation, glm::vec3(0.0f, -90.0f, 0.0f), 2.0f}
             }, false);
-            shopkeeperEvent = true;
-            playerManager->inputEnabled = true;
             Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
+
+            GameObject::Instantiate("TutorialPopup", parent)->AddComponent<Popup>()->
+                    Setup(240, 140, "UI/Tutorial/Tutorial.png", "UI/buttonInactive.png", "UI/buttonActive.png");
+
             return;
         }
-    }
 
-    if (hid->IsKeyDown(Key::KEY_SPACE)) {
-        if (dialogueIndex == 2) {
-            sampleImages[0]->SetAlpha(1);
-            sampleImages[1]->SetAlpha(1);
-            background->GetParent()->DisableSelfAndChildren();
-            background->enabled = true;
-            clapIcon->enabled = true;
-            NextDialogue();
-        }
-    }
-
-    if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT)) {
-        if (dialogueIndex == 4  ||  dialogueIndex == 5  ||  dialogueIndex == 8) {
-            if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return;
-            if (cheatSheetActive) return;
-            instrumentControlActive = !instrumentControlActive;
-            if (instrumentControlActive) {
-                GameObject::Instantiate("InstrumentControlAnimator", background->GetParent())
-                        ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, 225.0f, 0.0f), 0.5f}
-                });
-            } else {
-                GameObject::Instantiate("InstrumentControlAnimator", background->GetParent())
-                        ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -1018.0f, 0.0f), 0.5f}
-                });
-            }
-            if (dialogueIndex != 8)
-                NextDialogue();
-        }
-    }
-
-    if (hid->IsKeyDown(Key::KEY_TAB)) {
-        if (dialogueIndex == 6  ||  dialogueIndex == 7  ||  dialogueIndex == 8) {
-            if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
-            if (instrumentControlActive) return;
-            cheatSheetActive = !cheatSheetActive;
-            if (cheatSheetActive) {
-                GameObject::Instantiate("CheatSheetAnimator", parent->parent)
-                        ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, 0.0f, 0.0f), 0.5f}
-                });
-            } else {
-                GameObject::Instantiate("CheatSheetAnimator", parent->parent)
-                        ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(451.0f, -1018.0f, 0.0f), 0.5f}
-                });
-            }
-            if (dialogueIndex != 8)
-                NextDialogue();
-        }
-    }
-
-    if (dialogueIndex != 8) return;
-
-    for (auto key: PlayerInput::PlaySound) {
-        if (hid->IsKeyDown(key.first)) {
-            if(key.second > 1) return;
-            sampleSources[key.second]->ForcePlaySound();
-            for (int i = 0; i < sampleAnimators[key.second].size(); ++i) {
-                sampleAnimators[key.second][i]->Reset();
-            }
-
-            if (key.second == 0) pattern++;
-            else if (key.second == 1) {
-                if (pattern == 2) {
-                    for (int i = 0; i < 2; ++i) {
-                        for (int j = 0; j < 2; ++j) {
-                            GameObject::Destroy(sampleAnimators[i][j]->GetParent());
-                        }
-                    }
-                    GameObject::Destroy(background->GetParent());
-                    NextDialogue();
-                }
-                pattern = 0;
-            }
+        if (dialogueIndex == 6) {
+            dialogueIndex++;
+            shopkeeperEvent = true;
+            playerManager->inputEnabled = true;
+            spaceImage->enabled = true;
+            return;
         }
     }
 
@@ -309,27 +281,13 @@ void Shopkeeper::OnDestroy() {
     shopkeeperModel.reset();
     door.reset();
     playerManager.reset();
-    background.reset();
-    for (int i = 0; i < 2; ++i) {
-        if (!sampleSources.empty())
-            sampleSources[i].reset();
-
-        if (!sampleImages.empty())
-            sampleImages[i].reset();
-
-        if (!sampleAnimators.empty()) {
-            for (int j = 0; j < 2; ++j) {
-                if (!sampleAnimators[i].empty())
-                    sampleAnimators[i][j].reset();
-            }
-        }
-    }
-    sampleAnimators.clear();
-    clapIcon.reset();
-    sampleSources.clear();
-    instrumentControl.reset();
-    cheatSheet.reset();
     texts.clear();
+    crowdImage.reset();
+    spaceImage.reset();
+    patternsImage.reset();
+    musicSessionImage.reset();
+    stopMusicSessionImage.reset();
+    soundImage.reset();
     Component::OnDestroy();
 }
 
@@ -342,8 +300,10 @@ void Shopkeeper::NextDialogue() {
 
 void Shopkeeper::LoadData(std::shared_ptr<GameData> data) {
     shopkeeperEvent = data->shopkeeperEvent;
+    tutorial = data->tutorial;
 }
 
 void Shopkeeper::SaveData(std::shared_ptr<GameData> &data) {
     data->shopkeeperEvent = shopkeeperEvent;
+    data->tutorial = tutorial;
 }
