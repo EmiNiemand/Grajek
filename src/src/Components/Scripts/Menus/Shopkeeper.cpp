@@ -52,12 +52,6 @@ void Shopkeeper::Start() {
     sound2->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
     patternsSound = GameObject::Instantiate("PatternSound", parent)->AddComponent<AudioSource>();
     patternsSound->LoadAudioData("res/sounds/direct/clap/pattern2.wav", AudioType::Direct);
-    soundButton1 = GameObject::Instantiate("SoundButtonImage", parent)->AddComponent<Image>();
-    soundButton1->LoadTexture(1575, 603, "UI/Sesja/clapPatternsInactive.png", -0.99);
-    soundButton1->enabled = false;
-    soundButton2 = GameObject::Instantiate("SoundButtonImage", parent)->AddComponent<Image>();
-    soundButton2->LoadTexture(1575, 458, "UI/Sesja/clapPatternsSelect.png", -0.99);
-    soundButton2->enabled = false;
     soundImage = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
     soundImage->LoadTexture(0, 0, "UI/Tutorial/Sound1.png", -0.9);
     soundImage->enabled = false;
@@ -158,6 +152,7 @@ void Shopkeeper::Update() {
             dialogueIndex++;
             stopMusicSessionImage->enabled = false;
             crowdImage->enabled = true;
+            playerManager->inputEnabled = false;
             return;
         }
     }
@@ -205,8 +200,6 @@ void Shopkeeper::Update() {
         if (dialogueIndex == 10) {
             dialogueIndex++;
             instrumentControlImage->enabled = false;
-            soundButton1->enabled = true;
-            soundButton2->enabled = true;
             patternsImage->enabled = true;
             return;
         }
@@ -228,8 +221,6 @@ void Shopkeeper::Update() {
                 stopMusicSessionImage->enabled = true;
                 soundImage->enabled = false;
                 playerManager->inputEnabled = true;
-                soundButton1->enabled = false;
-                soundButton2->enabled = false;
             }
             patternIsGood = false;
             return;

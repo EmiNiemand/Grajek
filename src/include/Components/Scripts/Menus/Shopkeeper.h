@@ -21,7 +21,6 @@ private:
     std::shared_ptr<Image> patternsImage;
     std::shared_ptr<AudioSource> patternsSound;
     std::shared_ptr<AudioSource> sound1, sound2;
-    std::shared_ptr<Image> soundButton1, soundButton2;
     std::shared_ptr<Image> soundImage;
     std::shared_ptr<Image> stopMusicSessionImage;
     std::shared_ptr<Image> crowdImage;
