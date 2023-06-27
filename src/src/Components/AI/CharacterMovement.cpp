@@ -76,7 +76,7 @@ void CharacterMovement::FixedUpdate() {
             if (maxDistanceToCharacter < DISTANCE_TO_COLLISION) {
                 rotationAngle = std::acos(glm::dot(steeringForce, steeringDirection)) / AVOIDANCE_ROTATION_FACTOR;
 
-                if (rotationAngle > 0.4f) {
+                if (rotationAngle > 0.38f) {
                     steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
                     steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
                 }

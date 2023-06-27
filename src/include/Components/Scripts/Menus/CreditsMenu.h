@@ -9,6 +9,7 @@ public:
     ~CreditsMenu() override;
 
     bool ShowMenu() override;
+    void OnClick() override;
 };
 
 #endif //GAME_CPP_CREDITSMENU_H
