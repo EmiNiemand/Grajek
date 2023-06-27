@@ -11,8 +11,9 @@ void ClapSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
 
     // Set up samples
     // --------------
-    sampleImages[0]->LoadTexture(1000, 300, "UI/Sesja/ClapLeft.png");
-    sampleImages[1]->LoadTexture(1560, 300, "UI/Sesja/ClapRight.png");
+    int xPos0 = 700, xPos1 = 1060, yPos = 300;
+    sampleImages[0]->LoadTexture(xPos0, yPos, "UI/Sesja/ClapLeft.png");
+    sampleImages[1]->LoadTexture(xPos1, yPos, "UI/Sesja/ClapRight.png");
     // Clap
     // ----
     sampleAnimators.push_back({
@@ -30,12 +31,12 @@ void ClapSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
             {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
     }, AnimationBehaviour::Resetable);
     sampleAnimators[0][2]->Setup(sampleImages[0], {
-            {AnimatedProperty::Position, glm::vec3(1000 + sampleImages[0]->GetWidth(), 300, 0), 0},
-            {AnimatedProperty::Position, glm::vec3(1000, 300, 0), 0.2f}
+            {AnimatedProperty::Position, glm::vec3(xPos0 + sampleImages[0]->GetWidth(), yPos, 0), 0},
+            {AnimatedProperty::Position, glm::vec3(xPos0, yPos, 0), 0.2f}
     }, AnimationBehaviour::Resetable);
     sampleAnimators[0][3]->Setup(sampleImages[1], {
-            {AnimatedProperty::Position, glm::vec3(1560 - sampleImages[0]->GetWidth(), 300, 0), 0},
-            {AnimatedProperty::Position, glm::vec3(1560, 300, 0), 0.2f}
+            {AnimatedProperty::Position, glm::vec3(xPos1 - sampleImages[0]->GetWidth(), yPos, 0), 0},
+            {AnimatedProperty::Position, glm::vec3(xPos1, yPos, 0), 0.2f}
     }, AnimationBehaviour::Resetable);
     // Stomp
     // -----
@@ -54,19 +55,19 @@ void ClapSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
             {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
     }, AnimationBehaviour::Resetable);
     sampleAnimators[1][2]->Setup(sampleImages[0], {
-            {AnimatedProperty::Position, glm::vec3(1000, 0, 0), 0},
-            {AnimatedProperty::Position, glm::vec3(1000, 300, 0), 0.2f}
+            {AnimatedProperty::Position, glm::vec3(xPos0, 0, 0), 0},
+            {AnimatedProperty::Position, glm::vec3(xPos0, yPos, 0), 0.2f}
     }, AnimationBehaviour::Resetable);
     sampleAnimators[1][3]->Setup(sampleImages[1], {
-            {AnimatedProperty::Position, glm::vec3(1560, 0, 0), 0},
-            {AnimatedProperty::Position, glm::vec3(1560, 300, 0), 0.2f}
+            {AnimatedProperty::Position, glm::vec3(xPos1, 0, 0), 0},
+            {AnimatedProperty::Position, glm::vec3(xPos1, yPos, 0), 0.2f}
     }, AnimationBehaviour::Resetable);
 
     // Add buttons
-    int x = 1600, y = 603;
-    for (int i = 0; i < 2; i++, y -= 145) {
+    int x = 1600, y = 610;
+    for (int i = 0; i < 2; i++, y -= 115) {
         soundButtons.push_back(GameObject::Instantiate("clapPatternsButton", parent)->AddComponent<Button>());
-        soundButtons[i]->LoadTexture(x+900, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
+        soundButtons[i]->LoadTexture(x+700, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
         soundButtons[i]->isActive = false;
         patternsSounds.push_back(GameObject::Instantiate("clapPatternsSound", parent)->AddComponent<AudioSource>());
         patternsSounds[i]->LoadAudioData("res/sounds/direct/clap/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
@@ -76,7 +77,7 @@ void ClapSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
                 {AnimatedProperty::Position, glm::vec3(x, y, -0.85), 0.5f}
         }, AnimationBehaviour::Resetable);
         soundAnimators[i][1]->Setup(soundButtons[i], {
-                {AnimatedProperty::Position, glm::vec3(x+900, y, -0.85), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(x+700, y, -0.85), 0.5f}
         }, AnimationBehaviour::Resetable);
     }
     soundButtons[0]->up = soundButtons[1];

@@ -67,16 +67,16 @@ void SessionUI::Setup(std::shared_ptr<Instrument> instrument) {
 
 void SessionUI::SetCheatSheet(const std::string& cheatSheetPath) {
     cheatSheet = GameObject::Instantiate("CheatSheet", parent)->AddComponent<Image>();
-    cheatSheet->LoadTexture(1785, 0, cheatSheetPath, -0.8);
+    cheatSheet->LoadTexture(1800, 0, cheatSheetPath, -0.8);
 }
 
 void SessionUI::SetInstrumentControl(const std::string &instrumentControlPath) {
     instrumentControl = GameObject::Instantiate("InstrumentControl", parent)->AddComponent<Image>();
-    instrumentControl->LoadTexture(1785, 0, instrumentControlPath, -0.8);
+    instrumentControl->LoadTexture(1800, 0, instrumentControlPath, -0.8);
 
     notesRevealSound = GameObject::Instantiate("NotesRevealSound", parent)->AddComponent<AudioSource>();
     notesRevealSound->LoadAudioData("res/sounds/direct/cheatsheet_up.wav", AudioType::Direct);
-    notesHideSound = GameObject::Instantiate("NotesRevealSound", parent)->AddComponent<AudioSource>();
+    notesHideSound = GameObject::Instantiate("NotesHideSound", parent)->AddComponent<AudioSource>();
     notesHideSound->LoadAudioData("res/sounds/direct/cheatsheet_down.wav", AudioType::Direct);
 }
 
@@ -98,7 +98,7 @@ bool SessionUI::ToggleCheatSheet() {
         instrumentControlActive = false;
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(1800, 0, 0), 0.5f}
         });
     }
     cheatSheetActive = !cheatSheetActive;
@@ -108,7 +108,7 @@ bool SessionUI::ToggleCheatSheet() {
         instrumentControl->SetZ(-0.8);
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
                 });
         for (int i = 0; i < soundButtons.size(); i++) {
             soundButtons[i]->isActive = false;
@@ -120,7 +120,7 @@ bool SessionUI::ToggleCheatSheet() {
         notesHideSound->ForcePlaySound();
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
+                        {AnimatedProperty::Position, glm::vec3(1800, 0, 0), 0.5f}
                 });
         for (int i = 0; i < soundButtons.size(); i++) {
             soundAnimators[i][1]->Reset();
@@ -136,7 +136,7 @@ void SessionUI::ToggleInstrumentControl() {
         cheatSheetActive = false;
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
         });
         for (int i = 0; i < soundAnimators.size(); i++) {
             soundAnimators[i][1]->Reset();
@@ -149,13 +149,13 @@ void SessionUI::ToggleInstrumentControl() {
         cheatSheet->SetZ(-0.8);
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(885, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
         });
     } else {
         notesHideSound->ForcePlaySound();
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(1785, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(1800, 0, 0), 0.5f}
         });
     }
 }
@@ -200,11 +200,11 @@ void SessionUI::MetronomeSetup(int bpm) {
     tickSound->IsLooping(false);
 
     metronomeSoundIndicator = GameObject::Instantiate("MetronomeSoundDisabled", parent)->AddComponent<Image>();
-    metronomeSoundIndicator->LoadTexture(1830, 250, "UI/Sesja/ToggleDisabled.png", -0.85);
+    metronomeSoundIndicator->LoadTexture(1830, 360, "UI/Sesja/ToggleDisabled.png", -0.85);
     metronomeSoundIndicator->SetAlpha(metronomeSoundEnabled ? 0:1);
 
     metronomeVisualsIndicator = GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>();
-    metronomeVisualsIndicator->LoadTexture(1830, 200, "UI/Sesja/ToggleDisabled.png", -0.85);
+    metronomeVisualsIndicator->LoadTexture(1830, 320, "UI/Sesja/ToggleDisabled.png", -0.85);
     metronomeVisualsIndicator->SetAlpha(metronomeVisualEnabled ? 0:1);
 }
 
@@ -215,7 +215,7 @@ void SessionUI::BackingTrackSetup(const std::string& trackName) {
     backingTrack->PlaySoundAfterStart(true);
 
     backingTrackIndicator = GameObject::Instantiate("MetronomeVisualsDisabled", parent)->AddComponent<Image>();
-    backingTrackIndicator->LoadTexture(1830, 150, "UI/Sesja/ToggleDisabled.png", -0.85);
+    backingTrackIndicator->LoadTexture(1830, 285, "UI/Sesja/ToggleDisabled.png", -0.85);
     backingTrackIndicator->SetAlpha(backingTrackEnabled ? 0:1);
 }
 
@@ -319,6 +319,8 @@ void SessionUI::OnDestroy() {
     backingTrackIndicator.reset();
     cheatSheet.reset();
     instrumentControl.reset();
+    notesRevealSound.reset();
+    notesHideSound.reset();
     sampleSources.clear();
     sampleImages.clear();
     for(int i=0; i<sampleAnimators.size(); i++)

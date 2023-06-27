@@ -13,7 +13,7 @@ void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     // Set up samples
     // --------------
     // Hi-Hat
-    sampleImages[0]->LoadTexture(1000, 320, "UI/Sesja/DrumsHiHat.png");
+    sampleImages[0]->LoadTexture(700, 320, "UI/Sesja/DrumsHiHat.png");
     sampleAnimators.push_back({
         GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
         GameObject::Instantiate("AlphaAnimator", parent)->AddComponent<UIAnimator>()
@@ -29,7 +29,7 @@ void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
             {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
     // Kick
-    sampleImages[1]->LoadTexture(1250, 230, "UI/Sesja/DrumsKick.png");
+    sampleImages[1]->LoadTexture(950, 230, "UI/Sesja/DrumsKick.png");
     sampleAnimators.push_back({
               GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
               GameObject::Instantiate("AlphaAnimator", parent)->AddComponent<UIAnimator>()
@@ -43,7 +43,7 @@ void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
             {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.125f}
     }, AnimationBehaviour::Resetable);
     // Snare
-    sampleImages[2]->LoadTexture(1500, 320, "UI/Sesja/DrumsSnare.png");
+    sampleImages[2]->LoadTexture(1200, 320, "UI/Sesja/DrumsSnare.png");
     sampleAnimators.push_back({
           GameObject::Instantiate("ScaleAnimator", parent)->AddComponent<UIAnimator>(),
           GameObject::Instantiate("AlphaAnimator", parent)->AddComponent<UIAnimator>()
