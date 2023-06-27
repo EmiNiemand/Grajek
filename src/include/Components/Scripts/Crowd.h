@@ -11,11 +11,14 @@ namespace Crowd {
     class Crowd : public Component {
     private:
         std::shared_ptr<GameObject> jazzCrowd;
+        std::shared_ptr<GameObject> drumCrowd;
     public:
         Crowd(const std::shared_ptr<GameObject> &parent, int id);
         ~Crowd() override;
 
         void Start() override;
+        void OnDestroy() override;
+
         void OnEnemyDefeat(PlayerBadges badge);
     };
 }
