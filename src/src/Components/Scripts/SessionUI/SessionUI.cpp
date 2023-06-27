@@ -136,7 +136,7 @@ void SessionUI::ToggleInstrumentControl() {
         cheatSheetActive = false;
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
+                {AnimatedProperty::Position, glm::vec3(1800, 0, 0), 0.5f}
         });
         for (int i = 0; i < soundAnimators.size(); i++) {
             soundAnimators[i][1]->Reset();

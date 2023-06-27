@@ -58,8 +58,8 @@ void DrumsSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     }, AnimationBehaviour::Resetable);
 
     // Add buttons
-    int x = 1600, y = 625;
-    for (int i = 0; i < 4; i++, y -= 187) {
+    int x = 1700, y = 645;
+    for (int i = 0; i < 4; i++, y -= 147) {
         soundButtons.push_back(GameObject::Instantiate("drumsPatternsButton", parent)->AddComponent<Button>());
         soundButtons[i]->LoadTexture(x+900, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
         soundButtons[i]->isActive = false;
