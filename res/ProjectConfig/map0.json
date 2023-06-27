@@ -94,9 +94,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_LeftTopLamp5"
 },
 {
@@ -114,9 +114,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_LeftTopLamp4"
 },
 {
@@ -134,9 +134,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_LeftTopLamp3"
 },
 {
@@ -154,9 +154,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_LeftTopLamp2"
 },
 {
@@ -208,7 +208,7 @@
 "coliderSize.z": 1.0,
 "modelPath": "Buildings/Environment/TreeInPot4.obj",
 "name": "House",
-"position.x": 12.0,
+"position.x": 11.5,
 "position.y": 0.0,
 "position.z": -23.0,
 "rotation.x": 0.0,
@@ -250,7 +250,7 @@
 "name": "House",
 "position.x": -23.0,
 "position.y": 0.0,
-"position.z": 6.5,
+"position.z": 5.5,
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
@@ -754,9 +754,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp"
 },
 {
@@ -794,9 +794,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftDownSquareLamp1"
 },
 {
@@ -1290,7 +1290,7 @@
 "name": "SavePoint",
 "position.x": -64.0,
 "position.y": 0.0,
-"position.z": -45.0,
+"position.z": -43.0,
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
@@ -1614,9 +1614,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp"
 },
 {
@@ -1694,9 +1694,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "LeftBottomSquare_Lamp"
 },
 {
@@ -2074,9 +2074,9 @@
 "rotation.x": 0.0,
 "rotation.y": 130.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareDoubleLamp"
 },
 {
@@ -2514,9 +2514,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftDownSquareLamp"
 },
 {
@@ -2654,9 +2654,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_LeftTopLamp"
 },
 {
@@ -3154,9 +3154,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp7"
 },
 {
@@ -3174,9 +3174,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp6"
 },
 {
@@ -3194,9 +3194,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp5"
 },
 {
@@ -3214,9 +3214,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp4"
 },
 {
@@ -3234,9 +3234,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp3"
 },
 {
@@ -3254,9 +3254,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp2"
 },
 {
@@ -3274,9 +3274,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp1"
 },
 {
@@ -3294,9 +3294,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp9"
 },
 {
@@ -3314,9 +3314,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp8"
 },
 {
@@ -3434,9 +3434,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp2"
 },
 {
@@ -3454,9 +3454,9 @@
 "rotation.x": 0.0,
 "rotation.y": 135.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp3"
 },
 {
@@ -3474,9 +3474,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp1"
 },
 {
@@ -3494,9 +3494,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp6"
 },
 {
@@ -3514,9 +3514,9 @@
 "rotation.x": 0.0,
 "rotation.y": 45.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp7"
 },
 {
@@ -3534,9 +3534,9 @@
 "rotation.x": 0.0,
 "rotation.y": 45.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp4"
 },
 {
@@ -3554,9 +3554,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp5"
 },
 {
@@ -3574,9 +3574,9 @@
 "rotation.x": 0.0,
 "rotation.y": 135.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp8"
 },
 {
@@ -3594,9 +3594,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp9"
 },
 {
@@ -4403,9 +4403,9 @@
 "coliderOffset.x": 0.0,
 "coliderOffset.y": 2.0,
 "coliderOffset.z": 0.0,
-"coliderSize.x": 3.0,
+"coliderSize.x": 2.5,
 "coliderSize.y": 2.0,
-"coliderSize.z": 3.0,
+"coliderSize.z": 2.5,
 "modelPath": "Buildings/Environment/GrassCircleBrown.obj",
 "name": "House",
 "position.x": 16.0,
@@ -4654,9 +4654,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp211"
 },
 {
@@ -5014,10 +5014,170 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
+"uniqueName": "Outside_Lamp111"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 2.299999952316284,
+"coliderSize.y": 1.0,
+"coliderSize.z": 0.800000011920929,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": -17.0,
+"position.y": 0.0,
+"position.z": 14.0,
+"rotation.x": 0.0,
+"rotation.y": 0.0,
+"rotation.z": 0.0,
 "scale.x": 1.0,
 "scale.y": 1.0,
 "scale.z": 1.0,
-"uniqueName": "Outside_Lamp111"
+"uniqueName": "Environment_StartingSquareGrassCircleBrown1Coll"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 2.299999952316284,
+"coliderSize.y": 1.0,
+"coliderSize.z": 0.800000011920929,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": -17.0,
+"position.y": 0.0,
+"position.z": 14.0,
+"rotation.x": 0.0,
+"rotation.y": 90.0,
+"rotation.z": 0.0,
+"scale.x": 1.0,
+"scale.y": 1.0,
+"scale.z": 1.0,
+"uniqueName": "Environment_StartingSquareGrassCircleBrown1Coll2"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 2.299999952316284,
+"coliderSize.y": 1.0,
+"coliderSize.z": 0.800000011920929,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": 16.0,
+"position.y": 0.0,
+"position.z": 14.0,
+"rotation.x": 0.0,
+"rotation.y": 0.0,
+"rotation.z": 0.0,
+"scale.x": 1.0,
+"scale.y": 1.0,
+"scale.z": 1.0,
+"uniqueName": "Environment_StartingSquareGrassCircleBrown11Coll"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 2.299999952316284,
+"coliderSize.y": 1.0,
+"coliderSize.z": 0.800000011920929,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": 16.0,
+"position.y": 0.0,
+"position.z": 14.0,
+"rotation.x": 0.0,
+"rotation.y": 90.0,
+"rotation.z": 0.0,
+"scale.x": 1.0,
+"scale.y": 1.0,
+"scale.z": 1.0,
+"uniqueName": "InvisibleBlock2"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 2.299999952316284,
+"coliderSize.y": 1.0,
+"coliderSize.z": 0.800000011920929,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": 14.0,
+"position.y": 0.0,
+"position.z": -13.0,
+"rotation.x": 0.0,
+"rotation.y": 0.0,
+"rotation.z": 0.0,
+"scale.x": 1.0,
+"scale.y": 1.0,
+"scale.z": 1.0,
+"uniqueName": "Environment_StartingSquareGrassCircleBrown2Coll"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 2.299999952316284,
+"coliderSize.y": 1.0,
+"coliderSize.z": 0.800000011920929,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": 14.0,
+"position.y": 0.0,
+"position.z": -13.0,
+"rotation.x": 0.0,
+"rotation.y": 90.0,
+"rotation.z": 0.0,
+"scale.x": 1.0,
+"scale.y": 1.0,
+"scale.z": 1.0,
+"uniqueName": "InvisibleBlock3"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 3.0,
+"coliderSize.y": 1.0,
+"coliderSize.z": 1.0,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": -0.5,
+"position.y": 0.0,
+"position.z": 11.0,
+"rotation.x": 0.0,
+"rotation.y": 0.0,
+"rotation.z": 0.0,
+"scale.x": 0.5,
+"scale.y": 0.5,
+"scale.z": 0.5,
+"uniqueName": "InvisibleBlock4"
+},
+{
+"coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 3.0,
+"coliderSize.y": 1.0,
+"coliderSize.z": 1.0,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": -0.5,
+"position.y": 0.0,
+"position.z": 11.0,
+"rotation.x": 0.0,
+"rotation.y": 90.0,
+"rotation.z": 0.0,
+"scale.x": 0.5,
+"scale.y": 0.5,
+"scale.z": 0.5,
+"uniqueName": "Environment_StartingSquareGrassCircleBrownColl2"
 },
 {
 "coliderOffset.x": -0.5,
@@ -5234,9 +5394,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp18"
 },
 {
@@ -5254,9 +5414,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp15"
 },
 {
@@ -5274,9 +5434,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp14"
 },
 {
@@ -5294,9 +5454,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp17"
 },
 {
@@ -5314,9 +5474,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp16"
 },
 {
@@ -5334,9 +5494,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp11"
 },
 {
@@ -5354,9 +5514,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp10"
 },
 {
@@ -5374,9 +5534,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp13"
 },
 {
@@ -5394,9 +5554,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp12"
 },
 {
@@ -6074,9 +6234,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp8"
 },
 {
@@ -6094,9 +6254,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp9"
 },
 {
@@ -6114,9 +6274,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp6"
 },
 {
@@ -6134,9 +6294,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp7"
 },
 {
@@ -6154,9 +6314,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp4"
 },
 {
@@ -6174,9 +6334,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp5"
 },
 {
@@ -6194,9 +6354,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp2"
 },
 {
@@ -6214,9 +6374,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp3"
 },
 {
@@ -6234,9 +6394,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_DoubleLamp1"
 },
 {
@@ -6854,9 +7014,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp"
 },
 {
@@ -6914,9 +7074,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp71"
 },
 {
@@ -6934,9 +7094,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp61"
 },
 {
@@ -6954,9 +7114,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp51"
 },
 {
@@ -6974,9 +7134,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp41"
 },
 {
@@ -6994,9 +7154,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp31"
 },
 {
@@ -7014,9 +7174,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp29"
 },
 {
@@ -7034,9 +7194,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp28"
 },
 {
@@ -7054,9 +7214,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp27"
 },
 {
@@ -7074,9 +7234,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp26"
 },
 {
@@ -7094,9 +7254,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp25"
 },
 {
@@ -7114,9 +7274,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp24"
 },
 {
@@ -7134,9 +7294,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp23"
 },
 {
@@ -7154,9 +7314,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp22"
 },
 {
@@ -7174,9 +7334,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp21"
 },
 {
@@ -7194,9 +7354,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp20"
 },
 {
@@ -7214,9 +7374,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp12"
 },
 {
@@ -7234,9 +7394,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp13"
 },
 {
@@ -7254,9 +7414,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp10"
 },
 {
@@ -7274,9 +7434,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp11"
 },
 {
@@ -7294,9 +7454,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp16"
 },
 {
@@ -7314,9 +7474,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp17"
 },
 {
@@ -7334,9 +7494,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp14"
 },
 {
@@ -7354,9 +7514,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp15"
 },
 {
@@ -7374,9 +7534,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp18"
 },
 {
@@ -7394,9 +7554,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp19"
 },
 {
@@ -7414,9 +7574,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp91"
 },
 {
@@ -7434,9 +7594,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Outside_Lamp81"
 },
 {
@@ -7554,9 +7714,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareLamp"
 },
 {
@@ -8201,6 +8361,26 @@
 },
 {
 "coliderOffset.x": 0.0,
+"coliderOffset.y": 1.0,
+"coliderOffset.z": 0.0,
+"coliderSize.x": 1.0,
+"coliderSize.y": 1.0,
+"coliderSize.z": 1.0,
+"modelPath": "",
+"name": "InvisibleBlock",
+"position.x": 24.5,
+"position.y": 0.0,
+"position.z": -19.5,
+"rotation.x": 0.0,
+"rotation.y": 0.0,
+"rotation.z": 0.0,
+"scale.x": 1.0,
+"scale.y": 1.0,
+"scale.z": 1.0,
+"uniqueName": "StairsColl"
+},
+{
+"coliderOffset.x": 0.0,
 "coliderOffset.y": 4.0,
 "coliderOffset.z": 0.0,
 "coliderSize.x": 2.5,
@@ -8554,9 +8734,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftBottomSquareLamp2"
 },
 {
@@ -8694,9 +8874,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftDownSquareDoubleLamp2"
 },
 {
@@ -8714,9 +8894,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftDownSquareDoubleLamp3"
 },
 {
@@ -8734,9 +8914,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftDownSquareDoubleLamp1"
 },
 {
@@ -8894,9 +9074,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareDoubleLamp5"
 },
 {
@@ -8914,9 +9094,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareDoubleLamp4"
 },
 {
@@ -8930,13 +9110,13 @@
 "name": "House",
 "position.x": -23.0,
 "position.y": 0.0,
-"position.z": 0.0,
+"position.z": -1.0,
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareDoubleLamp3"
 },
 {
@@ -8954,9 +9134,9 @@
 "rotation.x": 0.0,
 "rotation.y": 45.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareDoubleLamp2"
 },
 {
@@ -8970,13 +9150,13 @@
 "name": "House",
 "position.x": 23.0,
 "position.y": 0.0,
-"position.z": -6.0,
+"position.z": -7.0,
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_StartingSquareDoubleLamp1"
 },
 {
@@ -10434,9 +10614,9 @@
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftBottomSquareLamp"
 },
 {
@@ -11374,18 +11554,18 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_LeftDownSquareDoubleLamp"
 },
 {
 "coliderOffset.x": 0.0,
 "coliderOffset.y": 2.0,
 "coliderOffset.z": 0.0,
-"coliderSize.x": 3.0,
+"coliderSize.x": 2.5,
 "coliderSize.y": 2.0,
-"coliderSize.z": 3.0,
+"coliderSize.z": 2.5,
 "modelPath": "Buildings/Environment/GrassCircleBrown.obj",
 "name": "House",
 "position.x": -0.5,
@@ -11494,9 +11674,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp11"
 },
 {
@@ -11514,9 +11694,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp10"
 },
 {
@@ -11534,9 +11714,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp13"
 },
 {
@@ -11554,9 +11734,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp12"
 },
 {
@@ -11574,9 +11754,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp15"
 },
 {
@@ -11594,9 +11774,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp14"
 },
 {
@@ -11614,9 +11794,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp17"
 },
 {
@@ -11634,9 +11814,9 @@
 "rotation.x": 0.0,
 "rotation.y": 90.0,
 "rotation.z": 0.0,
-"scale.x": 1.0,
-"scale.y": 1.0,
-"scale.z": 1.0,
+"scale.x": 0.8999999761581421,
+"scale.y": 0.8999999761581421,
+"scale.z": 0.8999999761581421,
 "uniqueName": "Environment_JazzSquareDoubleLamp16"
 },
 {
@@ -11810,7 +11990,7 @@
 "name": "House",
 "position.x": -23.0,
 "position.y": 0.0,
-"position.z": 12.5,
+"position.z": 8.0,
 "rotation.x": 0.0,
 "rotation.y": 0.0,
 "rotation.z": 0.0,
@@ -12583,9 +12763,9 @@
 "coliderOffset.x": 0.0,
 "coliderOffset.y": 2.0,
 "coliderOffset.z": 0.0,
-"coliderSize.x": 3.0,
+"coliderSize.x": 2.5,
 "coliderSize.y": 2.0,
-"coliderSize.z": 3.0,
+"coliderSize.z": 2.5,
 "modelPath": "Buildings/Environment/GrassCircleBrown.obj",
 "name": "House",
 "position.x": 14.0,
@@ -12603,9 +12783,9 @@
 "coliderOffset.x": 0.0,
 "coliderOffset.y": 2.0,
 "coliderOffset.z": 0.0,
-"coliderSize.x": 3.0,
+"coliderSize.x": 2.5,
 "coliderSize.y": 2.0,
-"coliderSize.z": 3.0,
+"coliderSize.z": 2.5,
 "modelPath": "Buildings/Environment/GrassCircleBrown.obj",
 "name": "House",
 "position.x": -17.0,
