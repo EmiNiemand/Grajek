@@ -94,28 +94,34 @@ void SessionUI::PlaySound(int index) {
 bool SessionUI::ToggleCheatSheet() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return false;
     if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return false;
-    if (instrumentControlActive) {
-        instrumentControlActive = false;
-        GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
-                ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
-                {AnimatedProperty::Position, glm::vec3(1800, 0, 0), 0.5f}
-        });
-    }
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
         notesRevealSound->ForcePlaySound();
         cheatSheet->SetZ(-0.81);
         instrumentControl->SetZ(-0.8);
-        GameObject::Instantiate("CheatSheetAnimator", parent->parent)
-                ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                        {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
-                });
+        if (instrumentControlActive) {
+            instrumentControlActive = false;
+            instrumentControl->SetPosition(1800, 0);
+            cheatSheet->SetPosition(1125, 0);
+            for (int i = 0; i < soundButtons.size(); i++) {
+                soundButtons[i]->isActive = false;
+                soundButtons[i]->SetPosition(1600, 610 - 115*i);
+            }
+            soundButtons[0]->isActive = true;
+            activeButton = soundButtons[0];
+            return true;
+        }
         for (int i = 0; i < soundButtons.size(); i++) {
             soundButtons[i]->isActive = false;
             soundAnimators[i][0]->Reset();
         }
         soundButtons[0]->isActive = true;
         activeButton = soundButtons[0];
+
+        GameObject::Instantiate("CheatSheetAnimator", parent->parent)
+                ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
+                {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
+        });
     } else {
         notesHideSound->ForcePlaySound();
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
@@ -132,21 +138,20 @@ bool SessionUI::ToggleCheatSheet() {
 void SessionUI::ToggleInstrumentControl() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
     if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return;
-    if (cheatSheetActive) {
-        cheatSheetActive = false;
-        GameObject::Instantiate("CheatSheetAnimator", parent->parent)
-                ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
-                {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
-        });
-        for (int i = 0; i < soundAnimators.size(); i++) {
-            soundAnimators[i][1]->Reset();
-        }
-    }
     instrumentControlActive = !instrumentControlActive;
     if (instrumentControlActive) {
         notesRevealSound->ForcePlaySound();
         instrumentControl->SetZ(-0.81);
         cheatSheet->SetZ(-0.8);
+        if (cheatSheetActive) {
+            cheatSheetActive = false;
+            cheatSheet->SetPosition(1800, 0);
+            instrumentControl->SetPosition(1125, 0);
+            for (int i = 0; i < soundAnimators.size(); i++) {
+                soundButtons[i]->SetPosition(2300, 610 - 115*i);
+            }
+            return;
+        }
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
                 {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
