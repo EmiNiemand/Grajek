@@ -151,6 +151,7 @@ std::shared_ptr<GameObject> MainMenuPrefab::Create() {
 
     // Credits Menu
     auto creditsMenu = GameObject::Instantiate("CreditsMenu", mainMenuScene)->AddComponent<CreditsMenu>();
+    creditsMenu->AddButton("CreditsBackButton", 1300, 25, "UI/Back.png", "UI/BackKolorki.png");
     creditsMenu->AddImage("CreditsBackground", 0, 0, "UI/Credits.png");
     creditsMenu->GetParent()->DisableSelfAndChildren();
 
