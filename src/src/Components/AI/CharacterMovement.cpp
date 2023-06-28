@@ -419,6 +419,15 @@ const glm::vec3 CharacterMovement::GetCurrentPosition() const {
 
 /**
  * @annotation
+ * Returns distance to player.
+ * @returns float - distance to player
+ */
+const float CharacterMovement::GetDistanceToPlayer() const {
+    return glm::distance(currentPosition, playerPosition);
+}
+
+/**
+ * @annotation
  * Checks whether this spawn point is already chosen by another CharacterMovement object.
  * @param position - position to check
  * @returns bool - false if not available, otherwise true

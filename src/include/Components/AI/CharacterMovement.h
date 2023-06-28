@@ -21,7 +21,7 @@ constexpr float DISTANCE_TO_COLLISION = 1.25f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.50f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.10f;
 // Movement consts
-constexpr float MOVEMENT_TIMEOUT = 3.0f;
+constexpr float MOVEMENT_TIMEOUT = 3.25f;
 constexpr float MOVEMENT_SMOOTHING_PARAM = 0.5f;
 constexpr float MOVEMENT_MAX_SPEED = 0.075f;
 
@@ -96,6 +96,7 @@ public:
     void SetState(const AI_MOVEMENT_STATE& newState);
     const AI_MOVEMENT_STATE GetState() const;
     const glm::vec3 GetCurrentPosition() const;
+    const float GetDistanceToPlayer() const;
 
 };
 

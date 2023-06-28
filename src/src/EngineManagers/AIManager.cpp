@@ -91,27 +91,17 @@ void AIManager::SelectPositions() {
     sessionPositions.clear();
     playerPosition = playerTransform->GetLocalPosition();
     glm::ivec2 newEndPoint = {std::round(playerPosition.x), std::round(playerPosition.z)};
-    int boundaries = 2;
-    bool isAvailable = true;
+    int boundaries = 2, index = 0;
 
-    int i = 0;
-    for (int y = -boundaries; y <= boundaries; ++y) {
-        for (int x = -boundaries; x <= boundaries; ++x) {
+    for (int y = -boundaries; y <= boundaries && index < charactersAmount; ++y) {
+        for (int x = -boundaries; x <= boundaries && index < charactersAmount; ++x) {
             if (y == -boundaries || y == boundaries || x == -boundaries || x == boundaries) {
                 if (!aiGrid[(newEndPoint.x + x + AI_GRID_SIZE / 2) + (newEndPoint.y + y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
-                    positions.emplace_back(newEndPoint.x + x, 0.0f, newEndPoint.y + y);
-
-                    if (++i == charactersAmount)
-                        isAvailable = false;
+                    positions.emplace_back(newEndPoint.x + x, 0.01f, newEndPoint.y + y);
+                    ++index;
                 }
-
-                if (!isAvailable)
-                    break;
             }
         }
-
-        if (!isAvailable)
-            break;
 
         if (y >= boundaries) {
             ++boundaries;
@@ -125,12 +115,12 @@ void AIManager::SelectPositions() {
         maxDistance = FLT_MAX;
         iterator = 0;
 
-        for (i = 0; i < positions.size(); ++i) {
-            distance = glm::distance(positions[i], mov.second->GetCurrentPosition());
+        for (index = 0; index < positions.size(); ++index) {
+            distance = glm::distance(positions[index], mov.second->GetCurrentPosition());
 
             if (distance < maxDistance) {
                 maxDistance = distance;
-                iterator = i;
+                iterator = index;
             }
         }
 
