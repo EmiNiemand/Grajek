@@ -61,12 +61,12 @@ void TrumpetSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     }
 
     // Add buttons
-    int x = 1850, y = 630;
-    for (int i = 0; i < 4; i++, y -= 187) {
+    int x = 1868, y = 655;
+    for (int i = 0; i < 4; i++, y -= 147) {
         soundButtons.push_back(GameObject::Instantiate("trumpetPatternsButton", parent)->AddComponent<Button>());
         soundButtons[i]->LoadTexture(x+900, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
         soundButtons[i]->isActive = false;
-        soundButtons[i]->SetScale(0.75);
+        soundButtons[i]->SetScale(0.7);
         patternsSounds.push_back(GameObject::Instantiate("trumpetPatternsSound", parent)->AddComponent<AudioSource>());
         patternsSounds[i]->LoadAudioData("res/sounds/direct/trumpet/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
         soundAnimators.push_back({GameObject::Instantiate("trumpetPatternsButtonAnimator", parent)->AddComponent<UIAnimator>(), GameObject::Instantiate("trumpetPatternsButtonAnimator", parent)->AddComponent<UIAnimator>()});

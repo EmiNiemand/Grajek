@@ -64,11 +64,12 @@ void ClapSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     }, AnimationBehaviour::Resetable);
 
     // Add buttons
-    int x = 1600, y = 610;
-    for (int i = 0; i < 2; i++, y -= 115) {
+    int x = 1625, y = 625;
+    for (int i = 0; i < 2; i++, y -= 105) {
         soundButtons.push_back(GameObject::Instantiate("clapPatternsButton", parent)->AddComponent<Button>());
         soundButtons[i]->LoadTexture(x+700, y, "UI/Sesja/clapPatternsInactive.png", "UI/Sesja/clapPatternsSelect.png", -0.85);
         soundButtons[i]->isActive = false;
+        soundButtons[i]->SetScale(0.8);
         patternsSounds.push_back(GameObject::Instantiate("clapPatternsSound", parent)->AddComponent<AudioSource>());
         patternsSounds[i]->LoadAudioData("res/sounds/direct/clap/pattern" + std::to_string(i + 1) + ".wav", AudioType::Direct);
         soundAnimators.push_back({GameObject::Instantiate("clapPatternsButtonAnimator", parent)->AddComponent<UIAnimator>(),
