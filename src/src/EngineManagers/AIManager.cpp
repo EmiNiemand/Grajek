@@ -259,22 +259,26 @@ const float AIManager::GetCombinedOpponentSatisfaction() {
             satisfaction += ch.second->GetOpponentSatisfaction();
     }
 
-    switch (currentOpponentInstrument) {
-        case Clap:
-            satisfaction *= CLAP_MODIFIER;
-            break;
-        case Drums:
-            satisfaction *= DRUMS_MODIFIER;
-            break;
-        case Trumpet:
-            satisfaction *= TRUMPET_MODIFIER;
-            break;
-        case Launchpad:
-            satisfaction *= LAUNCHPAD_MODIFIER;
-            break;
-        case Guitar:
-            satisfaction *= GUITAR_MODIFIER;
-            break;
+    if (sessionCharacters != 0.0f) {
+        satisfaction /= sessionCharacters;
+
+        switch (currentOpponentInstrument) {
+            case Clap:
+                satisfaction *= CLAP_MODIFIER;
+                break;
+            case Drums:
+                satisfaction *= DRUMS_MODIFIER;
+                break;
+            case Trumpet:
+                satisfaction *= TRUMPET_MODIFIER;
+                break;
+            case Launchpad:
+                satisfaction *= LAUNCHPAD_MODIFIER;
+                break;
+            case Guitar:
+                satisfaction *= GUITAR_MODIFIER;
+                break;
+        }
     }
 
     return satisfaction;
@@ -284,62 +288,9 @@ const float AIManager::GetOpponentSkillLevel(const float& accuracy, const int& p
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedOpponentSatisfaction();
 
-    float opponentInstrumentModifier = 0.0f;
-    float playerInstrumentModifier = 0.0f;
-
-    if (sessionCharacters != 0.0f) {
-        satisfaction /= sessionCharacters;
-
-        switch (currentOpponentInstrument) {
-            case Clap:
-                satisfaction *= CLAP_MODIFIER;
-                opponentInstrumentModifier = CLAP_MODIFIER;
-                break;
-            case Drums:
-                satisfaction *= DRUMS_MODIFIER;
-                opponentInstrumentModifier = DRUMS_MODIFIER;
-                break;
-            case Trumpet:
-                satisfaction *= TRUMPET_MODIFIER;
-                opponentInstrumentModifier = TRUMPET_MODIFIER;
-                break;
-            case Launchpad:
-                satisfaction *= LAUNCHPAD_MODIFIER;
-                opponentInstrumentModifier = LAUNCHPAD_MODIFIER;
-                break;
-            case Guitar:
-                satisfaction *= GUITAR_MODIFIER;
-                opponentInstrumentModifier = GUITAR_MODIFIER;
-                break;
-        }
-
-        switch (currentPlayerInstrument) {
-            case Clap:
-                playerInstrumentModifier = CLAP_MODIFIER;
-                break;
-            case Drums:
-                playerInstrumentModifier = DRUMS_MODIFIER;
-                break;
-            case Trumpet:
-                playerInstrumentModifier = TRUMPET_MODIFIER;
-                break;
-            case Launchpad:
-                playerInstrumentModifier = LAUNCHPAD_MODIFIER;
-                break;
-            case Guitar:
-                playerInstrumentModifier = GUITAR_MODIFIER;
-                break;
-        }
-    }
-
     satisfaction *= std::floor(sessionCharacters / 5.0f) * 0.5f;
 
-    float instrumentModifier = opponentInstrumentModifier;
-
-    if (instrumentModifier == 0 || playerInstrumentModifier > opponentInstrumentModifier)
-        instrumentModifier = 1;
-
-    return ((accuracy * (float)patternSize) + satisfaction / 50.0f * randomModifier) * instrumentModifier;
+    return ((accuracy * (float)patternSize) + satisfaction / 50.0f * randomModifier);
 }
 
 /**
