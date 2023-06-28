@@ -193,7 +193,6 @@ void MusicSession::PatternSuccess(std::shared_ptr<MusicPattern> pattern, float a
 void MusicSession::PatternTimeout() {
     recordedSounds.clear();
     potentialPatterns.clear();
-    patternFailureSound.reset();
     playerManager->PlayedPattern(nullptr, 0);
     patternTimeoutSound->ForcePlaySound();
 }
@@ -228,6 +227,8 @@ void MusicSession::OnDestroy() {
     sessionUI.reset();
     playerManager.reset();
     potentialPatterns.clear();
+    patternFailureSound.reset();
+    patternTimeoutSound.reset();
     instrument.reset();
     Component::OnDestroy();
 }
