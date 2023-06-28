@@ -36,16 +36,12 @@ void SavePointTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObje
     buttonImage->enabled = false;
     savePointMenu->buttonImage = nullptr;
     savePointMenu->triggerActive = false;
+    SavePointManager::GetInstance()->activeSavePoint.reset();
     Component::OnTriggerExit(gameObject);
 }
 
-void SavePointTrigger::OnCreate() {
-    SavePointManager::GetInstance()->savePoints.insert({id, std::dynamic_pointer_cast<SavePointTrigger>(shared_from_this())});
-    Component::OnCreate();
-}
 
 void SavePointTrigger::OnDestroy() {
-    SavePointManager::GetInstance()->savePoints.erase(id);
     savePointMenu.reset();
     buttonImage.reset();
     Component::OnDestroy();

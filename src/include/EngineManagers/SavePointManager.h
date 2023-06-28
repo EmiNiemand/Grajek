@@ -13,7 +13,6 @@ private:
 
 public:
     std::shared_ptr<SavePointTrigger> activeSavePoint;
-    std::unordered_map<int, std::shared_ptr<SavePointTrigger>> savePoints;
 
 private:
     explicit SavePointManager();
@@ -25,8 +24,8 @@ public:
 
     static SavePointManager* GetInstance();
 
-    void NotifyMenuIsActive();
-    void NotifyMenuIsNotActive();
+    void NotifyMenuIsActive() const;
+    void NotifyMenuIsNotActive() const;
 };
 
 #endif //GAME_CPP_SAVEPOINTMANAGER_H
