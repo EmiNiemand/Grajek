@@ -34,9 +34,15 @@ void Shopkeeper::Start() {
     spaceImage->LoadTexture(0, 0, "UI/Tutorial/SpaceToPlay.png");
     spaceImage->enabled = false;
 
-    musicSessionImage = GameObject::Instantiate("MusicSessionImage", parent)->AddComponent<Image>();
-    musicSessionImage->LoadTexture(0, 0, "UI/Tutorial/MusicSession1.png", -0.99);
-    musicSessionImage->enabled = false;
+    musicSessionImage1 = GameObject::Instantiate("MusicSessionImage1", parent)->AddComponent<Image>();
+    musicSessionImage1->LoadTexture(0, 0, "UI/Tutorial/MusicSession1.png", -0.99);
+    musicSessionImage1->enabled = false;
+    musicSessionImage2 = GameObject::Instantiate("MusicSessionImage2", parent)->AddComponent<Image>();
+    musicSessionImage2->LoadTexture(0, 0, "UI/Tutorial/MusicSession2.png", -0.99);
+    musicSessionImage2->enabled = false;
+    musicSessionImage3 = GameObject::Instantiate("MusicSessionImage3", parent)->AddComponent<Image>();
+    musicSessionImage3->LoadTexture(0, 0, "UI/Tutorial/MusicSession3.png", -0.99);
+    musicSessionImage3->enabled = false;
 
     instrumentControlImage = GameObject::Instantiate("InstrumentControlImage", parent)->AddComponent<Image>();
     instrumentControlImage->LoadTexture(0, 0, "UI/Tutorial/Control1.png", -0.99);
@@ -52,9 +58,12 @@ void Shopkeeper::Start() {
     sound2->LoadAudioData("res/sounds/direct/clap/clapStrong.wav", AudioType::Direct);
     patternsSound = GameObject::Instantiate("PatternSound", parent)->AddComponent<AudioSource>();
     patternsSound->LoadAudioData("res/sounds/direct/clap/pattern2.wav", AudioType::Direct);
-    soundImage = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
-    soundImage->LoadTexture(0, 0, "UI/Tutorial/Sound1.png", -0.9);
-    soundImage->enabled = false;
+    soundImage1 = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
+    soundImage1->LoadTexture(0, 0, "UI/Tutorial/Sound1.png", -0.9);
+    soundImage1->enabled = false;
+    soundImage1 = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
+    soundImage1->LoadTexture(0, 0, "UI/Tutorial/Sound2.png", -0.9);
+    soundImage1->enabled = false;
 
     stopMusicSessionImage = GameObject::Instantiate("StopMusicSessionImage", parent)->AddComponent<Image>();
     stopMusicSessionImage->LoadTexture(0, 0, "UI/Tutorial/StopMusicSession1.png", -0.99);
@@ -160,7 +169,7 @@ void Shopkeeper::Update() {
     if (hid->IsKeyDown(Key::KEY_ENTER)) {
         if (dialogueIndex == 10) {
             dialogueIndex++;
-            musicSessionImage->enabled = true;
+            musicSessionImage1->enabled = true;
             playerManager->inputEnabled = false;
             return;
         }
@@ -168,7 +177,7 @@ void Shopkeeper::Update() {
         if (dialogueIndex == 13) {
             dialogueIndex++;
             patternsImage->enabled = false;
-            soundImage->enabled = true;
+            soundImage1->enabled = true;
             return;
         }
 
@@ -190,7 +199,7 @@ void Shopkeeper::Update() {
     if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT)) {
         if (dialogueIndex == 11) {
             dialogueIndex++;
-            musicSessionImage->enabled = false;
+            musicSessionImage1->enabled = false;
             instrumentControlImage->enabled = true;
             return;
         }
@@ -219,7 +228,7 @@ void Shopkeeper::Update() {
             if (patternIsGood) {
                 dialogueIndex++;
                 stopMusicSessionImage->enabled = true;
-                soundImage->enabled = false;
+                soundImage1->enabled = false;
                 playerManager->inputEnabled = true;
             }
             patternIsGood = false;
@@ -310,9 +319,9 @@ void Shopkeeper::OnDestroy() {
     crowdImage.reset();
     spaceImage.reset();
     patternsImage.reset();
-    musicSessionImage.reset();
+    musicSessionImage1.reset();
     stopMusicSessionImage.reset();
-    soundImage.reset();
+    soundImage1.reset();
     Component::OnDestroy();
 }
 

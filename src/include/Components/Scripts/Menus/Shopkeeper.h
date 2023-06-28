@@ -16,12 +16,15 @@ class AudioSource;
 class Shopkeeper : public Component, public IDataPersistance {
 private:
     std::shared_ptr<Image> spaceImage;
-    std::shared_ptr<Image> musicSessionImage;
+    std::shared_ptr<Image> musicSessionImage1;
+    std::shared_ptr<Image> musicSessionImage2;
+    std::shared_ptr<Image> musicSessionImage3;
     std::shared_ptr<Image> instrumentControlImage;
     std::shared_ptr<Image> patternsImage;
     std::shared_ptr<AudioSource> patternsSound;
     std::shared_ptr<AudioSource> sound1, sound2;
-    std::shared_ptr<Image> soundImage;
+    std::shared_ptr<Image> soundImage1;
+    std::shared_ptr<Image> soundImage2;
     std::shared_ptr<Image> stopMusicSessionImage;
     std::shared_ptr<Image> crowdImage;
 
