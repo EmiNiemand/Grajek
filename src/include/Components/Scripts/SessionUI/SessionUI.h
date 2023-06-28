@@ -36,8 +36,8 @@ private:
     std::shared_ptr<AudioSource> tickSound;
     std::shared_ptr<Image> metronomeSoundIndicator;
     std::shared_ptr<Image> metronomeVisualsIndicator;
-    bool metronomeSoundEnabled;
-    bool metronomeVisualEnabled;
+    bool metronomeSoundEnabled = true;
+    bool metronomeVisualEnabled = true;
 
     // Backing track
     std::shared_ptr<AudioSource> backingTrack;

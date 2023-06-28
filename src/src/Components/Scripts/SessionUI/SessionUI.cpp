@@ -20,7 +20,6 @@ void SessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     metronomeVisualEnabled = !OptionsManager::GetInstance()->sessionMetronomeVisuals;
     backingTrackEnabled = !OptionsManager::GetInstance()->sessionBackingTrack;
 
-    // TODO: ugly workaround, replace when possible by passing instrument to method
     std::string instrumentName = instrument->NameToString();
     std::string instrumentNameLCase = instrumentName;
     instrumentNameLCase[0] -= 'Z'-'z';
