@@ -61,9 +61,9 @@ void Shopkeeper::Start() {
     soundImage1 = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
     soundImage1->LoadTexture(0, 0, "UI/Tutorial/Sound1.png", -0.9);
     soundImage1->enabled = false;
-    soundImage1 = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
-    soundImage1->LoadTexture(0, 0, "UI/Tutorial/Sound2.png", -0.9);
-    soundImage1->enabled = false;
+    soundImage2 = GameObject::Instantiate("SoundImage", parent)->AddComponent<Image>();
+    soundImage2->LoadTexture(0, 0, "UI/Tutorial/Sound2.png", -0.9);
+    soundImage2->enabled = false;
 
     stopMusicSessionImage = GameObject::Instantiate("StopMusicSessionImage", parent)->AddComponent<Image>();
     stopMusicSessionImage->LoadTexture(0, 0, "UI/Tutorial/StopMusicSession1.png", -0.99);
@@ -157,7 +157,7 @@ void Shopkeeper::Update() {
             return;
         }
 
-        if (dialogueIndex == 16) {
+        if (dialogueIndex == 18) {
             dialogueIndex++;
             stopMusicSessionImage->enabled = false;
             crowdImage->enabled = true;
@@ -174,20 +174,36 @@ void Shopkeeper::Update() {
             return;
         }
 
-        if (dialogueIndex == 13) {
+        if (dialogueIndex == 11) {
+            dialogueIndex++;
+            musicSessionImage1->enabled = false;
+            musicSessionImage2->enabled = true;
+            return;
+        }
+
+        if (dialogueIndex == 12) {
+            dialogueIndex++;
+            musicSessionImage2->enabled = false;
+            musicSessionImage3->enabled = true;
+            return;
+        }
+
+        if (dialogueIndex == 15) {
             dialogueIndex++;
             patternsImage->enabled = false;
             soundImage1->enabled = true;
             return;
         }
 
-        if (dialogueIndex == 14) {
+        if (dialogueIndex == 16) {
             dialogueIndex++;
             patternsSound->PlaySound();
+            soundImage1->enabled = false;
+            soundImage2->enabled = true;
             return;
         }
 
-        if (dialogueIndex == 17) {
+        if (dialogueIndex == 19) {
             dialogueIndex++;
             playerManager->inputEnabled = true;
             crowdImage->enabled = false;
@@ -197,16 +213,16 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT)) {
-        if (dialogueIndex == 11) {
+        if (dialogueIndex == 13) {
             dialogueIndex++;
-            musicSessionImage1->enabled = false;
+            musicSessionImage3->enabled = false;
             instrumentControlImage->enabled = true;
             return;
         }
     }
 
     if (hid->IsKeyDown(Key::KEY_TAB)) {
-        if (dialogueIndex == 12) {
+        if (dialogueIndex == 14) {
             dialogueIndex++;
             instrumentControlImage->enabled = false;
             patternsImage->enabled = true;
@@ -215,7 +231,7 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_R)) {
-        if (dialogueIndex == 15) {
+        if (dialogueIndex == 17) {
             sound1->PlaySound();
             patternIsGood = true;
             return;
@@ -223,12 +239,12 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_U)) {
-        if (dialogueIndex == 15) {
+        if (dialogueIndex == 17) {
             sound2->PlaySound();
             if (patternIsGood) {
                 dialogueIndex++;
                 stopMusicSessionImage->enabled = true;
-                soundImage1->enabled = false;
+                soundImage2->enabled = false;
                 playerManager->inputEnabled = true;
             }
             patternIsGood = false;
