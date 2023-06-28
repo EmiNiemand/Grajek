@@ -94,6 +94,7 @@ void SessionUI::PlaySound(int index) {
 bool SessionUI::ToggleCheatSheet() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return false;
     if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return false;
+    int xPos;
     cheatSheetActive = !cheatSheetActive;
     if (cheatSheetActive) {
         notesRevealSound->ForcePlaySound();
@@ -111,6 +112,7 @@ bool SessionUI::ToggleCheatSheet() {
             activeButton = soundButtons[0];
             return true;
         }
+        else xPos = 1155;
         for (int i = 0; i < soundButtons.size(); i++) {
             soundButtons[i]->isActive = false;
             soundAnimators[i][0]->Reset();
@@ -123,6 +125,7 @@ bool SessionUI::ToggleCheatSheet() {
                 {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
         });
     } else {
+        if(!instrumentControlActive) xPos = 1830;
         notesHideSound->ForcePlaySound();
         GameObject::Instantiate("CheatSheetAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(cheatSheet, {
@@ -132,12 +135,26 @@ bool SessionUI::ToggleCheatSheet() {
             soundAnimators[i][1]->Reset();
         }
     }
+    // Animate helper switches
+    GameObject::Instantiate("HelperSwitchAnimator", parent->parent)
+            ->AddComponent<UIAnimator>()->Setup( metronomeSoundIndicator, {
+            {AnimatedProperty::Position, glm::vec3(xPos, 360, 0), 0.5f}
+    });
+    GameObject::Instantiate("HelperSwitchAnimator", parent->parent)
+            ->AddComponent<UIAnimator>()->Setup(metronomeVisualsIndicator, {
+            {AnimatedProperty::Position, glm::vec3(xPos, 320, 0), 0.5f}
+    });
+    GameObject::Instantiate("HelperSwitchAnimator", parent->parent)
+            ->AddComponent<UIAnimator>()->Setup(backingTrackIndicator, {
+            {AnimatedProperty::Position, glm::vec3(xPos, 285, 0), 0.5f}
+    });
     return true;
 }
 
 void SessionUI::ToggleInstrumentControl() {
     if (GloomEngine::GetInstance()->FindGameObjectWithName("CheatSheetAnimator")) return;
     if (GloomEngine::GetInstance()->FindGameObjectWithName("InstrumentControlAnimator")) return;
+    int xPos = 1830;
     instrumentControlActive = !instrumentControlActive;
     if (instrumentControlActive) {
         notesRevealSound->ForcePlaySound();
@@ -152,17 +169,32 @@ void SessionUI::ToggleInstrumentControl() {
             }
             return;
         }
+        xPos = 1155;
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
                 {AnimatedProperty::Position, glm::vec3(1125, 0, 0), 0.5f}
         });
     } else {
+        if(!cheatSheetActive) xPos = 1830;
         notesHideSound->ForcePlaySound();
         GameObject::Instantiate("InstrumentControlAnimator", parent->parent)
                 ->AddComponent<UIAnimator>()->Setup(instrumentControl, {
                 {AnimatedProperty::Position, glm::vec3(1800, 0, 0), 0.5f}
         });
     }
+    // Animate helper switches
+    GameObject::Instantiate("HelperSwitchAnimator", parent->parent)
+            ->AddComponent<UIAnimator>()->Setup( metronomeSoundIndicator, {
+            {AnimatedProperty::Position, glm::vec3(xPos, 360, 0), 0.5f}
+    });
+    GameObject::Instantiate("HelperSwitchAnimator", parent->parent)
+            ->AddComponent<UIAnimator>()->Setup(metronomeVisualsIndicator, {
+            {AnimatedProperty::Position, glm::vec3(xPos, 320, 0), 0.5f}
+    });
+    GameObject::Instantiate("HelperSwitchAnimator", parent->parent)
+            ->AddComponent<UIAnimator>()->Setup(backingTrackIndicator, {
+            {AnimatedProperty::Position, glm::vec3(xPos, 285, 0), 0.5f}
+    });
 }
 
 void SessionUI::UpdateAccuracy(float fraction) {

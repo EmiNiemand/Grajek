@@ -74,6 +74,8 @@ void MusicSession::StopSample(int index) {
 
     if(recordedSounds.empty()) return;
 
+    lastTime = glfwGetTime();
+
     for (auto it = recordedSounds.rbegin(); it != recordedSounds.rend(); ++it) {
         if(it->sample->id == index) {
             it->duration = GetRhythmValue(glfwGetTime() - it->duration);
@@ -144,15 +146,29 @@ void MusicSession::DetectPattern() {
 void MusicSession::CalcAccuracyAndReset(const std::shared_ptr<MusicPattern> &goodPattern) {
     float accuracy = 0;
     recordedSounds[0].delay = 0;
+
     for (int i = 0; i < recordedSounds.size(); i++)
     {
+        // TODO: this is a quick and bad "fix" that is intended to repair trumpet
+        //       (might be caused by the fact that the last recorded sound is added
+        //       to the vector but it didn't stop playing just yet; maybe add some buffor?)
+        if(instrument->name == InstrumentName::Trumpet) {
+            if (recordedSounds[i].duration > 3) recordedSounds[i].duration = 3;
+            // Since there's no delay between sounds in all patterns, let's make it a bit easier for player
+            // (and emphasize length of playing rather than racing fingers)
+            if (recordedSounds[i].delay < 2) recordedSounds[i].delay = 0;
+        }
         float soundAccuracy = abs(goodPattern->sounds[i]->delay - recordedSounds[i].delay);
         if(goodPattern->sounds[i]->duration != 0)
             soundAccuracy = (soundAccuracy + abs(goodPattern->sounds[i]->duration - recordedSounds[i].duration)) / 2.0f;
         accuracy += soundAccuracy;
     }
 
-    accuracy /= (float)recordedSounds.size();
+    // TODO: another quick fix
+    float divider = recordedSounds.size() > 0 ? recordedSounds.size() : 1;
+    if(accuracy < 0) accuracy = 0;
+
+    accuracy /= divider;
     spdlog::info("[MS] Accuracy: " + std::to_string((1 - accuracy) * 100) + "%");
     PatternSuccess(goodPattern, 1 - accuracy);
 

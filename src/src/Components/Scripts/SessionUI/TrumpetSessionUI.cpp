@@ -9,9 +9,9 @@ TrumpetSessionUI::TrumpetSessionUI(const std::shared_ptr<GameObject> &parent, in
 void TrumpetSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
     SessionUI::Setup(instrument);
 
-    valveInitPos[0] = {1100, 0};
-    valveInitPos[1] = {1300, 0};
-    valveInitPos[2] = {1500, 0};
+    valveInitPos[0] = {700, 0};
+    valveInitPos[1] = {900, 0};
+    valveInitPos[2] = {1100, 0};
     float positionAnimationDuration = 1.25f;
 
     // Set up samples

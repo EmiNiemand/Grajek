@@ -2,7 +2,7 @@
 "fullScreen": false,
 "height": 810,
 "musicVolume": 0.5,
-"session.backingTrack": true,
+"session.backingTrack": false,
 "session.metronomeSound": false,
 "session.metronomeVisuals": false,
 "shadowResolution": 1024,
