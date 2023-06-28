@@ -6,6 +6,7 @@
 #include "EngineManagers/AIManager.h"
 #include "EngineManagers/RandomnessManager.h"
 #include "Components/AI/CharacterLogic.h"
+#include "Components/AI/CharacterMovement.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/Default.h"
 #include "GameObjectsAndPrefabs/Prefabs/Characters/JazzTrumpet.h"
 
@@ -27,11 +28,8 @@ AIManager* AIManager::GetInstance() {
 
 /**
  * @annotation
- * Initializes manager and spawner. Also creates new thread
- * which periodically spawns new entities.
- * @param min - min amount of entities
- * @param max - max amount of entities
- * @param delay - time delay between spawns
+ * Initializes manager and spawner.
+ * @param maxCharacters - max amount of characters
  */
 void AIManager::InitializeSpawner(const int& maxCharacters) {
 #ifdef DEBUG
@@ -42,6 +40,9 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
     charactersAmount = maxCharacters;
     charactersLogics.reserve(maxCharacters);
     charactersMovements.reserve(maxCharacters);
+    tempCharacters.reserve(maxCharacters);
+    sessionPositions.reserve(maxCharacters);
+    positions.reserve(maxCharacters);
     pathfinding = std::make_shared<CharacterPathfinding>();
     jazzHoodParams.second = GloomEngine::GetInstance()->FindGameObjectWithName("JazzHoodCenter")->
             transform->GetLocalPosition();
@@ -75,8 +76,67 @@ void AIManager::InitializeSpawner(const int& maxCharacters) {
 void AIManager::Free() {
     charactersLogics.clear();
     charactersMovements.clear();
+    tempCharacters.clear();
+    sessionPositions.clear();
+    positions.clear();
     playerPatternsPlayed.clear();
     playerTransform = nullptr;
+}
+
+/**
+ * @annotation
+ * Selects positions near player for every character.
+ */
+void AIManager::SelectPositions() {
+    sessionPositions.clear();
+    playerPosition = playerTransform->GetLocalPosition();
+    glm::ivec2 newEndPoint = {std::round(playerPosition.x), std::round(playerPosition.z)};
+    int boundaries = 2;
+    bool isAvailable = true;
+
+    int i = 0;
+    for (int y = -boundaries; y <= boundaries; ++y) {
+        for (int x = -boundaries; x <= boundaries; ++x) {
+            if (y == -boundaries || y == boundaries || x == -boundaries || x == boundaries) {
+                if (!aiGrid[(newEndPoint.x + x + AI_GRID_SIZE / 2) + (newEndPoint.y + y + AI_GRID_SIZE / 2) * AI_GRID_SIZE]) {
+                    positions.emplace_back(newEndPoint.x + x, 0.0f, newEndPoint.y + y);
+
+                    if (++i == charactersAmount)
+                        isAvailable = false;
+                }
+
+                if (!isAvailable)
+                    break;
+            }
+        }
+
+        if (!isAvailable)
+            break;
+
+        if (y >= boundaries) {
+            ++boundaries;
+            y = -boundaries;
+        }
+    }
+
+    float maxDistance, distance;
+    int iterator;
+    for (const auto& mov : charactersMovements) {
+        maxDistance = FLT_MAX;
+        iterator = 0;
+
+        for (i = 0; i < positions.size(); ++i) {
+            distance = glm::distance(positions[i], mov.second->GetCurrentPosition());
+
+            if (distance < maxDistance) {
+                maxDistance = distance;
+                iterator = i;
+            }
+        }
+
+        sessionPositions[mov.first] = positions[iterator];
+        positions.erase(positions.begin() + iterator);
+    }
 }
 
 /**
@@ -94,6 +154,9 @@ void AIManager::NotifyPlayerStartsPlaying(const InstrumentName &ins, const Music
         ch.second->SetPlayerInstrumentAndGenre(ins, gen);
         ch.second->SetPlayerPlayingStatus(true);
     }
+
+    if (!isPlayerTalkingToOpponent)
+        SelectPositions();
 }
 
 /**
@@ -171,6 +234,14 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     return satisfaction;
 }
 
+/**
+ * @annotation
+ * Returns player skill level based on equation:
+ * ((accuracyValue * (float)patternSize) + satisfaction / 50.0f * randomModifier) * patternModifier
+ * @param accuracy - latest player pattern accuracy
+ * @param patternSize - pattern array size
+ * @returns float - total player skill level.
+ */
 const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
@@ -198,14 +269,24 @@ const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& pat
     return ((accuracyValue * (float)patternSize) + satisfaction / 50.0f * randomModifier) * patternModifier;
 }
 
+/**
+ * @annotation
+ * Notifies every character that player is talking to the opponent.
+ * @param state - true is player is talking
+ */
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
+    isPlayerTalkingToOpponent = state;
+
     for (auto&& ch : charactersLogics)
         ch.second->SetOpponentPlayingStatus(state);
+
+    if (isPlayerTalkingToOpponent)
+        SelectPositions();
 }
 
 /**
  * @annotation
- * Notifies every character about started enemy session.
+ * Notifies every character about started opponent session.
  * @param ins - enum of instrument name
  * @param gen - enum of music genre
  */
@@ -218,7 +299,7 @@ void AIManager::NotifyOpponentStartsPlaying(const InstrumentName &ins, const Mus
 
 /**
  * @annotation
- * Notifies every character about stopped player session.
+ * Notifies every character about stopped opponent session.
  */
 void AIManager::NotifyOpponentStopsPlaying() {
     currentOpponentInstrument = {};
@@ -229,8 +310,8 @@ void AIManager::NotifyOpponentStopsPlaying() {
 
 /**
  * @annotation
- * Notifies every character about the pattern played by enemy.
- * @param pat - pointer to MusicPattern played by enemy
+ * Notifies every character about the pattern played by opponent.
+ * @param pat - pointer to MusicPattern played by opponent
  */
 void AIManager::NotifyOpponentPlayedPattern(const std::shared_ptr<MusicPattern>& pat) {
     AI_LOGIC_STATE state;
@@ -284,6 +365,14 @@ const float AIManager::GetCombinedOpponentSatisfaction() {
     return satisfaction;
 }
 
+/**
+ * @annotation
+ * Returns opponent skill level based on equation:
+ * ((accuracy * (float)patternSize) + satisfaction / 50.0f * randomModifier)
+ * @param accuracy - latest opponent pattern accuracy
+ * @param patternSize - pattern array size
+ * @returns float - total opponent skill level.
+ */
 const float AIManager::GetOpponentSkillLevel(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedOpponentSatisfaction();

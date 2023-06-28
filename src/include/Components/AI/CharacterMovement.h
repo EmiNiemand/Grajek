@@ -34,7 +34,6 @@ class CharacterPathfinding;
 class CharacterMovement : public Component {
     AI_MOVEMENT_STATE movementState = NearTargetPosition;
     AI_MOVEMENT_STATE previousMovementState = Waiting;
-    std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     float timeSinceLastPoint = 0.0f;
     bool isStatic = false;
     // Collisions
@@ -81,8 +80,6 @@ class CharacterMovement : public Component {
     void CalculatePath(const glm::ivec2& toPoint);
 
 protected:
-    const glm::ivec2 GetEndPoint() const;
-    const bool IsEndPointAvailable(const glm::ivec2 &position);
     const glm::ivec2 GetSpawnPoint() const;
     const bool IsSpawnPointAvailable(const glm::ivec2 &position);
 

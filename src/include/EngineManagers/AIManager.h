@@ -42,14 +42,16 @@ class AIManager {
     int random = 0;
     // Hoods spawn rates and center points
     std::pair<int, glm::vec3> jazzHoodParams;
-    // Player and enemy status
+    // Player and opponent status
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
     InstrumentName currentPlayerInstrument {};
     std::vector<std::shared_ptr<MusicPattern>> playerPatternsPlayed = {};
     InstrumentName currentOpponentInstrument {};
+    bool isPlayerTalkingToOpponent = false;
     // Settings
     int charactersAmount = 0;
+    std::vector<glm::vec3> positions;
 
     inline static AIManager* aiManager;
     explicit AIManager();
@@ -57,7 +59,8 @@ class AIManager {
 public:
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> charactersLogics;
     std::unordered_map<int, std::shared_ptr<CharacterMovement>> charactersMovements;
-    std::unordered_map<int, glm::vec3> charactersMovementsPos;
+    std::unordered_map<int, std::shared_ptr<CharacterMovement>> tempCharacters;
+    std::unordered_map<int, glm::vec3> sessionPositions;
     std::shared_ptr<CharacterPathfinding> pathfinding;
     bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
     bool isInitializing = true;
@@ -89,6 +92,7 @@ public:
     [[nodiscard]] const int GetCharactersAmount() const;
     void RemoveCharacterLogic(const int& componentId);
 
+    void SelectPositions();
 };
 
 #endif //GLOOMENGINE_AIMANAGER_H
