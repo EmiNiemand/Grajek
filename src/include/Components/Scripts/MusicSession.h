@@ -26,8 +26,6 @@ private:
     std::shared_ptr<PlayerManager> playerManager;
 
     std::vector<Sound> recordedSounds;
-    std::shared_ptr<AudioSource> patternFailureSound;
-    std::shared_ptr<AudioSource> patternTimeoutSound;
     std::vector<std::shared_ptr<MusicPattern>> potentialPatterns;
     float lastTime = 0;
 
@@ -36,6 +34,8 @@ private:
 
 public:
     std::shared_ptr<Instrument> instrument;
+    std::shared_ptr<AudioSource> patternFailureSound;
+    std::shared_ptr<AudioSource> patternTimeoutSound;
 
 
 

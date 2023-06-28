@@ -33,14 +33,12 @@ private:
     std::shared_ptr<Image> metronomeImage;
     std::shared_ptr<Image> metronomeMask;
     std::shared_ptr<UIAnimator> metronomeAnimator;
-    std::shared_ptr<AudioSource> tickSound;
     std::shared_ptr<Image> metronomeSoundIndicator;
     std::shared_ptr<Image> metronomeVisualsIndicator;
     bool metronomeSoundEnabled = true;
     bool metronomeVisualEnabled = true;
 
     // Backing track
-    std::shared_ptr<AudioSource> backingTrack;
     std::shared_ptr<Image> backingTrackIndicator;
     bool backingTrackEnabled = true;
 
@@ -60,13 +58,17 @@ protected:
     std::shared_ptr<Button> activeButton;
     std::vector<std::shared_ptr<Button>> soundButtons;
     std::vector<std::vector<std::shared_ptr<UIAnimator>>> soundAnimators;
-    std::vector<std::shared_ptr<AudioSource>> patternsSounds;
 
     // Samples
-    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+
     std::vector<std::shared_ptr<Image>> sampleImages;
     std::vector<std::vector<std::shared_ptr<UIAnimator>>> sampleAnimators;
 
+public:
+    std::shared_ptr<AudioSource> tickSound;
+    std::shared_ptr<AudioSource> backingTrack;
+    std::vector<std::shared_ptr<AudioSource>> sampleSources;
+    std::vector<std::shared_ptr<AudioSource>> patternsSounds;
 
 public:
     SessionUI(const std::shared_ptr<GameObject> &parent, int id);

@@ -205,9 +205,36 @@ void PlayerManager::OnInteract() {
 void PlayerManager::ToggleOptionsMenu() {
     activeMenu->HideMenu();
 
-    if (activeMenu == pauseMenu)
+    if (activeMenu == pauseMenu) {
+        if (session) {
+            auto sessionUI = GloomEngine::GetInstance()->FindGameObjectWithName("Session")->GetComponent<SessionUI>();
+            sessionUI->backingTrack->StopSound();
+            sessionUI->tickSound->StopSound();
+            for (const auto& sound : sessionUI->sampleSources) {
+                sound->SetGain(0);
+            }
+            for (const auto& sound : sessionUI->patternsSounds) {
+                sound->SetGain(0);
+            }
+            session->patternTimeoutSound->SetGain(0);
+            session->patternFailureSound->SetGain(0);
+        }
         activeMenu = optionsMenu;
+    }
     else if(activeMenu == optionsMenu) {
+        if (session) {
+            auto sessionUI = GloomEngine::GetInstance()->FindGameObjectWithName("Session")->GetComponent<SessionUI>();
+            sessionUI->backingTrack->PlaySound();
+            sessionUI->tickSound->PlaySound();
+            for (const auto& sound : sessionUI->sampleSources) {
+                sound->SetGain(1);
+            }
+            for (const auto& sound : sessionUI->patternsSounds) {
+                sound->SetGain(1);
+            }
+            session->patternTimeoutSound->SetGain(1);
+            session->patternFailureSound->SetGain(1);
+        }
         activeMenu = pauseMenu;
         optionsMenu->chooseMenu->GetComponent<OptionsChooseMenu>()->ShowChooseMenu();
     }
@@ -232,8 +259,9 @@ void PlayerManager::OnMenuToggle() {
     // Options -> Pause menu
     else if (activeMenu == optionsMenu) {
         ToggleOptionsMenu();
-        if (!session)
+        if (!session) {
             DialogueManager::GetInstance()->NotifyMenuIsActive();
+        }
     }
     // Disable any active menu
     else if(activeMenu) {
