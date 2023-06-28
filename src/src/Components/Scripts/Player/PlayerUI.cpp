@@ -275,8 +275,8 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
 
     // Set up controls menu
     auto controlsMenu = GameObject::Instantiate("ControlsMenu", menus)->AddComponent<ControlsMenu>();
-    controlsMenu->Menu::AddImage("ControlsMenuBackground", 0, 0, "UI/Controls.png", -0.9);
-    controlsMenu->Menu::AddButton("ControlsBackButton", 1500, 25, "UI/BackKolorki.png", "UI/BackKolorki.png", "", 18, glm::vec3(0.0f, 0.0f, 0.0f), "Kanit-Light.ttf", -0.95);
+    controlsMenu->Menu::AddImage("ControlsMenuBackground", 0, 0, "UI/Controls.png", -0.97);
+    controlsMenu->Menu::AddButton("ControlsBackButton", 1500, 25, "UI/BackKolorki.png", "UI/BackKolorki.png", "", 18, glm::vec3(0.0f, 0.0f, 0.0f), "Kanit-Light.ttf", -0.98);
     controlsMenu->GetParent()->DisableSelfAndChildren();
 }
 

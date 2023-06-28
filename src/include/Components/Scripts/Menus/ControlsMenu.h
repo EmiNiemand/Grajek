@@ -6,13 +6,14 @@
 class PlayerManager;
 
 class ControlsMenu : public Menu {
+    bool sameFrame = true;
 public:
     ControlsMenu(const std::shared_ptr<GameObject> &parent, int id);
     ~ControlsMenu() override;
 
     void Start() override;
+    void Update() override;
     bool ShowMenu() override;
-    void OnClick() override;
 };
 
 #endif //GAME_CPP_CONTROLSMENU_H
