@@ -7,6 +7,7 @@
 #include "Components/Scripts/Menus/Shopkeeper.h"
 #include "EngineManagers/HIDManager.h"
 #include "Components/Scripts/Menus/MapTrigger.h"
+#include "Components/Scripts/Menus/ShopTrigger.h"
 
 DialogueManager::DialogueManager() = default;
 
@@ -30,6 +31,8 @@ void DialogueManager::NotifyMenuIsActive() {
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ESC))
         shopkeeper->menuActive = true;
     map->buttonImage->enabled = false;
+    if (shopTrigger)
+        shopTrigger->buttonImage->enabled = false;
 }
 
 void DialogueManager::NotifyMenuIsNotActive() {
@@ -44,4 +47,6 @@ void DialogueManager::NotifyMenuIsNotActive() {
         shopkeeper->menuActive = false;
     if (map->triggerActive)
         map->buttonImage->enabled = true;
+    if (shopTrigger)
+        shopTrigger->buttonImage->enabled = true;
 }
