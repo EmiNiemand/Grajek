@@ -92,7 +92,7 @@ void CharacterMovement::FixedUpdate() {
                 if (maxDistanceToCharacter < DISTANCE_TO_COLLISION) {
                     rotationAngle = std::acos(glm::dot(steeringForce, steeringDirection)) / AVOIDANCE_ROTATION_FACTOR;
 
-                    if (rotationAngle > 0.38f) {
+                    if (rotationAngle > 0.45f) {
                         steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
                         steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
                     }
@@ -456,15 +456,6 @@ void CharacterMovement::SetState(const AI_MOVEMENT_STATE& newState) {
  */
 const AI_MOVEMENT_STATE CharacterMovement::GetState() const {
     return movementState;
-}
-
-/**
- * @annotation
- * Returns current position.
- * @returns glm::vec3 - currentPosition
- */
-const glm::vec3 CharacterMovement::GetCurrentPosition() const {
-    return currentPosition;
 }
 
 /**

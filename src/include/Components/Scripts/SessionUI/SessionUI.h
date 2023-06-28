@@ -27,7 +27,7 @@ private:
     // Accuracy rating
     std::vector<std::shared_ptr<Image>> accuracyRating;
     std::vector<std::shared_ptr<UIAnimator>> accuracyRatingAnimator;
-    inline static float accuracyThresholds[] { 0.5f, 0.8f, 0.95f };
+    inline static float accuracyThresholds[] { 0.5f, 0.8f, 0.9f };
 
     // Metronome
     std::shared_ptr<Image> metronomeImage;

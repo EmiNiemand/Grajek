@@ -98,7 +98,6 @@ public:
 
     void SetState(const AI_MOVEMENT_STATE& newState);
     const AI_MOVEMENT_STATE GetState() const;
-    const glm::vec3 GetCurrentPosition() const;
 
 };
 

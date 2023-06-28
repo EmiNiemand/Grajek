@@ -171,6 +171,11 @@ const float AIManager::GetCombinedPlayerSatisfaction() {
     return satisfaction;
 }
 
+/**
+ * @annotation
+ * Returns player skill level ((accuracyValue * (float)patternSize) + satisfaction / 50.0f * randomModifier) * patternModifier
+ * @returns float - skill level
+ */
 const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
@@ -198,6 +203,11 @@ const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& pat
     return ((accuracyValue * (float)patternSize) + satisfaction / 50.0f * randomModifier) * patternModifier;
 }
 
+/**
+ * @annotation
+ * Notifies every character about player talking with opponent.
+ * @param state - is player "talking" with opponent
+ */
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
     for (auto&& ch : charactersLogics)
         ch.second->SetOpponentPlayingStatus(state);
@@ -284,6 +294,11 @@ const float AIManager::GetCombinedOpponentSatisfaction() {
     return satisfaction;
 }
 
+/**
+ * @annotation
+ * Returns opponent skill level ((accuracy * (float)patternSize) + satisfaction / 50.0f * randomModifier)
+ * @returns float - skill level
+ */
 const float AIManager::GetOpponentSkillLevel(const float& accuracy, const int& patternSize) {
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedOpponentSatisfaction();

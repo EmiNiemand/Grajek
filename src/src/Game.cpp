@@ -102,7 +102,7 @@ void Game::InitializeGame() const {
 
     auto drummerOpponentComponent = drummer->AddComponent<Opponent>();
     drummerOpponentComponent->name = "Matt Ronome";
-    drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums), 0.65, 85, 50,
+    drummerOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums), 0.6, 75, 50,
                                     glm::vec3(1, 0, 0), PlayerBadges::DRUMS);
 
 
@@ -118,7 +118,7 @@ void Game::InitializeGame() const {
 
     auto trumpeterOpponentComponent = trumpeter->AddComponent<Opponent>();
     trumpeterOpponentComponent->name = "Christopher Jazzus";
-    trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet), 0.55, 80, 200,
+    trumpeterOpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Trumpet), 0.65, 80, 200,
                                               glm::vec3(1, 0, 0), PlayerBadges::TRUMPET);
 
 
@@ -134,7 +134,7 @@ void Game::InitializeGame() const {
 
     auto opponent1OpponentComponent = opponent1->AddComponent<Opponent>();
     opponent1OpponentComponent->name = "Benjamin Klapper";
-    opponent1OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap), 0.4f, 90, 15, glm::vec3(1, 1, 0));
+    opponent1OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap), 0.45f, 80, 15, glm::vec3(1, 1, 0));
 
 
     auto opponent2 = GameObject::Instantiate("NormalOpponent", activeScene);
@@ -149,7 +149,7 @@ void Game::InitializeGame() const {
 
     auto opponent2OpponentComponent = opponent2->AddComponent<Opponent>();
     opponent2OpponentComponent->name = "Patt Ernie";
-    opponent2OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap), 0.5f, 80, 30, glm::vec3(1, 1, 0));
+    opponent2OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Clap), 0.6f, 80, 30, glm::vec3(1, 1, 0));
 
 
     auto opponent3 = GameObject::Instantiate("NormalOpponent", activeScene);
@@ -162,7 +162,7 @@ void Game::InitializeGame() const {
     opponent3->transform->SetLocalScale(glm::vec3(0.5, 0.5, 0.5));
     auto opponent3OpponentComponent = opponent3->AddComponent<Opponent>();
     opponent3OpponentComponent->name = "Sam Pelle";
-    opponent3OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums), 0.65f, 80, 25, glm::vec3(1, 1, 0));
+    opponent3OpponentComponent->Setup(Instrument::GetInstrument(InstrumentName::Drums), 0.65f, 85, 25, glm::vec3(1, 1, 0));
 
     // Town people
     auto dialogue = GameObject::Instantiate("GateDialogue", activeScene);
@@ -201,7 +201,7 @@ void Game::InitializeGame() const {
     dialogueIndicator->transform->SetLocalScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
     dialogue = GameObject::Instantiate("Felynn Rutin", activeScene);
-    dialogue->transform->SetLocalPosition(glm::vec3(-59, 0, 2.5));
+    dialogue->transform->SetLocalPosition(glm::vec3(-59, 0, 1.5));
     dialogue->transform->SetLocalScale(glm::vec3(0.5f));
     dialogue->transform->SetLocalRotation(glm::vec3(0, 355, 0));
     dialogue->AddComponent<BoxCollider>()->SetSize({1, 1, 1});
