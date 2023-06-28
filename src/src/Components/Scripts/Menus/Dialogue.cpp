@@ -19,8 +19,6 @@ Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Componen
 Dialogue::~Dialogue() = default;
 
 void Dialogue::Awake() {
-    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
-
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     parent->GetComponent<BoxCollider>()->SetSize({5, 5, 5});
     parent->GetComponent<BoxCollider>()->isTrigger = true;
@@ -49,6 +47,12 @@ void Dialogue::Awake() {
     Component::Awake();
 }
 
+
+void Dialogue::Start() {
+    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
+    Component::Start();
+}
+
 void Dialogue::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) {
     if (gameObject->GetName() != "Player") return;
     triggerActive = true;
@@ -66,6 +70,7 @@ void Dialogue::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 
 void Dialogue::Update() {
     if (menuActive) return;
+    if (playerManager->session) return;
     if (triggerActive) {
         for (const auto& interactKey : PlayerInput::Interact) {
             if (HIDManager::GetInstance()->IsKeyDown(interactKey.first) && !forced && !active) {
@@ -97,6 +102,7 @@ void Dialogue::ShowDialogue() {
     text2->text = texts[0].text2;
     text3->text = texts[0].text3;
     active = true;
+    if (!playerManager) playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     playerManager->inputEnabled = false;
     dialogue->EnableSelfAndChildren();
     image->enabled = false;
@@ -106,6 +112,7 @@ void Dialogue::HideDialogue() {
     Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
     active = false;
     dialogueIndex = 0;
+    if (!playerManager) playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     playerManager->inputEnabled = true;
     dialogue->DisableSelfAndChildren();
     if (!forced && triggerActive)

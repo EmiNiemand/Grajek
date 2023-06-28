@@ -46,6 +46,8 @@ void MapTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 
 void MapTrigger::Update() {
     if (!triggerActive && !background->enabled) return;
+    if (playerManager->session) return;
+    
     auto hid = HIDManager::GetInstance();
 
     if (hid->IsKeyDown(Key::KEY_E)) {

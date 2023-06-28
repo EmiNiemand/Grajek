@@ -224,18 +224,25 @@ void PlayerManager::OnMenuToggle() {
     if(!activeMenu) {
         activeMenu = pauseMenu;
         activeMenu->ShowMenu();
-        DialogueManager::GetInstance()->NotifyMenuIsActive();
+        if (!session) {
+            DialogueManager::GetInstance()->NotifyMenuIsActive();
+            SavePointManager::GetInstance()->NotifyMenuIsNotActive();
+        }
     }
     // Options -> Pause menu
     else if (activeMenu == optionsMenu) {
         ToggleOptionsMenu();
-        DialogueManager::GetInstance()->NotifyMenuIsActive();
+        if (!session)
+            DialogueManager::GetInstance()->NotifyMenuIsActive();
     }
     // Disable any active menu
     else if(activeMenu) {
         activeMenu->HideMenu();
         activeMenu.reset();
-        DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+        if (!session){
+            SavePointManager::GetInstance()->NotifyMenuIsNotActive();
+            DialogueManager::GetInstance()->NotifyMenuIsNotActive();
+        }
     }
 }
 

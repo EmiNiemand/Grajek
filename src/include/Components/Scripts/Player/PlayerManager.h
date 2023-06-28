@@ -30,8 +30,7 @@ class AudioListener;
 
 class PlayerManager : public Component, public IDataPersistance {
 private:
-	// Music session
-    std::shared_ptr<MusicSession> session;
+    // Music session
     std::shared_ptr<SessionStarter> sessionStarter;
     std::shared_ptr<GameObject> sessionStarterUI;
     std::shared_ptr<Opponent> sessionOpponent;
@@ -56,6 +55,8 @@ private:
     float previousVelocity;
 
 public:
+    // Music session
+    std::shared_ptr<MusicSession> session;
     std::shared_ptr<Menu> activeMenu;
     bool inputEnabled;
 

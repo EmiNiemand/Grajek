@@ -191,6 +191,7 @@ void Opponent::Update() {
     }
 
     if(dialogue->menuActive) return;
+    if (playerManager->session) return;
 
     auto hid = HIDManager::GetInstance();
 

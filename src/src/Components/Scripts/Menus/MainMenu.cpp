@@ -33,10 +33,12 @@ void MainMenu::OnClick() {
         HideMenu();
         GloomEngine::GetInstance()->timeScale = 1;
         SceneManager::GetInstance()->LoadScene("Scene");
+        activeButton.reset();
     } else if (activeButton->GetParent()->GetName() == "LoadGameButton") {
         HideMenu();
         mainMenuManager->activeMenu = mainMenuManager->loadGameMenu;
         mainMenuManager->loadGameMenu->ShowMenu();
+        activeButton.reset();
     } else if (activeButton->GetParent()->GetName() == "MainMenuOptionsButton") {
         HideMenu();
         mainMenuManager->activeMenu = mainMenuManager->optionsMenu;

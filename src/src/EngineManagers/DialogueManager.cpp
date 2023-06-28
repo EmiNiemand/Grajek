@@ -1,4 +1,7 @@
 #include "EngineManagers/DialogueManager.h"
+#include "GloomEngine.h"
+#include "GameObjectsAndPrefabs/GameObject.h"
+#include "Components/Scripts/Player/PlayerManager.h"
 #include "Components/Scripts/Menus/Dialogue.h"
 #include "Components/UI/Image.h"
 #include "Components/Scripts/Menus/Shopkeeper.h"
@@ -32,8 +35,9 @@ void DialogueManager::NotifyMenuIsActive() {
 void DialogueManager::NotifyMenuIsNotActive() {
     for (const auto & dialogue : dialogues) {
         if (!dialogue.second->triggerActive) continue;
-        if (!dialogue.second->forced)
+        if (!dialogue.second->forced) {
             dialogue.second->image->enabled = true;
+        }
         dialogue.second->menuActive = false;
     }
     if (HIDManager::GetInstance()->IsKeyDown(Key::KEY_ESC))
