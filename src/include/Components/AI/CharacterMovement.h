@@ -21,7 +21,7 @@ constexpr float DISTANCE_TO_COLLISION = 1.25f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.50f;
 constexpr float AVOIDANCE_FORCE_MODIFIER = 1.10f;
 // Movement consts
-constexpr float MOVEMENT_TIMEOUT = 3.0f;
+constexpr float MOVEMENT_TIMEOUT = 3.25f;
 constexpr float MOVEMENT_SMOOTHING_PARAM = 0.5f;
 constexpr float MOVEMENT_MAX_SPEED = 0.075f;
 
@@ -34,7 +34,6 @@ class CharacterPathfinding;
 class CharacterMovement : public Component {
     AI_MOVEMENT_STATE movementState = NearTargetPosition;
     AI_MOVEMENT_STATE previousMovementState = Waiting;
-    std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     float timeSinceLastPoint = 0.0f;
     bool isStatic = false;
     // Collisions
@@ -81,8 +80,6 @@ class CharacterMovement : public Component {
     void CalculatePath(const glm::ivec2& toPoint);
 
 protected:
-    const glm::ivec2 GetEndPoint() const;
-    const bool IsEndPointAvailable(const glm::ivec2 &position);
     const glm::ivec2 GetSpawnPoint() const;
     const bool IsSpawnPointAvailable(const glm::ivec2 &position);
 
@@ -98,6 +95,8 @@ public:
 
     void SetState(const AI_MOVEMENT_STATE& newState);
     const AI_MOVEMENT_STATE GetState() const;
+    const glm::vec3 GetCurrentPosition() const;
+    const float GetDistanceToPlayer() const;
 
 };
 

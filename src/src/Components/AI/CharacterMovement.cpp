@@ -38,7 +38,7 @@ void CharacterMovement::Start() {
     else
         SetRandomSpawnPoint();
 
-    otherCharacters->erase(id);
+    AIManager::GetInstance()->tempCharacters.erase(id);
     Component::Start();
 }
 
@@ -147,7 +147,6 @@ void CharacterMovement::AIUpdate() {
         case ReturningToPreviousTarget:
             isStatic = false;
             parent->GetComponent<BoxCollider>()->ChangeAIGridPoints(isStatic);
-            otherCharacters->erase(id);
             ReturnToPreviousPath();
             break;
         case OnPathToDuel:
@@ -155,7 +154,6 @@ void CharacterMovement::AIUpdate() {
                 movementState = NearDuelPosition;
             break;
         case SettingPathToDuel:
-            otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
             SetNewPathToDuel();
             break;
         case NearDuelPosition:
@@ -165,7 +163,6 @@ void CharacterMovement::AIUpdate() {
             }
             break;
         case SettingPathToPlayer:
-            otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
             SetNewPathToPlayer();
             break;
         case OnPathToPlayer:
@@ -186,12 +183,13 @@ void CharacterMovement::AIUpdate() {
 }
 
 void CharacterMovement::OnCreate() {
-    otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
-    otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
+    AIManager::GetInstance()->charactersMovements.insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
+    AIManager::GetInstance()->tempCharacters.insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
     Component::OnCreate();
 }
 
 void CharacterMovement::OnDestroy() {
+    AIManager::GetInstance()->charactersMovements.erase(id);
     if (path != nullptr) {
         path->clear();
         delete path;
@@ -201,7 +199,6 @@ void CharacterMovement::OnDestroy() {
     collisionGrid = nullptr;
     playerTransform = nullptr;
     playerRigidbody = nullptr;
-    otherCharacters = nullptr;
     Component::OnDestroy();
 }
 
@@ -324,38 +321,10 @@ void CharacterMovement::SetRandomEndPoint() {
  * Sets new end point near player position.
  */
 void CharacterMovement::SetNewPathToPlayer() {
-    playerPosition = playerTransform->GetLocalPosition();
-    glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z}, intEndPoint;
-    int boundariesXY = 3;
-    bool isAvailable = false;
-
-    for (int y = -boundariesXY; y <= boundariesXY; y += 2) {
-        for (int x = -boundariesXY; x <= boundariesXY; x += 2) {
-            if (y == -boundariesXY || y == boundariesXY || x == -boundariesXY || x == boundariesXY) {
-                intEndPoint = {newEndPoint.x + x, newEndPoint.y + y};
-
-                if (!aiGrid[(intEndPoint.x + AI_GRID_SIZE / 2) + (intEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    isAvailable = IsEndPointAvailable(intEndPoint);
-
-                if (isAvailable) {
-                    newEndPoint = intEndPoint;
-                    break;
-                }
-            }
-        }
-
-        if (isAvailable)
-            break;
-
-        if (y >= boundariesXY) {
-            boundariesXY += 2;
-            y = -boundariesXY;
-        }
-    }
-
     speedMultiplier = 2.0f;
     previousEndPoint = endPoint;
-    endPoint = newEndPoint;
+    playerPosition = AIManager::GetInstance()->sessionPositions[id];
+    endPoint = {playerPosition.x, playerPosition.z};
     movementState = OnPathToPlayer;
 
     CalculatePath(endPoint);
@@ -366,38 +335,10 @@ void CharacterMovement::SetNewPathToPlayer() {
  * Sets new end point near player position (when dueling).
  */
 void CharacterMovement::SetNewPathToDuel() {
-    playerPosition = playerTransform->GetLocalPosition();
-    glm::ivec2 newEndPoint = {playerPosition.x, playerPosition.z}, intEndPoint;
-    int boundariesXY = 4;
-    bool isAvailable = false;
-
-    for (int y = -boundariesXY; y <= boundariesXY; y += 2) {
-        for (int x = -boundariesXY; x <= boundariesXY; x += 2) {
-            if (y == -boundariesXY || y == boundariesXY || x == -boundariesXY || x == boundariesXY) {
-                intEndPoint = {newEndPoint.x + x, newEndPoint.y + y};
-
-                if (!aiGrid[(intEndPoint.x + AI_GRID_SIZE / 2) + (intEndPoint.y + AI_GRID_SIZE / 2) * AI_GRID_SIZE])
-                    isAvailable = IsEndPointAvailable(intEndPoint);
-
-                if (isAvailable) {
-                    newEndPoint = intEndPoint;
-                    break;
-                }
-            }
-        }
-
-        if (isAvailable)
-            break;
-
-        if (y >= boundariesXY) {
-            boundariesXY += 2;
-            y = -boundariesXY;
-        }
-    }
-
     speedMultiplier = 2.0f;
     previousEndPoint = endPoint;
-    endPoint = newEndPoint;
+    playerPosition = AIManager::GetInstance()->sessionPositions[id];
+    endPoint = {playerPosition.x, playerPosition.z};
     movementState = OnPathToDuel;
 
     CalculatePath(endPoint);
@@ -469,11 +410,20 @@ const glm::ivec2 CharacterMovement::GetSpawnPoint() const {
 
 /**
  * @annotation
- * Returns current end point.
- * @returns glm::ivec2 - currentPosition
+ * Returns current position.
+ * @returns glm::vec3 - currentPosition
  */
-const glm::ivec2 CharacterMovement::GetEndPoint() const {
-    return endPoint;
+const glm::vec3 CharacterMovement::GetCurrentPosition() const {
+    return currentPosition;
+}
+
+/**
+ * @annotation
+ * Returns distance to player.
+ * @returns float - distance to player
+ */
+const float CharacterMovement::GetDistanceToPlayer() const {
+    return glm::distance(currentPosition, playerPosition);
 }
 
 /**
@@ -485,27 +435,8 @@ const glm::ivec2 CharacterMovement::GetEndPoint() const {
 const bool CharacterMovement::IsSpawnPointAvailable(const glm::ivec2& position) {
     bool isAvailable = true;
 
-    for (const auto& mov : *otherCharacters) {
+    for (const auto& mov : AIManager::GetInstance()->tempCharacters) {
         if (position == mov.second->GetSpawnPoint() && mov.first != id) {
-            isAvailable = false;
-            break;
-        }
-    }
-
-    return isAvailable;
-}
-
-/**
- * @annotation
- * Checks whether this end point is already chosen by another CharacterMovement object.
- * @param position - position to check
- * @returns bool - false if not available, otherwise true
- */
-const bool CharacterMovement::IsEndPointAvailable(const glm::ivec2& position) {
-    bool isAvailable = true;
-
-    for (const auto& mov : *otherCharacters) {
-        if (position == mov.second->GetEndPoint() && mov.first != id) {
             isAvailable = false;
             break;
         }
