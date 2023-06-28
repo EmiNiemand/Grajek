@@ -13,6 +13,7 @@
 #include "Components/Scripts/Menus/OptionsMenu.h"
 #include "Components/Scripts/Menus/SavePointMenu.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
+#include "Components/Scripts/Menus/ControlsMenu.h"
 #include "EngineManagers/SavePointManager.h"
 #include "Components/Animations/UIAnimator.h"
 #include "LowLevelClasses/GameData.h"
@@ -65,12 +66,14 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         std::vector<std::string> buttonNames = {
                 "Resume",
                 "Options",
+                "Controls",
                 "Main Menu",
                 "Exit"
         };
         std::vector<std::string> buttonImageNames = {
                 "Resume",
                 "Options",
+                "Controls",
                 "MainMenu",
                 "Exit"
         };
@@ -269,6 +272,12 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
 
         savePointMenu->GetParent()->DisableSelfAndChildren();
     }
+
+    // Set up controls menu
+    auto controlsMenu = GameObject::Instantiate("ControlsMenu", menus)->AddComponent<ControlsMenu>();
+    controlsMenu->Menu::AddImage("ControlsMenuBackground", 0, 0, "UI/Controls.png", -0.97);
+    controlsMenu->Menu::AddButton("ControlsBackButton", 1500, 25, "UI/BackKolorki.png", "UI/BackKolorki.png", "", 18, glm::vec3(0.0f, 0.0f, 0.0f), "Kanit-Light.ttf", -0.98);
+    controlsMenu->GetParent()->DisableSelfAndChildren();
 }
 
 void PlayerUI::UpdateCash(int newAmount, bool playAnimation) {

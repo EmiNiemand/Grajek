@@ -95,9 +95,9 @@ void SavePointMenu::OnClick() {
 }
 
 void SavePointMenu::HideMenu() {
-    Menu::HideMenu();
     backgroundImage->enabled = false;
     if (triggerActive) buttonImage->enabled = true;
+    Menu::HideMenu();
 }
 
 void SavePointMenu::SaveData(std::shared_ptr<GameData> &data) {

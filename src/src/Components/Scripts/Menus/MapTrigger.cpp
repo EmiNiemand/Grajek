@@ -14,7 +14,7 @@ void MapTrigger::Start() {
     auto interactButton = GameObject::Instantiate("InteractButton", parent);
     interactButton->transform->SetLocalPosition({0, 5, 0});
     buttonImage = GameObject::Instantiate("ButtonImage", interactButton)->AddComponent<Image>();
-    buttonImage->LoadTexture(0, 0, "UI/enterSavePoint.png");
+    buttonImage->LoadTexture(0, 0, "UI/openMap.png");
     buttonImage->isDynamic = true;
     buttonImage->SetScale(0.5);
     buttonImage->enabled = false;
@@ -46,6 +46,8 @@ void MapTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
 
 void MapTrigger::Update() {
     if (!triggerActive && !background->enabled) return;
+    if (playerManager->session) return;
+    
     auto hid = HIDManager::GetInstance();
 
     if (hid->IsKeyDown(Key::KEY_E)) {

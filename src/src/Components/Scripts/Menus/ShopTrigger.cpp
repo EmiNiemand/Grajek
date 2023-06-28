@@ -4,6 +4,7 @@
 #include "Components/Renderers/Renderer.h"
 #include "Components/Scripts/Menus/ShopMenu.h"
 #include "GloomEngine.h"
+#include "EngineManagers/DialogueManager.h"
 
 ShopTrigger::ShopTrigger(const std::shared_ptr<GameObject> &parent, int id) : Component(parent, id) {}
 
@@ -31,6 +32,7 @@ void ShopTrigger::OnTriggerEnter(const std::shared_ptr<GameObject> &gameObject) 
     }, false);
     shopMenu->triggerActive = true;
     buttonImage->enabled = true;
+    DialogueManager::GetInstance()->shopTrigger = std::dynamic_pointer_cast<ShopTrigger>(shared_from_this());
     Component::OnTriggerEnter(gameObject);
 }
 
@@ -42,5 +44,6 @@ void ShopTrigger::OnTriggerExit(const std::shared_ptr<GameObject> &gameObject) {
     }, false);
     shopMenu->triggerActive = false;
     buttonImage->enabled = false;
+    DialogueManager::GetInstance()->shopTrigger.reset();
     Component::OnTriggerExit(gameObject);
 }

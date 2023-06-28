@@ -6,6 +6,7 @@
 SavePointManager::SavePointManager() = default;
 
 SavePointManager::~SavePointManager() {
+    activeSavePoint.reset();
     delete savePointManager;
 }
 
@@ -16,23 +17,12 @@ SavePointManager *SavePointManager::GetInstance() {
     return savePointManager;
 }
 
-void SavePointManager::NotifyMenuIsActive() {
+void SavePointManager::NotifyMenuIsActive() const {
     if (!activeSavePoint) return;
-    if (!activeSavePoint->GetParent()->children.empty())
-        GameObject::Destroy(activeSavePoint->GetParent()->children.begin()->second);
-    for (const auto & savePoint : savePoints) {
-        if (savePoint.second->triggerActive) {
-            savePoint.second->buttonImage->enabled = false;
-            return;
-        }
-    }
+    activeSavePoint->buttonImage->enabled = false;
 }
 
-void SavePointManager::NotifyMenuIsNotActive() {
-    for (const auto & savePoint : savePoints) {
-        if (savePoint.second->triggerActive) {
-            savePoint.second->buttonImage->enabled = true;
-            return;
-        }
-    }
+void SavePointManager::NotifyMenuIsNotActive() const {
+    if (!activeSavePoint) return;
+    activeSavePoint->buttonImage->enabled = true;
 }
