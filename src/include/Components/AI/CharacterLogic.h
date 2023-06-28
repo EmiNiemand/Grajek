@@ -40,7 +40,8 @@ class CharacterLogic : public Component {
     MusicGenre previousPlayerGenre {};
     float values = 0.0f;
     float repeatingModifier = 0.0f;
-    // Enemy instruments
+    // Opponent instruments
+    bool isOpponentPlaying = false;
     InstrumentName opponentInstrumentName {};
     MusicGenre opponentGenre {};
     // Satisfaction

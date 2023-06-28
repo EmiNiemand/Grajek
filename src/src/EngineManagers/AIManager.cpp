@@ -175,13 +175,9 @@ const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& pat
     float randomModifier = RandomnessManager::GetInstance()->GetFloat(0.90f, 1.10f);
     float satisfaction = GetCombinedPlayerSatisfaction();
     float accuracyValue = accuracy;
+    float patternModifier = 1.0f;
 
-    if (sessionCharacters <= 25.0f)
-        satisfaction *= 2.0f;
-    else if (sessionCharacters <= 50.0f)
-        satisfaction *= 4.0f;
-    else
-        satisfaction *= 6.0f;
+    satisfaction *= std::floor(sessionCharacters / 5.0f) * 0.5f;
 
     if (accuracy <= 0.5)
         accuracyValue = 0;
@@ -192,22 +188,14 @@ const float AIManager::GetPlayerSkillLevel(const float& accuracy, const int& pat
     else if (accuracy <= 1)
         accuracyValue = 1.5;
 
-    float patternModifier = 1.0f;
-    int patternCounter = 0;
-
     auto playerPlayedPattern = playerPatternsPlayed[0];
 
     for (int i = 1; i < 3; ++i) {
         if (playerPatternsPlayed.size() > i && playerPatternsPlayed[i] == playerPlayedPattern)
-            ++patternCounter;
+            patternModifier -= 0.3f;
     }
 
-    if (patternCounter == 1)
-        patternModifier = 0.75;
-    else if (patternCounter >= 2)
-        patternModifier = 0.35f;
-
-    return ((accuracyValue * (float)patternSize) + satisfaction / 100.0f * randomModifier) * patternModifier;
+    return ((accuracyValue * (float)patternSize) + satisfaction / 50.0f * randomModifier) * patternModifier;
 }
 
 void AIManager::NotifyPlayerTalksWithOpponent(const bool& state) {
@@ -344,19 +332,14 @@ const float AIManager::GetOpponentSkillLevel(const float& accuracy, const int& p
         }
     }
 
-    if (sessionCharacters <= 25.0f)
-        satisfaction *= 2.0f;
-    else if (sessionCharacters <= 50.0f)
-        satisfaction *= 4.0f;
-    else
-        satisfaction *= 6.0f;
+    satisfaction *= std::floor(sessionCharacters / 5.0f) * 0.5f;
 
-    float instrumentModifier = opponentInstrumentModifier - playerInstrumentModifier;
+    float instrumentModifier = opponentInstrumentModifier;
 
     if (instrumentModifier == 0 || playerInstrumentModifier > opponentInstrumentModifier)
         instrumentModifier = 1;
 
-    return ((accuracy / 100 * (float)patternSize) + satisfaction / 100.0f * randomModifier) * instrumentModifier;
+    return ((accuracy * (float)patternSize) + satisfaction / 50.0f * randomModifier) * instrumentModifier;
 }
 
 /**

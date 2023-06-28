@@ -4,7 +4,7 @@
 "musicVolume": 0.5,
 "session.backingTrack": false,
 "session.metronomeSound": true,
-"session.metronomeVisuals": false,
+"session.metronomeVisuals": true,
 "shadowResolution": 1024,
 "width": 1440
 }

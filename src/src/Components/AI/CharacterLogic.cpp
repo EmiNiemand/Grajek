@@ -90,6 +90,20 @@ void CharacterLogic::Update() {
 }
 
 void CharacterLogic::AIUpdate() {
+    if (isPlayerPlaying && logicState == Wandering) {
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
+            logicState = AlertedByPlayer;
+
+            CalculateBasePlayerSatisfaction();
+        }
+    } else if (isOpponentPlaying && logicState == Wandering) {
+        if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetGlobalPosition())) {
+            logicState = AlertedByOpponent;
+
+            CalculateBaseOpponentSatisfaction();
+        }
+    }
+
     switch (logicState) {
         case ListeningToPlayer:
             playerSatisfaction = std::clamp(playerSatisfaction - NORMAL_SATISFACTION_REDUCER, 0.0f, 100.0f);
@@ -221,11 +235,11 @@ void CharacterLogic::SetPlayerPlayingStatus(const bool& state) {
     if (isPlayerPlaying) {
         playerPosition = playerTransform->GetLocalPosition();
 
+        for (auto &pat: favPatterns)
+            pat.second = 0.0f;
+
         if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetGlobalPosition())) {
             logicState = AlertedByPlayer;
-
-            for (auto &pat: favPatterns)
-                pat.second = 0.0f;
 
             CalculateBasePlayerSatisfaction();
         }
@@ -277,7 +291,7 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
         }
 
         if (!isFavorite)
-            opponentSatisfaction -= 3.0f;
+            opponentSatisfaction -= 2.0f;
 
         opponentSatisfaction = std::clamp(opponentSatisfaction, 0.0f, 100.0f);
     }
@@ -288,7 +302,9 @@ void CharacterLogic::SetOpponentPattern(const std::shared_ptr<MusicPattern>& pat
  * Sets new enemy session state.
  * @param isEnemyPlaying - session state
  */
-void CharacterLogic::SetOpponentPlayingStatus(const bool& isOpponentPlaying) {
+void CharacterLogic::SetOpponentPlayingStatus(const bool& state) {
+    isOpponentPlaying = state;
+
     if (isOpponentPlaying) {
         playerPosition = playerTransform->GetLocalPosition();
 
