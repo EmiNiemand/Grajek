@@ -380,6 +380,34 @@ void PlayerManager::EndSessionWithOpponent(bool wonSession, float moneyBet) {
 void PlayerManager::ReceiveBadge(PlayerBadges badge) {
     equipment->badges[badge] = true;
     playerUI->UpdateBadges(equipment->badges);
+
+    // TODO: Add obtained badge pop-up
+
+    auto badgePopUp = GameObject::Instantiate("BadgePopUp", parent)->AddComponent<Image>();
+    std::string badgeName;
+    switch (badge) {
+        case PlayerBadges::DRUMS:
+            badgeName = "Drums"; break;
+        case PlayerBadges::TRUMPET:
+            badgeName = "Drums"; break;
+        case PlayerBadges::LAUNCHPAD:
+            badgeName = "Drums"; break;
+        case PlayerBadges::GUITAR:
+            badgeName = "Drums"; break;
+    }
+    badgePopUp->LoadTexture(920, 540, "UI/BadgePopUp/"+badgeName+".png", -0.99);
+    badgePopUp->pivot = {0.5, 0.5};
+
+    GameObject::Instantiate("BadgePopUpScaleAnimator", parent)->AddComponent<UIAnimator>()
+        ->Setup(badgePopUp, {
+            {AnimatedProperty::Scale, glm::vec3(1.5f), 0},
+            {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
+    }, AnimationBehaviour::Resetable);
+    GameObject::Instantiate("BadgePopUpScaleAnimator", parent)->AddComponent<UIAnimator>()
+        ->Setup(badgePopUp, {
+            {AnimatedProperty::Alpha, glm::vec3(1.5f), 0},
+            {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.2f}
+    }, AnimationBehaviour::Resetable);
 }
 
 void PlayerManager::OnCheatSheetToggle() {
