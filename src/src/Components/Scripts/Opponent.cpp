@@ -183,6 +183,7 @@ void Opponent::Update() {
                     sampleIndex = -1;
                 }
                 ++sampleIndex;
+                if (musicSession) sampleSources[sampleIndex]->SetGain(0.3f);
                 sampleSources[sampleIndex]->PlaySound();
                 timer = 0.0f - (pattern->sounds[sampleIndex]->duration + pattern->sounds[sampleIndex]->duration *
                         (1 - accuracy / 100)) * 60 / (float)instrument->genre;
