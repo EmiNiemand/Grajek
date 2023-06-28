@@ -19,6 +19,7 @@ Dialogue::Dialogue(const std::shared_ptr<GameObject> &parent, int id) : Componen
 Dialogue::~Dialogue() = default;
 
 void Dialogue::Awake() {
+    playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     parent->AddComponent<BoxCollider>()->SetOffset({0, 0, 0});
     parent->GetComponent<BoxCollider>()->SetSize({5, 5, 5});
     parent->GetComponent<BoxCollider>()->isTrigger = true;

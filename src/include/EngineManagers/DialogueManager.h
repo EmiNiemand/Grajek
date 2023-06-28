@@ -7,6 +7,7 @@
 class Dialogue;
 class Shopkeeper;
 class MapTrigger;
+class ShopTrigger;
 
 class DialogueManager {
 private:
@@ -16,6 +17,7 @@ public:
     std::unordered_map<int, std::shared_ptr<Dialogue>> dialogues;
     std::shared_ptr<Shopkeeper> shopkeeper;
     std::shared_ptr<MapTrigger> map;
+    std::shared_ptr<ShopTrigger> shopTrigger;
 
 private:
     explicit DialogueManager();
