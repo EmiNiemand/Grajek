@@ -29,7 +29,7 @@ OptionsManager::OptionsManager() {
 }
 
 void OptionsManager::Load() {
-    std::filesystem::path path = std::filesystem::current_path().parent_path().parent_path();
+    std::filesystem::path path = std::filesystem::current_path();
     path /= "res";
     path /= "ProjectConfig";
     path /= "config.json";
