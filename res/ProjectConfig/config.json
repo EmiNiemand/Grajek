@@ -3,8 +3,8 @@
 "height": 810,
 "musicVolume": 0.5,
 "session.backingTrack": false,
-"session.metronomeSound": true,
-"session.metronomeVisuals": true,
+"session.metronomeSound": false,
+"session.metronomeVisuals": false,
 "shadowResolution": 1024,
 "width": 1440
 }
