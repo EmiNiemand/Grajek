@@ -460,15 +460,6 @@ const AI_MOVEMENT_STATE CharacterMovement::GetState() const {
 
 /**
  * @annotation
- * Returns current position.
- * @returns glm::vec3 - currentPosition
- */
-const glm::vec3 CharacterMovement::GetCurrentPosition() const {
-    return currentPosition;
-}
-
-/**
- * @annotation
  * Returns current spawn point.
  * @returns glm::ivec2 - currentPosition
  */

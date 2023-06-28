@@ -57,7 +57,6 @@ class AIManager {
 public:
     std::unordered_map<int, std::shared_ptr<CharacterLogic>> charactersLogics;
     std::unordered_map<int, std::shared_ptr<CharacterMovement>> charactersMovements;
-    std::unordered_map<int, glm::vec3> charactersMovementsPos;
     std::shared_ptr<CharacterPathfinding> pathfinding;
     bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
     bool isInitializing = true;
