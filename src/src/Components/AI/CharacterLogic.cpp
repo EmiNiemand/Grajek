@@ -93,12 +93,14 @@ void CharacterLogic::AIUpdate() {
     if (isPlayerPlaying && logicState == Wandering) {
         if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetLocalPosition())) {
             logicState = AlertedByPlayer;
-
+            AIManager::GetInstance()->sessionCharacters += 1.0f;
+            
             CalculateBasePlayerSatisfaction();
         }
     } else if (isOpponentPlaying && logicState == Wandering) {
         if (AI_AWARE_DISTANCE > glm::distance(playerPosition, parent->transform->GetGlobalPosition())) {
             logicState = AlertedByOpponent;
+            AIManager::GetInstance()->sessionCharacters += 1.0f;
 
             CalculateBaseOpponentSatisfaction();
         }

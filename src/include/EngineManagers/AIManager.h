@@ -50,7 +50,6 @@ class AIManager {
     InstrumentName currentOpponentInstrument {};
     // Settings
     int charactersAmount = 0;
-    float sessionCharacters = 0.0f;
 
     inline static AIManager* aiManager;
     explicit AIManager();
@@ -62,6 +61,7 @@ public:
     std::shared_ptr<CharacterPathfinding> pathfinding;
     bool aiGrid[AI_GRID_SIZE * AI_GRID_SIZE] = {};
     bool isInitializing = true;
+    float sessionCharacters = 0.0f;
     // Spawn coords
     glm::vec3 maxSpawnCoords {};
     glm::vec3 minSpawnCoords {};
