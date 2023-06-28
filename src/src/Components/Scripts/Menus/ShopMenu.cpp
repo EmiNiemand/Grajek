@@ -15,7 +15,6 @@ ShopMenu::~ShopMenu() = default;
 
 void ShopMenu::Awake() {
     // Remove already bought instruments from shop
-    // TODO: improve
     auto playerManager = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>();
     auto playerInstruments = playerManager->GetInstruments();
     if(playerInstruments.contains(InstrumentName::Drums))

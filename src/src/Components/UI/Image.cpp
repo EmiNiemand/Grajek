@@ -96,10 +96,8 @@ void Image::SetPosition(float x2, float y2) {
     mesh->setupMesh();
 }
 
-//TODO: I actually have no idea what'd happen after using this method, probably best to avoid using it
 void Image::SetRotation(float angle) {
     parent->transform->SetLocalRotation(glm::vec3(0.0f, 0.0f, angle));
-    //TODO: replace these with pivot point (and add pivot point)
     float x2 = leftBottom.x, y2 = leftBottom.y;
     float width2 = rightBottom.x - x2, height2 = leftTop.y - y2;
     float p = x2 + width2 / 2, q = y2 + height2 / 2;

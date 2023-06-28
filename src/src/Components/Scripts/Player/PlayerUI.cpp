@@ -20,8 +20,6 @@
 #include "Components/Scripts/Instrument.h"
 #include <fstream>
 
-//TODO: move menus creation to Prefabs or appropriate methods
-//      in every Menu subclass (eg. Setup())
 PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
         : Component(parent, id) {
     cashText = GameObject::Instantiate("Money", parent)->AddComponent<Text>();
@@ -32,8 +30,6 @@ PlayerUI::PlayerUI(const std::shared_ptr<GameObject> &parent, int id)
     cashBackground->LoadTexture(0, 0, "UI/MoneyBackground.png", -0.8);
     cashBackground->SetPosition(0, 1080 - cashBackground->GetHeight());
     cashAmount = 0;
-
-    //TODO: Add badges background
 
     auto badgesParent = GameObject::Instantiate("Badges", parent);
     {
