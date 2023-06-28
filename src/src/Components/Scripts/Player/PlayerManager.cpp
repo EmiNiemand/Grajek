@@ -203,10 +203,6 @@ void PlayerManager::OnInteract() {
 
 #pragma region UI Events
 void PlayerManager::ToggleOptionsMenu() {
-    //TODO: this should be simply controlled by pauseMenu
-    // (which means that PlayerManager here only calls method)
-    // in PauseMenu (or even activeMenu)
-
     activeMenu->HideMenu();
 
     if (activeMenu == pauseMenu)
@@ -214,7 +210,6 @@ void PlayerManager::ToggleOptionsMenu() {
     else if(activeMenu == optionsMenu) {
         activeMenu = pauseMenu;
         optionsMenu->chooseMenu->GetComponent<OptionsChooseMenu>()->ShowChooseMenu();
-        // TODO: possibly redundant assignment, because timeScale is set to 0 anyway
     }
     activeMenu->ShowMenu();
 }

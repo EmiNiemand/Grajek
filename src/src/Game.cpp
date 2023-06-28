@@ -30,6 +30,7 @@
 #include "Components/Scripts/Opponent.h"
 #include "Components/Scripts/Instrument.h"
 #include "Components/Scripts/Crowd.h"
+#include "Components/Scripts/Menus/MapTrigger.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -291,6 +292,15 @@ void Game::InitializeGame() const {
     auto shopkeeper = GameObject::Instantiate("Shopkeeper", activeScene);
     shopkeeper->transform->SetLocalPosition(glm::vec3(1.5f, 0, -3));
     shopkeeper->AddComponent<Shopkeeper>();
+
+    auto map = GameObject::Instantiate("Map", activeScene);
+    map->AddComponent<Renderer>()->LoadModel("Buildings/Environment/Mapa.obj");
+    map->transform->SetLocalPosition(glm::vec3(14, 0, -9));
+    map->AddComponent<BoxCollider>()->SetSize(glm::vec3(2,2,0.5));
+    auto mapTrigger = GameObject::Instantiate("MapTrigger", map);
+    mapTrigger->AddComponent<BoxCollider>()->SetSize(glm::vec3(3,1,1));
+    mapTrigger->GetComponent<BoxCollider>()->isTrigger = true;
+    mapTrigger->AddComponent<MapTrigger>();
 
     std::shared_ptr<GameObject> crowd = GameObject::Instantiate("Crowd", SceneManager::GetInstance()->activeScene);
     crowd->AddComponent<Crowd::Crowd>();

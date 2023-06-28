@@ -361,7 +361,7 @@ void DebugManager::SaveMenu()
             ImGui::EndCombo();
         }
         if (ImGui::SmallButton("Add house with model at path")) {
-            //TODO/INFO I assume all house models picked from the picker are in models/buildings
+            //INFO I assume all house models picked from the picker are in models/buildings
             std::string path = "Buildings/";
             path += selectedFolderName + "/";
             path += modelPaths[selectedModelId].path().filename().string();

@@ -13,6 +13,7 @@
 #include "Components/Scripts/SessionUI/TrumpetSessionUI.h"
 #include "Components/Scripts/SessionUI/LaunchpadSessionUI.h"
 #include "Components/Scripts/SessionUI/GuitarSessionUI.h"
+#include "Components/Audio/AudioSource.h"
 
 #ifdef DEBUG
 #include <tracy/Tracy.hpp>
@@ -29,6 +30,14 @@ void MusicSession::Setup(std::shared_ptr<Instrument> playerInstrument) {
 
     auto sessionUIInstance = GloomEngine::GetInstance()->FindGameObjectWithName("SessionUI");
     sessionUIInstance = GameObject::Instantiate("Session", sessionUIInstance);
+
+    auto patternFailureAudioSource = GameObject::Instantiate("FailureAudioSource", parent);
+    patternFailureSound = patternFailureAudioSource->AddComponent<AudioSource>();
+    patternFailureSound->LoadAudioData("res/sounds/direct/on_pattern_failure.wav", AudioType::Direct);
+
+    auto patternTimeoutAudioSource = GameObject::Instantiate("TimeoutAudioSource", parent);
+    patternTimeoutSound = patternTimeoutAudioSource->AddComponent<AudioSource>();
+    patternTimeoutSound->LoadAudioData("res/sounds/direct/on_pattern_timeout.wav", AudioType::Direct);
 
     switch (instrument->name) {
         case Clap:      sessionUI = sessionUIInstance->AddComponent<ClapSessionUI>(); break;
@@ -178,24 +187,20 @@ void MusicSession::CalcAccuracyAndReset(const std::shared_ptr<MusicPattern> &goo
 
 void MusicSession::PatternSuccess(std::shared_ptr<MusicPattern> pattern, float accuracy) {
     playerManager->PlayedPattern(pattern, accuracy);
-    //TODO: play some kind of success sound
-    // sessionUI.DiscoveredPattern();
-
     sessionUI->UpdateAccuracy(accuracy);
 }
 
 void MusicSession::PatternTimeout() {
     recordedSounds.clear();
     potentialPatterns.clear();
-
     playerManager->PlayedPattern(nullptr, 0);
-    //TODO: play timeout sound
+    patternTimeoutSound->ForcePlaySound();
 }
 
 void MusicSession::PatternFail() {
     sessionUI->UpdateAccuracy(0);
     playerManager->PlayedPattern(nullptr, 0);
-    //TODO: play some kind of failure sound (record scratch)
+    patternFailureSound->ForcePlaySound();
 }
 
 float MusicSession::GetRhythmValue(float currentNoteLength) { return currentNoteLength * (bpm/60.0f); }
@@ -222,6 +227,8 @@ void MusicSession::OnDestroy() {
     sessionUI.reset();
     playerManager.reset();
     potentialPatterns.clear();
+    patternFailureSound.reset();
+    patternTimeoutSound.reset();
     instrument.reset();
     Component::OnDestroy();
 }

@@ -12,6 +12,5 @@ void LaunchpadSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
 }
 
 void LaunchpadSessionUI::PlaySound(int index) {
-    // TODO to do
     SessionUI::PlaySound(index);
 }

@@ -12,7 +12,6 @@ void GuitarSessionUI::Setup(std::shared_ptr<Instrument> instrument) {
 }
 
 void GuitarSessionUI::PlaySound(int index) {
-    // TODO to do
     SessionUI::PlaySound(index);
 }
 

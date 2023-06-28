@@ -90,20 +90,20 @@ void DrumsSessionUI::PlaySound(int index) {
     auto nuta = GameObject::Instantiate("Nuta", animator->GetParent())->AddComponent<Image>();
     auto generator = RandomnessManager::GetInstance();
     if (index == 0) {
-        int random = generator->GetInt(430, 630);
-        nuta->LoadTexture(random, 575, "UI/Sesja/Nuta1.png", -0.1f);
+        int random = generator->GetInt(325, 525);
+        nuta->LoadTexture(random, 500, "UI/Sesja/Nutka1.png", -0.1f);
         animator->Setup(nuta, {
                 {AnimatedProperty::Position, glm::vec3(random, 750.0f, 0.0f)}
         });
     } else if (index == 1) {
-        int random = generator->GetInt(120, 400);
-        nuta->LoadTexture(525, random, "UI/Sesja/Nuta2.png", -0.1f);
+        int random = generator->GetInt(120, 300);
+        nuta->LoadTexture(400, random, "UI/Sesja/Nutka2.png", -0.1f);
         animator->Setup(nuta, {
                 {AnimatedProperty::Position, glm::vec3(700.0f, random, 0.0f)}
         });
     } else if (index == 2) {
-        int random = generator->GetInt(210, 360);
-        nuta->LoadTexture(random, 390, "UI/Sesja/Nuta3.png", -0.1f);
+        int random = generator->GetInt(150, 300);
+        nuta->LoadTexture(random, 300, "UI/Sesja/Nutka3.png", -0.1f);
         animator->Setup(nuta, {
                 {AnimatedProperty::Position, glm::vec3(random, 550.0f, 0.0f)}
         });
