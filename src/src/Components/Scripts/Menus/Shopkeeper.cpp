@@ -136,19 +136,19 @@ void Shopkeeper::Update() {
     auto hid = HIDManager::GetInstance();
 
     if (hid->IsKeyDown(Key::KEY_SPACE)) {
-        if (dialogueIndex == 7) {
+        if (dialogueIndex == 9) {
             dialogueIndex++;
             spaceImage->enabled = false;
             return;
         }
 
-        if (dialogueIndex == 8) {
+        if (dialogueIndex == 10) {
             dialogueIndex--;
             spaceImage->enabled = true;
             return;
         }
 
-        if (dialogueIndex == 14) {
+        if (dialogueIndex == 16) {
             dialogueIndex++;
             stopMusicSessionImage->enabled = false;
             crowdImage->enabled = true;
@@ -158,27 +158,27 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_ENTER)) {
-        if (dialogueIndex == 8) {
+        if (dialogueIndex == 10) {
             dialogueIndex++;
             musicSessionImage->enabled = true;
             playerManager->inputEnabled = false;
             return;
         }
 
-        if (dialogueIndex == 11) {
+        if (dialogueIndex == 13) {
             dialogueIndex++;
             patternsImage->enabled = false;
             soundImage->enabled = true;
             return;
         }
 
-        if (dialogueIndex == 12) {
+        if (dialogueIndex == 14) {
             dialogueIndex++;
             patternsSound->PlaySound();
             return;
         }
 
-        if (dialogueIndex == 15) {
+        if (dialogueIndex == 17) {
             dialogueIndex++;
             playerManager->inputEnabled = true;
             crowdImage->enabled = false;
@@ -188,7 +188,7 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_LEFT_SHIFT)) {
-        if (dialogueIndex == 9) {
+        if (dialogueIndex == 11) {
             dialogueIndex++;
             musicSessionImage->enabled = false;
             instrumentControlImage->enabled = true;
@@ -197,7 +197,7 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_TAB)) {
-        if (dialogueIndex == 10) {
+        if (dialogueIndex == 12) {
             dialogueIndex++;
             instrumentControlImage->enabled = false;
             patternsImage->enabled = true;
@@ -206,7 +206,7 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_R)) {
-        if (dialogueIndex == 13) {
+        if (dialogueIndex == 15) {
             sound1->PlaySound();
             patternIsGood = true;
             return;
@@ -214,7 +214,7 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_U)) {
-        if (dialogueIndex == 13) {
+        if (dialogueIndex == 15) {
             sound2->PlaySound();
             if (patternIsGood) {
                 dialogueIndex++;
@@ -228,7 +228,7 @@ void Shopkeeper::Update() {
     }
 
     if (hid->IsKeyDown(Key::KEY_ESC)) {
-        if (dialogueIndex == 8) {
+        if (dialogueIndex == 10) {
             dialogueIndex--;
             spaceImage->enabled = true;
             return;
@@ -263,13 +263,29 @@ void Shopkeeper::Update() {
             Camera::activeCamera->GetComponent<Camera>()->SetZoomLevel(1.0f);
 
             GameObject::Instantiate("TutorialPopup", parent)->AddComponent<Popup>()->
-                    Setup(0, 0, "UI/Tutorial/Tutorial.png",
+                    Setup(0, 0, "UI/Tutorial/Tutorial1.png",
                           "UI/ButtonTransparent.png", "UI/ButtonTransparent.png", false);
 
             return;
         }
 
         if (dialogueIndex == 6) {
+            dialogueIndex++;
+            GameObject::Instantiate("TutorialPopup", parent)->AddComponent<Popup>()->
+                    Setup(0, 0, "UI/Tutorial/Tutorial2.png",
+                          "UI/ButtonTransparent.png", "UI/ButtonTransparent.png", false);
+            return;
+        }
+
+        if (dialogueIndex == 7) {
+            dialogueIndex++;
+            GameObject::Instantiate("TutorialPopup", parent)->AddComponent<Popup>()->
+                    Setup(0, 0, "UI/Tutorial/Tutorial3.png",
+                          "UI/ButtonTransparent.png", "UI/ButtonTransparent.png", false);
+            return;
+        }
+
+        if (dialogueIndex == 8) {
             dialogueIndex++;
             shopkeeperEvent = true;
             playerManager->inputEnabled = true;
