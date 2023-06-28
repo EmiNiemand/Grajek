@@ -415,6 +415,7 @@ void PlayerManager::ReceiveBadge(PlayerBadges badge) {
                 {AnimatedProperty::Scale, glm::vec3(1.0f), 0.15},
             {AnimatedProperty::Scale, glm::vec3(0.0f), 0.65}
     }, AnimationBehaviour::OneTime);
+    badgePopUpAnimator->AddComponent<Image>()->LoadTexture(0, 0, "UI/backgroundOpacity60.png", -0.98);
 }
 
 void PlayerManager::OnCheatSheetToggle() {
