@@ -15,6 +15,7 @@
 #include <numbers>
 
 // Forces consts
+constexpr float DISTANCE_TO_PLAYER = 0.8f;
 constexpr float DISTANCE_TO_POINT = 1.5f;
 constexpr float DISTANCE_TO_COLLISION = 1.25f;
 constexpr float AVOIDANCE_ROTATION_FACTOR = 1.50f;
@@ -32,6 +33,7 @@ class CharacterPathfinding;
 
 class CharacterMovement : public Component {
     AI_MOVEMENT_STATE movementState = NearTargetPosition;
+    AI_MOVEMENT_STATE previousMovementState = Waiting;
     std::shared_ptr<std::unordered_map<int, std::shared_ptr<CharacterMovement>>> otherCharacters = nullptr;
     float timeSinceLastPoint = 0.0f;
     bool isStatic = false;
@@ -52,9 +54,12 @@ class CharacterMovement : public Component {
     std::vector<glm::vec3>* path = nullptr;
     int pathIterator = -1;
     int nullPathCounter = 3;
+    std::shared_ptr<Rigidbody> playerRigidbody = nullptr;
     std::shared_ptr<Transform> playerTransform = nullptr;
     glm::vec3 playerPosition {};
+    float playerVelocity = 0.0f;
     glm::vec3 currentPosition {};
+    glm::vec3 currentPositionForward {};
     glm::ivec2 endPoint {};
     glm::ivec2 previousEndPoint {};
     glm::ivec2 maxSpawnCoords {};

@@ -19,6 +19,8 @@ CharacterMovement::CharacterMovement(const std::shared_ptr<GameObject> &parent, 
 CharacterMovement::~CharacterMovement() = default;
 
 void CharacterMovement::Start() {
+    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
+    playerRigidbody = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<Rigidbody>();
     rigidbody = parent->GetComponent<Rigidbody>();
     collisionGrid = CollisionManager::GetInstance()->grid;
     collisionGridSize = CollisionManager::GetInstance()->gridSize;
@@ -46,72 +48,87 @@ void CharacterMovement::FixedUpdate() {
 #endif
 
     currentPosition = parent->transform->GetLocalPosition();
+    currentPositionForward = currentPosition + parent->transform->GetForward() * 2.0f;
+    playerPosition = playerTransform->GetLocalPosition();
+    playerVelocity = glm::length(glm::vec2(playerRigidbody->velocity.x, playerRigidbody->velocity.z));
 
-    if (pathIterator >= 0) {
-        cellPos = glm::ivec2((int) (currentPosition.x / collisionGridSize) + GRID_SIZE / 2,
-                             (int) (currentPosition.z / collisionGridSize) + GRID_SIZE / 2);
+    if (glm::distance(playerPosition, currentPositionForward) < DISTANCE_TO_PLAYER && playerVelocity > 0.01f) {
+        if (movementState != Waiting) {
+            previousMovementState = movementState;
+            movementState = Waiting;
+        }
+    } else {
+        if (previousMovementState != Waiting) {
+            movementState = previousMovementState;
+            previousMovementState = Waiting;
+        }
 
-        cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
+        if (pathIterator >= 0) {
+            cellPos = glm::ivec2((int) (currentPosition.x / collisionGridSize) + GRID_SIZE / 2,
+                                 (int) (currentPosition.z / collisionGridSize) + GRID_SIZE / 2);
 
-        speed = std::lerp(speed, MOVEMENT_MAX_SPEED, MOVEMENT_SMOOTHING_PARAM);
+            cellPtr = &collisionGrid[cellPos.x + cellPos.y * GRID_SIZE];
 
-        steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
+            speed = std::lerp(speed, MOVEMENT_MAX_SPEED, MOVEMENT_SMOOTHING_PARAM);
 
-        if (!cellPtr->empty()) {
-            for (const auto &box: *cellPtr) {
-                if (box.first == parent->GetComponent<BoxCollider>()->GetId())
-                    continue;
+            steeringForce = glm::normalize((*path)[pathIterator] - currentPosition);
 
-                if (box.second->isDynamic) {
-                    steeringPosition = box.second->GetParent()->transform->GetGlobalPosition();
-                    distance = glm::distance(currentPosition, steeringPosition);
+            if (!cellPtr->empty()) {
+                for (const auto &box: *cellPtr) {
+                    if (box.first == parent->GetComponent<BoxCollider>()->GetId())
+                        continue;
 
-                    if (distance < maxDistanceToCharacter) {
-                        maxDistanceToCharacter = distance;
-                        steeringDirection = glm::normalize(currentPosition - steeringPosition);
+                    if (box.second->isDynamic) {
+                        steeringPosition = box.second->GetParent()->transform->GetGlobalPosition();
+                        distance = glm::distance(currentPosition, steeringPosition);
+
+                        if (distance < maxDistanceToCharacter) {
+                            maxDistanceToCharacter = distance;
+                            steeringDirection = glm::normalize(currentPosition - steeringPosition);
+                        }
                     }
                 }
-            }
 
-            if (maxDistanceToCharacter < DISTANCE_TO_COLLISION) {
-                rotationAngle = std::acos(glm::dot(steeringForce, steeringDirection)) / AVOIDANCE_ROTATION_FACTOR;
+                if (maxDistanceToCharacter < DISTANCE_TO_COLLISION) {
+                    rotationAngle = std::acos(glm::dot(steeringForce, steeringDirection)) / AVOIDANCE_ROTATION_FACTOR;
 
-                if (rotationAngle > 0.38f) {
-                    steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
-                    steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
+                    if (rotationAngle > 0.38f) {
+                        steeringMatrix = glm::rotate(glm::mat4(1), rotationAngle, glm::vec3(0, 1, 0));
+                        steeringForce = steeringMatrix * glm::vec4(steeringDirection, 1) * AVOIDANCE_FORCE_MODIFIER;
+                    }
                 }
+
+                maxDistanceToCharacter = FLT_MAX;
             }
 
-            maxDistanceToCharacter = FLT_MAX;
+            ApplyForces(steeringForce);
+
+            distance = glm::distance(currentPosition, (*path)[pathIterator]);
+
+            if (distance < DISTANCE_TO_POINT) {
+                --pathIterator;
+                timeSinceLastPoint = 0.0f;
+            }
         }
 
-        ApplyForces(steeringForce);
+        if (movementState == NearPlayerPosition || movementState == NearDuelPosition) {
+            steeringForce = glm::normalize(playerPosition - currentPosition);
 
-        distance = glm::distance(currentPosition, (*path)[pathIterator]);
+            ApplyRotation(steeringForce);
+        } else {
+            timeSinceLastPoint += GloomEngine::GetInstance()->fixedDeltaTime;
 
-        if (distance < DISTANCE_TO_POINT) {
-            --pathIterator;
-            timeSinceLastPoint = 0.0f;
-        }
-    }
+            if (timeSinceLastPoint > MOVEMENT_TIMEOUT) {
+                timeSinceLastPoint = 0.0f;
+                pathIterator = -1;
 
-    if (movementState == NearPlayerPosition || movementState == NearDuelPosition) {
-        steeringForce = glm::normalize(playerPosition - currentPosition);
-
-        ApplyRotation(steeringForce);
-    } else {
-        timeSinceLastPoint += GloomEngine::GetInstance()->fixedDeltaTime;
-
-        if (timeSinceLastPoint > MOVEMENT_TIMEOUT) {
-            timeSinceLastPoint = 0.0f;
-            pathIterator = -1;
-
-            if (movementState == OnPathToPlayer)
-                movementState = NearPlayerPosition;
-            else if (movementState == OnPathToDuel)
-                movementState = NearDuelPosition;
-            else
-                movementState = NearTargetPosition;
+                if (movementState == OnPathToPlayer)
+                    movementState = NearPlayerPosition;
+                else if (movementState == OnPathToDuel)
+                    movementState = NearDuelPosition;
+                else
+                    movementState = NearTargetPosition;
+            }
         }
     }
 
@@ -171,7 +188,6 @@ void CharacterMovement::AIUpdate() {
 void CharacterMovement::OnCreate() {
     otherCharacters = std::make_shared<std::unordered_map<int, std::shared_ptr<CharacterMovement>>>(AIManager::GetInstance()->charactersMovements);
     otherCharacters->insert({id, std::dynamic_pointer_cast<CharacterMovement>(shared_from_this())});
-    playerTransform = GloomEngine::GetInstance()->FindGameObjectWithName("Player")->transform;
     Component::OnCreate();
 }
 
@@ -184,6 +200,8 @@ void CharacterMovement::OnDestroy() {
     pathfinding = nullptr;
     collisionGrid = nullptr;
     playerTransform = nullptr;
+    playerRigidbody = nullptr;
+    otherCharacters = nullptr;
     Component::OnDestroy();
 }
 

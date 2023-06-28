@@ -70,6 +70,7 @@ void CharacterLogic::Update() {
                     characterAnimations->SetNewState(Walking);
                     break;
                 case Stuck:
+                case Waiting:
                 case NearTargetPosition:
                     characterAnimations->SetNewState(Idle);
                     break;
