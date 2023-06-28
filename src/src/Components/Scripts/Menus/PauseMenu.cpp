@@ -9,10 +9,16 @@
 #include "EngineManagers/DialogueManager.h"
 #include "EngineManagers/AudioManager.h"
 #include "EngineManagers/OptionsManager.h"
+#include "Components/Scripts/Menus/ControlsMenu.h"
 
 PauseMenu::PauseMenu(const std::shared_ptr<GameObject> &parent, int id) : Menu(parent, id) {}
 
 PauseMenu::~PauseMenu() = default;
+
+void PauseMenu::Start() {
+    Component::Start();
+    controlsMenu = GloomEngine::GetInstance()->FindGameObjectWithName("ControlsMenu")->GetComponent<ControlsMenu>();
+}
 
 bool PauseMenu::ShowMenu() {
     if(!Menu::ShowMenu()) return false;
@@ -37,6 +43,8 @@ void PauseMenu::OnClick() {
         DialogueManager::GetInstance()->NotifyMenuIsNotActive();
     } else if (buttonName == "OptionsButton") {
         GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->ToggleOptionsMenu();
+    } else if (buttonName == "ControlsButton") {
+        controlsMenu->ShowMenu();
     } else if (buttonName == "Main MenuButton") {
         SceneManager::GetInstance()->LoadScene("MainMenu");
     } else if (buttonName == "ExitButton") {
