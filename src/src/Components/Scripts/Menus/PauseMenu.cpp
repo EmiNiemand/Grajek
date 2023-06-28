@@ -32,7 +32,7 @@ bool PauseMenu::ShowMenu() {
 void PauseMenu::HideMenu() {
     Menu::HideMenu();
     AudioManager::GetInstance()->audioListener->SetGain(OptionsManager::GetInstance()->musicVolume);
-    
+
     if (!GloomEngine::GetInstance()->FindGameObjectWithName("Player")->GetComponent<PlayerManager>()->session)
         SceneManager::GetInstance()->activeScene->GetComponent<AudioSource>()->SetGain(0.2f);
 }
