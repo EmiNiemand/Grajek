@@ -17,6 +17,7 @@ class PlayerManager;
 class SessionUI;
 class Sound;
 class Instrument;
+class AudioSource;
 
 class MusicSession : public Component {
 private:
@@ -25,6 +26,8 @@ private:
     std::shared_ptr<PlayerManager> playerManager;
 
     std::vector<Sound> recordedSounds;
+    std::shared_ptr<AudioSource> patternFailureSound;
+    std::shared_ptr<AudioSource> patternTimeoutSound;
     std::vector<std::shared_ptr<MusicPattern>> potentialPatterns;
     float lastTime = 0;
 
