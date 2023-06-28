@@ -381,33 +381,40 @@ void PlayerManager::ReceiveBadge(PlayerBadges badge) {
     equipment->badges[badge] = true;
     playerUI->UpdateBadges(equipment->badges);
 
-    // TODO: Add obtained badge pop-up
-
-    auto badgePopUp = GameObject::Instantiate("BadgePopUp", parent)->AddComponent<Image>();
+    auto badgePopUpAnimator = GameObject::Instantiate("BadgePopUpScaleAnimator", parent);
+    auto badgePopUp = GameObject::Instantiate("BadgePopUp", badgePopUpAnimator)->AddComponent<Image>();
     std::string badgeName;
     switch (badge) {
         case PlayerBadges::DRUMS:
             badgeName = "Drums"; break;
         case PlayerBadges::TRUMPET:
-            badgeName = "Drums"; break;
+            badgeName = "Trumpet"; break;
         case PlayerBadges::LAUNCHPAD:
-            badgeName = "Drums"; break;
+            badgeName = "Launchpad"; break;
         case PlayerBadges::GUITAR:
-            badgeName = "Drums"; break;
+            badgeName = "Guitar"; break;
     }
+
     badgePopUp->LoadTexture(920, 540, "UI/BadgePopUp/"+badgeName+".png", -0.99);
     badgePopUp->pivot = {0.5, 0.5};
 
     GameObject::Instantiate("BadgePopUpScaleAnimator", parent)->AddComponent<UIAnimator>()
+            ->Setup(badgePopUp, {
+                    {AnimatedProperty::Alpha, glm::vec3(0.0f), 0},
+                    {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.75},
+                    {AnimatedProperty::Alpha, glm::vec3(1.0f), 1.0},
+                    {AnimatedProperty::Alpha, glm::vec3(0.0f), 0.35}
+            }, AnimationBehaviour::OneTime);
+    badgePopUpAnimator->AddComponent<UIAnimator>()
         ->Setup(badgePopUp, {
-            {AnimatedProperty::Scale, glm::vec3(1.5f), 0},
-            {AnimatedProperty::Scale, glm::vec3(1.0f), 0.2f}
-    }, AnimationBehaviour::Resetable);
-    GameObject::Instantiate("BadgePopUpScaleAnimator", parent)->AddComponent<UIAnimator>()
-        ->Setup(badgePopUp, {
-            {AnimatedProperty::Alpha, glm::vec3(1.5f), 0},
-            {AnimatedProperty::Alpha, glm::vec3(1.0f), 0.2f}
-    }, AnimationBehaviour::Resetable);
+                {AnimatedProperty::Scale, glm::vec3(0.0f), 0},
+                {AnimatedProperty::Scale, glm::vec3(1.2f), 1},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.15},
+                {AnimatedProperty::Scale, glm::vec3(1.1f), 0.15},
+                {AnimatedProperty::Scale, glm::vec3(0.9f), 0.15},
+                {AnimatedProperty::Scale, glm::vec3(1.0f), 0.15},
+            {AnimatedProperty::Scale, glm::vec3(0.0f), 0.65}
+    }, AnimationBehaviour::OneTime);
 }
 
 void PlayerManager::OnCheatSheetToggle() {
