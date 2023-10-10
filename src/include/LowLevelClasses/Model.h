@@ -26,14 +26,14 @@ public:
 
     virtual void Draw();
     virtual void Draw(std::shared_ptr<Shader> useShader);
-    inline std::vector<Mesh> GetMeshes() { return meshes; }
+    inline const std::vector<Mesh>& GetMeshes() { return meshes; }
 
     virtual void LoadModel(std::string const &path) = 0;
 
 protected:
     static unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
     virtual void ProcessNode(aiNode *node, const aiScene *scene) = 0;
-    virtual Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene) = 0;
+    virtual void ProcessMesh(aiMesh *mesh, const aiScene *scene) = 0;
     std::vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 };
 

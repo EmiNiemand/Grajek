@@ -18,9 +18,6 @@ Renderer::Renderer(const std::shared_ptr<GameObject> &parent, int id) : Drawable
 Renderer::~Renderer() = default;
 
 void Renderer::Update() {
-#ifdef DEBUG
-    ZoneScopedNC("Renderer", 0x800080);
-#endif
     if (!parent->isOnFrustum) {
         return;
     }

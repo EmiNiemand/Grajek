@@ -21,7 +21,15 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
-Mesh::~Mesh() = default;
+Mesh::~Mesh() {
+    for (int i = 0; i < textures.size(); ++i) {
+        glDeleteTextures(1, &textures[i].id);
+    }
+
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+};
 
 void Mesh::Draw(std::shared_ptr<Shader> &shader, int type) {
     // bind appropriate textures

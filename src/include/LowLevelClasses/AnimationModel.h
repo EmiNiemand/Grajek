@@ -36,7 +36,7 @@ public:
 protected:
     static void SetVertexBoneDataToDefault(Vertex& vertex);
     void ProcessNode(aiNode *node, const aiScene *scene) override;
-    Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene) override;
+    void ProcessMesh(aiMesh *mesh, const aiScene *scene) override;
     static void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
     void ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 };

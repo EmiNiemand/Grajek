@@ -308,7 +308,7 @@ void Game::InitializeGame() const {
 #ifdef DEBUG
     AIManager::GetInstance()->InitializeSpawner(2);
 #else
-    AIManager::GetInstance()->InitializeSpawner(60);
+    AIManager::GetInstance()->InitializeSpawner(50);
 #endif
 
     camera->SetTarget(nullptr);

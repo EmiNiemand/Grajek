@@ -20,7 +20,7 @@ public:
 
 protected:
     void ProcessNode(aiNode *node, const aiScene *scene) override;
-    Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene) override;
+    void ProcessMesh(aiMesh *mesh, const aiScene *scene) override;
 };
 
 

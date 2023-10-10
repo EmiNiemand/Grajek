@@ -55,7 +55,7 @@ void AnimationModel::ProcessNode(aiNode *node, const aiScene *scene)
         // the node object only contains indices to index the actual objects in the activeScene.
         // the activeScene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(ProcessMesh(mesh, scene));
+        ProcessMesh(mesh, scene);
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for(unsigned int i = 0; i < node->mNumChildren; i++)
@@ -65,7 +65,7 @@ void AnimationModel::ProcessNode(aiNode *node, const aiScene *scene)
 
 }
 
-Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+void AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     // data to fill
     std::vector<Vertex> vertices;
@@ -128,7 +128,7 @@ Mesh AnimationModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 	ExtractBoneWeightForVertices(vertices,mesh,scene);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, textures);
+    meshes.emplace_back(vertices, indices, textures);
 }
 
 void AnimationModel::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
