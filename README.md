@@ -1,8 +1,7 @@
-# GloomEngine
+# Grajek
 
 ---
 
-Game Engine based on OpenGL created from scratch. 
-Utilized by our Grajek game.
+Game called Grajek created on opengl based engine named GloomEngine.
 
 ---
